@@ -86,15 +86,18 @@ npm run preview
 
 ### 部署到 Cloudflare Pages
 
-### 方法一:通过 Cloudflare Dashboard
+本项目使用 Cloudflare Pages Functions 解决 API 跨域问题。
+
+#### 通过 Cloudflare Dashboard 部署
 
 1. **登录 Cloudflare Dashboard**
    - 访问 https://dash.cloudflare.com
-   - 选择 "Pages" 服务
+   - 选择 "Workers & Pages"
 
 2. **创建新项目**
-   - 点击 "Create a project"
-   - 选择 "Connect to Git" 或 "Direct Upload"
+   - 点击 "Create application" → "Pages"
+   - 选择 "Connect to Git"
+   - 选择你的 GitHub 仓库
 
 3. **配置构建设置**
    - **Framework preset**: Vite
@@ -102,9 +105,24 @@ npm run preview
    - **Build output directory**: `dist`
    - **Node version**: 18 或更高
 
-4. **部署**
+4. **重要：Functions 配置**
+   - 项目中的 `functions/` 目录会自动部署为 Cloudflare Pages Functions
+   - `functions/api/generate-image.js` 会映射到 `/api/generate-image` 路由
+   - 无需额外配置，Cloudflare 会自动识别
+
+5. **环境变量（可选）**
+   - 在 Settings → Environment variables 中添加
+   - `ARK_API_KEY`: 你的火山引擎 API Key
+
+6. **部署**
    - 点击 "Save and Deploy"
    - 等待构建完成
+
+#### 文件说明
+
+- `functions/api/generate-image.js` - Cloudflare Pages Function（API 代理）
+- `_headers` - 自定义响应头配置（CORS）
+- `_redirects` - 重定向规则（SPA 路由支持）
 
 ### 方法二:使用 Wrangler CLI
 
