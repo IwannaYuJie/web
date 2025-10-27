@@ -60,7 +60,31 @@ npm run build
 npm run preview
 ```
 
-## 🌐 部署到 Cloudflare Pages
+## 🌐 部署
+
+### 部署到 Vercel（推荐）
+
+本项目使用 Serverless 函数解决 API 跨域问题，推荐部署到 Vercel。
+
+1. **连接 GitHub 仓库**
+   - 访问 https://vercel.com
+   - 点击 "Import Project"
+   - 选择你的 GitHub 仓库
+
+2. **配置构建设置**
+   - **Framework Preset**: Vite
+   - **Build Command**: `npm run build`
+   - **Output Directory**: `dist`
+
+3. **配置环境变量（可选）**
+   - 添加 `ARK_API_KEY` 环境变量
+   - 值为你的火山引擎 API Key
+
+4. **部署**
+   - 点击 "Deploy"
+   - 等待构建完成
+
+### 部署到 Cloudflare Pages
 
 ### 方法一:通过 Cloudflare Dashboard
 

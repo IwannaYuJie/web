@@ -20,8 +20,11 @@ function ImageGenerator() {
   const fileInputRef = useRef(null) // 文件输入引用
 
   // API 配置
-  // 使用 Vite 代理路径解决 CORS 跨域问题
-  const API_ENDPOINT = '/api/v3/images/generations'
+  // 开发环境使用 Vite 代理，生产环境使用 Serverless 函数代理
+  const isDevelopment = import.meta.env.DEV
+  const API_ENDPOINT = isDevelopment 
+    ? '/api/v3/images/generations'  // 开发环境：Vite 代理
+    : '/api/generate-image'          // 生产环境：Serverless 函数
   const API_KEY = '85e498e4-2b40-4b94-85ca-60bd022ae24c'
 
   /**
