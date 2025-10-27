@@ -6,24 +6,49 @@
 }
 
 :root {
-  /* 颜色变量 */
-  --primary-color: #646cff;
-  --primary-hover: #535bf2;
-  --bg-color: #ffffff;
-  --text-color: #213547;
-  --border-color: #e5e7eb;
-  --card-bg: #f9fafb;
-  --shadow: 0 1px 3px 0 rgba(0, 0, 0, 0.1);
-  --shadow-lg: 0 10px 15px -3px rgba(0, 0, 0, 0.1);
+  /* 橘猫主题配色 - 温暖可爱的橙色系 */
+  --primary-color: #FF9F45;        /* 橘猫主色 - 温暖的橙色 */
+  --primary-hover: #FF8C1A;        /* 悬停色 - 深橙色 */
+  --secondary-color: #FFB366;      /* 辅助色 - 浅橙色 */
+  --accent-color: #FFC999;         /* 强调色 - 奶油橙 */
+  
+  --bg-color: #FFF8F0;             /* 背景色 - 温暖的米白色 */
+  --text-color: #5C4033;           /* 文字色 - 深棕色 */
+  --text-secondary: #8B6F47;       /* 次要文字 - 浅棕色 */
+  
+  --border-color: #FFD4A3;         /* 边框色 - 浅橙色 */
+  --card-bg: #FFFAF5;              /* 卡片背景 - 奶白色 */
+  --card-hover: #FFF5E6;           /* 卡片悬停 - 浅奶油色 */
+  
+  /* 橘猫特色渐变 */
+  --gradient-warm: linear-gradient(135deg, #FFB366 0%, #FF9F45 50%, #FF8C1A 100%);
+  --gradient-soft: linear-gradient(135deg, #FFF8F0 0%, #FFE6CC 100%);
+  
+  /* 阴影效果 - 柔和温暖 */
+  --shadow: 0 2px 8px 0 rgba(255, 159, 69, 0.15);
+  --shadow-lg: 0 8px 24px 0 rgba(255, 159, 69, 0.25);
+  --shadow-hover: 0 12px 32px 0 rgba(255, 159, 69, 0.3);
+  
+  /* 圆角 - 可爱风格 */
+  --radius-sm: 12px;
+  --radius-md: 16px;
+  --radius-lg: 24px;
+  --radius-full: 9999px;
 }
 
-/* 深色模式支持 */
+/* 深色模式支持 - 橘猫夜间主题 */
 @media (prefers-color-scheme: dark) {
   :root {
-    --bg-color: #1a1a1a;
-    --text-color: #e5e7eb;
-    --border-color: #374151;
-    --card-bg: #242424;
+    --bg-color: #2D1F1A;             /* 深棕背景 */
+    --text-color: #FFE6CC;           /* 浅橙文字 */
+    --text-secondary: #D4A574;       /* 次要文字 */
+    
+    --border-color: #4D3A2E;         /* 深棕边框 */
+    --card-bg: #3D2B20;              /* 深色卡片 */
+    --card-hover: #4D3A2E;           /* 卡片悬停 */
+    
+    --shadow: 0 2px 8px 0 rgba(0, 0, 0, 0.3);
+    --shadow-lg: 0 8px 24px 0 rgba(0, 0, 0, 0.4);
   }
 }
 
@@ -36,6 +61,11 @@ body {
   background-color: var(--bg-color);
   color: var(--text-color);
   line-height: 1.6;
+  
+  /* 添加可爱的背景纹理效果 */
+  background-image: 
+    radial-gradient(circle at 20% 50%, rgba(255, 191, 102, 0.05) 0%, transparent 50%),
+    radial-gradient(circle at 80% 80%, rgba(255, 159, 69, 0.05) 0%, transparent 50%);
 }
 
 /* 容器样式 */

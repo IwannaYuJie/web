@@ -1,4 +1,4 @@
-/* App 组件样式 */
+/* App 组件样式 - 橘猫主题 */
 
 .app {
   min-height: 100vh;
@@ -6,15 +6,16 @@
   flex-direction: column;
 }
 
-/* 导航栏样式 */
+/* 导航栏样式 - 橘猫渐变 */
 .navbar {
-  background-color: var(--primary-color);
+  background: var(--gradient-warm);
   color: white;
-  padding: 1rem 0;
-  box-shadow: var(--shadow);
+  padding: 1.2rem 0;
+  box-shadow: var(--shadow-lg);
   position: sticky;
   top: 0;
   z-index: 100;
+  border-bottom: 3px solid rgba(255, 255, 255, 0.2);
 }
 
 .navbar .container {
@@ -24,15 +25,19 @@
 }
 
 .navbar .logo {
-  font-size: 1.5rem;
-  font-weight: bold;
+  font-size: 1.6rem;
+  font-weight: 800;
   color: white;
   text-decoration: none;
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  transition: transform 0.3s ease;
 }
 
 .navbar .logo:hover {
   color: white;
-  opacity: 0.9;
+  transform: scale(1.05);
 }
 
 .nav-links {
@@ -42,15 +47,18 @@
 
 .nav-links a {
   color: white;
-  font-weight: 500;
-  padding: 0.5rem 1rem;
-  border-radius: 4px;
-  transition: background-color 0.3s ease;
+  font-weight: 600;
+  padding: 0.6rem 1.2rem;
+  border-radius: var(--radius-full);
+  transition: all 0.3s ease;
+  background-color: rgba(255, 255, 255, 0.1);
 }
 
 .nav-links a:hover {
-  background-color: rgba(255, 255, 255, 0.1);
+  background-color: rgba(255, 255, 255, 0.25);
   color: white;
+  transform: translateY(-2px);
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
 }
 
 /* 主内容区域 */
@@ -59,76 +67,101 @@
   padding: 2rem 0;
 }
 
-/* 页脚样式 */
+/* 页脚样式 - 橘猫爪印 */
 .footer {
-  background-color: var(--card-bg);
-  border-top: 1px solid var(--border-color);
-  padding: 2rem 0;
+  background: var(--gradient-soft);
+  border-top: 2px solid var(--border-color);
+  padding: 2.5rem 0;
   text-align: center;
   margin-top: 4rem;
 }
 
 .footer p {
   color: var(--text-color);
-  opacity: 0.7;
+  opacity: 0.8;
+  font-weight: 500;
 }
 
-/* 页面标题 */
+/* 页面标题 - 可爱橘猫风格 */
 .page-header {
   text-align: center;
   margin-bottom: 3rem;
-  padding: 2rem 0;
+  padding: 3rem 0 2rem;
 }
 
 .page-header h1 {
-  font-size: 2.5rem;
-  margin-bottom: 0.5rem;
-  color: var(--text-color);
+  font-size: 2.8rem;
+  margin-bottom: 0.8rem;
+  color: var(--primary-color);
+  font-weight: 800;
+  text-shadow: 2px 2px 4px rgba(255, 159, 69, 0.1);
 }
 
 .page-header p {
-  font-size: 1.2rem;
-  color: var(--text-color);
-  opacity: 0.7;
+  font-size: 1.3rem;
+  color: var(--text-secondary);
+  font-weight: 500;
 }
 
-/* 随机名言区域 */
+/* 随机名言区域 - 橘猫卡片 */
 .quote-section {
-  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-  border-radius: 12px;
-  padding: 2rem;
+  background: var(--gradient-warm);
+  border-radius: var(--radius-lg);
+  padding: 2.5rem;
   margin-bottom: 3rem;
   color: white;
-  box-shadow: var(--shadow-lg);
+  box-shadow: var(--shadow-hover);
+  border: 3px solid rgba(255, 255, 255, 0.3);
+  position: relative;
+  overflow: hidden;
+}
+
+/* 橘猫装饰元素 */
+.quote-section::before {
+  content: '🐱';
+  position: absolute;
+  font-size: 8rem;
+  opacity: 0.1;
+  right: -1rem;
+  top: -2rem;
+  transform: rotate(-15deg);
 }
 
 .quote-section h2 {
-  margin-bottom: 1rem;
-  font-size: 1.8rem;
+  margin-bottom: 1.2rem;
+  font-size: 2rem;
+  font-weight: 700;
+  position: relative;
+  z-index: 1;
 }
 
 .quote-button {
   background-color: white;
-  color: #667eea;
-  padding: 0.75rem 1.5rem;
-  border-radius: 8px;
-  font-weight: 600;
-  font-size: 1rem;
-  box-shadow: var(--shadow);
+  color: var(--primary-color);
+  padding: 0.9rem 2rem;
+  border-radius: var(--radius-full);
+  font-weight: 700;
+  font-size: 1.05rem;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+  position: relative;
+  z-index: 1;
 }
 
 .quote-button:hover:not(:disabled) {
-  transform: translateY(-2px);
-  box-shadow: var(--shadow-lg);
+  transform: translateY(-3px) scale(1.05);
+  box-shadow: 0 8px 20px rgba(0, 0, 0, 0.2);
+  background-color: #FFF8F0;
 }
 
 .quote-card {
-  background-color: rgba(255, 255, 255, 0.1);
+  background-color: rgba(255, 255, 255, 0.15);
   backdrop-filter: blur(10px);
-  border-radius: 8px;
-  padding: 1.5rem;
-  margin-top: 1.5rem;
-  border: 1px solid rgba(255, 255, 255, 0.2);
+  border-radius: var(--radius-md);
+  padding: 2rem;
+  margin-top: 1.8rem;
+  border: 2px solid rgba(255, 255, 255, 0.3);
+  position: relative;
+  z-index: 1;
 }
 
 .quote-text {
@@ -145,12 +178,15 @@
 }
 
 .error-message {
-  background-color: rgba(239, 68, 68, 0.2);
-  border: 1px solid rgba(239, 68, 68, 0.4);
-  border-radius: 8px;
-  padding: 1rem;
+  background-color: rgba(255, 107, 107, 0.25);
+  border: 2px solid rgba(255, 107, 107, 0.5);
+  border-radius: var(--radius-md);
+  padding: 1.2rem;
   margin-top: 1rem;
   color: white;
+  font-weight: 600;
+  position: relative;
+  z-index: 1;
 }
 
 /* 文章列表区域 */
@@ -159,9 +195,10 @@
 }
 
 .articles-section h2 {
-  font-size: 2rem;
-  margin-bottom: 1.5rem;
-  color: var(--text-color);
+  font-size: 2.2rem;
+  margin-bottom: 1.8rem;
+  color: var(--primary-color);
+  font-weight: 700;
 }
 
 .articles-grid {
@@ -172,25 +209,46 @@
 
 .article-card {
   background-color: var(--card-bg);
-  border: 1px solid var(--border-color);
-  border-radius: 12px;
-  padding: 1.5rem;
+  border: 2px solid var(--border-color);
+  border-radius: var(--radius-md);
+  padding: 2rem;
   transition: all 0.3s ease;
   display: block;
   color: var(--text-color);
   box-shadow: var(--shadow);
+  position: relative;
+  overflow: hidden;
+}
+
+/* 橘猫爪印装饰 */
+.article-card::after {
+  content: '🐾';
+  position: absolute;
+  font-size: 3rem;
+  opacity: 0.05;
+  right: 1rem;
+  bottom: 1rem;
+  transition: all 0.3s ease;
 }
 
 .article-card:hover {
-  transform: translateY(-4px);
-  box-shadow: var(--shadow-lg);
+  transform: translateY(-6px);
+  box-shadow: var(--shadow-hover);
   border-color: var(--primary-color);
+  background-color: var(--card-hover);
+}
+
+.article-card:hover::after {
+  opacity: 0.15;
+  transform: scale(1.2) rotate(15deg);
 }
 
 .article-card h3 {
-  font-size: 1.3rem;
-  margin-bottom: 0.75rem;
+  font-size: 1.4rem;
+  margin-bottom: 0.8rem;
   color: var(--text-color);
+  font-weight: 700;
+  line-height: 1.4;
 }
 
 .article-description {
@@ -208,20 +266,25 @@
 
 /* 文章详情页 */
 .back-link {
-  display: inline-block;
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
   margin-bottom: 2rem;
-  padding: 0.5rem 1rem;
+  padding: 0.7rem 1.5rem;
   background-color: var(--card-bg);
-  border: 1px solid var(--border-color);
-  border-radius: 8px;
-  font-weight: 500;
+  border: 2px solid var(--border-color);
+  border-radius: var(--radius-full);
+  font-weight: 600;
   transition: all 0.3s ease;
+  box-shadow: var(--shadow);
 }
 
 .back-link:hover {
   background-color: var(--primary-color);
   color: white;
   border-color: var(--primary-color);
+  transform: translateX(-4px);
+  box-shadow: var(--shadow-lg);
 }
 
 .article-detail {
@@ -233,7 +296,10 @@
   text-align: center;
   margin-bottom: 3rem;
   padding-bottom: 2rem;
-  border-bottom: 2px solid var(--border-color);
+  border-bottom: 3px solid var(--border-color);
+  background: var(--gradient-soft);
+  padding: 2rem;
+  border-radius: var(--radius-lg);
 }
 
 .article-header h1 {
@@ -275,32 +341,34 @@
 }
 
 .not-found h1 {
-  font-size: 3rem;
+  font-size: 4rem;
   margin-bottom: 1rem;
-  color: var(--text-color);
+  color: var(--primary-color);
+  font-weight: 800;
 }
 
 .not-found p {
-  font-size: 1.2rem;
+  font-size: 1.3rem;
   margin-bottom: 2rem;
-  color: var(--text-color);
-  opacity: 0.7;
+  color: var(--text-secondary);
+  font-weight: 500;
 }
 
 .back-button {
   display: inline-block;
-  padding: 0.75rem 1.5rem;
-  background-color: var(--primary-color);
+  padding: 1rem 2.5rem;
+  background: var(--gradient-warm);
   color: white;
-  border-radius: 8px;
-  font-weight: 600;
+  border-radius: var(--radius-full);
+  font-weight: 700;
+  font-size: 1.1rem;
   transition: all 0.3s ease;
+  box-shadow: var(--shadow-lg);
 }
 
 .back-button:hover {
-  background-color: var(--primary-hover);
-  transform: translateY(-2px);
-  box-shadow: var(--shadow-lg);
+  transform: translateY(-3px) scale(1.05);
+  box-shadow: var(--shadow-hover);
   color: white;
 }
 
@@ -324,5 +392,478 @@
 
   .navbar .logo {
     font-size: 1.2rem;
+  }
+}
+
+/* ============================================
+   图片生成页面样式 - 橘猫画板主题 🎨
+   ============================================ */
+
+/* 图片生成区域 */
+.image-generator-section {
+  max-width: 900px;
+  margin: 0 auto;
+}
+
+/* 生成表单 */
+.generator-form {
+  background: var(--card-bg);
+  border: 2px solid var(--border-color);
+  border-radius: var(--radius-lg);
+  padding: 2.5rem;
+  box-shadow: var(--shadow);
+  margin-bottom: 3rem;
+}
+
+.generator-form h2 {
+  color: var(--primary-color);
+  font-size: 1.8rem;
+  margin-bottom: 2rem;
+  font-weight: 700;
+}
+
+/* 表单组 */
+.form-group {
+  margin-bottom: 2rem;
+}
+
+.form-group label {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  margin-bottom: 0.8rem;
+  color: var(--text-color);
+  font-weight: 600;
+  font-size: 1.05rem;
+}
+
+.label-icon {
+  font-size: 1.3rem;
+}
+
+.label-text {
+  flex: 1;
+}
+
+/* 输入框样式 */
+.input {
+  width: 100%;
+  background: var(--card-bg);
+  border: 2px solid var(--border-color);
+  border-radius: var(--radius-md);
+  padding: 0.9rem 1.2rem;
+  color: var(--text-color);
+  font-size: 1rem;
+  font-family: inherit;
+  transition: all 0.3s ease;
+}
+
+.input:focus {
+  border-color: var(--primary-color);
+  outline: none;
+  box-shadow: 0 0 0 3px rgba(255, 159, 69, 0.1);
+}
+
+.input:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+}
+
+/* 文本域特殊样式 */
+.textarea-input {
+  resize: vertical;
+  min-height: 120px;
+  line-height: 1.6;
+}
+
+/* 下拉选择框 */
+.select-input {
+  cursor: pointer;
+  appearance: none;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 12 12'%3E%3Cpath fill='%23FF9F45' d='M6 9L1 4h10z'/%3E%3C/svg%3E");
+  background-repeat: no-repeat;
+  background-position: right 1rem center;
+  padding-right: 3rem;
+}
+
+/* 输入提示 */
+.input-hint {
+  margin-top: 0.5rem;
+  font-size: 0.9rem;
+  color: var(--text-secondary);
+  font-style: italic;
+}
+
+/* 表单操作按钮区域 */
+.form-actions {
+  display: flex;
+  gap: 1rem;
+  margin-top: 2rem;
+}
+
+/* 主要按钮 */
+.primary-button {
+  flex: 1;
+  background: var(--gradient-warm);
+  color: white;
+  padding: 1rem 2rem;
+  border: none;
+  border-radius: var(--radius-full);
+  font-weight: 700;
+  font-size: 1.05rem;
+  cursor: pointer;
+  box-shadow: var(--shadow-lg);
+  transition: all 0.3s ease;
+}
+
+.primary-button:hover:not(:disabled) {
+  transform: translateY(-3px) scale(1.02);
+  box-shadow: var(--shadow-hover);
+}
+
+.primary-button:active:not(:disabled) {
+  transform: translateY(-1px) scale(0.98);
+}
+
+.primary-button:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+  transform: none;
+}
+
+/* 次要按钮 */
+.secondary-button {
+  flex: 0.5;
+  background: white;
+  color: var(--primary-color);
+  border: 2px solid var(--border-color);
+  padding: 1rem 2rem;
+  border-radius: var(--radius-full);
+  font-weight: 600;
+  font-size: 1.05rem;
+  cursor: pointer;
+  transition: all 0.3s ease;
+}
+
+.secondary-button:hover:not(:disabled) {
+  border-color: var(--primary-color);
+  background: var(--card-hover);
+  transform: translateY(-2px);
+}
+
+.secondary-button:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+}
+
+/* 结果展示区域 */
+.result-section {
+  background: var(--card-bg);
+  border: 2px solid var(--primary-color);
+  border-radius: var(--radius-lg);
+  padding: 2.5rem;
+  box-shadow: var(--shadow-lg);
+  animation: slideIn 0.5s ease;
+}
+
+@keyframes slideIn {
+  from {
+    opacity: 0;
+    transform: translateY(20px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.result-section h2 {
+  color: var(--primary-color);
+  font-size: 1.8rem;
+  margin-bottom: 2rem;
+  text-align: center;
+  font-weight: 700;
+}
+
+/* 生成的图片卡片 */
+.generated-image-card {
+  background: white;
+  border: 2px solid var(--border-color);
+  border-radius: var(--radius-md);
+  padding: 1.5rem;
+  box-shadow: var(--shadow);
+}
+
+.generated-image {
+  width: 100%;
+  height: auto;
+  border-radius: var(--radius-md);
+  margin-bottom: 1.5rem;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+  transition: transform 0.3s ease;
+}
+
+.generated-image:hover {
+  transform: scale(1.02);
+}
+
+/* 图片信息 */
+.image-info {
+  background: var(--bg-color);
+  border-radius: var(--radius-sm);
+  padding: 1.2rem;
+  margin-bottom: 1.5rem;
+}
+
+.image-info p {
+  display: flex;
+  justify-content: space-between;
+  margin-bottom: 0.6rem;
+  font-size: 0.95rem;
+}
+
+.image-info p:last-child {
+  margin-bottom: 0;
+}
+
+.info-label {
+  color: var(--text-secondary);
+  font-weight: 600;
+}
+
+.info-value {
+  color: var(--text-color);
+  font-weight: 700;
+}
+
+/* 下载按钮 */
+.download-button {
+  display: block;
+  width: 100%;
+  background: var(--gradient-warm);
+  color: white;
+  padding: 0.9rem;
+  border-radius: var(--radius-full);
+  text-align: center;
+  text-decoration: none;
+  font-weight: 700;
+  box-shadow: var(--shadow);
+  transition: all 0.3s ease;
+}
+
+.download-button:hover {
+  color: white;
+  transform: translateY(-2px);
+  box-shadow: var(--shadow-hover);
+}
+
+/* 使用提示区域 */
+.tips-section {
+  margin-top: 3rem;
+}
+
+.tips-section h2 {
+  color: var(--primary-color);
+  font-size: 1.8rem;
+  margin-bottom: 2rem;
+  text-align: center;
+  font-weight: 700;
+}
+
+.tips-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+  gap: 1.5rem;
+}
+
+.tip-card {
+  background: var(--card-bg);
+  border: 2px solid var(--border-color);
+  border-radius: var(--radius-md);
+  padding: 1.8rem;
+  box-shadow: var(--shadow);
+  transition: all 0.3s ease;
+}
+
+.tip-card:hover {
+  transform: translateY(-4px);
+  box-shadow: var(--shadow-hover);
+  border-color: var(--primary-color);
+}
+
+.tip-card h3 {
+  color: var(--primary-color);
+  font-size: 1.2rem;
+  margin-bottom: 0.8rem;
+  font-weight: 700;
+}
+
+.tip-card p {
+  color: var(--text-secondary);
+  font-size: 0.95rem;
+  line-height: 1.6;
+}
+
+/* 图片上传样式 */
+.image-upload-container {
+  display: flex;
+  gap: 1rem;
+  align-items: center;
+}
+
+.file-input {
+  display: none;
+}
+
+.file-input-label {
+  flex: 1;
+  background: var(--gradient-warm);
+  color: white;
+  padding: 0.9rem 1.5rem;
+  border-radius: var(--radius-full);
+  text-align: center;
+  cursor: pointer;
+  font-weight: 600;
+  transition: all 0.3s ease;
+  box-shadow: var(--shadow);
+}
+
+.file-input-label:hover {
+  transform: translateY(-2px);
+  box-shadow: var(--shadow-hover);
+}
+
+.clear-image-button {
+  background: white;
+  color: var(--primary-color);
+  border: 2px solid var(--border-color);
+  padding: 0.9rem 1.5rem;
+  border-radius: var(--radius-full);
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.3s ease;
+}
+
+.clear-image-button:hover:not(:disabled) {
+  border-color: var(--primary-color);
+  background: var(--card-hover);
+}
+
+.clear-image-button:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+}
+
+/* 图片预览 */
+.image-preview {
+  margin-top: 1rem;
+  border: 2px solid var(--border-color);
+  border-radius: var(--radius-md);
+  overflow: hidden;
+  max-width: 400px;
+}
+
+.image-preview img {
+  width: 100%;
+  height: auto;
+  display: block;
+}
+
+/* 复选框样式 */
+.checkbox-label {
+  display: flex;
+  align-items: center;
+  gap: 0.8rem;
+  cursor: pointer;
+  padding: 0.5rem 0;
+}
+
+.checkbox-input {
+  width: 20px;
+  height: 20px;
+  cursor: pointer;
+  accent-color: var(--primary-color);
+}
+
+.checkbox-text {
+  font-size: 1.05rem;
+  font-weight: 600;
+  color: var(--text-color);
+}
+
+/* 多图展示网格 */
+.generated-images-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+  gap: 2rem;
+  margin-top: 2rem;
+}
+
+.generated-image-card {
+  position: relative;
+  background: white;
+  border: 2px solid var(--border-color);
+  border-radius: var(--radius-md);
+  padding: 1.5rem;
+  box-shadow: var(--shadow);
+  transition: all 0.3s ease;
+}
+
+.generated-image-card:hover {
+  transform: translateY(-4px);
+  box-shadow: var(--shadow-hover);
+  border-color: var(--primary-color);
+}
+
+.image-number {
+  position: absolute;
+  top: 1rem;
+  right: 1rem;
+  background: var(--gradient-warm);
+  color: white;
+  padding: 0.4rem 0.9rem;
+  border-radius: var(--radius-full);
+  font-weight: 700;
+  font-size: 0.9rem;
+  box-shadow: var(--shadow);
+  z-index: 10;
+}
+
+/* 移动端适配 - 图片生成页面 */
+@media (max-width: 768px) {
+  .generator-form,
+  .result-section {
+    padding: 1.5rem;
+  }
+
+  .form-actions {
+    flex-direction: column;
+  }
+
+  .secondary-button {
+    flex: 1;
+  }
+
+  .tips-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .generator-form h2,
+  .result-section h2,
+  .tips-section h2 {
+    font-size: 1.5rem;
+  }
+
+  .generated-images-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .image-upload-container {
+    flex-direction: column;
+  }
+
+  .file-input-label,
+  .clear-image-button {
+    width: 100%;
   }
 }

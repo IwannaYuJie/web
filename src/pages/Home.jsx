@@ -63,21 +63,21 @@ function Home() {
 
   return (
     <div className="container">
-      {/* 页面标题 */}
+      {/* 页面标题 - 橘猫主题 */}
       <header className="page-header">
-        <h1>欢迎来到我的博客 🎉</h1>
-        <p>分享技术、记录成长</p>
+        <h1>🐱 橘猫的小窝 🧡</h1>
+        <p>一只爱分享技术的懒猫 · 记录成长的每一天</p>
       </header>
 
-      {/* 随机名言区域 */}
+      {/* 随机名言区域 - 橘猫的智慧 */}
       <section className="quote-section">
-        <h2>每日一句 ✨</h2>
+        <h2>🐾 橘猫的每日智慧</h2>
         <button 
           onClick={fetchRandomQuote} 
           disabled={loading}
           className="quote-button"
         >
-          {loading ? '加载中...' : '获取随机名言'}
+          {loading ? '🐱 思考中...' : '🎲 获取今日名言'}
         </button>
         
         {/* 显示名言 */}
@@ -96,9 +96,9 @@ function Home() {
         )}
       </section>
 
-      {/* 文章列表 */}
+      {/* 文章列表 - 橘猫的笔记本 */}
       <section className="articles-section">
-        <h2>最新文章 📝</h2>
+        <h2>📚 橘猫的技术笔记</h2>
         <div className="articles-grid">
           {articles.map(article => (
             <Link 
@@ -106,9 +106,9 @@ function Home() {
               key={article.id}
               className="article-card"
             >
-              <h3>{article.title}</h3>
+              <h3>🐾 {article.title}</h3>
               <p className="article-description">{article.description}</p>
-              <p className="article-date">📅 {article.date}</p>
+              <p className="article-date">🗓️ {article.date}</p>
             </Link>
           ))}
         </div>

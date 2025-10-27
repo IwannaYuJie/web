@@ -1,6 +1,7 @@
 import { BrowserRouter as Router, Routes, Route, Link } from 'react-router-dom'
 import Home from './pages/Home'
 import ArticleDetail from './pages/ArticleDetail'
+import ImageGenerator from './pages/ImageGenerator'
 import './App.css'
 
 /**
@@ -11,14 +12,15 @@ function App() {
   return (
     <Router>
       <div className="app">
-        {/* 导航栏 */}
+        {/* 导航栏 - 橘猫主题 */}
         <nav className="navbar">
           <div className="container">
             <Link to="/" className="logo">
-              📚 我的博客
+              🐱 橘猫小窝
             </Link>
             <div className="nav-links">
-              <Link to="/">首页</Link>
+              <Link to="/">🏠 首页</Link>
+              <Link to="/image-generator">🎨 AI画板</Link>
             </div>
           </div>
         </nav>
@@ -28,12 +30,13 @@ function App() {
           <Routes>
             <Route path="/" element={<Home />} />
             <Route path="/article/:id" element={<ArticleDetail />} />
+            <Route path="/image-generator" element={<ImageGenerator />} />
           </Routes>
         </main>
 
-        {/* 页脚 */}
+        {/* 页脚 - 橘猫爪印 */}
         <footer className="footer">
-          <p>© 2025 Vite + React Demo | 用 ❤️ 制作</p>
+          <p>© 2025 橘猫小窝 🐾 | 用 🧡 和 ☕ 制作</p>
         </footer>
       </div>
     </Router>
