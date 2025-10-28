@@ -53,7 +53,20 @@ export async function onRequest(context) {
       body: JSON.stringify(requestBody)
     })
 
-    // 获取响应数据
+    // 如果是流式响应，直接转发流
+    if (requestBody.stream) {
+      return new Response(response.body, {
+        status: response.status,
+        headers: {
+          ...corsHeaders,
+          'Content-Type': 'text/event-stream',
+          'Cache-Control': 'no-cache',
+          'Connection': 'keep-alive'
+        }
+      })
+    }
+
+    // 非流式响应，解析 JSON
     const data = await response.json()
 
     // 返回结果

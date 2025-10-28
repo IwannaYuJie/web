@@ -220,7 +220,13 @@ function ImageGenerator() {
       }
 
     } catch (err) {
-      setError(`😿 生成失败：${err.message}`)
+      // 特殊处理超时错误
+      let errorMessage = err.message
+      if (err.message.includes('524') || err.message.includes('timeout') || err.message.includes('Unexpected token')) {
+        errorMessage = '⏱️ 生成超时了！建议：\n1. 减少生成数量（1-3张）\n2. 使用较低分辨率（1K或2K）\n3. 简化提示词描述'
+      }
+      
+      setError(`😿 生成失败：${errorMessage}`)
       console.error('图片生成错误:', err)
     } finally {
       setLoading(false)
@@ -363,7 +369,7 @@ function ImageGenerator() {
                 onChange={(e) => setNumImages(Math.min(15, Math.max(1, parseInt(e.target.value) || 1)))}
                 disabled={loading}
               />
-              <p className="input-hint">💡 最多可一次生成 15 张图片</p>
+              <p className="input-hint">💡 建议 1-3 张（数量多或分辨率高可能超时）</p>
             </div>
           )}
 
