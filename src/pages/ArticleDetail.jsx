@@ -8,151 +8,167 @@ function ArticleDetail() {
   // 获取 URL 参数中的文章 ID
   const { id } = useParams()
 
-  // 模拟文章数据库
+  // Java技术文章数据库
   const articlesData = {
     1: {
-      title: '如何使用 Vite 构建现代化前端项目',
-      date: '2025-01-15',
-      author: 'Doro',
+      title: '☕ Spring Boot 3.0 新特性深度解析',
+      date: '2025-01-27',
+      author: '橘猫',
+      category: 'Spring框架',
       content: `
-        Vite 是一个现代化的前端构建工具,它利用浏览器原生 ES 模块特性,提供了极快的开发体验。
+        Spring Boot 3.0 是Spring生态系统的重大升级，带来了许多革命性的改进和新特性。
 
-        ## 为什么选择 Vite?
+        ## 核心升级
 
-        1. **极速的冷启动**: 无需打包,即时启动开发服务器
-        2. **快速的热更新**: 利用 ESM 实现精确的热模块替换
-        3. **优化的构建**: 使用 Rollup 进行生产环境打包
+        ### 1. Java 17 基线要求
+        Spring Boot 3.0 要求最低 Java 17，充分利用了新版本的特性：
+        - Records 记录类
+        - 文本块
+        - Switch 表达式
 
-        ## 快速开始
+        ### 2. GraalVM 原生镜像支持
+        构建原生镜像，启动时间毫秒级，内存占用极低。
 
-        使用 npm 创建项目:
-        \`\`\`bash
-        npm create vite@latest my-app
-        \`\`\`
+        ### 3. 观测性增强（Observability）
+        集成 Micrometer 和 Micrometer Tracing，提供统一的观测性API。
 
-        选择你喜欢的框架(React、Vue、Svelte 等),然后开始开发!
+        ## 性能优化
 
-        ## 最佳实践
-
-        - 使用环境变量管理配置
-        - 合理配置代理解决跨域问题
-        - 利用插件生态扩展功能
+        - 启动时间减少 20-30%
+        - 内存占用降低 15%
+        - AOT（Ahead-of-Time）编译支持
       `
     },
     2: {
-      title: 'React Hooks 完全指南',
-      date: '2025-01-10',
-      author: 'Doro',
+      title: '🔥 Java 21虚拟线程实战指南',
+      date: '2025-01-25',
+      author: '橘猫',
+      category: 'Java核心',
       content: `
-        React Hooks 是 React 16.8 引入的新特性,让你在不编写 class 的情况下使用 state 和其他 React 特性。
+        Java 21 的虚拟线程（Virtual Threads）是 Project Loom 的核心成果，彻底改变了Java的并发编程模型。
 
-        ## 常用 Hooks
+        ## 什么是虚拟线程？
 
-        ### useState
-        用于在函数组件中添加状态:
-        \`\`\`javascript
-        const [count, setCount] = useState(0)
+        虚拟线程是轻量级的线程实现，由JVM管理而非操作系统：
+        - 创建成本极低
+        - 可以创建数百万个
+        - 自动调度和管理
+
+        ## 使用示例
+
+        ### 创建虚拟线程
+        \`\`\`java
+        Thread vThread = Thread.ofVirtual().start(() -> {
+            System.out.println("Hello from virtual thread!");
+        });
         \`\`\`
 
-        ### useEffect
-        用于处理副作用(数据获取、订阅等):
-        \`\`\`javascript
-        useEffect(() => {
-          // 副作用代码
-          return () => {
-            // 清理函数
-          }
-        }, [依赖项])
-        \`\`\`
+        ## 性能对比
 
-        ### useContext
-        用于跨组件共享数据,避免 props 层层传递。
-
-        ## 使用规则
-
-        1. 只在最顶层使用 Hooks
-        2. 只在 React 函数中调用 Hooks
+        传统线程池 vs 虚拟线程：
+        - 吞吐量提升 10-100倍
+        - 内存占用减少 90%
+        - 延迟降低 50%
       `
     },
     3: {
-      title: 'JavaScript 异步编程详解',
-      date: '2025-01-05',
-      author: 'Doro',
+      title: '🚀 微服务架构：Spring Cloud Gateway网关设计',
+      date: '2025-01-23',
+      author: '橘猫',
+      category: '微服务',
       content: `
-        JavaScript 的异步编程是前端开发的核心概念之一。
+        Spring Cloud Gateway 是Spring Cloud生态系统中的API网关解决方案，提供了路由、过滤、限流等核心功能。
 
-        ## 演进历程
+        ## 核心概念
 
-        ### 1. 回调函数
-        最早的异步解决方案,但容易造成"回调地狱"。
+        ### 三大组件
+        1. **Route（路由）**：网关的基本构建块
+        2. **Predicate（断言）**：匹配HTTP请求
+        3. **Filter（过滤器）**：修改请求和响应
 
-        ### 2. Promise
-        ES6 引入,提供了更优雅的异步处理方式:
-        \`\`\`javascript
-        fetch('/api/data')
-          .then(response => response.json())
-          .then(data => console.log(data))
-          .catch(error => console.error(error))
+        ## 实战配置
+
+        ### 路由配置
+        \`\`\`yaml
+        spring:
+          cloud:
+            gateway:
+              routes:
+                - id: user-service
+                  uri: lb://USER-SERVICE
+                  predicates:
+                    - Path=/api/users/**
+                  filters:
+                    - StripPrefix=1
         \`\`\`
 
-        ### 3. async/await
-        ES2017 引入,让异步代码看起来像同步代码:
-        \`\`\`javascript
-        async function fetchData() {
-          try {
-            const response = await fetch('/api/data')
-            const data = await response.json()
-            console.log(data)
-          } catch (error) {
-            console.error(error)
-          }
+        ### 自定义全局过滤器
+        \`\`\`java
+        @Component
+        public class AuthGlobalFilter implements GlobalFilter {
+            @Override
+            public Mono<Void> filter(ServerWebExchange exchange, 
+                                    GatewayFilterChain chain) {
+                String token = exchange.getRequest()
+                    .getHeaders()
+                    .getFirst("Authorization");
+                
+                if (StringUtils.isEmpty(token)) {
+                    exchange.getResponse().setStatusCode(HttpStatus.UNAUTHORIZED);
+                    return exchange.getResponse().setComplete();
+                }
+                
+                return chain.filter(exchange);
+            }
         }
         \`\`\`
-
-        ## 最佳实践
-
-        - 优先使用 async/await
-        - 记得处理错误
-        - 避免不必要的 await
       `
     },
     4: {
-      title: 'CSS Grid 布局实战',
-      date: '2024-12-28',
-      author: 'Doro',
+      title: '💾 MySQL索引优化实战技巧',
+      date: '2025-01-20',
+      author: '橘猫',
+      category: '数据库',
       content: `
-        CSS Grid 是一个强大的二维布局系统,让复杂布局变得简单。
+        MySQL索引优化是提升数据库性能的关键，正确的索引策略可以让查询性能提升数倍甚至数十倍。
 
-        ## 基础概念
+        ## 索引原理
 
-        Grid 容器和 Grid 项目:
-        \`\`\`css
-        .container {
-          display: grid;
-          grid-template-columns: repeat(3, 1fr);
-          gap: 20px;
-        }
+        ### B+树结构
+        MySQL InnoDB使用B+树作为索引结构：
+        - 非叶子节点只存储键值
+        - 叶子节点存储完整数据
+        - 叶子节点通过指针连接
+
+        ## 索引类型详解
+
+        ### 1. 聚簇索引 vs 非聚簇索引
+        \`\`\`sql
+        -- 聚簇索引（主键）
+        CREATE TABLE users (
+            id BIGINT PRIMARY KEY,
+            name VARCHAR(50),
+            email VARCHAR(100)
+        );
+
+        -- 非聚簇索引（二级索引）
+        CREATE INDEX idx_email ON users(email);
         \`\`\`
 
-        ## 常用属性
-
-        - **grid-template-columns**: 定义列
-        - **grid-template-rows**: 定义行
-        - **gap**: 设置间距
-        - **grid-area**: 定义区域
-
-        ## 响应式布局
-
-        结合媒体查询实现响应式:
-        \`\`\`css
-        @media (max-width: 768px) {
-          .container {
-            grid-template-columns: 1fr;
-          }
-        }
+        ### 2. 联合索引
+        \`\`\`sql
+        -- 遵循最左前缀原则
+        CREATE INDEX idx_name_age_city ON users(name, age, city);
         \`\`\`
 
-        Grid 让我们能够轻松实现各种复杂的布局需求!
+        ## 优化实战
+
+        ### 使用EXPLAIN分析
+        \`\`\`sql
+        EXPLAIN SELECT * FROM orders 
+        WHERE user_id = 123 AND status = 'PAID'
+        ORDER BY created_at DESC;
+        \`\`\`
       `
     }
   }

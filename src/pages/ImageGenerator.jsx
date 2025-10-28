@@ -1,8 +1,16 @@
-import { useState, useRef } from 'react'
+import React, { useState, useRef } from 'react'
 
 /**
  * 图片生成页面组件
  * 使用火山引擎 Seedream 4.0 API 生成图片
+ * 
+ * 功能特性：
+ * 1. 文生图 - 根据文字描述生成图片
+ * 2. 图生图 - 上传参考图片进行二次创作
+ * 3. 预设模板 - 快速选择常用提示词
+ * 4. 艺术风格 - 多种艺术风格可选
+ * 5. 历史记录 - 保存和查看生成历史
+ * 6. 批量生成 - 支持连续生成多张图片
  */
 function ImageGenerator() {
   // 状态管理
@@ -16,11 +24,103 @@ function ImageGenerator() {
   const [loading, setLoading] = useState(false) // 加载状态
   const [error, setError] = useState(null) // 错误信息
   const [generatedImages, setGeneratedImages] = useState([]) // 生成的图片列表
+  const [selectedStyle, setSelectedStyle] = useState('') // 选中的艺术风格
+  const [selectedTemplate, setSelectedTemplate] = useState('') // 选中的提示词模板
+  const [imageHistory, setImageHistory] = useState([]) // 历史生成记录
+  const [showHistory, setShowHistory] = useState(false) // 是否显示历史记录
   
   const fileInputRef = useRef(null) // 文件输入引用
 
-  // API 配置
-  // 开发环境使用 Vite 代理，生产环境使用 Serverless 函数代理
+  /**
+   * 预设艺术风格配置
+   * 每个风格包含：id（唯一标识）、name（显示名称）、prompt（风格描述词）
+   */
+  const artStyles = [
+    { id: 'anime', name: '🎌 动漫风格', prompt: '动漫风格，精致的画风，日系插画' },
+    { id: 'realistic', name: '📷 写实摄影', prompt: '超写实，高清摄影，专业摄影作品' },
+    { id: 'oil', name: '🎨 油画艺术', prompt: '油画风格，印象派，艺术大师作品' },
+    { id: 'watercolor', name: '🖌️ 水彩画风', prompt: '水彩画，柔和的色彩，艺术感' },
+    { id: 'cyberpunk', name: '🌃 赛博朋克', prompt: '赛博朋克风格，霓虹灯，未来科技感' },
+    { id: 'fantasy', name: '🏰 奇幻世界', prompt: '奇幻风格，魔法世界，史诗感' },
+    { id: 'minimalist', name: '⚪ 极简主义', prompt: '极简风格，简洁，现代设计' },
+    { id: 'vintage', name: '📻 复古怀旧', prompt: '复古风格，怀旧感，老照片质感' },
+    { id: 'cartoon', name: '🎭 卡通漫画', prompt: '卡通风格，可爱，儿童插画' },
+    { id: 'surreal', name: '🌀 超现实', prompt: '超现实主义，梦幻，艺术创意' }
+  ]
+
+  /**
+   * 预设提示词模板配置
+   * 按照分类组织，方便用户快速找到需要的模板
+   * 每个模板包含：id、category（分类）、name（名称）、prompt（完整提示词）
+   */
+  const promptTemplates = [
+    { 
+      id: 'cat', 
+      category: '🐱 橘猫系列',
+      name: '慵懒橘猫',
+      prompt: '一只胖胖的橘猫，慵懒地躺在阳光下的窗台上，毛茸茸的，温暖的午后阳光洒在它身上，背景是温馨的家居环境'
+    },
+    {
+      id: 'cat2',
+      category: '🐱 橘猫系列',
+      name: '橘猫玩耍',
+      prompt: '可爱的橘猫正在玩毛线球，活泼好动，眼睛明亮，在舒适的客厅里，柔和的灯光'
+    },
+    {
+      id: 'nature',
+      category: '🌸 自然风景',
+      name: '樱花盛开',
+      prompt: '春天的樱花树下，粉色花瓣飘落，唯美浪漫的氛围，柔和的光线，梦幻般的场景'
+    },
+    {
+      id: 'sunset',
+      category: '🌸 自然风景',
+      name: '日落海滩',
+      prompt: '金色的夕阳洒在海面上，波光粼粼，海滩上有细软的沙子，远处有椰子树，宁静祥和'
+    },
+    {
+      id: 'food',
+      category: '🍰 美食诱惑',
+      name: '精致甜点',
+      prompt: '精美的草莓蛋糕，奶油装饰，新鲜水果，咖啡店环境，温暖的灯光，食物摄影风格'
+    },
+    {
+      id: 'coffee',
+      category: '🍰 美食诱惑',
+      name: '咖啡时光',
+      prompt: '一杯热气腾腾的拿铁咖啡，精致的拉花，木质桌面，舒适的咖啡厅氛围，温暖色调'
+    },
+    {
+      id: 'character',
+      category: '👤 人物肖像',
+      name: '温柔少女',
+      prompt: '温柔的少女，长发飘飘，穿着淡雅的连衣裙，在花园里微笑，柔和的自然光，唯美风格'
+    },
+    {
+      id: 'warrior',
+      category: '👤 人物肖像',
+      name: '勇敢战士',
+      prompt: '英勇的战士，身穿铠甲，手持长剑，站在山巅，史诗感，壮丽的背景，电影级画面'
+    },
+    {
+      id: 'city',
+      category: '🏙️ 城市建筑',
+      name: '未来都市',
+      prompt: '未来科技城市，高楼大厦，飞行汽车，霓虹灯光，赛博朋克风格，夜景，科幻感'
+    },
+    {
+      id: 'ancient',
+      category: '🏙️ 城市建筑',
+      name: '古风建筑',
+      prompt: '中国古代建筑，亭台楼阁，小桥流水，古色古香，水墨画风格，诗意盎然'
+    }
+  ]
+
+  /**
+   * API 配置
+   * 开发环境：使用 Vite 代理解决跨域问题
+   * 生产环境：使用 Serverless 函数代理保护 API 密钥
+   */
   const isDevelopment = import.meta.env.DEV
   const API_ENDPOINT = isDevelopment 
     ? '/api/v3/images/generations'  // 开发环境：Vite 代理
@@ -75,6 +175,64 @@ function ImageGenerator() {
   }
 
   /**
+   * 应用选中的模板（支持取消选择）
+   */
+  const applyTemplate = (template) => {
+    // 如果已经选中了该模板，取消选择
+    if (selectedTemplate === template.id) {
+      setSelectedTemplate('')
+    } else {
+      // 否则应用新模板
+      setPrompt(template.prompt)
+      setSelectedTemplate(template.id)
+    }
+  }
+
+  /**
+   * 应用艺术风格（支持取消选择）
+   */
+  const applyStyle = (style) => {
+    // 如果已经选中了该风格，取消选择
+    if (selectedStyle === style.id) {
+      setSelectedStyle('')
+    } else {
+      // 否则应用新风格
+      setSelectedStyle(style.id)
+    }
+  }
+
+  /**
+   * 保存到历史记录
+   */
+  const saveToHistory = (images, promptUsed) => {
+    const historyItem = {
+      id: Date.now(),
+      prompt: promptUsed,
+      images: images,
+      timestamp: new Date().toLocaleString('zh-CN'),
+      style: selectedStyle,
+      size: size
+    }
+    const newHistory = [historyItem, ...imageHistory].slice(0, 10) // 只保留最近10条
+    setImageHistory(newHistory)
+    localStorage.setItem('imageHistory', JSON.stringify(newHistory))
+  }
+
+  /**
+   * 加载历史记录
+   */
+  React.useEffect(() => {
+    const savedHistory = localStorage.getItem('imageHistory')
+    if (savedHistory) {
+      try {
+        setImageHistory(JSON.parse(savedHistory))
+      } catch (e) {
+        console.error('加载历史记录失败:', e)
+      }
+    }
+  }, [])
+
+  /**
    * 调用火山引擎 Seedream 4.0 API 生成图片
    */
   const generateImage = async () => {
@@ -89,10 +247,16 @@ function ImageGenerator() {
     setGeneratedImages([])
 
     try {
-      // 构建提示词：如果是组图模式，自动添加生成多张的提示
+      // 构建提示词：添加艺术风格
       let finalPrompt = prompt
+      const selectedStyleObj = artStyles.find(s => s.id === selectedStyle)
+      if (selectedStyleObj) {
+        finalPrompt = `${prompt}，${selectedStyleObj.prompt}`
+      }
+      
+      // 如果是组图模式，自动添加生成多张的提示
       if (sequentialGeneration === 'auto' && numImages > 1) {
-        finalPrompt = `${prompt}。生成一组共${numImages}张连贯的图片`
+        finalPrompt = `${finalPrompt}。生成一组共${numImages}张连贯的图片`
       }
 
       // 构建请求体
@@ -202,6 +366,13 @@ function ImageGenerator() {
         if (allImages.length === 0) {
           throw new Error('未能生成图片')
         }
+        
+        // 保存到历史记录
+        saveToHistory(allImages.map((img, index) => ({
+          url: img.url,
+          size: img.size,
+          index: index + 1
+        })), finalPrompt)
       } else {
         // 非流式响应处理
         const data = await response.json()
@@ -209,11 +380,15 @@ function ImageGenerator() {
         console.log('📊 返回图片数量:', data.data?.length || 0)
         
         if (data.data && data.data.length > 0) {
-          setGeneratedImages(data.data.map((img, index) => ({
+          const images = data.data.map((img, index) => ({
             url: img.url,
             size: img.size,
             index: index + 1
-          })))
+          }))
+          setGeneratedImages(images)
+          
+          // 保存到历史记录
+          saveToHistory(images, finalPrompt)
         } else {
           throw new Error('未能生成图片')
         }
@@ -245,6 +420,8 @@ function ImageGenerator() {
     setSequentialGeneration('disabled')
     setGeneratedImages([])
     setError(null)
+    setSelectedStyle('')
+    setSelectedTemplate('')
   }
 
   return (
@@ -255,10 +432,115 @@ function ImageGenerator() {
         <p>用 AI 的魔法，把想象变成现实 ✨</p>
       </header>
 
+      {/* 快捷操作栏 */}
+      <div className="quick-actions">
+        <button 
+          className={`action-button ${showHistory ? 'active' : ''}`}
+          onClick={() => setShowHistory(!showHistory)}
+        >
+          📚 历史记录 {imageHistory.length > 0 && `(${imageHistory.length})`}
+        </button>
+      </div>
+
+      {/* 历史记录面板 */}
+      {showHistory && imageHistory.length > 0 && (
+        <section className="history-section">
+          <h2>📜 最近生成的作品</h2>
+          <div className="history-grid">
+            {imageHistory.map(item => (
+              <div key={item.id} className="history-card">
+                <div className="history-images">
+                  {item.images.slice(0, 1).map((img, idx) => (
+                    <img 
+                      key={idx} 
+                      src={img.url} 
+                      alt="历史图片" 
+                      className="history-thumbnail"
+                      onClick={() => window.open(img.url, '_blank')}
+                    />
+                  ))}
+                  {item.images.length > 1 && (
+                    <div className="more-images">+{item.images.length - 1}</div>
+                  )}
+                </div>
+                <div className="history-info">
+                  <p className="history-prompt">{item.prompt.substring(0, 50)}...</p>
+                  <p className="history-meta">
+                    <span>📅 {item.timestamp}</span>
+                    <span>📐 {item.size}</span>
+                  </p>
+                </div>
+                <button 
+                  className="use-prompt-button"
+                  onClick={() => {
+                    setPrompt(item.prompt)
+                    setSize(item.size)
+                    setSelectedStyle(item.style || '')
+                    setShowHistory(false)
+                  }}
+                >
+                  🔄 使用此提示词
+                </button>
+              </div>
+            ))}
+          </div>
+        </section>
+      )}
+
       {/* 图片生成表单 */}
       <section className="image-generator-section">
         <div className="generator-form">
           <h2>🖌️ 描述你的画面</h2>
+          
+          {/* 预设模板选择 */}
+          <div className="form-group">
+            <label>
+              <span className="label-icon">📝</span>
+              <span className="label-text">快速模板（可选）</span>
+            </label>
+            <div className="template-categories">
+              {Array.from(new Set(promptTemplates.map(t => t.category))).map(category => (
+                <div key={category} className="template-category">
+                  <h4>{category}</h4>
+                  <div className="template-grid">
+                    {promptTemplates
+                      .filter(t => t.category === category)
+                      .map(template => (
+                        <button
+                          key={template.id}
+                          className={`template-button ${selectedTemplate === template.id ? 'selected' : ''}`}
+                          onClick={() => applyTemplate(template)}
+                          disabled={loading}
+                        >
+                          {template.name}
+                        </button>
+                      ))}
+                  </div>
+                </div>
+              ))}
+            </div>
+          </div>
+
+          {/* 艺术风格选择 */}
+          <div className="form-group">
+            <label>
+              <span className="label-icon">🎨</span>
+              <span className="label-text">艺术风格（可选）</span>
+            </label>
+            <div className="style-grid">
+              {artStyles.map(style => (
+                <button
+                  key={style.id}
+                  className={`style-button ${selectedStyle === style.id ? 'selected' : ''}`}
+                  onClick={() => applyStyle(style)}
+                  disabled={loading}
+                  title={style.prompt}
+                >
+                  {style.name}
+                </button>
+              ))}
+            </div>
+          </div>
           
           {/* 提示词输入 */}
           <div className="form-group">
