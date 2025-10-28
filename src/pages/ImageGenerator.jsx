@@ -11,7 +11,7 @@ function ImageGenerator() {
   const [imagePreview, setImagePreview] = useState(null) // 图片预览 URL
   const [size, setSize] = useState('2K') // 图片尺寸
   const [numImages, setNumImages] = useState(1) // 生成图片数量
-  const [watermark, setWatermark] = useState(true) // 是否添加水印
+  const [watermark, setWatermark] = useState(false) // 是否添加水印
   const [sequentialGeneration, setSequentialGeneration] = useState('disabled') // 连续生成模式（auto 或 disabled）
   const [loading, setLoading] = useState(false) // 加载状态
   const [error, setError] = useState(null) // 错误信息
@@ -89,15 +89,30 @@ function ImageGenerator() {
     setGeneratedImages([])
 
     try {
+      // 构建提示词：如果是组图模式，自动添加生成多张的提示
+      let finalPrompt = prompt
+      if (sequentialGeneration === 'auto' && numImages > 1) {
+        finalPrompt = `${prompt}。生成一组共${numImages}张连贯的图片`
+      }
+
       // 构建请求体
       const requestBody = {
         model: 'doubao-seedream-4-0-250828',
-        prompt: prompt,
+        prompt: finalPrompt,
         size: size,
-        sequential_image_generation: sequentialGeneration,
-        stream: false,
+        stream: true,  // 默认开启流式输出
         response_format: 'url',
         watermark: watermark
+      }
+
+      // 如果需要生成多张图片（组图模式）
+      if (sequentialGeneration === 'auto' && numImages > 1) {
+        requestBody.sequential_image_generation = 'auto'
+        requestBody.sequential_image_generation_options = {
+          max_images: numImages
+        }
+      } else {
+        requestBody.sequential_image_generation = 'disabled'
       }
 
       // 如果有上传的图片，添加到请求中（图生图）
@@ -105,10 +120,12 @@ function ImageGenerator() {
         requestBody.image = uploadedImage
       }
 
-      // 如果启用连续生成，添加数量参数
-      if (sequentialGeneration === 'auto') {
-        requestBody.n = numImages
-      }
+      // 调试日志：查看请求参数
+      console.log('🐱 请求参数:', requestBody)
+      console.log('📋 完整参数 JSON:', JSON.stringify(requestBody, null, 2))
+      console.log('🔢 生成数量 n:', requestBody.n)
+      console.log('🔄 sequential_image_generation:', requestBody.sequential_image_generation)
+      console.log('📐 size:', requestBody.size)
 
       // 发送 API 请求
       const response = await fetch(API_ENDPOINT, {
@@ -126,17 +143,80 @@ function ImageGenerator() {
         throw new Error(errorData.error?.message || '图片生成失败')
       }
 
-      // 解析响应数据
-      const data = await response.json()
-      
-      if (data.data && data.data.length > 0) {
-        setGeneratedImages(data.data.map((img, index) => ({
-          url: img.url,
-          size: img.size,
-          index: index + 1
-        })))
+      // 处理流式响应
+      if (requestBody.stream) {
+        const reader = response.body.getReader()
+        const decoder = new TextDecoder()
+        let buffer = ''
+        const allImages = []
+
+        while (true) {
+          const { done, value } = await reader.read()
+          if (done) break
+
+          buffer += decoder.decode(value, { stream: true })
+          const lines = buffer.split('\n')
+          buffer = lines.pop() || ''
+
+          for (const line of lines) {
+            if (line.startsWith('data: ')) {
+              const jsonStr = line.slice(6).trim()
+              if (jsonStr === '[DONE]') continue
+              
+              try {
+                const data = JSON.parse(jsonStr)
+                console.log('🎨 流式数据:', data)
+                
+                // 处理流式图片生成成功事件
+                if (data.type === 'image_generation.partial_succeeded' && data.url) {
+                  // 添加新生成的图片
+                  allImages.push({
+                    url: data.url,
+                    size: data.size,
+                    image_index: data.image_index
+                  })
+                  
+                  // 实时更新显示
+                  setGeneratedImages(allImages.map((img, index) => ({
+                    url: img.url,
+                    size: img.size,
+                    index: index + 1
+                  })))
+                  
+                  console.log(`✅ 第 ${allImages.length} 张图片已生成`)
+                }
+                
+                // 处理完成事件
+                if (data.type === 'image_generation.completed') {
+                  console.log('🎉 所有图片生成完成！', data.usage)
+                }
+              } catch (e) {
+                console.warn('解析流式数据失败:', e)
+              }
+            }
+          }
+        }
+
+        console.log('📊 最终图片数量:', allImages.length)
+        
+        if (allImages.length === 0) {
+          throw new Error('未能生成图片')
+        }
       } else {
-        throw new Error('未能生成图片')
+        // 非流式响应处理
+        const data = await response.json()
+        console.log('🎨 API 响应:', data)
+        console.log('📊 返回图片数量:', data.data?.length || 0)
+        
+        if (data.data && data.data.length > 0) {
+          setGeneratedImages(data.data.map((img, index) => ({
+            url: img.url,
+            size: img.size,
+            index: index + 1
+          })))
+        } else {
+          throw new Error('未能生成图片')
+        }
       }
 
     } catch (err) {
