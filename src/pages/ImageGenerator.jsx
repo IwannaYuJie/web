@@ -12,7 +12,7 @@ function ImageGenerator() {
   const [size, setSize] = useState('2K') // 图片尺寸
   const [numImages, setNumImages] = useState(1) // 生成图片数量
   const [watermark, setWatermark] = useState(true) // 是否添加水印
-  const [sequentialGeneration, setSequentialGeneration] = useState('disabled') // 连续生成模式
+  const [sequentialGeneration, setSequentialGeneration] = useState('disabled') // 连续生成模式（auto 或 disabled）
   const [loading, setLoading] = useState(false) // 加载状态
   const [error, setError] = useState(null) // 错误信息
   const [generatedImages, setGeneratedImages] = useState([]) // 生成的图片列表
@@ -106,7 +106,7 @@ function ImageGenerator() {
       }
 
       // 如果启用连续生成，添加数量参数
-      if (sequentialGeneration === 'enabled') {
+      if (sequentialGeneration === 'auto') {
         requestBody.n = numImages
       }
 
@@ -262,12 +262,12 @@ function ImageGenerator() {
               disabled={loading}
             >
               <option value="disabled">禁用（生成 1 张）</option>
-              <option value="enabled">启用（生成多张）</option>
+              <option value="auto">自动（生成多张）</option>
             </select>
           </div>
 
           {/* 生成数量（仅当连续生成启用时） */}
-          {sequentialGeneration === 'enabled' && (
+          {sequentialGeneration === 'auto' && (
             <div className="form-group">
               <label htmlFor="numImages">
                 <span className="label-icon">🔢</span>
