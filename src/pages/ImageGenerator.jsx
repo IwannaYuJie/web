@@ -18,7 +18,7 @@ function ImageGenerator() {
   const [uploadedImage, setUploadedImage] = useState(null) // 上传的图片（base64）
   const [imagePreview, setImagePreview] = useState(null) // 图片预览 URL
   const [size, setSize] = useState('2K') // 图片尺寸
-  const [numImages, setNumImages] = useState(1) // 生成图片数量
+  const [numImages, setNumImages] = useState(2) // 生成图片数量
   const [watermark, setWatermark] = useState(false) // 是否添加水印
   const [sequentialGeneration, setSequentialGeneration] = useState('disabled') // 连续生成模式（auto 或 disabled）
   const [loading, setLoading] = useState(false) // 加载状态
@@ -415,7 +415,7 @@ function ImageGenerator() {
     setPrompt('')
     clearUploadedImage()
     setSize('2K')
-    setNumImages(1)
+    setNumImages(2)
     setWatermark(true)
     setSequentialGeneration('disabled')
     setGeneratedImages([])
@@ -639,19 +639,19 @@ function ImageGenerator() {
             <div className="form-group">
               <label htmlFor="numImages">
                 <span className="label-icon">🔢</span>
-                <span className="label-text">生成数量（1-15）</span>
+                <span className="label-text">生成数量（2-15）</span>
               </label>
               <input
                 id="numImages"
                 type="number"
-                min="1"
+                min="2"
                 max="15"
                 className="input"
                 value={numImages}
-                onChange={(e) => setNumImages(Math.min(15, Math.max(1, parseInt(e.target.value) || 1)))}
+                onChange={(e) => setNumImages(Math.min(15, Math.max(2, parseInt(e.target.value) || 2)))}
                 disabled={loading}
               />
-              <p className="input-hint">💡 建议 1-3 张（数量多或分辨率高可能超时）</p>
+              <p className="input-hint">💡 建议 2-3 张（数量多或分辨率高可能超时）</p>
             </div>
           )}
 
