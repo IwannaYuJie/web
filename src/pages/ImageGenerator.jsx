@@ -17,7 +17,7 @@ function ImageGenerator() {
   const [prompt, setPrompt] = useState('') // 用户输入的提示词
   const [uploadedImage, setUploadedImage] = useState(null) // 上传的图片（base64）
   const [imagePreview, setImagePreview] = useState(null) // 图片预览 URL
-  const [size, setSize] = useState('2K') // 图片尺寸
+  const [aspectRatio, setAspectRatio] = useState([1, 1]) // 图片宽高比 [宽, 高]
   const [numImages, setNumImages] = useState(2) // 生成图片数量
   const [watermark, setWatermark] = useState(false) // 是否添加水印
   const [sequentialGeneration, setSequentialGeneration] = useState('disabled') // 连续生成模式（auto 或 disabled）
@@ -30,6 +30,37 @@ function ImageGenerator() {
   const [showHistory, setShowHistory] = useState(false) // 是否显示历史记录
   
   const fileInputRef = useRef(null) // 文件输入引用
+
+  /**
+   * 宽高比配置
+   * 根据火山引擎API文档,支持的最大像素范围为4096
+   * 按照宽高比计算,保证最长边为4096
+   */
+  const aspectRatioOptions = [
+    { label: '9:16 (竖屏)', value: [9, 16], pixels: [2304, 4096] },
+    { label: '16:9 (横屏)', value: [16, 9], pixels: [4096, 2304] },
+    { label: '1:1 (方形)', value: [1, 1], pixels: [4096, 4096] }
+  ]
+
+  /**
+   * 根据宽高比计算实际像素尺寸
+   * 在API支持的范围内取最大值
+   */
+  const calculatePixelSize = (ratio) => {
+    const option = aspectRatioOptions.find(
+      opt => opt.value[0] === ratio[0] && opt.value[1] === ratio[1]
+    )
+    return option ? option.pixels : [2048, 2048]
+  }
+
+  /**
+   * 获取当前选中的宽高比配置
+   */
+  const getCurrentAspectRatioOption = () => {
+    return aspectRatioOptions.find(
+      opt => opt.value[0] === aspectRatio[0] && opt.value[1] === aspectRatio[1]
+    ) || aspectRatioOptions[2] // 默认1:1
+  }
 
   /**
    * 预设艺术风格配置
@@ -211,7 +242,7 @@ function ImageGenerator() {
       images: images,
       timestamp: new Date().toLocaleString('zh-CN'),
       style: selectedStyle,
-      size: size
+      aspectRatio: aspectRatio
     }
     const newHistory = [historyItem, ...imageHistory].slice(0, 10) // 只保留最近10条
     setImageHistory(newHistory)
@@ -259,11 +290,14 @@ function ImageGenerator() {
         finalPrompt = `${finalPrompt}。生成一组共${numImages}张连贯的图片`
       }
 
+      // 计算实际像素尺寸
+      const pixelSize = calculatePixelSize(aspectRatio)
+      
       // 构建请求体
       const requestBody = {
         model: 'doubao-seedream-4-0-250828',
         prompt: finalPrompt,
-        size: size,
+        size: pixelSize, // 使用宽高比计算出的像素值 [宽, 高]
         stream: true,  // 默认开启流式输出
         response_format: 'url',
         watermark: watermark
@@ -414,7 +448,7 @@ function ImageGenerator() {
   const resetForm = () => {
     setPrompt('')
     clearUploadedImage()
-    setSize('2K')
+    setAspectRatio([1, 1]) // 重置为1:1
     setNumImages(2)
     setWatermark(true)
     setSequentialGeneration('disabled')
@@ -467,14 +501,16 @@ function ImageGenerator() {
                   <p className="history-prompt">{item.prompt.substring(0, 50)}...</p>
                   <p className="history-meta">
                     <span>📅 {item.timestamp}</span>
-                    <span>📐 {item.size}</span>
+                    <span>📐 {item.aspectRatio ? `${item.aspectRatio[0]}:${item.aspectRatio[1]}` : item.size}</span>
                   </p>
                 </div>
                 <button 
                   className="use-prompt-button"
                   onClick={() => {
                     setPrompt(item.prompt)
-                    setSize(item.size)
+                    if (item.aspectRatio) {
+                      setAspectRatio(item.aspectRatio)
+                    }
                     setSelectedStyle(item.style || '')
                     setShowHistory(false)
                   }}
@@ -597,23 +633,26 @@ function ImageGenerator() {
             <p className="input-hint">💡 上传图片后，AI 会根据图片和描述生成新图（图生图）</p>
           </div>
 
-          {/* 图片尺寸选择 */}
+          {/* 图片宽高比选择 */}
           <div className="form-group">
-            <label htmlFor="size">
+            <label htmlFor="aspectRatio">
               <span className="label-icon">📐</span>
-              <span className="label-text">图片尺寸</span>
+              <span className="label-text">图片宽高比</span>
             </label>
             <select
-              id="size"
+              id="aspectRatio"
               className="input select-input"
-              value={size}
-              onChange={(e) => setSize(e.target.value)}
+              value={JSON.stringify(aspectRatio)}
+              onChange={(e) => setAspectRatio(JSON.parse(e.target.value))}
               disabled={loading}
             >
-              <option value="1K">1K (标清)</option>
-              <option value="2K">2K (高清)</option>
-              <option value="4K">4K (超高清)</option>
+              {aspectRatioOptions.map(option => (
+                <option key={option.label} value={JSON.stringify(option.value)}>
+                  {option.label} - {option.pixels[0]}x{option.pixels[1]}
+                </option>
+              ))}
             </select>
+            <p className="input-hint">💡 已自动选择该比例下的最大分辨率</p>
           </div>
 
           {/* 连续生成模式 */}
@@ -754,8 +793,8 @@ function ImageGenerator() {
             <p>启用连续生成模式，一次最多可生成 15 张图片</p>
           </div>
           <div className="tip-card">
-            <h3>📐 尺寸选择</h3>
-            <p>支持 1K、2K、4K 三种分辨率，4K 可达超高清画质</p>
+            <h3>📐 宽高比选择</h3>
+            <p>支持 9:16、16:9、1:1 三种宽高比，自动使用最大分辨率</p>
           </div>
           <div className="tip-card">
             <h3>⚡ 耐心等待</h3>
