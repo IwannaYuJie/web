@@ -41,7 +41,7 @@ export async function onRequest(context) {
 
     // 火山引擎 API 配置
     const API_ENDPOINT = 'https://ark.cn-beijing.volces.com/api/v3/images/generations'
-    const API_KEY = context.env.ARK_API_KEY || '85e498e4-2b40-4b94-85ca-60bd022ae24c'
+    const API_KEY = context.env.ARK_API_KEY || 'd5409697-4157-4ea2-9265-782d9d59a810'
 
     // 转发请求到火山引擎 API
     const response = await fetch(API_ENDPOINT, {
