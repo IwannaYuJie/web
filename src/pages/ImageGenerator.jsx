@@ -24,6 +24,7 @@ function ImageGenerator() {
   const [loading, setLoading] = useState(false) // 加载状态
   const [error, setError] = useState(null) // 错误信息
   const [generatedImages, setGeneratedImages] = useState([]) // 生成的图片列表
+  const [usageInfo, setUsageInfo] = useState(null) // API使用统计信息
   const [selectedStyle, setSelectedStyle] = useState('') // 选中的艺术风格
   const [selectedTemplate, setSelectedTemplate] = useState('') // 选中的提示词模板
   const [imageHistory, setImageHistory] = useState([]) // 历史生成记录
@@ -276,6 +277,7 @@ function ImageGenerator() {
     setLoading(true)
     setError(null)
     setGeneratedImages([])
+    setUsageInfo(null) // 清空之前的统计信息
 
     try {
       // 构建提示词：添加艺术风格
@@ -297,7 +299,7 @@ function ImageGenerator() {
       const requestBody = {
         model: 'doubao-seedream-4-0-250828',
         prompt: finalPrompt,
-        size: pixelSize, // 使用宽高比计算出的像素值 [宽, 高]
+        size: `${pixelSize[0]}x${pixelSize[1]}`, // 格式化为字符串 "宽x高"
         stream: true,  // 默认开启流式输出
         response_format: 'url',
         watermark: watermark
@@ -387,6 +389,10 @@ function ImageGenerator() {
                 // 处理完成事件
                 if (data.type === 'image_generation.completed') {
                   console.log('🎉 所有图片生成完成！', data.usage)
+                  // 保存usage统计信息
+                  if (data.usage) {
+                    setUsageInfo(data.usage)
+                  }
                 }
               } catch (e) {
                 console.warn('解析流式数据失败:', e)
@@ -738,7 +744,25 @@ function ImageGenerator() {
         {/* 生成结果展示 */}
         {generatedImages.length > 0 && (
           <div className="result-section">
-            <h2>🎉 生成成功！共 {generatedImages.length} 张图片</h2>
+            <div className="result-header">
+              <h2>🎉 生成成功！</h2>
+              {usageInfo && (
+                <div className="usage-info">
+                  <span className="usage-item">
+                    <span className="usage-label">🖼️ 生成图片数:</span>
+                    <span className="usage-value">{usageInfo.generated_images}</span>
+                  </span>
+                  <span className="usage-item">
+                    <span className="usage-label">📝 输出Token:</span>
+                    <span className="usage-value">{usageInfo.output_tokens}</span>
+                  </span>
+                  <span className="usage-item">
+                    <span className="usage-label">💰 总Token:</span>
+                    <span className="usage-value">{usageInfo.total_tokens}</span>
+                  </span>
+                </div>
+              )}
+            </div>
             
             {/* 图片网格展示 */}
             <div className="generated-images-grid">
