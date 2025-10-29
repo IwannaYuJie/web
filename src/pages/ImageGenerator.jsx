@@ -17,7 +17,9 @@ function ImageGenerator() {
   const [prompt, setPrompt] = useState('') // 用户输入的提示词
   const [uploadedImage, setUploadedImage] = useState(null) // 上传的图片（base64）
   const [imagePreview, setImagePreview] = useState(null) // 图片预览 URL
+  const [sizeMode, setSizeMode] = useState('aspectRatio') // 尺寸选择模式: 'aspectRatio' 或 'resolution'
   const [aspectRatio, setAspectRatio] = useState([1, 1]) // 图片宽高比 [宽, 高]
+  const [resolution, setResolution] = useState('2K') // 分辨率选择: 1K/2K/4K
   const [numImages, setNumImages] = useState(2) // 生成图片数量
   const [watermark, setWatermark] = useState(false) // 是否添加水印
   const [sequentialGeneration, setSequentialGeneration] = useState('disabled') // 连续生成模式（auto 或 disabled）
@@ -44,23 +46,34 @@ function ImageGenerator() {
   ]
 
   /**
-   * 根据宽高比计算实际像素尺寸
-   * 在API支持的范围内取最大值
+   * 分辨率选项配置
    */
-  const calculatePixelSize = (ratio) => {
-    const option = aspectRatioOptions.find(
-      opt => opt.value[0] === ratio[0] && opt.value[1] === ratio[1]
-    )
-    return option ? option.pixels : [2048, 2048]
-  }
+  const resolutionOptions = [
+    { label: '1K (标清)', value: '1K' },
+    { label: '2K (高清)', value: '2K' },
+    { label: '4K (超高清)', value: '4K' }
+  ]
 
   /**
-   * 获取当前选中的宽高比配置
+   * 生成数量选项
    */
-  const getCurrentAspectRatioOption = () => {
-    return aspectRatioOptions.find(
-      opt => opt.value[0] === aspectRatio[0] && opt.value[1] === aspectRatio[1]
-    ) || aspectRatioOptions[2] // 默认1:1
+  const numImagesOptions = [2, 5, 10, 15]
+
+  /**
+   * 根据当前模式获取size参数
+   */
+  const getSizeParam = () => {
+    if (sizeMode === 'aspectRatio') {
+      // 宽高比模式: 返回 "宽x高" 格式
+      const option = aspectRatioOptions.find(
+        opt => opt.value[0] === aspectRatio[0] && opt.value[1] === aspectRatio[1]
+      )
+      const pixels = option ? option.pixels : [4096, 4096]
+      return `${pixels[0]}x${pixels[1]}`
+    } else {
+      // 分辨率模式: 返回 1K/2K/4K
+      return resolution
+    }
   }
 
   /**
@@ -292,14 +305,11 @@ function ImageGenerator() {
         finalPrompt = `${finalPrompt}。生成一组共${numImages}张连贯的图片`
       }
 
-      // 计算实际像素尺寸
-      const pixelSize = calculatePixelSize(aspectRatio)
-      
       // 构建请求体
       const requestBody = {
         model: 'doubao-seedream-4-0-250828',
         prompt: finalPrompt,
-        size: `${pixelSize[0]}x${pixelSize[1]}`, // 格式化为字符串 "宽x高"
+        size: getSizeParam(), // 根据选择模式获取size参数
         stream: true,  // 默认开启流式输出
         response_format: 'url',
         watermark: watermark
@@ -454,7 +464,9 @@ function ImageGenerator() {
   const resetForm = () => {
     setPrompt('')
     clearUploadedImage()
+    setSizeMode('aspectRatio')
     setAspectRatio([1, 1]) // 重置为1:1
+    setResolution('2K')
     setNumImages(2)
     setWatermark(true)
     setSequentialGeneration('disabled')
@@ -639,27 +651,79 @@ function ImageGenerator() {
             <p className="input-hint">💡 上传图片后，AI 会根据图片和描述生成新图（图生图）</p>
           </div>
 
-          {/* 图片宽高比选择 */}
+          {/* 尺寸选择模式 */}
           <div className="form-group">
-            <label htmlFor="aspectRatio">
+            <label>
               <span className="label-icon">📐</span>
-              <span className="label-text">图片宽高比</span>
+              <span className="label-text">尺寸选择方式</span>
             </label>
-            <select
-              id="aspectRatio"
-              className="input select-input"
-              value={JSON.stringify(aspectRatio)}
-              onChange={(e) => setAspectRatio(JSON.parse(e.target.value))}
-              disabled={loading}
-            >
-              {aspectRatioOptions.map(option => (
-                <option key={option.label} value={JSON.stringify(option.value)}>
-                  {option.label} - {option.pixels[0]}x{option.pixels[1]}
-                </option>
-              ))}
-            </select>
-            <p className="input-hint">💡 已自动选择该比例下的最大分辨率</p>
+            <div className="size-mode-tabs">
+              <button
+                type="button"
+                className={`mode-tab ${sizeMode === 'aspectRatio' ? 'active' : ''}`}
+                onClick={() => setSizeMode('aspectRatio')}
+                disabled={loading}
+              >
+                📐 宽高比
+              </button>
+              <button
+                type="button"
+                className={`mode-tab ${sizeMode === 'resolution' ? 'active' : ''}`}
+                onClick={() => setSizeMode('resolution')}
+                disabled={loading}
+              >
+                🎯 分辨率
+              </button>
+            </div>
           </div>
+
+          {/* 宽高比选择 (当模式为aspectRatio时显示) */}
+          {sizeMode === 'aspectRatio' && (
+            <div className="form-group">
+              <label htmlFor="aspectRatio">
+                <span className="label-icon">📐</span>
+                <span className="label-text">选择宽高比</span>
+              </label>
+              <select
+                id="aspectRatio"
+                className="input select-input"
+                value={JSON.stringify(aspectRatio)}
+                onChange={(e) => setAspectRatio(JSON.parse(e.target.value))}
+                disabled={loading}
+              >
+                {aspectRatioOptions.map(option => (
+                  <option key={option.label} value={JSON.stringify(option.value)}>
+                    {option.label} - {option.pixels[0]}x{option.pixels[1]}
+                  </option>
+                ))}
+              </select>
+              <p className="input-hint">💡 已自动选择该比例下的最大分辨率</p>
+            </div>
+          )}
+
+          {/* 分辨率选择 (当模式为resolution时显示) */}
+          {sizeMode === 'resolution' && (
+            <div className="form-group">
+              <label htmlFor="resolution">
+                <span className="label-icon">🎯</span>
+                <span className="label-text">选择分辨率</span>
+              </label>
+              <select
+                id="resolution"
+                className="input select-input"
+                value={resolution}
+                onChange={(e) => setResolution(e.target.value)}
+                disabled={loading}
+              >
+                {resolutionOptions.map(option => (
+                  <option key={option.value} value={option.value}>
+                    {option.label}
+                  </option>
+                ))}
+              </select>
+              <p className="input-hint">💡 1K=标清, 2K=高清, 4K=超高清</p>
+            </div>
+          )}
 
           {/* 连续生成模式 */}
           <div className="form-group">
@@ -684,19 +748,22 @@ function ImageGenerator() {
             <div className="form-group">
               <label htmlFor="numImages">
                 <span className="label-icon">🔢</span>
-                <span className="label-text">生成数量（2-15）</span>
+                <span className="label-text">生成数量</span>
               </label>
-              <input
+              <select
                 id="numImages"
-                type="number"
-                min="2"
-                max="15"
-                className="input"
+                className="input select-input"
                 value={numImages}
-                onChange={(e) => setNumImages(Math.min(15, Math.max(2, parseInt(e.target.value) || 2)))}
+                onChange={(e) => setNumImages(parseInt(e.target.value))}
                 disabled={loading}
-              />
-              <p className="input-hint">💡 建议 2-3 张（数量多或分辨率高可能超时）</p>
+              >
+                {numImagesOptions.map(num => (
+                  <option key={num} value={num}>
+                    {num} 张
+                  </option>
+                ))}
+              </select>
+              <p className="input-hint">💡 建议 2-5 张（数量多或分辨率高可能超时）</p>
             </div>
           )}
 

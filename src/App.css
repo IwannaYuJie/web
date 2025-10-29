@@ -1182,6 +1182,46 @@
   z-index: 2;
 }
 
+/* 尺寸选择模式切换标签 */
+.size-mode-tabs {
+  display: flex;
+  gap: 1rem;
+  background: var(--bg-color);
+  padding: 0.5rem;
+  border-radius: var(--radius-md);
+}
+
+.mode-tab {
+  flex: 1;
+  background: white;
+  border: 2px solid var(--border-color);
+  border-radius: var(--radius-md);
+  padding: 0.8rem 1.5rem;
+  font-size: 1rem;
+  font-weight: 600;
+  color: var(--text-color);
+  cursor: pointer;
+  transition: all 0.3s ease;
+}
+
+.mode-tab:hover:not(:disabled) {
+  border-color: var(--primary-color);
+  background: var(--card-hover);
+  transform: translateY(-2px);
+}
+
+.mode-tab.active {
+  background: var(--gradient-warm);
+  color: white;
+  border-color: var(--primary-color);
+  box-shadow: var(--shadow);
+}
+
+.mode-tab:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+}
+
 /* 首页增强样式 */
 .home-header {
   position: relative;
