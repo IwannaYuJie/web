@@ -2,6 +2,7 @@ import { BrowserRouter as Router, Routes, Route, Link } from 'react-router-dom'
 import Home from './pages/Home'
 import ArticleDetail from './pages/ArticleDetail'
 import ImageGenerator from './pages/ImageGenerator'
+import AIChat from './pages/AIChat'
 import './App.css'
 
 /**
@@ -21,6 +22,7 @@ function App() {
             <div className="nav-links">
               <Link to="/">🏠 首页</Link>
               <Link to="/image-generator">🎨 AI画板</Link>
+              <Link to="/ai-chat">🤖 AI对话</Link>
             </div>
           </div>
         </nav>
@@ -31,6 +33,7 @@ function App() {
             <Route path="/" element={<Home />} />
             <Route path="/article/:id" element={<ArticleDetail />} />
             <Route path="/image-generator" element={<ImageGenerator />} />
+            <Route path="/ai-chat" element={<AIChat />} />
           </Routes>
         </main>
 
