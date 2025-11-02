@@ -99,3 +99,35 @@ button:disabled {
   opacity: 0.6;
   cursor: not-allowed;
 }
+
+/* 移动端优化 */
+@media (max-width: 768px) {
+  body {
+    font-size: 16px; /* 防止iOS自动缩放 */
+  }
+
+  /* 优化触摸滚动 */
+  * {
+    -webkit-tap-highlight-color: rgba(255, 159, 69, 0.2);
+    -webkit-touch-callout: none;
+  }
+
+  /* 平滑滚动 */
+  html {
+    scroll-behavior: smooth;
+  }
+
+  /* 优化按钮触摸区域 */
+  button,
+  a {
+    min-height: 44px;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+  }
+
+  /* 容器适配 */
+  .container {
+    padding: 0 1rem;
+  }
+}

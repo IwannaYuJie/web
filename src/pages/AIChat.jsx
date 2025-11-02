@@ -305,6 +305,23 @@ function AIChat() {
         <aside className="model-panel">
           <div className="model-panel-header">
             <h3>🎯 选择模型</h3>
+            
+            {/* 分类下拉菜单 */}
+            <div className="category-selector">
+              <label>模型系列</label>
+              <select 
+                value={selectedCategory} 
+                onChange={(e) => setSelectedCategory(e.target.value)}
+                className="category-dropdown"
+              >
+                {Object.keys(modelCategories).map(category => (
+                  <option key={category} value={category}>
+                    {category} ({modelCategories[category].length}个模型)
+                  </option>
+                ))}
+              </select>
+            </div>
+
             <div className="stream-toggle">
               <label>
                 <input
@@ -317,37 +334,22 @@ function AIChat() {
             </div>
           </div>
 
-          {/* 模型分类 */}
-          <div className="model-categories">
-            {Object.keys(modelCategories).map(category => (
-              <div key={category} className="model-category">
-                <button
-                  className={`category-btn ${selectedCategory === category ? 'active' : ''}`}
-                  onClick={() => setSelectedCategory(category)}
-                >
-                  {category}
-                  <span className="model-count">{modelCategories[category].length}</span>
-                </button>
-                
-                {selectedCategory === category && (
-                  <div className="model-list">
-                    {modelCategories[category].map(model => (
-                      <div
-                        key={model.id}
-                        className={`model-item ${selectedModel === model.id ? 'selected' : ''}`}
-                        onClick={() => handleModelChange(model.id)}
-                      >
-                        <div className="model-name">{model.name}</div>
-                        <div className="model-price">
-                          <span className="price-label">输入:</span>
-                          <span className="price-value">${model.inputPrice}</span>
-                          <span className="price-label">输出:</span>
-                          <span className="price-value">${model.outputPrice}</span>
-                        </div>
-                      </div>
-                    ))}
-                  </div>
-                )}
+          {/* 当前分类的模型列表 */}
+          <div className="model-list">
+            {modelCategories[selectedCategory].map(model => (
+              <div
+                key={model.id}
+                className={`model-item ${selectedModel === model.id ? 'selected' : ''}`}
+                onClick={() => handleModelChange(model.id)}
+              >
+                <div className="model-name">{model.name}</div>
+                <div className="model-price">
+                  <span className="price-label">输入:</span>
+                  <span className="price-value">${model.inputPrice}</span>
+                  <span className="price-separator">|</span>
+                  <span className="price-label">输出:</span>
+                  <span className="price-value">${model.outputPrice}</span>
+                </div>
               </div>
             ))}
           </div>
