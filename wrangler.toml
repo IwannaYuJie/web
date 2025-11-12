@@ -7,22 +7,10 @@ compatibility_date = "2024-01-01"
 # Pages 项目配置
 pages_build_output_dir = "dist"
 
-# KV 命名空间绑定
-# 注意：需要先在 Cloudflare Dashboard 中创建 KV 命名空间
-# 然后在 Pages 项目设置中绑定该命名空间
-[[kv_namespaces]]
-binding = "ARTICLES_KV"
-id = "YOUR_KV_NAMESPACE_ID"  # 替换为你的 KV 命名空间 ID
-preview_id = "YOUR_PREVIEW_KV_NAMESPACE_ID"  # 可选：预览环境的 KV 命名空间 ID
-
-# 预览环境配置（用于 Pages 预览部署）
-[env.preview]
-[[env.preview.kv_namespaces]]
-binding = "ARTICLES_KV"
-id = "YOUR_PREVIEW_KV_NAMESPACE_ID"
-
-# 生产环境配置（用于 Pages 生产部署）
-[env.production]
-[[env.production.kv_namespaces]]
-binding = "ARTICLES_KV"
-id = "YOUR_KV_NAMESPACE_ID"
+# 注意：KV 命名空间绑定应该在 Cloudflare Pages Dashboard 中配置
+# 不要在 wrangler.toml 中配置 KV，否则会导致部署失败
+# 
+# 配置步骤：
+# 1. 在 Cloudflare Dashboard 中创建 KV 命名空间
+# 2. 在 Pages 项目的 Settings -> Functions -> KV namespace bindings 中添加绑定
+# 3. 绑定名称设置为: ARTICLES_KV
