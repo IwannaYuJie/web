@@ -16,16 +16,27 @@ Cloudflare Pages 的重定向规则可能没有正确处理 API 路由。
 
 ## 诊断步骤
 
-### 步骤 1: 测试 Functions 是否工作
+### ✅ 步骤 1: 测试 Functions 是否工作（已完成）
 访问测试端点来确认 Cloudflare Functions 是否正常：
 
 ```
 https://jumaomaomaoju.cn/api/test
 ```
 
-**预期结果**：返回 JSON 数据，包含 `success: true`
+**结果**：✅ **成功！** Functions 工作正常，GET 请求没有问题。
 
-**如果失败**：说明 Functions 没有正确部署到自定义域名
+### 步骤 2: 使用测试工具诊断 POST 请求
+访问测试页面：
+
+```
+https://jumaomaomaoju.cn/test-api.html
+```
+
+依次点击所有测试按钮，观察哪些请求成功，哪些失败：
+1. **GET /api/test** - 应该成功 ✅
+2. **POST /api/test** - 如果失败，说明 POST 被拦截 ❌
+3. **POST + Method Override** - 如果失败，说明自定义头被拦截 ❌
+4. **POST /api/articles** - 测试真实 API
 
 ### 步骤 2: 对比 Pages 默认域名
 访问 Cloudflare Pages 提供的默认域名（通常是 `*.pages.dev`）：
@@ -37,12 +48,33 @@ https://[你的项目名].pages.dev/api/articles
 
 **如果默认域名正常**：说明问题出在自定义域名配置上
 
-### 步骤 3: 检查 Cloudflare Dashboard 配置
+### 步骤 3: 检查 Cloudflare 安全规则（重点！）
+
+**最可能的原因**：Cloudflare 的 WAF 或安全规则拦截了 POST 请求
 
 1. 登录 Cloudflare Dashboard
-2. 进入 Pages 项目
-3. 检查 **Custom domains** 设置
-4. 确认自定义域名的状态为 "Active"
+2. 选择你的域名 `jumaomaomaoju.cn`
+3. 检查以下设置：
+
+#### A. WAF (Web Application Firewall)
+- 进入 **Security** → **WAF**
+- 查看 **Managed Rules** 是否有规则拦截 POST 请求
+- 查看 **Custom Rules** 是否有自定义规则
+- **临时解决方案**：为 `/api/*` 路径添加例外规则
+
+#### B. Security Level
+- 进入 **Security** → **Settings**
+- 检查 **Security Level** 设置
+- 如果设置为 "High" 或 "I'm Under Attack"，可能会拦截 POST 请求
+- **建议**：设置为 "Medium" 或为 API 路径添加例外
+
+#### C. Rate Limiting
+- 进入 **Security** → **Rate Limiting Rules**
+- 检查是否有规则限制了 API 请求频率
+
+#### D. Page Rules
+- 进入 **Rules** → **Page Rules**
+- 检查是否有规则影响 `/api/*` 路径
 
 ## 解决方案
 
@@ -72,11 +104,21 @@ fetch(`${API_BASE_URL}/api/articles`)
 代理状态: 已代理（橙色云朵）
 ```
 
-#### B2. 检查 Cloudflare 规则
-在 Cloudflare Dashboard 中检查：
-- **Page Rules**：确保没有规则拦截 `/api/*` 路径
-- **WAF Rules**：确保没有防火墙规则阻止 API 请求
-- **Transform Rules**：检查是否有规则修改了请求方法
+#### B2. 为 API 路径添加 WAF 例外规则（推荐！）
+
+在 Cloudflare Dashboard 中：
+
+1. 进入 **Security** → **WAF** → **Custom rules**
+2. 点击 **Create rule**
+3. 配置规则：
+   - **Rule name**: `Allow API Requests`
+   - **Field**: `URI Path`
+   - **Operator**: `starts with`
+   - **Value**: `/api/`
+   - **Action**: `Skip` → 选择 `All remaining custom rules` 和 `All managed rules`
+4. 点击 **Deploy**
+
+这样可以让 `/api/*` 路径绕过所有 WAF 规则。
 
 #### B3. 重新添加自定义域名
 1. 在 Cloudflare Pages 项目中删除自定义域名

@@ -1,0 +1,229 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>API 测试工具</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      max-width: 800px;
+      margin: 50px auto;
+      padding: 20px;
+      background: #f5f5f5;
+    }
+    .test-section {
+      background: white;
+      padding: 20px;
+      margin: 20px 0;
+      border-radius: 8px;
+      box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+    }
+    button {
+      background: #0066cc;
+      color: white;
+      border: none;
+      padding: 10px 20px;
+      border-radius: 4px;
+      cursor: pointer;
+      margin: 5px;
+    }
+    button:hover {
+      background: #0052a3;
+    }
+    .result {
+      margin-top: 10px;
+      padding: 10px;
+      background: #f9f9f9;
+      border-left: 4px solid #0066cc;
+      white-space: pre-wrap;
+      font-family: monospace;
+      font-size: 12px;
+    }
+    .error {
+      border-left-color: #cc0000;
+      background: #fff0f0;
+    }
+    .success {
+      border-left-color: #00cc00;
+      background: #f0fff0;
+    }
+    h1 { color: #333; }
+    h2 { color: #666; margin-top: 0; }
+  </style>
+</head>
+<body>
+  <h1>🔍 API 测试工具</h1>
+  
+  <div class="test-section">
+    <h2>测试 1: GET 请求（应该成功）</h2>
+    <button onclick="testGet()">🟢 测试 GET /api/test</button>
+    <div id="result-get" class="result" style="display:none;"></div>
+  </div>
+
+  <div class="test-section">
+    <h2>测试 2: POST 请求（可能失败）</h2>
+    <button onclick="testPost()">🟡 测试 POST /api/test</button>
+    <div id="result-post" class="result" style="display:none;"></div>
+  </div>
+
+  <div class="test-section">
+    <h2>测试 3: POST + Method Override（关键测试）</h2>
+    <button onclick="testPostWithOverride()">🔴 测试 POST + X-HTTP-Method-Override: PUT</button>
+    <div id="result-override" class="result" style="display:none;"></div>
+  </div>
+
+  <div class="test-section">
+    <h2>测试 4: 真实的文章 API</h2>
+    <button onclick="testArticlesGet()">📚 GET /api/articles</button>
+    <button onclick="testArticlesPost()">➕ POST /api/articles (创建测试文章)</button>
+    <div id="result-articles" class="result" style="display:none;"></div>
+  </div>
+
+  <script>
+    async function testGet() {
+      const resultDiv = document.getElementById('result-get');
+      resultDiv.style.display = 'block';
+      resultDiv.textContent = '测试中...';
+      resultDiv.className = 'result';
+      
+      try {
+        const response = await fetch('/api/test');
+        const data = await response.json();
+        
+        resultDiv.className = 'result success';
+        resultDiv.textContent = `✅ 成功！\nHTTP ${response.status}\n\n${JSON.stringify(data, null, 2)}`;
+      } catch (error) {
+        resultDiv.className = 'result error';
+        resultDiv.textContent = `❌ 失败！\n${error.message}`;
+      }
+    }
+
+    async function testPost() {
+      const resultDiv = document.getElementById('result-post');
+      resultDiv.style.display = 'block';
+      resultDiv.textContent = '测试中...';
+      resultDiv.className = 'result';
+      
+      try {
+        const response = await fetch('/api/test', {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json'
+          },
+          body: JSON.stringify({ test: 'data' })
+        });
+        
+        const data = await response.json();
+        
+        if (response.ok) {
+          resultDiv.className = 'result success';
+          resultDiv.textContent = `✅ 成功！POST请求正常工作！\nHTTP ${response.status}\n\n${JSON.stringify(data, null, 2)}`;
+        } else {
+          resultDiv.className = 'result error';
+          resultDiv.textContent = `❌ 失败！\nHTTP ${response.status}: ${response.statusText}\n\n${JSON.stringify(data, null, 2)}`;
+        }
+      } catch (error) {
+        resultDiv.className = 'result error';
+        resultDiv.textContent = `❌ 失败！\n${error.message}`;
+      }
+    }
+
+    async function testPostWithOverride() {
+      const resultDiv = document.getElementById('result-override');
+      resultDiv.style.display = 'block';
+      resultDiv.textContent = '测试中...';
+      resultDiv.className = 'result';
+      
+      try {
+        const response = await fetch('/api/test', {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+            'X-HTTP-Method-Override': 'PUT'
+          },
+          body: JSON.stringify({ test: 'override' })
+        });
+        
+        const data = await response.json();
+        
+        if (response.ok) {
+          resultDiv.className = 'result success';
+          resultDiv.textContent = `✅ 成功！Method Override 正常工作！\nHTTP ${response.status}\n\n${JSON.stringify(data, null, 2)}`;
+        } else {
+          resultDiv.className = 'result error';
+          resultDiv.textContent = `❌ 失败！\nHTTP ${response.status}: ${response.statusText}\n\n${JSON.stringify(data, null, 2)}`;
+        }
+      } catch (error) {
+        resultDiv.className = 'result error';
+        resultDiv.textContent = `❌ 失败！\n${error.message}`;
+      }
+    }
+
+    async function testArticlesGet() {
+      const resultDiv = document.getElementById('result-articles');
+      resultDiv.style.display = 'block';
+      resultDiv.textContent = '测试中...';
+      resultDiv.className = 'result';
+      
+      try {
+        const response = await fetch('/api/articles');
+        const data = await response.json();
+        
+        if (response.ok) {
+          resultDiv.className = 'result success';
+          resultDiv.textContent = `✅ 成功！获取到 ${data.length} 篇文章\nHTTP ${response.status}\n\n${JSON.stringify(data, null, 2)}`;
+        } else {
+          resultDiv.className = 'result error';
+          resultDiv.textContent = `❌ 失败！\nHTTP ${response.status}: ${response.statusText}\n\n${JSON.stringify(data, null, 2)}`;
+        }
+      } catch (error) {
+        resultDiv.className = 'result error';
+        resultDiv.textContent = `❌ 失败！\n${error.message}`;
+      }
+    }
+
+    async function testArticlesPost() {
+      const resultDiv = document.getElementById('result-articles');
+      resultDiv.style.display = 'block';
+      resultDiv.textContent = '测试中...';
+      resultDiv.className = 'result';
+      
+      const testArticle = {
+        title: '🧪 测试文章 - ' + new Date().toLocaleString(),
+        description: '这是一篇用于测试 API 的文章',
+        category: 'Java核心',
+        readTime: '1 分钟'
+      };
+      
+      try {
+        const response = await fetch('/api/articles', {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json'
+          },
+          body: JSON.stringify(testArticle)
+        });
+        
+        let data;
+        try {
+          data = await response.json();
+        } catch (e) {
+          data = { error: '无法解析响应 JSON' };
+        }
+        
+        if (response.ok) {
+          resultDiv.className = 'result success';
+          resultDiv.textContent = `✅ 成功！文章创建成功！\nHTTP ${response.status}\n\n${JSON.stringify(data, null, 2)}`;
+        } else {
+          resultDiv.className = 'result error';
+          resultDiv.textContent = `❌ 失败！\nHTTP ${response.status}: ${response.statusText}\n\n${JSON.stringify(data, null, 2)}`;
+        }
+      } catch (error) {
+        resultDiv.className = 'result error';
+        resultDiv.textContent = `❌ 失败！\n${error.message}`;
+      }
+    }
+  </script>
+</body>
+</html>
