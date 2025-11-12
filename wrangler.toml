@@ -1,0 +1,22 @@
+# Cloudflare Pages 项目配置
+# 用于本地开发和部署配置
+
+name = "orange-cat-blog"
+compatibility_date = "2024-01-01"
+
+# Pages 项目配置
+pages_build_output_dir = "dist"
+
+# KV 命名空间绑定
+# 注意：需要先在 Cloudflare Dashboard 中创建 KV 命名空间
+# 然后在 Pages 项目设置中绑定该命名空间
+[[kv_namespaces]]
+binding = "ARTICLES_KV"
+id = "YOUR_KV_NAMESPACE_ID"  # 替换为你的 KV 命名空间 ID
+preview_id = "YOUR_PREVIEW_KV_NAMESPACE_ID"  # 可选：预览环境的 KV 命名空间 ID
+
+# 本地开发配置
+[env.development]
+[[env.development.kv_namespaces]]
+binding = "ARTICLES_KV"
+id = "YOUR_KV_NAMESPACE_ID"
