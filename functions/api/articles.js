@@ -230,10 +230,7 @@ export async function onRequest(context) {
   const methodOverride = request.headers.get('X-HTTP-Method-Override')
   if (method === 'POST' && methodOverride) {
     method = methodOverride.toUpperCase()
-    console.log(`[Method Override] 原始方法: POST, Override: ${methodOverride}, 最终方法: ${method}`)
   }
-  
-  console.log(`[API Request] ${method} ${url.pathname}, ArticleID: ${articleId || 'none'}`)
   
   // 检查 KV 绑定是否存在
   if (!env.ARTICLES_KV) {

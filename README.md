@@ -302,6 +302,30 @@ npm run preview
 /* /index.html 200
 ```
 
+### 文章编辑/删除 405 错误
+
+**问题描述**：在自定义域名上，文章的编辑和删除功能返回 405 Method Not Allowed 错误。
+
+**原因分析**：
+- Cloudflare 的安全规则会拦截 `POST /api/articles/1` 这种带数字路径参数的 POST 请求
+- 这是为了防止 CSRF 攻击等安全威胁
+
+**解决方案**：
+本项目已采用查询参数替代路径参数的方式：
+- ❌ 旧方式：`POST /api/articles/1`
+- ✅ 新方式：`POST /api/articles?id=1`
+
+配合 `X-HTTP-Method-Override` 头实现 PUT/DELETE 操作：
+- 编辑：`POST /api/articles?id=1` + `X-HTTP-Method-Override: PUT`
+- 删除：`POST /api/articles?id=1` + `X-HTTP-Method-Override: DELETE`
+
+**技术细节**：
+- 前端使用查询参数传递文章 ID
+- 后端同时支持查询参数和路径参数（优先使用查询参数）
+- 通过 Method Override 头将 POST 请求转换为实际的 PUT/DELETE 操作
+
+此方案既解决了 Cloudflare 拦截问题，又保持了 RESTful API 的语义。
+
 ## 📄 许可证
 
 MIT License
