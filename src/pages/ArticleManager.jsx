@@ -112,8 +112,9 @@ function ArticleManager() {
     setSubmitting(true)
     
     try {
+      // 使用查询参数而不是路径参数，避免被Cloudflare拦截
       const url = editingArticle 
-        ? `/api/articles/${editingArticle.id}` 
+        ? `/api/articles?id=${editingArticle.id}` 
         : '/api/articles'
       
       const response = await fetch(url, {
@@ -157,7 +158,8 @@ function ArticleManager() {
     }
     
     try {
-      const response = await fetch(`/api/articles/${article.id}`, {
+      // 使用查询参数而不是路径参数，避免被Cloudflare拦截
+      const response = await fetch(`/api/articles?id=${article.id}`, {
         method: 'POST',
         headers: {
           'X-HTTP-Method-Override': 'DELETE'

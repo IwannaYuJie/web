@@ -80,6 +80,13 @@
     <div id="result-articles" class="result" style="display:none;"></div>
   </div>
 
+  <div class="test-section">
+    <h2>测试 5: 带路径参数的 POST 请求（关键！）</h2>
+    <button onclick="testPostWithId()">🔴 POST /api/articles/999</button>
+    <button onclick="testPostWithIdAndOverride()">🟣 POST /api/articles/999 + Override: DELETE</button>
+    <div id="result-post-id" class="result" style="display:none;"></div>
+  </div>
+
   <script>
     async function testGet() {
       const resultDiv = document.getElementById('result-get');
@@ -218,6 +225,76 @@
         } else {
           resultDiv.className = 'result error';
           resultDiv.textContent = `❌ 失败！\nHTTP ${response.status}: ${response.statusText}\n\n${JSON.stringify(data, null, 2)}`;
+        }
+      } catch (error) {
+        resultDiv.className = 'result error';
+        resultDiv.textContent = `❌ 失败！\n${error.message}`;
+      }
+    }
+
+    async function testPostWithId() {
+      const resultDiv = document.getElementById('result-post-id');
+      resultDiv.style.display = 'block';
+      resultDiv.textContent = '测试中...';
+      resultDiv.className = 'result';
+      
+      try {
+        const response = await fetch('/api/articles/999', {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json'
+          },
+          body: JSON.stringify({ test: 'data' })
+        });
+        
+        let data;
+        try {
+          data = await response.json();
+        } catch (e) {
+          data = { error: '无法解析响应 JSON' };
+        }
+        
+        if (response.ok) {
+          resultDiv.className = 'result success';
+          resultDiv.textContent = `✅ 成功！POST /api/articles/999 正常工作！\nHTTP ${response.status}\n\n${JSON.stringify(data, null, 2)}`;
+        } else {
+          resultDiv.className = 'result error';
+          resultDiv.textContent = `❌ 失败！这就是问题所在！\nHTTP ${response.status}: ${response.statusText}\n\n${JSON.stringify(data, null, 2)}`;
+        }
+      } catch (error) {
+        resultDiv.className = 'result error';
+        resultDiv.textContent = `❌ 失败！\n${error.message}`;
+      }
+    }
+
+    async function testPostWithIdAndOverride() {
+      const resultDiv = document.getElementById('result-post-id');
+      resultDiv.style.display = 'block';
+      resultDiv.textContent = '测试中...';
+      resultDiv.className = 'result';
+      
+      try {
+        const response = await fetch('/api/articles/999', {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+            'X-HTTP-Method-Override': 'DELETE'
+          }
+        });
+        
+        let data;
+        try {
+          data = await response.json();
+        } catch (e) {
+          data = { error: '无法解析响应 JSON' };
+        }
+        
+        if (response.ok) {
+          resultDiv.className = 'result success';
+          resultDiv.textContent = `✅ 成功！POST + Override 正常工作！\nHTTP ${response.status}\n\n${JSON.stringify(data, null, 2)}`;
+        } else {
+          resultDiv.className = 'result error';
+          resultDiv.textContent = `❌ 失败！Cloudflare 拦截了带ID的POST请求！\nHTTP ${response.status}: ${response.statusText}\n\n${JSON.stringify(data, null, 2)}`;
         }
       } catch (error) {
         resultDiv.className = 'result error';

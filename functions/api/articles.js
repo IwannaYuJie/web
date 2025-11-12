@@ -222,9 +222,9 @@ export async function onRequest(context) {
     return handleOptions()
   }
   
-  // 解析路径参数（例如 /api/articles/123）
+  // 解析路径参数（例如 /api/articles/123）或查询参数（例如 /api/articles?id=123）
   const pathParts = url.pathname.split('/').filter(p => p)
-  const articleId = pathParts[2] // articles 后面的 ID
+  const articleId = url.searchParams.get('id') || pathParts[2] // 优先使用查询参数
   
   // 支持 X-HTTP-Method-Override 头（用于绕过不支持 PUT/DELETE 的代理）
   const methodOverride = request.headers.get('X-HTTP-Method-Override')
