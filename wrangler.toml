@@ -15,8 +15,14 @@ binding = "ARTICLES_KV"
 id = "YOUR_KV_NAMESPACE_ID"  # 替换为你的 KV 命名空间 ID
 preview_id = "YOUR_PREVIEW_KV_NAMESPACE_ID"  # 可选：预览环境的 KV 命名空间 ID
 
-# 本地开发配置
-[env.development]
-[[env.development.kv_namespaces]]
+# 预览环境配置（用于 Pages 预览部署）
+[env.preview]
+[[env.preview.kv_namespaces]]
+binding = "ARTICLES_KV"
+id = "YOUR_PREVIEW_KV_NAMESPACE_ID"
+
+# 生产环境配置（用于 Pages 生产部署）
+[env.production]
+[[env.production.kv_namespaces]]
 binding = "ARTICLES_KV"
 id = "YOUR_KV_NAMESPACE_ID"
