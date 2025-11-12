@@ -126,8 +126,14 @@ function ArticleManager() {
       })
       
       if (!response.ok) {
-        const errorData = await response.json()
-        throw new Error(errorData.error || '操作失败')
+        let errorMessage = `HTTP ${response.status}: ${response.statusText}`
+        try {
+          const errorData = await response.json()
+          errorMessage = errorData.error || errorMessage
+        } catch (e) {
+          // 如果响应不是JSON，使用状态码信息
+        }
+        throw new Error(errorMessage)
       }
       
       // 成功后刷新列表并关闭表单
@@ -159,8 +165,14 @@ function ArticleManager() {
       })
       
       if (!response.ok) {
-        const errorData = await response.json()
-        throw new Error(errorData.error || '删除失败')
+        let errorMessage = `HTTP ${response.status}: ${response.statusText}`
+        try {
+          const errorData = await response.json()
+          errorMessage = errorData.error || errorMessage
+        } catch (e) {
+          // 如果响应不是JSON，使用状态码信息
+        }
+        throw new Error(errorMessage)
       }
       
       // 成功后刷新列表
