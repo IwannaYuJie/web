@@ -222,20 +222,23 @@ export async function onRequest(context) {
     return handleOptions()
   }
   
+  // 解析路径参数（例如 /api/articles/123）
+  const pathParts = url.pathname.split('/').filter(p => p)
+  const articleId = pathParts[2] // articles 后面的 ID
+  
   // 支持 X-HTTP-Method-Override 头（用于绕过不支持 PUT/DELETE 的代理）
   const methodOverride = request.headers.get('X-HTTP-Method-Override')
   if (method === 'POST' && methodOverride) {
     method = methodOverride.toUpperCase()
+    console.log(`[Method Override] 原始方法: POST, Override: ${methodOverride}, 最终方法: ${method}`)
   }
+  
+  console.log(`[API Request] ${method} ${url.pathname}, ArticleID: ${articleId || 'none'}`)
   
   // 检查 KV 绑定是否存在
   if (!env.ARTICLES_KV) {
     return errorResponse('KV 命名空间未配置，请在 Cloudflare Pages 设置中绑定 ARTICLES_KV', 500)
   }
-  
-  // 解析路径参数（例如 /api/articles/123）
-  const pathParts = url.pathname.split('/').filter(p => p)
-  const articleId = pathParts[2] // articles 后面的 ID
   
   try {
     // 路由处理
@@ -250,7 +253,10 @@ export async function onRequest(context) {
         }
       
       case 'POST':
-        // POST /api/articles - 创建新文章
+        // POST /api/articles - 创建新文章（仅当没有 articleId 时）
+        if (articleId) {
+          return errorResponse('POST 请求不应包含文章 ID，请使用 PUT 更新文章', 400)
+        }
         const createData = await request.json()
         return await createArticle(env, createData)
       
