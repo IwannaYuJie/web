@@ -116,12 +116,11 @@ function ArticleManager() {
         ? `/api/articles/${editingArticle.id}` 
         : '/api/articles'
       
-      const method = editingArticle ? 'PUT' : 'POST'
-      
       const response = await fetch(url, {
-        method,
+        method: editingArticle ? 'POST' : 'POST',
         headers: {
-          'Content-Type': 'application/json'
+          'Content-Type': 'application/json',
+          ...(editingArticle && { 'X-HTTP-Method-Override': 'PUT' })
         },
         body: JSON.stringify(formData)
       })
@@ -153,7 +152,10 @@ function ArticleManager() {
     
     try {
       const response = await fetch(`/api/articles/${article.id}`, {
-        method: 'DELETE'
+        method: 'POST',
+        headers: {
+          'X-HTTP-Method-Override': 'DELETE'
+        }
       })
       
       if (!response.ok) {

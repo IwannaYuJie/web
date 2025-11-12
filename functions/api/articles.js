@@ -215,11 +215,17 @@ async function deleteArticle(env, id) {
 export async function onRequest(context) {
   const { request, env } = context
   const url = new URL(request.url)
-  const method = request.method
+  let method = request.method
   
   // 处理 OPTIONS 预检请求
   if (method === 'OPTIONS') {
     return handleOptions()
+  }
+  
+  // 支持 X-HTTP-Method-Override 头（用于绕过不支持 PUT/DELETE 的代理）
+  const methodOverride = request.headers.get('X-HTTP-Method-Override')
+  if (method === 'POST' && methodOverride) {
+    method = methodOverride.toUpperCase()
   }
   
   // 检查 KV 绑定是否存在
