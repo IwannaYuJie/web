@@ -13,15 +13,10 @@
 ```javascript
 build: {
   sourcemap: false,        // 🔒 禁用 Source Map
-  minify: 'terser',        // 深度混淆
-  terserOptions: {
-    compress: {
-      drop_console: true,   // 移除 console.log
-      drop_debugger: true,  // 移除 debugger
-    },
-    format: {
-      comments: false,      // 移除所有注释
-    },
+  minify: 'esbuild',       // 使用 esbuild（Vite 内置）
+  esbuildOptions: {
+    drop: ['console', 'debugger'], // 移除 console.log 和 debugger
+    legalComments: 'none',         // 移除所有注释
   },
 }
 ```
@@ -31,6 +26,11 @@ build: {
 - 变量名
 - 注释（可能含敏感信息）
 - 硬编码的配置
+
+**为什么用 esbuild？**
+- ✅ Vite 内置，无需额外依赖
+- ✅ 构建速度比 Terser 快 10-100 倍
+- ✅ 混淆效果足够安全（虽然不如 Terser 极致，但对普通攻击足够）
 
 ---
 
