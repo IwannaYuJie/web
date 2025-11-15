@@ -25,7 +25,7 @@
 .intro-title {
   text-align: center;
   font-size: 2.5rem;
-  color: var(--primary-color, #FF9F45);
+  color: #2c3e50;
   margin-bottom: 30px;
   font-weight: 700;
 }
@@ -93,9 +93,10 @@
 }
 
 .game-rules h3, .yujie-traits h3 {
-  color: var(--primary-color, #FF9F45);
+  color: #2c3e50;
   margin-bottom: 15px;
   font-size: 1.3rem;
+  font-weight: 700;
 }
 
 .game-rules ul {
@@ -192,8 +193,9 @@
 
 .game-title {
   margin: 0;
-  color: var(--primary-color, #FF9F45);
+  color: #2c3e50;
   font-size: 1.5rem;
+  font-weight: 700;
 }
 
 .turn-count {
@@ -243,12 +245,13 @@
 }
 
 .affection-label {
-  color: var(--primary-color, #FF9F45);
+  color: #2c3e50;
   font-size: 1.1rem;
+  font-weight: 700;
 }
 
 .affection-value {
-  color: var(--primary-color, #FF9F45);
+  color: #2c3e50;
   font-size: 1.3rem;
   font-weight: 700;
 }
@@ -586,7 +589,7 @@
 }
 
 .ending-title.success {
-  color: var(--primary-color, #FF9F45);
+  color: #2c3e50;
 }
 
 .ending-title.failure {
@@ -613,8 +616,9 @@
 }
 
 .ending-stats h3 {
-  color: var(--primary-color, #FF9F45);
+  color: #2c3e50;
   margin-bottom: 20px;
+  font-weight: 700;
 }
 
 .stats-grid {
@@ -638,7 +642,7 @@
 .stat-value {
   font-size: 1.5rem;
   font-weight: 700;
-  color: var(--primary-color, #FF9F45);
+  color: #2c3e50;
 }
 
 .ending-actions {
