@@ -1,5 +1,6 @@
 import { useState } from 'react'
 import YujieGame from '../components/YujieGame'
+import YujieAIGame from '../components/YujieAIGame'
 import './GameHub.css'
 
 /**
@@ -21,16 +22,17 @@ function GameHub() {
       icon: '💕',
       description: '东北风情恋爱模拟游戏，体验与雨姐的浪漫故事！',
       status: 'active',
-      color: '#e91e63',
+      color: '#FF9F45',
       component: 'YujieGame'
     },
     {
-      id: 'game-2',
-      name: '敬请期待',
-      icon: '🎯',
-      description: '更多精彩游戏即将上线...',
-      status: 'coming-soon',
-      color: '#4ECDC4'
+      id: 'yujie-ai-game',
+      name: 'AI攻略：东北雨姐',
+      icon: '🤖💕',
+      description: '扮演从外国归来的黑人小哥，用AI对话攻略雨姐的心！',
+      status: 'active',
+      color: '#FF8C1A',
+      component: 'YujieAIGame'
     },
     {
       id: 'game-3',
@@ -38,7 +40,7 @@ function GameHub() {
       icon: '🎲',
       description: '更多精彩游戏即将上线...',
       status: 'coming-soon',
-      color: '#45B7D1'
+      color: '#FFB366'
     },
     {
       id: 'game-4',
@@ -46,7 +48,7 @@ function GameHub() {
       icon: '🎪',
       description: '更多精彩游戏即将上线...',
       status: 'coming-soon',
-      color: '#96CEB4'
+      color: '#FFC999'
     }
   ])
 
@@ -162,7 +164,8 @@ function GameHub() {
             <div className="game-container">
               {/* 根据游戏ID加载对应的游戏组件 */}
               {selectedGame.id === 'yujie-game' && <YujieGame />}
-              {selectedGame.id !== 'yujie-game' && (
+              {selectedGame.id === 'yujie-ai-game' && <YujieAIGame />}
+              {selectedGame.id !== 'yujie-game' && selectedGame.id !== 'yujie-ai-game' && (
                 <>
                   <h2>{selectedGame.icon} {selectedGame.name}</h2>
                   <p>游戏内容区域 - 在这里加载具体的游戏组件</p>
