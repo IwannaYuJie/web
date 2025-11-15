@@ -49,7 +49,25 @@ web/
 npm install
 ```
 
-### 2. 启动开发服务器
+### 2. 配置环境变量（可选，用于 AI 功能）
+
+如果你需要使用 AI 对话或图片生成功能，需要配置 API Key：
+
+```bash
+# 复制环境变量模板文件
+cp .env.example .env
+
+# 编辑 .env 文件，填入你的 API Key
+# ARK_API_KEY=你的火山引擎API密钥
+# QINIU_AI_API_KEY=你的七牛云AI API密钥
+```
+
+**⚠️ 安全提醒**：
+- `.env` 文件已添加到 `.gitignore`，不会被提交到 Git
+- 请勿在任何公开场合分享你的 API Key
+- 生产环境请使用 Cloudflare Pages 环境变量，不要硬编码在代码中
+
+### 3. 启动开发服务器
 
 ```bash
 npm run dev
@@ -135,9 +153,11 @@ npm run preview
    - `functions/api/articles.js` 会映射到 `/api/articles` 路由
    - 无需额外配置，Cloudflare 会自动识别
 
-7. **环境变量（可选）**
-   - 在 Settings → Environment variables 中添加
-   - `ARK_API_KEY`: 你的火山引擎 API Key
+7. **环境变量（重要！必须配置才能使用 AI 功能）**
+   - 在 Settings → Environment variables 中添加：
+   - `ARK_API_KEY`: 你的火山引擎 API Key（用于图片生成）
+   - `QINIU_AI_API_KEY`: 你的七牛云 AI API Key（用于 AI 对话）
+   - **⚠️ 注意**：必须配置这两个环境变量，否则 AI 功能会返回 500 错误
 
 8. **部署**
    - 点击 "Save and Deploy"

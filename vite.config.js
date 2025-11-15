@@ -1,5 +1,10 @@
-import { defineConfig } from 'vite'
+import { defineConfig, loadEnv } from 'vite'
 import react from '@vitejs/plugin-react'
+
+// 读取环境变量（开发环境使用）
+// 注意：仅用于本地开发代理，生产环境使用 Cloudflare 环境变量
+const ARK_API_KEY_DEV = process.env.ARK_API_KEY || 'YOUR_ARK_API_KEY_HERE'
+const QINIU_AI_API_KEY_DEV = process.env.QINIU_AI_API_KEY || 'YOUR_QINIU_AI_API_KEY_HERE'
 
 // 模拟文章数据（用于本地开发）
 let mockArticles = [
@@ -155,8 +160,8 @@ export default defineConfig({
         rewrite: (path) => path.replace(/^\/api\/generate-image/, ''),
         configure: (proxy, options) => {
           proxy.on('proxyReq', (proxyReq, req, res) => {
-            // 添加 API Key
-            proxyReq.setHeader('Authorization', 'Bearer d5409697-4157-4ea2-9265-782d9d59a810')
+            // 添加 API Key（从环境变量读取）
+            proxyReq.setHeader('Authorization', `Bearer ${ARK_API_KEY_DEV}`)
           })
         }
       },
@@ -168,8 +173,8 @@ export default defineConfig({
         rewrite: (path) => path.replace(/^\/api\/ai-chat/, ''),
         configure: (proxy, options) => {
           proxy.on('proxyReq', (proxyReq, req, res) => {
-            // 添加 API Key
-            proxyReq.setHeader('Authorization', 'Bearer sk-563757c462e7f3415126806b3808ff4b6d00b0091263a38a552a34bdd4a91f8a')
+            // 添加 API Key（从环境变量读取）
+            proxyReq.setHeader('Authorization', `Bearer ${QINIU_AI_API_KEY_DEV}`)
           })
         }
       }

@@ -41,7 +41,21 @@ export async function onRequest(context) {
 
     // 七牛云 AI API 配置
     const API_ENDPOINT = 'https://api.qnaigc.com/v1/chat/completions'
-    const API_KEY = context.env.QINIU_AI_API_KEY || 'sk-563757c462e7f3415126806b3808ff4b6d00b0091263a38a552a34bdd4a91f8a'
+    const API_KEY = context.env.QINIU_AI_API_KEY
+    
+    // 安全检查：必须配置环境变量
+    if (!API_KEY) {
+      return new Response(JSON.stringify({ 
+        error: '服务器配置错误', 
+        message: '未配置 QINIU_AI_API_KEY 环境变量，请在 Cloudflare Dashboard 中添加' 
+      }), {
+        status: 500,
+        headers: {
+          ...corsHeaders,
+          'Content-Type': 'application/json'
+        }
+      })
+    }
 
     // 转发请求到七牛云 AI API
     const response = await fetch(API_ENDPOINT, {

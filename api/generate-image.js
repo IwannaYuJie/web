@@ -24,7 +24,15 @@ export default async function handler(req, res) {
   try {
     // 火山引擎 API 配置
     const API_ENDPOINT = 'https://ark.cn-beijing.volces.com/api/v3/images/generations'
-    const API_KEY = process.env.ARK_API_KEY || 'd5409697-4157-4ea2-9265-782d9d59a810'
+    const API_KEY = process.env.ARK_API_KEY
+    
+    // 安全检查：必须配置环境变量
+    if (!API_KEY) {
+      return res.status(500).json({ 
+        error: '服务器配置错误', 
+        message: '未配置 ARK_API_KEY 环境变量' 
+      })
+    }
 
     // 转发请求到火山引擎 API
     const response = await fetch(API_ENDPOINT, {

@@ -165,12 +165,12 @@ function ImageGenerator() {
    * API 配置
    * 开发环境：使用 Vite 代理解决跨域问题
    * 生产环境：使用 Serverless 函数代理保护 API 密钥
+   * 注意：前端不应该包含任何 API Key，所有认证由后端代理处理
    */
   const isDevelopment = import.meta.env.DEV
   const API_ENDPOINT = isDevelopment 
     ? '/api/v3/images/generations'  // 开发环境：Vite 代理
     : '/api/generate-image'          // 生产环境：Serverless 函数
-  const API_KEY = 'd5409697-4157-4ea2-9265-782d9d59a810'
 
   /**
    * 处理图片上传

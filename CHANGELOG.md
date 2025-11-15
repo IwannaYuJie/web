@@ -4,6 +4,113 @@
 
 ---
 
+## [2025-01-15] - 🔒 重大安全更新：移除所有硬编码 API Key
+
+### 🚨 安全修复（Critical）
+
+#### 问题描述
+在全面安全审计中发现多处硬编码的 API Key，存在严重的安全隐患：
+- 七牛云 AI API Key 硬编码在 2 个文件中
+- 火山引擎 API Key 硬编码在 4 个文件中
+- 其中 1 处在前端代码中（最危险）
+
+#### 影响范围
+如果代码仓库为公开状态，任何人都能看到这些 API Key，可能导致：
+- API 额度被盗用
+- 产生意外费用
+- 服务被滥用
+
+#### 解决方案
+**全面移除硬编码，采用环境变量方案**：
+
+1. **后端 API 函数**（Cloudflare Functions）
+   - ✅ `functions/api/ai-chat.js` - 移除硬编码，仅从 `context.env.QINIU_AI_API_KEY` 读取
+   - ✅ `functions/api/generate-image.js` - 移除硬编码，仅从 `context.env.ARK_API_KEY` 读取
+   - ✅ `api/generate-image.js` - 移除硬编码，仅从 `process.env.ARK_API_KEY` 读取
+   - ✅ 添加环境变量检查，缺少时返回 500 错误和提示信息
+
+2. **开发环境配置**（Vite）
+   - ✅ `vite.config.js` - 从 `process.env` 读取，提供占位符
+   - ✅ 支持通过 `.env` 文件配置本地开发 API Key
+
+3. **前端代码**
+   - ✅ `src/pages/ImageGenerator.jsx` - 移除硬编码的 API Key
+   - ✅ 前端不再包含任何敏感信息
+
+### 📝 配置变更
+
+#### 新增文件
+- **SECURITY_CHECKLIST.md** - 安全检查清单和最佳实践文档
+  - 包含快速安全扫描命令
+  - API Key 泄露修复步骤
+  - 定期检查项目清单
+
+#### 修改文件
+- **README.md** - 添加环境变量配置说明
+  - 本地开发 `.env` 配置步骤
+  - Cloudflare Pages 环境变量配置说明
+  - 安全提醒和注意事项
+
+- **.env.example** - 已存在，无需修改
+  - 提供环境变量模板
+  - 不包含真实 API Key
+
+- **.gitignore** - 已包含 `.env`（无需修改）
+  - 确保环境变量文件不被提交
+
+### 🔧 使用指南
+
+#### 本地开发配置
+
+1. 复制环境变量模板：
+   ```bash
+   cp .env.example .env
+   ```
+
+2. 编辑 `.env` 文件，填入真实 API Key：
+   ```env
+   ARK_API_KEY=你的火山引擎API密钥
+   QINIU_AI_API_KEY=你的七牛云AI API密钥
+   ```
+
+3. 启动开发服务器：
+   ```bash
+   npm run dev
+   ```
+
+#### Cloudflare Pages 生产环境配置
+
+1. 登录 Cloudflare Dashboard
+2. 进入项目 Settings → Environment variables
+3. 添加以下环境变量：
+   - `ARK_API_KEY` = 火山引擎 API 密钥
+   - `QINIU_AI_API_KEY` = 七牛云 AI API 密钥
+4. 保存后重新部署
+
+### ✅ 安全检查结果
+
+- ✅ 所有硬编码 API Key 已移除
+- ✅ 前端代码不包含任何敏感信息
+- ✅ 后端增加环境变量校验
+- ✅ `.env` 文件已在 `.gitignore` 中
+- ✅ 未发现个人信息泄露（penghaoxiang、958656603 等）
+
+### ⚠️ 重要提醒
+
+1. **立即更换旧 API Key**（如果仓库曾公开）：
+   - 登录火山引擎控制台，重置 API Key
+   - 登录七牛云控制台，重置 API Key
+   - 更新 Cloudflare Pages 环境变量
+
+2. **Git 历史清理**（如果敏感信息已提交）：
+   - 参考 `SECURITY_CHECKLIST.md` 中的清理步骤
+   - 使用 BFG Repo-Cleaner 或 git-filter-branch
+
+3. **设置仓库为私有**（推荐）：
+   - GitHub 仓库设置 → Settings → Danger Zone → Change visibility
+
+---
+
 ## [2025-11-12] - 修复文章管理 API 405 错误
 
 ### 🐛 Bug 修复
