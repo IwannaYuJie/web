@@ -203,7 +203,7 @@
 }
 
 .card-description {
-  color: #7f8c8d;
+  color: #555;
   font-size: 0.95rem;
   line-height: 1.5;
   margin: 0 0 1.5rem;
@@ -314,7 +314,7 @@
 }
 
 .add-game-hint p {
-  color: #7f8c8d;
+  color: #555;
   margin: 0 0 1.5rem;
   line-height: 1.6;
 }
