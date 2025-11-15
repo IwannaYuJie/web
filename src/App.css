@@ -67,6 +67,15 @@
   padding: 2rem 0;
 }
 
+/* 全屏内容区域（游戏中心专用） */
+.main-content-fullscreen {
+  flex: 1;
+  padding: 0;
+  margin: 0;
+  width: 100%;
+  min-height: 100vh;
+}
+
 /* 页脚样式 - 橘猫爪印 */
 .footer {
   background: var(--gradient-soft);

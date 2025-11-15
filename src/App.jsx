@@ -1,4 +1,4 @@
-import { BrowserRouter as Router, Routes, Route, Link } from 'react-router-dom'
+import { BrowserRouter as Router, Routes, Route, Link, useLocation } from 'react-router-dom'
 import Home from './pages/Home'
 import ArticleDetail from './pages/ArticleDetail'
 import ImageGenerator from './pages/ImageGenerator'
@@ -11,11 +11,14 @@ import './App.css'
  * 主应用组件
  * 使用 React Router 实现页面路由
  */
-function App() {
+function AppContent() {
+  const location = useLocation()
+  const isGameHub = location.pathname === '/secret-games'
+
   return (
-    <Router future={{ v7_startTransition: true, v7_relativeSplatPath: true }}>
-      <div className="app">
-        {/* 导航栏 - 橘猫主题 */}
+    <div className="app">
+      {/* 导航栏 - 橘猫主题 (游戏中心页面不显示) */}
+      {!isGameHub && (
         <nav className="navbar">
           <div className="container">
             <Link to="/" className="logo">
@@ -29,25 +32,35 @@ function App() {
             </div>
           </div>
         </nav>
+      )}
 
-        {/* 路由配置 */}
-        <main className="main-content">
-          <Routes>
-            <Route path="/" element={<Home />} />
-            <Route path="/article/:id" element={<ArticleDetail />} />
-            <Route path="/image-generator" element={<ImageGenerator />} />
-            <Route path="/ai-chat" element={<AIChat />} />
-            <Route path="/admin/articles" element={<ArticleManager />} />
-            {/* 隐藏的游戏中心页面 - 不在导航栏显示 */}
-            <Route path="/secret-games" element={<GameHub />} />
-          </Routes>
-        </main>
+      {/* 路由配置 */}
+      <main className={isGameHub ? "main-content-fullscreen" : "main-content"}>
+        <Routes>
+          <Route path="/" element={<Home />} />
+          <Route path="/article/:id" element={<ArticleDetail />} />
+          <Route path="/image-generator" element={<ImageGenerator />} />
+          <Route path="/ai-chat" element={<AIChat />} />
+          <Route path="/admin/articles" element={<ArticleManager />} />
+          {/* 隐藏的游戏中心页面 - 不在导航栏显示 */}
+          <Route path="/secret-games" element={<GameHub />} />
+        </Routes>
+      </main>
 
-        {/* 页脚 - 橘猫爪印 */}
+      {/* 页脚 - 橘猫爪印 (游戏中心页面不显示) */}
+      {!isGameHub && (
         <footer className="footer">
           <p>© 2025 橘猫小窝 🐾 | 用 🧡 和 ☕ 制作</p>
         </footer>
-      </div>
+      )}
+    </div>
+  )
+}
+
+function App() {
+  return (
+    <Router future={{ v7_startTransition: true, v7_relativeSplatPath: true }}>
+      <AppContent />
     </Router>
   )
 }
