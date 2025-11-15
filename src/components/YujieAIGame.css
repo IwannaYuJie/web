@@ -401,6 +401,7 @@
 .message.assistant .message-content {
   background: #FFF8F0;
   border: 2px solid #FFB366;
+  color: #2c3e50;
 }
 
 .message.error-message .message-content {
