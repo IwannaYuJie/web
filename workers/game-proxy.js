@@ -14,12 +14,13 @@
 
 export default {
   async fetch(request, env) {
-    const url = new URL(request.url);
-    
-    // ============ 配置区域 ============
-    // 修改为你的主站域名
-    const TARGET_DOMAIN = 'jumaomaomaoju.cn';
-    const TARGET_PATH = '/secret-games'; // 游戏页面路径
+    try {
+      const url = new URL(request.url);
+      
+      // ============ 配置区域 ============
+      // 修改为你的主站域名
+      const TARGET_DOMAIN = 'jumaomaomaoju.cn';
+      const TARGET_PATH = '/secret-games'; // 游戏页面路径
     
     // ============ 请求处理 ============
     
@@ -55,14 +56,42 @@ export default {
     // 5. 修改响应头，移除可能暴露源站的信息
     const newHeaders = new Headers(response.headers);
     
-    // 移除可能暴露源站的头
-    newHeaders.delete('x-powered-by');
-    newHeaders.delete('server');
-    newHeaders.delete('x-vercel-id');
-    newHeaders.delete('x-cloudflare-request-id');
+    // 🔒 移除所有可能暴露源站的头部
+    const headersToRemove = [
+      'x-powered-by',
+      'server',
+      'x-vercel-id',
+      'x-cloudflare-request-id',
+      'x-amz-cf-id',
+      'x-amz-cf-pop',
+      'x-cache',
+      'via',
+      'x-served-by',
+      'x-timer',
+      'x-fastly-request-id',
+      'cf-ray',
+      'cf-cache-status',
+    ];
     
-    // 添加自定义头(可选)
-    newHeaders.set('x-proxy-by', 'Cloudflare-Worker');
+    headersToRemove.forEach(header => newHeaders.delete(header));
+    
+    // 添加安全头部
+    newHeaders.set('x-content-type-options', 'nosniff');
+    newHeaders.set('x-frame-options', 'DENY');
+    newHeaders.set('referrer-policy', 'no-referrer'); // 🔒 防止 Referer 泄露
+    
+    // 添加严格的 CSP (内容安全策略)
+    newHeaders.set('content-security-policy', 
+      "default-src 'self'; " +
+      "script-src 'self' 'unsafe-inline' 'unsafe-eval'; " + // React 需要 unsafe-eval
+      "style-src 'self' 'unsafe-inline'; " +
+      "img-src 'self' data: blob:; " +
+      "connect-src 'self'; " + // 🔒 限制只能连接到当前域名
+      "font-src 'self' data:; " +
+      "object-src 'none'; " +
+      "base-uri 'self'; " +
+      "form-action 'self'"
+    );
     
     // 6. 如果是 HTML，重写内容
     const contentType = response.headers.get('content-type') || '';
@@ -99,11 +128,28 @@ export default {
       });
     }
     
-    // 7. 非 HTML 内容直接返回
+    // 7. 非 HTML 内容直接返回（同样应用安全头部）
     return new Response(response.body, {
       status: response.status,
       statusText: response.statusText,
       headers: newHeaders
     });
+    } catch (error) {
+      // 🔒 错误处理：捕获所有异常，防止泄露源站信息
+      console.error('[Proxy Error]', error);
+      return new Response(
+        JSON.stringify({ 
+          error: 'Service temporarily unavailable',
+          message: 'Please try again later' 
+        }), 
+        {
+          status: 503,
+          headers: {
+            'content-type': 'application/json',
+            'x-content-type-options': 'nosniff',
+          }
+        }
+      );
+    }
   }
 };

@@ -184,5 +184,16 @@ export default defineConfig({
   // 构建配置
   build: {
     outDir: 'dist', // 输出目录，适配 Cloudflare Pages
+    sourcemap: false, // 🔒 禁用 Source Map，防止源代码泄露
+    minify: 'terser', // 使用 terser 进行更深度的混淆
+    terserOptions: {
+      compress: {
+        drop_console: true, // 移除 console.log
+        drop_debugger: true, // 移除 debugger
+      },
+      format: {
+        comments: false, // 移除所有注释
+      },
+    },
   },
 })
