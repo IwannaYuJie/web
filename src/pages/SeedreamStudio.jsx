@@ -62,17 +62,21 @@ function SeedreamStudio() {
     }
     
     return imageList.map((item, index) => {
+      console.log(`处理图片 ${index + 1}:`, item)
+      
       // 优先使用 url 字段
       if (item?.url) {
+        console.log(`图片 ${index + 1} 使用 URL 模式:`, item.url)
         return {
           src: item.url,
-          downloadName: item.file_name || item.file_name || `seedream_${index + 1}.png`
+          downloadName: item.file_name || `seedream_${index + 1}.png`
         }
       }
 
       // 其次尝试 base64 格式
       const base64 = item?.base64 || item?.b64_json || item?.content || ''
       if (base64) {
+        console.log(`图片 ${index + 1} 使用 Base64 模式`)
         return {
           src: `data:image/png;base64,${base64}`,
           downloadName: item?.file_name || `seedream_${index + 1}.png`
@@ -192,15 +196,26 @@ function SeedreamStudio() {
         return
       }
       
+      console.log('检查 result.images:', result.images)
+      console.log('result.images 是数组?', Array.isArray(result.images))
+      console.log('result.images 长度:', result.images?.length)
+      
       if (!result.images || !Array.isArray(result.images) || result.images.length === 0) {
-        setError('😿 生成成功但没有返回图像，请稍后重试')
-        console.error('图片数据异常:', result)
+        setError('😿 生成成功但没有返回图像，请检查控制台日志')
+        console.error('图片数据异常 - 完整结果:', JSON.stringify(result, null, 2))
         return
       }
 
       setResultSeed(result.seed ? String(result.seed) : '')
       const normalizedImages = normalizeImages(result.images)
       console.log('转换后的图片列表:', normalizedImages)
+      
+      if (normalizedImages.length === 0) {
+        setError('😿 图片格式转换失败，请检查控制台日志')
+        console.error('所有图片转换后为空，原始数据:', result.images)
+        return
+      }
+      
       setImages(normalizedImages)
     } catch (generationError) {
       console.error('调用 Fal Seedream 失败:', generationError)
