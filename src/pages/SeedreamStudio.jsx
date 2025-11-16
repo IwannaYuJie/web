@@ -1,4 +1,4 @@
-import React, { useEffect, useMemo, useState } from 'react'
+import React, { useEffect, useMemo, useRef, useState } from 'react'
 import { fal } from '@fal-ai/client'
 import './SeedreamStudio.css'
 
@@ -24,6 +24,13 @@ function SeedreamStudio() {
   const [resultSeed, setResultSeed] = useState('')
   const [images, setImages] = useState([])
   const [saveMessage, setSaveMessage] = useState('')
+  const [mode, setMode] = useState('text')
+  const [imageInputMethod, setImageInputMethod] = useState('upload')
+  const [uploadedImage, setUploadedImage] = useState(null)
+  const [uploadedImagePreview, setUploadedImagePreview] = useState('')
+  const [imageUrlsText, setImageUrlsText] = useState('')
+  const [controlScale, setControlScale] = useState(0.7)
+  const inputImageRef = useRef(null)
 
   /**
    * 初始化时尝试读取已保存的 API Key
@@ -39,6 +46,12 @@ function SeedreamStudio() {
     }
   }, [])
 
+  useEffect(() => () => {
+    if (uploadedImagePreview) {
+      URL.revokeObjectURL(uploadedImagePreview)
+    }
+  }, [uploadedImagePreview])
+
   /**
    * 根据当前选择构建 Fal API 所需的尺寸参数
    */
@@ -51,6 +64,14 @@ function SeedreamStudio() {
     }
     return sizePreset
   }, [sizePreset, customWidth, customHeight])
+
+  const controlScaleNumber = useMemo(() => {
+    const value = Number.parseFloat(String(controlScale))
+    if (Number.isNaN(value)) {
+      return 0.7
+    }
+    return value
+  }, [controlScale])
 
   /**
    * 将 Fal 返回的图片对象转换为组件可消费的统一格式
@@ -126,6 +147,53 @@ function SeedreamStudio() {
     setSeed(String(Math.floor(Math.random() * 9999999999)))
   }
 
+  const handleModeChange = (nextMode) => {
+    if (nextMode === mode) {
+      return
+    }
+    setMode(nextMode)
+    setError('')
+    setImages([])
+    setResultSeed('')
+    if (nextMode === 'text') {
+      handleRemoveUploadedImage()
+      setImageUrlsText('')
+      setImageInputMethod('upload')
+    }
+  }
+
+  const handleImageInputMethodChange = (method) => {
+    setImageInputMethod(method)
+    setImageUrlsText('')
+    if (method === 'urls') {
+      handleRemoveUploadedImage()
+    }
+  }
+
+  const handleImageUpload = (event) => {
+    const file = event.target.files?.[0]
+    if (!file) {
+      handleRemoveUploadedImage()
+      return
+    }
+    if (uploadedImagePreview) {
+      URL.revokeObjectURL(uploadedImagePreview)
+    }
+    setUploadedImage(file)
+    setUploadedImagePreview(URL.createObjectURL(file))
+  }
+
+  const handleRemoveUploadedImage = () => {
+    if (uploadedImagePreview) {
+      URL.revokeObjectURL(uploadedImagePreview)
+    }
+    setUploadedImage(null)
+    setUploadedImagePreview('')
+    if (inputImageRef.current) {
+      inputImageRef.current.value = ''
+    }
+  }
+
   /**
    * 调用 Fal.ai Seedream v4 文生图能力
    */
@@ -149,6 +217,24 @@ function SeedreamStudio() {
       if (!sizeValid) {
         setError('😿 自定义尺寸需在 1024~4096 像素之间')
         return
+      }
+    }
+
+    let presetUrlList = []
+    if (mode === 'edit') {
+      if (imageInputMethod === 'upload' && !uploadedImage) {
+        setError('😿 改图模式需要先上传一张基础图像')
+        return
+      }
+      if (imageInputMethod === 'urls') {
+        presetUrlList = imageUrlsText
+          .split('\n')
+          .map((raw) => raw.trim())
+          .filter(Boolean)
+        if (presetUrlList.length === 0) {
+          setError('😿 请提供至少一个有效的图像 URL')
+          return
+        }
       }
     }
 
@@ -177,9 +263,32 @@ function SeedreamStudio() {
         }
       }
 
+      let modelId = 'fal-ai/bytedance/seedream/v4/text-to-image'
+
+      if (mode === 'edit') {
+        modelId = 'fal-ai/bytedance/seedream/v4/edit'
+        inputPayload.control_scale = controlScaleNumber
+
+        if (imageInputMethod === 'upload') {
+          try {
+            console.log('上传基础图像到 Fal 存储')
+            setError('')
+            const uploadedUrl = await fal.storage.upload(uploadedImage)
+            inputPayload.image_urls = [uploadedUrl]
+          } catch (uploadError) {
+            console.error('上传基础图像失败:', uploadError)
+            setError(uploadError?.message || '😿 上传基础图像失败，请稍后再试')
+            setLoading(false)
+            return
+          }
+        } else {
+          inputPayload.image_urls = presetUrlList
+        }
+      }
+
       console.log('Seedream 输入参数:', inputPayload)
 
-      const result = await fal.subscribe('fal-ai/bytedance/seedream/v4/text-to-image', {
+      const result = await fal.subscribe(modelId, {
         input: inputPayload,
         logs: true,
         onQueueUpdate: (update) => {
@@ -190,21 +299,21 @@ function SeedreamStudio() {
       })
 
       console.log('Fal.ai 完整返回结果:', result)
-      
+
       if (!result) {
         setError('😿 没有收到返回结果，请稍后重试')
         return
       }
-      
+
       // Fal.ai 返回格式: { data: { images: [...], seed: ... }, requestId: ... }
       const resultData = result.data || result
       const imageList = resultData.images
       const resultSeedValue = resultData.seed
-      
+
       console.log('提取的图片数组:', imageList)
       console.log('图片数组是数组?', Array.isArray(imageList))
       console.log('图片数组长度:', imageList?.length)
-      
+
       if (!imageList || !Array.isArray(imageList) || imageList.length === 0) {
         setError('😿 生成成功但没有返回图像，请检查控制台日志')
         console.error('图片数据异常 - 完整结果:', JSON.stringify(result, null, 2))
@@ -214,13 +323,13 @@ function SeedreamStudio() {
       setResultSeed(resultSeedValue ? String(resultSeedValue) : '')
       const normalizedImages = normalizeImages(imageList)
       console.log('转换后的图片列表:', normalizedImages)
-      
+
       if (normalizedImages.length === 0) {
         setError('😿 图片格式转换失败，请检查控制台日志')
         console.error('所有图片转换后为空，原始数据:', imageList)
         return
       }
-      
+
       setImages(normalizedImages)
     } catch (generationError) {
       console.error('调用 Fal Seedream 失败:', generationError)
@@ -279,6 +388,100 @@ function SeedreamStudio() {
                 />
               </div>
             </div>
+
+            <div className="panel-card">
+              <h2>🧪 生成模式</h2>
+              <div className="mode-toggle" role="group" aria-label="Seedream 模式切换">
+                <button
+                  type="button"
+                  className={`mode-button${mode === 'text' ? ' active' : ''}`}
+                  onClick={() => handleModeChange('text')}
+                >
+                  文生图
+                </button>
+                <button
+                  type="button"
+                  className={`mode-button${mode === 'edit' ? ' active' : ''}`}
+                  onClick={() => handleModeChange('edit')}
+                >
+                  图像编辑
+                </button>
+              </div>
+              {mode === 'edit' && (
+                <p className="panel-tip">需要上传或提供待编辑图像，生成结果保持橘猫主题风格</p>
+              )}
+            </div>
+
+            {mode === 'edit' && (
+              <div className="panel-card">
+                <h2>🖼️ 输入图像</h2>
+                <div className="input-tabs" role="tablist">
+                  <button
+                    type="button"
+                    className={`input-tab${imageInputMethod === 'upload' ? ' active' : ''}`}
+                    onClick={() => handleImageInputMethodChange('upload')}
+                  >
+                    本地上传
+                  </button>
+                  <button
+                    type="button"
+                    className={`input-tab${imageInputMethod === 'urls' ? ' active' : ''}`}
+                    onClick={() => handleImageInputMethodChange('urls')}
+                  >
+                    粘贴 URL
+                  </button>
+                </div>
+
+                {imageInputMethod === 'upload' ? (
+                  <div className="file-upload">
+                    <label className="file-label" htmlFor="seedream-upload">
+                      <span>选择一张基础图像</span>
+                      <input
+                        id="seedream-upload"
+                        ref={inputImageRef}
+                        type="file"
+                        accept="image/*"
+                        onChange={handleImageUpload}
+                      />
+                    </label>
+                    {uploadedImage && (
+                      <div className="upload-preview">
+                        <img src={uploadedImagePreview} alt="待编辑的基础图像预览" />
+                        <button type="button" className="remove-button" onClick={handleRemoveUploadedImage}>
+                          移除图像
+                        </button>
+                      </div>
+                    )}
+                  </div>
+                ) : (
+                  <div className="field-group">
+                    <label htmlFor="seedream-url-input">图像 URLs（每行一条）</label>
+                    <textarea
+                      id="seedream-url-input"
+                      rows={4}
+                      placeholder="https://example.com/image.png"
+                      value={imageUrlsText}
+                      onChange={(event) => setImageUrlsText(event.target.value)}
+                    />
+                    <p className="panel-tip">确保链接可直接访问原图，建议使用 HTTPS 地址</p>
+                  </div>
+                )}
+
+                <div className="field-group">
+                  <label htmlFor="seedream-control-scale">编辑强度 (0 - 2)</label>
+                  <input
+                    id="seedream-control-scale"
+                    type="range"
+                    min="0"
+                    max="2"
+                    step="0.05"
+                    value={controlScale}
+                    onChange={(event) => setControlScale(event.target.value)}
+                  />
+                  <span className="range-value">当前强度：{controlScaleNumber.toFixed(2)}</span>
+                </div>
+              </div>
+            )}
 
             <div className="panel-card">
               <h2>⚙️ 参数设置</h2>
@@ -412,6 +615,8 @@ function SeedreamStudio() {
                   <span>生成中...</span>
                   <span className="seedream-loader" aria-hidden="true" />
                 </>
+              ) : mode === 'edit' ? (
+                '✨ 编辑图像'
               ) : (
                 '✨ 生成图像'
               )}

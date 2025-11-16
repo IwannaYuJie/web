@@ -164,6 +164,101 @@
   font-size: 0.95rem;
 }
 
+.mode-toggle,
+.input-tabs {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 0.75rem;
+}
+
+.mode-button,
+.input-tab {
+  border: 2px solid var(--border-color);
+  border-radius: var(--radius-full);
+  padding: 0.65rem 1rem;
+  font-weight: 600;
+  background: white;
+  color: var(--text-color);
+  transition: background 0.3s ease, border-color 0.3s ease, color 0.3s ease;
+}
+
+.mode-button.active,
+.input-tab.active {
+  background: var(--gradient-warm);
+  border-color: var(--primary-color);
+  color: white;
+}
+
+.mode-button:hover,
+.input-tab:hover {
+  border-color: var(--primary-color);
+}
+
+.file-upload {
+  display: flex;
+  flex-direction: column;
+  gap: 0.9rem;
+}
+
+.file-label {
+  border: 2px dashed var(--border-color);
+  border-radius: var(--radius-md);
+  padding: 1.1rem;
+  text-align: center;
+  font-weight: 600;
+  color: var(--primary-color);
+  cursor: pointer;
+  background: rgba(255, 191, 102, 0.12);
+  position: relative;
+}
+
+.file-label:hover {
+  border-color: var(--primary-color);
+  background: rgba(255, 191, 102, 0.2);
+}
+
+.file-label input {
+  position: absolute;
+  inset: 0;
+  opacity: 0;
+  cursor: pointer;
+}
+
+.upload-preview {
+  position: relative;
+  border: 2px solid rgba(255, 191, 102, 0.4);
+  border-radius: var(--radius-md);
+  overflow: hidden;
+  box-shadow: var(--shadow);
+}
+
+.upload-preview img {
+  width: 100%;
+  display: block;
+}
+
+.remove-button {
+  position: absolute;
+  top: 0.6rem;
+  right: 0.6rem;
+  background: var(--primary-color);
+  border: none;
+  color: white;
+  border-radius: var(--radius-full);
+  padding: 0.35rem 0.75rem;
+  font-weight: 600;
+  cursor: pointer;
+}
+
+.remove-button:hover {
+  background: var(--primary-hover);
+}
+
+.range-value {
+  font-weight: 600;
+  color: var(--text-color);
+}
+
 .toggle-group {
   display: flex;
   flex-direction: column;

@@ -4,6 +4,24 @@
 
 ---
 
+## [2025-11-17] - 🖼️ Seedream v4 图像编辑能力
+
+### ✨ 新功能
+
+- 在 `src/pages/SeedreamStudio.jsx` 中加入模式切换，支持切换到改图模式并调用 `fal-ai/bytedance/seedream/v4/edit`
+- 在改图模式下新增本地上传与 URL 粘贴两种入图方式、控制强度滑块，以及实时预览与移除入口
+
+### 💅 样式更新
+
+- `src/pages/SeedreamStudio.css` 新增模式切换、上传预览、标签按钮等橘猫主题样式，保持与现有面板视觉一致
+
+### 🧪 行为优化
+
+- 在 `SeedreamStudio.jsx` 中统一处理 Fal.ai 返回结构，沿用文生图解析逻辑以兼容 `result.data.images`
+- 引入 Fal.ai 存储上传流程，确保本地文件可安全传递至改图 API
+
+---
+
 ## [2025-11-17] - 🎨 新增 Seedream v4 隐藏实验室
 
 ### ✨ 新功能
