@@ -10,7 +10,7 @@ function SeedreamStudio() {
   const storageKey = 'seedream-fal-key'
   const [apiKey, setApiKey] = useState('')
   const [prompt, setPrompt] = useState('')
-  const [sizePreset, setSizePreset] = useState('square_hd')
+  const [sizePreset, setSizePreset] = useState('auto_4K')
   const [customWidth, setCustomWidth] = useState('1024')
   const [customHeight, setCustomHeight] = useState('1024')
   const [enhanceMode, setEnhanceMode] = useState('standard')
@@ -56,14 +56,21 @@ function SeedreamStudio() {
    * 将 Fal 返回的图片对象转换为组件可消费的统一格式
    */
   const normalizeImages = (imageList = []) => {
+    if (!Array.isArray(imageList)) {
+      console.warn('图片列表不是数组:', imageList)
+      return []
+    }
+    
     return imageList.map((item, index) => {
+      // 优先使用 url 字段
       if (item?.url) {
         return {
           src: item.url,
-          downloadName: item.file_name || `seedream_${index + 1}.png`
+          downloadName: item.file_name || item.file_name || `seedream_${index + 1}.png`
         }
       }
 
+      // 其次尝试 base64 格式
       const base64 = item?.base64 || item?.b64_json || item?.content || ''
       if (base64) {
         return {
@@ -72,6 +79,7 @@ function SeedreamStudio() {
         }
       }
 
+      console.warn('无法识别的图片格式:', item)
       return null
     }).filter(Boolean)
   }
@@ -177,13 +185,23 @@ function SeedreamStudio() {
         }
       })
 
-      if (!result || !Array.isArray(result.images) || result.images.length === 0) {
+      console.log('Fal.ai 完整返回结果:', result)
+      
+      if (!result) {
+        setError('😿 没有收到返回结果，请稍后重试')
+        return
+      }
+      
+      if (!result.images || !Array.isArray(result.images) || result.images.length === 0) {
         setError('😿 生成成功但没有返回图像，请稍后重试')
+        console.error('图片数据异常:', result)
         return
       }
 
       setResultSeed(result.seed ? String(result.seed) : '')
-      setImages(normalizeImages(result.images))
+      const normalizedImages = normalizeImages(result.images)
+      console.log('转换后的图片列表:', normalizedImages)
+      setImages(normalizedImages)
     } catch (generationError) {
       console.error('调用 Fal Seedream 失败:', generationError)
       setError(generationError?.message || '😿 发生未知错误，请稍后再试')
