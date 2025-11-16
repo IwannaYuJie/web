@@ -198,26 +198,26 @@ function SeedreamStudio() {
       
       // Fal.ai 返回格式: { data: { images: [...], seed: ... }, requestId: ... }
       const resultData = result.data || result
-      const images = resultData.images
-      const seed = resultData.seed
+      const imageList = resultData.images
+      const resultSeedValue = resultData.seed
       
-      console.log('提取的图片数组:', images)
-      console.log('图片数组是数组?', Array.isArray(images))
-      console.log('图片数组长度:', images?.length)
+      console.log('提取的图片数组:', imageList)
+      console.log('图片数组是数组?', Array.isArray(imageList))
+      console.log('图片数组长度:', imageList?.length)
       
-      if (!images || !Array.isArray(images) || images.length === 0) {
+      if (!imageList || !Array.isArray(imageList) || imageList.length === 0) {
         setError('😿 生成成功但没有返回图像，请检查控制台日志')
         console.error('图片数据异常 - 完整结果:', JSON.stringify(result, null, 2))
         return
       }
 
-      setResultSeed(seed ? String(seed) : '')
-      const normalizedImages = normalizeImages(images)
+      setResultSeed(resultSeedValue ? String(resultSeedValue) : '')
+      const normalizedImages = normalizeImages(imageList)
       console.log('转换后的图片列表:', normalizedImages)
       
       if (normalizedImages.length === 0) {
         setError('😿 图片格式转换失败，请检查控制台日志')
-        console.error('所有图片转换后为空，原始数据:', images)
+        console.error('所有图片转换后为空，原始数据:', imageList)
         return
       }
       
