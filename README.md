@@ -247,6 +247,7 @@ npm run preview
 - **实时预览**: 生成后立即展示图片和详细信息
 - **使用提示**: 提供使用技巧，帮助生成更好的图片
 - **API 集成**: 使用火山引擎 Seedream 4.0 图片生成 API
+- **高级实验室**: 访问 `/secret-seedream` 可体验 Fal.ai Seedream v4 高级面板（需自备 FAL_KEY）
 
 ## 🛠️ 技术栈
 

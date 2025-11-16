@@ -4,6 +4,28 @@
 
 ---
 
+## [2025-11-17] - 🎨 新增 Seedream v4 隐藏实验室
+
+### ✨ 新功能
+
+- 在 `src/pages/SeedreamStudio.jsx` 中新增 Fal.ai Seedream v4 文生图实验室页面，支持尺寸预设、自定义尺寸、增强模式、同步模式以及安全检查等参数调节
+- 结果面板支持查看生成种子、批量展示图片并提供下载入口，兼容 URL 与 Base64 两种返回格式
+
+### 🔐 用户体验
+
+- 提供本地 API Key 管理：页面允许输入、保存与清除 FAL_KEY，信息仅存储在浏览器 `localStorage`
+- 在 `src/App.jsx` 注册隐藏路由 `/secret-seedream`，仅通过手动访问启用高级面板
+
+### 📦 依赖调整
+
+- 在 `package.json` 中新增 `@fal-ai/client` 依赖以调用 Fal.ai SDK
+
+### 📚 文档同步
+
+- 在 `README.md` 的 AI 图片生成章节补充隐藏实验室入口与使用说明
+
+---
+
 ## [2025-11-15] - 🔒 Worker 反向代理安全加固
 
 ### 🛡️ 安全增强（Security Enhancement）

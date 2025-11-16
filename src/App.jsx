@@ -5,6 +5,7 @@ import ImageGenerator from './pages/ImageGenerator'
 import AIChat from './pages/AIChat'
 import ArticleManager from './pages/ArticleManager'
 import GameHub from './pages/GameHub'
+import SeedreamStudio from './pages/SeedreamStudio'
 import './App.css'
 
 /**
@@ -44,6 +45,8 @@ function AppContent() {
           <Route path="/admin/articles" element={<ArticleManager />} />
           {/* 隐藏的游戏中心页面 - 不在导航栏显示 */}
           <Route path="/secret-games" element={<GameHub />} />
+          {/* 隐藏的 Seedream AI 实验室 - 仅手动访问 */}
+          <Route path="/secret-seedream" element={<SeedreamStudio />} />
         </Routes>
       </main>
 
