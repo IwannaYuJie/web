@@ -649,7 +649,10 @@ function SeedreamStudio() {
             {error && <p className="error-banner" role="alert">{error}</p>}
           </section>
 
-          <section className="seedream-output" aria-label="生成结果区域">
+          <section 
+            className={`seedream-output ${!loading && images.length === 0 ? 'mobile-hidden' : ''}`} 
+            aria-label="生成结果区域"
+          >
             <div className="output-card">
               <h2>🎨 生成结果</h2>
 

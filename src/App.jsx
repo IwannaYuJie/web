@@ -15,11 +15,13 @@ import './App.css'
 function AppContent() {
   const location = useLocation()
   const isGameHub = location.pathname === '/secret-games'
+  const isSeedreamStudio = location.pathname === '/secret-seedream'
+  const hideNavAndFooter = isGameHub || isSeedreamStudio
 
   return (
     <div className="app">
-      {/* 导航栏 - 橘猫主题 (游戏中心页面不显示) */}
-      {!isGameHub && (
+      {/* 导航栏 - 橘猫主题 (游戏中心和 Seedream 页面不显示) */}
+      {!hideNavAndFooter && (
         <nav className="navbar">
           <div className="container">
             <Link to="/" className="logo">
@@ -36,7 +38,7 @@ function AppContent() {
       )}
 
       {/* 路由配置 */}
-      <main className={isGameHub ? "main-content-fullscreen" : "main-content"}>
+      <main className={hideNavAndFooter ? "main-content-fullscreen" : "main-content"}>
         <Routes>
           <Route path="/" element={<Home />} />
           <Route path="/article/:id" element={<ArticleDetail />} />
@@ -50,8 +52,8 @@ function AppContent() {
         </Routes>
       </main>
 
-      {/* 页脚 - 橘猫爪印 (游戏中心页面不显示) */}
-      {!isGameHub && (
+      {/* 页脚 - 橘猫爪印 (游戏中心和 Seedream 页面不显示) */}
+      {!hideNavAndFooter && (
         <footer className="footer">
           <p>© 2025 橘猫小窝 🐾 | 用 🧡 和 ☕ 制作</p>
         </footer>

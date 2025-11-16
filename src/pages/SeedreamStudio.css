@@ -1,6 +1,7 @@
 /* SeedreamStudio 页面样式 - 橘猫主题参数面板与结果展示 */
 .seedream-page {
-  padding: 3rem 0;
+  padding: 2rem 0;
+  min-height: 100vh;
 }
 
 .seedream-header {
@@ -25,6 +26,25 @@
   grid-template-columns: minmax(0, 420px) 1fr;
   gap: 2rem;
   align-items: start;
+}
+
+@media (max-width: 1024px) {
+  .seedream-layout {
+    grid-template-columns: 1fr;
+  }
+
+  .seedream-panel {
+    order: 1;
+  }
+
+  .seedream-output {
+    order: 2;
+  }
+  
+  /* 移动端：没有图片时隐藏结果区域 */
+  .seedream-output.mobile-hidden {
+    display: none;
+  }
 }
 
 .seedream-panel {
@@ -457,28 +477,34 @@
   color: var(--primary-hover);
 }
 
-@media (max-width: 1024px) {
-  .seedream-layout {
-    grid-template-columns: 1fr;
-  }
-
-  .seedream-panel {
-    order: 2;
-  }
-
-  .seedream-output {
-    order: 1;
-  }
-}
-
 @media (max-width: 768px) {
+  .seedream-page {
+    padding: 1rem 0;
+  }
+
+  .seedream-header {
+    margin-bottom: 1.5rem;
+  }
+
   .seedream-header h1 {
-    font-size: 2rem;
+    font-size: 1.8rem;
+  }
+  
+  .seedream-header p {
+    font-size: 0.95rem;
   }
 
   .panel-card,
   .output-card {
     padding: 1.25rem;
+  }
+  
+  .collapse-header {
+    padding: 1rem 1.25rem;
+  }
+  
+  .collapse-content {
+    padding: 0 1.25rem 1.25rem;
   }
 
   .field-grid {
@@ -491,11 +517,29 @@
 }
 
 @media (max-width: 480px) {
+  .seedream-page {
+    padding: 0.75rem 0;
+  }
+  
+  .seedream-header h1 {
+    font-size: 1.5rem;
+  }
+
   .seedream-header p {
-    font-size: 1rem;
+    font-size: 0.9rem;
   }
 
   .generate-button {
     padding: 0.8rem 1.1rem;
+    font-size: 0.95rem;
+  }
+  
+  .panel-card h2,
+  .output-card h2 {
+    font-size: 1.1rem;
+  }
+  
+  .image-grid {
+    grid-template-columns: 1fr;
   }
 }
