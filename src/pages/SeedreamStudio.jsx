@@ -30,6 +30,8 @@ function SeedreamStudio() {
   const [uploadedImagePreview, setUploadedImagePreview] = useState('')
   const [imageUrlsText, setImageUrlsText] = useState('')
   const [controlScale, setControlScale] = useState(0.7)
+  const [showApiKeyPanel, setShowApiKeyPanel] = useState(false)
+  const [showParamsPanel, setShowParamsPanel] = useState(false)
   const inputImageRef = useRef(null)
 
   /**
@@ -351,28 +353,39 @@ function SeedreamStudio() {
 
         <div className="seedream-layout">
           <section className="seedream-panel" aria-label="生成设置面板">
-            <div className="panel-card">
-              <h2>🔑 Fal.ai API Key</h2>
-              <p className="panel-tip">API Key 仅保存在本地浏览器，请放心使用</p>
-              <div className="field-group">
-                <label htmlFor="fal-api-key">FAL_KEY</label>
-                <input
-                  id="fal-api-key"
-                  type="text"
-                  placeholder="输入 Fal.ai API Key"
-                  value={apiKey}
-                  onChange={(event) => setApiKey(event.target.value)}
-                />
-              </div>
-              <div className="panel-actions">
-                <button type="button" className="primary" onClick={handleSaveKey}>
-                  🐾 保存到本地
-                </button>
-                <button type="button" className="ghost" onClick={handleClearKey}>
-                  🧼 清除保存
-                </button>
-              </div>
-              {saveMessage && <p className="panel-message">{saveMessage}</p>}
+            <div className="panel-card collapsible">
+              <button 
+                type="button"
+                className="collapse-header"
+                onClick={() => setShowApiKeyPanel(!showApiKeyPanel)}
+              >
+                <h2>🔑 Fal.ai API Key</h2>
+                <span className="collapse-icon">{showApiKeyPanel ? '▼' : '▶'}</span>
+              </button>
+              {showApiKeyPanel && (
+                <div className="collapse-content">
+                  <p className="panel-tip">API Key 仅保存在本地浏览器，请放心使用</p>
+                  <div className="field-group">
+                    <label htmlFor="fal-api-key">FAL_KEY</label>
+                    <input
+                      id="fal-api-key"
+                      type="text"
+                      placeholder="输入 Fal.ai API Key"
+                      value={apiKey}
+                      onChange={(event) => setApiKey(event.target.value)}
+                    />
+                  </div>
+                  <div className="panel-actions">
+                    <button type="button" className="primary" onClick={handleSaveKey}>
+                      🐾 保存到本地
+                    </button>
+                    <button type="button" className="ghost" onClick={handleClearKey}>
+                      🧼 清除保存
+                    </button>
+                  </div>
+                  {saveMessage && <p className="panel-message">{saveMessage}</p>}
+                </div>
+              )}
             </div>
 
             <div className="panel-card">
@@ -483,8 +496,17 @@ function SeedreamStudio() {
               </div>
             )}
 
-            <div className="panel-card">
-              <h2>⚙️ 参数设置</h2>
+            <div className="panel-card collapsible">
+              <button 
+                type="button"
+                className="collapse-header"
+                onClick={() => setShowParamsPanel(!showParamsPanel)}
+              >
+                <h2>⚙️ 参数设置</h2>
+                <span className="collapse-icon">{showParamsPanel ? '▼' : '▶'}</span>
+              </button>
+              {showParamsPanel && (
+                <div className="collapse-content">
               <div className="field-grid">
                 <div className="field-group">
                   <label htmlFor="seedream-size">图像尺寸</label>
@@ -602,6 +624,8 @@ function SeedreamStudio() {
                   <span>启用安全检查</span>
                 </label>
               </div>
+                </div>
+              )}
             </div>
 
             <button
