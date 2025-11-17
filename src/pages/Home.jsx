@@ -168,6 +168,11 @@ function Home() {
         </div>
       </header>
 
+      {/* Google 自定义搜索 */}
+      <section className="search-section">
+        <div className="gcse-search"></div>
+      </section>
+
       {/* 快速导航区 */}
       <section className="quick-nav-section">
         <div className="quick-nav-grid">
