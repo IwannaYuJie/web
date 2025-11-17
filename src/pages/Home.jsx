@@ -287,28 +287,6 @@ function Home() {
           </div>
         )}
       </section>
-
-      {/* Java学习路线 */}
-      <section className="cat-tips-section">
-        <h2>🎓 Java学习路线推荐</h2>
-        <div className="tips-carousel">
-          <div className="tip-card active">
-            <span className="tip-icon">📚</span>
-            <h3>基础阶段</h3>
-            <p>Java基础语法、面向对象、集合框架、IO流、多线程</p>
-          </div>
-          <div className="tip-card">
-            <span className="tip-icon">🔥</span>
-            <h3>进阶阶段</h3>
-            <p>JVM原理、并发编程、设计模式、Spring全家桶</p>
-          </div>
-          <div className="tip-card">
-            <span className="tip-icon">🏆</span>
-            <h3>高级阶段</h3>
-            <p>分布式系统、微服务架构、性能调优、源码分析</p>
-          </div>
-        </div>
-      </section>
     </div>
   )
 }
