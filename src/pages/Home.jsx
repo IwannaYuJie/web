@@ -162,29 +162,15 @@ function Home() {
 
   return (
     <div className="container">
-      {/* 页面标题 - 橘猫主题 */}
-      <header className="page-header home-header">
-        <div className="cat-mood-indicator">
-          <img src="/images/cat-avatar.png" alt="橘猫" className="cat-avatar" />
-          <span className="mood-text">橘猫心情</span>
-        </div>
-        <h1>🐱 橘猫的小窝 🧡</h1>
-        <p className="greeting">{getGreeting()}</p>
-        <div className="header-stats">
-          <div className="stat-item">
-            <span className="stat-icon">👥</span>
-            <span className="stat-value">{visitorCount.toLocaleString()}</span>
-            <span className="stat-label">访客</span>
+      {/* 页面标题 - 橘猫主题（精简版） */}
+      <header className="page-header home-header-compact">
+        <div className="welcome-section">
+          <div className="cat-mood-mini">
+            <img src="/images/cat-avatar.png" alt="橘猫" className="cat-avatar-small" />
           </div>
-          <div className="stat-item">
-            <span className="stat-icon">📝</span>
-            <span className="stat-value">{articles.length}</span>
-            <span className="stat-label">文章</span>
-          </div>
-          <div className="stat-item">
-            <span className="stat-icon">🕰️</span>
-            <span className="stat-value">{currentTime.toLocaleTimeString('zh-CN')}</span>
-            <span className="stat-label">当前时间</span>
+          <div className="welcome-text">
+            <h1>🐱 橘猫的小窝</h1>
+            <p className="greeting-compact">{getGreeting()}</p>
           </div>
         </div>
       </header>

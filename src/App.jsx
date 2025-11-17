@@ -21,6 +21,12 @@ function AppContent() {
   const hideNavAndFooter = isGameHub || isSeedreamStudio
   const [isScrolled, setIsScrolled] = React.useState(false)
   const [mobileMenuOpen, setMobileMenuOpen] = React.useState(false) // 移动端菜单状态
+  
+  // 统计信息状态
+  const [visitorCount, setVisitorCount] = React.useState(12345)
+  const [articleCount, setArticleCount] = React.useState(0)
+  const [currentTime, setCurrentTime] = React.useState(new Date())
+  const [statsExpanded, setStatsExpanded] = React.useState(false) // 统计信息展开状态
 
   // 监听滚动事件，给导航栏添加动态效果
   React.useEffect(() => {
@@ -30,6 +36,30 @@ function AppContent() {
     
     window.addEventListener('scroll', handleScroll)
     return () => window.removeEventListener('scroll', handleScroll)
+  }, [])
+  
+  // 获取文章数量
+  React.useEffect(() => {
+    fetch('/api/articles')
+      .then(res => res.json())
+      .then(data => setArticleCount(data.length))
+      .catch(() => setArticleCount(0))
+  }, [])
+  
+  // 更新时间
+  React.useEffect(() => {
+    const timer = setInterval(() => {
+      setCurrentTime(new Date())
+    }, 1000)
+    return () => clearInterval(timer)
+  }, [])
+  
+  // 模拟访客增长
+  React.useEffect(() => {
+    const countTimer = setInterval(() => {
+      setVisitorCount(prev => prev + Math.floor(Math.random() * 3))
+    }, 5000)
+    return () => clearInterval(countTimer)
   }, [])
 
   // 切换移动端菜单
@@ -68,6 +98,42 @@ function AppContent() {
               <Link to="/image-generator" onClick={closeMobileMenu}>🎨 AI画板</Link>
               <Link to="/ai-chat" onClick={closeMobileMenu}>🤖 AI对话</Link>
               <Link to="/admin/articles" onClick={closeMobileMenu}>📝 文章管理</Link>
+            </div>
+            
+            {/* 紧凑型统计信息 */}
+            <div 
+              className={`navbar-stats ${statsExpanded ? 'expanded' : ''}`}
+              onMouseEnter={() => setStatsExpanded(true)}
+              onMouseLeave={() => setStatsExpanded(false)}
+            >
+              <div className="stats-compact">
+                <span className="stat-badge" title="访客数">👥 {visitorCount.toLocaleString()}</span>
+                <span className="stat-badge" title="文章数">📝 {articleCount}</span>
+                <span className="stat-badge" title="当前时间">🕒 {currentTime.toLocaleTimeString('zh-CN', { hour: '2-digit', minute: '2-digit' })}</span>
+              </div>
+              <div className="stats-detail">
+                <div className="detail-item">
+                  <span className="detail-icon">👥</span>
+                  <div>
+                    <div className="detail-label">访客数</div>
+                    <div className="detail-value">{visitorCount.toLocaleString()}</div>
+                  </div>
+                </div>
+                <div className="detail-item">
+                  <span className="detail-icon">📝</span>
+                  <div>
+                    <div className="detail-label">文章总数</div>
+                    <div className="detail-value">{articleCount}</div>
+                  </div>
+                </div>
+                <div className="detail-item">
+                  <span className="detail-icon">🕒</span>
+                  <div>
+                    <div className="detail-label">当前时间</div>
+                    <div className="detail-value">{currentTime.toLocaleString('zh-CN')}</div>
+                  </div>
+                </div>
+              </div>
             </div>
           </div>
         </nav>
