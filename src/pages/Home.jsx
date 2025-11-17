@@ -19,6 +19,7 @@ function Home() {
   const [visitorCount, setVisitorCount] = useState(12345) // 访问计数
   const [currentTime, setCurrentTime] = useState(new Date())
   const [selectedCategory, setSelectedCategory] = useState('全部')
+  const [showBackToTop, setShowBackToTop] = useState(false) // 返回顶部按钮显示状态
 
   // 橘猫心情数组
   const catMoods = ['😺', '😸', '😹', '😻', '😼', '😽', '🙀', '😿', '😾']
@@ -87,6 +88,26 @@ function Home() {
     }, 5000)
     return () => clearInterval(countTimer)
   }, [])
+
+  // 监听滚动，显示/隐藏返回顶部按钮
+  useEffect(() => {
+    const handleScroll = () => {
+      setShowBackToTop(window.scrollY > 400)
+    }
+    
+    window.addEventListener('scroll', handleScroll)
+    return () => window.removeEventListener('scroll', handleScroll)
+  }, [])
+
+  /**
+   * 滚动到页面顶部
+   */
+  const scrollToTop = () => {
+    window.scrollTo({
+      top: 0,
+      behavior: 'smooth'
+    })
+  }
 
   /**
    * 获取随机名言
@@ -287,6 +308,15 @@ function Home() {
           </div>
         )}
       </section>
+      
+      {/* 返回顶部按钮 */}
+      <button 
+        className={`back-to-top ${showBackToTop ? 'visible' : ''}`}
+        onClick={scrollToTop}
+        aria-label="返回顶部"
+      >
+        ⬆️
+      </button>
     </div>
   )
 }
