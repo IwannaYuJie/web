@@ -25,7 +25,7 @@ function AppContent() {
         <nav className="navbar">
           <div className="container">
             <Link to="/" className="logo">
-              🐱 橘猫小窝
+              <img src="/images/cat-avatar.png" alt="橘猫" className="logo-avatar" /> 橘猫小窝
             </Link>
             <div className="nav-links">
               <Link to="/">🏠 首页</Link>

@@ -144,7 +144,7 @@ function Home() {
       {/* 页面标题 - 橘猫主题 */}
       <header className="page-header home-header">
         <div className="cat-mood-indicator">
-          <span className="cat-mood">{catMood}</span>
+          <img src="/images/cat-avatar.png" alt="橘猫" className="cat-avatar" />
           <span className="mood-text">橘猫心情</span>
         </div>
         <h1>🐱 橘猫的小窝 🧡</h1>
