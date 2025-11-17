@@ -7,24 +7,8 @@ const ARK_API_KEY_DEV = process.env.ARK_API_KEY || 'YOUR_ARK_API_KEY_HERE'
 const QINIU_AI_API_KEY_DEV = process.env.QINIU_AI_API_KEY || 'YOUR_QINIU_AI_API_KEY_HERE'
 
 // 模拟文章数据（用于本地开发）
-let mockArticles = [
-  {
-    id: 1,
-    title: '☕ Spring Boot 3.0 新特性深度解析',
-    description: '详细介绍 Spring Boot 3.0 的核心新特性，包括 GraalVM 原生镜像支持、Java 17 基线等重要更新',
-    date: '2024-01-15',
-    category: 'Spring框架',
-    readTime: '15 分钟'
-  },
-  {
-    id: 2,
-    title: '🚀 微服务架构设计最佳实践',
-    description: '从零开始构建微服务架构，涵盖服务拆分、API网关、服务发现、配置中心等核心组件',
-    date: '2024-01-10',
-    category: '微服务',
-    readTime: '20 分钟'
-  }
-]
+// 注意：所有测试示例文章已清空，可通过文章管理页面添加新文章
+let mockArticles = []
 
 // Vite 配置文件
 // https://vitejs.dev/config/
