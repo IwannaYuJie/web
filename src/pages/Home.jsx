@@ -180,120 +180,128 @@ function Home() {
         <div className="gcse-search"></div>
       </section>
 
-      {/* 快速导航区 */}
-      <section className="quick-nav-section">
-        <div className="quick-nav-grid">
-          <a href="#articles" className="quick-nav-card">
-            <span className="nav-icon">☕</span>
-            <h3>Java核心</h3>
-            <p>JDK新特性、JVM原理</p>
-          </a>
-          <a href="#articles" className="quick-nav-card">
-            <span className="nav-icon">🌱</span>
-            <h3>Spring生态</h3>
-            <p>Spring Boot、Cloud、Security</p>
-          </a>
-          <a href="#articles" className="quick-nav-card">
-            <span className="nav-icon">🚀</span>
-            <h3>微服务架构</h3>
-            <p>分布式系统设计</p>
-          </a>
-          <a href="https://github.com" target="_blank" rel="noopener noreferrer" className="quick-nav-card">
-            <span className="nav-icon">💻</span>
+      {/* 主要内容区 - 两栏布局 */}
+      <div className="main-content-layout">
+        {/* 左侧：开源项目大卡片 */}
+        <aside className="sidebar-project">
+          <div className="project-card-featured">
+            <div className="project-icon">💻</div>
             <h3>开源项目</h3>
-            <p>GitHub代码仓库</p>
-          </a>
-        </div>
-      </section>
+            <p className="project-description">查看我的 GitHub 代码仓库，探索技术实践与开源贡献</p>
+            <a 
+              href="https://github.com/IwannaYuJie" 
+              target="_blank" 
+              rel="noopener noreferrer" 
+              className="project-button"
+            >
+              <span>访问 GitHub</span>
+              <span className="button-icon">→</span>
+            </a>
+            <div className="project-stats">
+              <div className="stat-item">
+                <span className="stat-icon">⭐</span>
+                <span>Star 项目</span>
+              </div>
+              <div className="stat-item">
+                <span className="stat-icon">🔗</span>
+                <span>Fork 代码</span>
+              </div>
+            </div>
+          </div>
+        </aside>
 
-      {/* 随机名言区域 - 橘猫的智慧 */}
-      <section className="quote-section" id="quote">
-        <h2>🐾 橘猫的每日智慧</h2>
-        <button 
-          onClick={fetchRandomQuote} 
-          disabled={loading}
-          className="quote-button"
-        >
-          {loading ? '🐱 思考中...' : '🎲 获取今日名言'}
-        </button>
-        
-        {/* 显示名言 */}
-        {quote && (
-          <div className="quote-card">
-            <p className="quote-text">"{quote.content}"</p>
-            <p className="quote-author">— {quote.author}</p>
-          </div>
-        )}
-        
-        {/* 显示错误信息 */}
-        {error && (
-          <div className="error-message">
-            ❌ {error}
-          </div>
-        )}
-      </section>
-
-      {/* 文章列表 - 橘猫的笔记本 */}
-      <section className="articles-section" id="articles">
-        <div className="section-header">
-          <h2>☕ Java技术文章精选</h2>
-          <div className="category-tabs">
-            {categories.map(category => (
-              <button
-                key={category}
-                className={`category-tab ${selectedCategory === category ? 'active' : ''}`}
-                onClick={() => setSelectedCategory(category)}
-              >
-                {category}
-              </button>
-            ))}
-          </div>
-        </div>
-        
-        {/* 加载状态 */}
-        {articlesLoading && (
-          <div className="loading-message">
-            🐱 正在加载文章列表...
-          </div>
-        )}
-        
-        {/* 错误提示 */}
-        {articlesError && (
-          <div className="error-message">
-            ❌ {articlesError}
-            <button onClick={fetchArticles} className="retry-button">
-              🔄 重试
+        {/* 右侧：主内容区域 */}
+        <div className="main-content-area">
+          {/* 随机名言区域 - 橘猫的智慧 */}
+          <section className="quote-section" id="quote">
+            <h2>🐾 橘猫的每日智慧</h2>
+            <button 
+              onClick={fetchRandomQuote} 
+              disabled={loading}
+              className="quote-button"
+            >
+              {loading ? '🐱 思考中...' : '🎲 获取今日名言'}
             </button>
-          </div>
-        )}
-        
-        {/* 文章列表 */}
-        {!articlesLoading && !articlesError && (
-          <div className="articles-grid">
-            {filteredArticles.length > 0 ? (
-              filteredArticles.map(article => (
-                <Link 
-                  to={`/article/${article.id}`} 
-                  key={article.id}
-                  className="article-card enhanced"
-                >
-                  <div className="article-category">{article.category}</div>
-                  <h3>{article.title}</h3>
-                  <p className="article-description">{article.description}</p>
-                  <div className="article-meta">
-                    <span className="article-date">📅 {article.date}</span>
-                    <span className="article-read-time">🕒 {article.readTime}</span>
-                  </div>
-                </Link>
-              ))
-            ) : (
-              <div className="empty-message">
-                📝 暂无文章，快去添加一篇吧！
+            
+            {/* 显示名言 */}
+            {quote && (
+              <div className="quote-card">
+                <p className="quote-text">"{quote.content}"</p>
+                <p className="quote-author">— {quote.author}</p>
               </div>
             )}
-          </div>
-        )}
-      </section>
+            
+            {/* 显示错误信息 */}
+            {error && (
+              <div className="error-message">
+                ❌ {error}
+              </div>
+            )}
+          </section>
+
+          {/* 文章列表 - 橘猫的笔记本 */}
+          <section className="articles-section" id="articles">
+            <div className="section-header">
+              <h2>☕ Java技术文章精选</h2>
+              <div className="category-tabs">
+                {categories.map(category => (
+                  <button
+                    key={category}
+                    className={`category-tab ${selectedCategory === category ? 'active' : ''}`}
+                    onClick={() => setSelectedCategory(category)}
+                  >
+                    {category}
+                  </button>
+                ))}
+              </div>
+            </div>
+            
+            {/* 加载状态 */}
+            {articlesLoading && (
+              <div className="loading-message">
+                🐱 正在加载文章列表...
+              </div>
+            )}
+            
+            {/* 错误提示 */}
+            {articlesError && (
+              <div className="error-message">
+                ❌ {articlesError}
+                <button onClick={fetchArticles} className="retry-button">
+                  🔄 重试
+                </button>
+              </div>
+            )}
+            
+            {/* 文章列表 */}
+            {!articlesLoading && !articlesError && (
+              <div className="articles-grid">
+                {filteredArticles.length > 0 ? (
+                  filteredArticles.map(article => (
+                    <Link 
+                      to={`/article/${article.id}`} 
+                      key={article.id}
+                      className="article-card enhanced"
+                    >
+                      <div className="article-category">{article.category}</div>
+                      <h3>{article.title}</h3>
+                      <p className="article-description">{article.description}</p>
+                      <div className="article-meta">
+                        <span className="article-date">📅 {article.date}</span>
+                        <span className="article-read-time">🕒 {article.readTime}</span>
+                      </div>
+                    </Link>
+                  ))
+                ) : (
+                  <div className="empty-message">
+                    📝 暂无文章,快去添加一篇吧!
+                  </div>
+                )}
+              </div>
+            )}
+          </section>
+        </div>
+      </div>
       
       {/* 返回顶部按钮 */}
       <button 

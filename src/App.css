@@ -2099,6 +2099,259 @@
   -webkit-user-select: text !important;
 }
 
+/* ==================== 首页两栏布局 ==================== */
+
+/* 主要内容布局容器 - 桌面端两栏，移动端单列 */
+.main-content-layout {
+  display: flex;
+  gap: 2rem;
+  align-items: flex-start;
+  margin-bottom: 3rem;
+}
+
+/* 左侧边栏 - 开源项目固定展示区 */
+.sidebar-project {
+  width: 280px;
+  flex-shrink: 0;
+  position: sticky;
+  top: 120px; /* 导航栏下方悬浮 */
+  animation: slideInLeft 0.8s ease-out;
+}
+
+/* 右侧主内容区域 */
+.main-content-area {
+  flex: 1;
+  min-width: 0; /* 防止内容溢出 */
+  animation: slideInUp 0.6s ease-out;
+}
+
+/* ==================== 特色开源项目卡片 ==================== */
+
+.project-card-featured {
+  background: linear-gradient(135deg, var(--card-bg) 0%, #FFF5E6 100%);
+  border: 3px solid var(--primary-color);
+  border-radius: var(--radius-xl);
+  padding: 2rem 1.5rem;
+  text-align: center;
+  box-shadow: 0 8px 24px rgba(255, 159, 69, 0.25);
+  transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+  position: relative;
+  overflow: hidden;
+}
+
+/* 卡片背景动态渐变 */
+.project-card-featured::before {
+  content: '';
+  position: absolute;
+  top: -50%;
+  left: -50%;
+  width: 200%;
+  height: 200%;
+  background: radial-gradient(circle, rgba(255, 159, 69, 0.1) 0%, transparent 70%);
+  opacity: 0;
+  transition: opacity 0.5s ease;
+  z-index: 0;
+}
+
+.project-card-featured:hover::before {
+  opacity: 1;
+}
+
+.project-card-featured:hover {
+  transform: translateY(-8px) scale(1.03);
+  box-shadow: 0 16px 48px rgba(255, 159, 69, 0.4);
+  border-color: var(--primary-hover);
+}
+
+/* 项目图标 */
+.project-icon {
+  font-size: 4rem;
+  margin-bottom: 1.2rem;
+  display: inline-block;
+  transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+  position: relative;
+  z-index: 1;
+}
+
+.project-card-featured:hover .project-icon {
+  transform: scale(1.15) rotate(10deg);
+}
+
+/* 项目标题 */
+.project-card-featured h3 {
+  font-size: 1.5rem;
+  font-weight: 700;
+  color: var(--primary-color);
+  margin-bottom: 1rem;
+  position: relative;
+  z-index: 1;
+}
+
+/* 项目描述 */
+.project-description {
+  font-size: 0.95rem;
+  color: var(--text-secondary);
+  line-height: 1.6;
+  margin-bottom: 1.5rem;
+  position: relative;
+  z-index: 1;
+}
+
+/* 访问按钮 */
+.project-button {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.5rem;
+  background: var(--gradient-warm);
+  color: white;
+  padding: 0.9rem 1.8rem;
+  border-radius: var(--radius-full);
+  font-weight: 600;
+  font-size: 1rem;
+  text-decoration: none;
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  box-shadow: 0 4px 12px rgba(255, 140, 26, 0.3);
+  position: relative;
+  z-index: 1;
+  border: none;
+  cursor: pointer;
+  overflow: hidden;
+}
+
+.project-button::before {
+  content: '';
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  width: 0;
+  height: 0;
+  border-radius: 50%;
+  background: rgba(255, 255, 255, 0.3);
+  transform: translate(-50%, -50%);
+  transition: width 0.5s ease, height 0.5s ease;
+}
+
+.project-button:hover::before {
+  width: 300px;
+  height: 300px;
+}
+
+.project-button:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 8px 20px rgba(255, 140, 26, 0.5);
+}
+
+.project-button:active {
+  transform: translateY(0);
+}
+
+.button-icon {
+  font-size: 1.2rem;
+  transition: transform 0.3s ease;
+}
+
+.project-button:hover .button-icon {
+  transform: translateX(5px);
+}
+
+/* 项目统计 */
+.project-stats {
+  display: flex;
+  justify-content: space-around;
+  margin-top: 1.5rem;
+  padding-top: 1.5rem;
+  border-top: 2px dashed var(--border-color);
+  position: relative;
+  z-index: 1;
+}
+
+.stat-item {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 0.3rem;
+  font-size: 0.85rem;
+  color: var(--text-secondary);
+  transition: all 0.3s ease;
+}
+
+.stat-item:hover {
+  color: var(--primary-color);
+  transform: scale(1.1);
+}
+
+.stat-icon {
+  font-size: 1.5rem;
+}
+
+/* ==================== 响应式布局 ==================== */
+
+/* 平板端（768px - 1024px） */
+@media (max-width: 1024px) {
+  .sidebar-project {
+    width: 240px;
+  }
+  
+  .project-card-featured {
+    padding: 1.5rem 1.2rem;
+  }
+  
+  .project-icon {
+    font-size: 3.5rem;
+  }
+}
+
+/* 移动端（<768px） */
+@media (max-width: 768px) {
+  /* 改为单列布局 */
+  .main-content-layout {
+    flex-direction: column;
+    gap: 2rem;
+  }
+  
+  /* 侧边栏变为全宽 */
+  .sidebar-project {
+    width: 100%;
+    position: static;
+    order: -1; /* 移动端置顶显示 */
+  }
+  
+  .project-card-featured {
+    padding: 2rem 1.5rem;
+  }
+  
+  .main-content-area {
+    width: 100%;
+  }
+}
+
+/* 超小屏幕优化（<480px） */
+@media (max-width: 480px) {
+  .project-card-featured {
+    padding: 1.5rem 1rem;
+  }
+  
+  .project-icon {
+    font-size: 3rem;
+  }
+  
+  .project-card-featured h3 {
+    font-size: 1.3rem;
+  }
+  
+  .project-button {
+    width: 100%;
+    padding: 1rem;
+  }
+  
+  .project-stats {
+    gap: 1rem;
+  }
+}
+
+/* ==================== 原有快速导航区样式保留（备用） ==================== */
+
 /* 快速导航区 */
 .quick-nav-section {
   margin-bottom: 3rem;
