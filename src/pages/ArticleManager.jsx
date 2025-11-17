@@ -17,7 +17,8 @@ function ArticleManager() {
     description: '',
     category: 'Java核心',
     readTime: '',
-    date: new Date().toISOString().split('T')[0]
+    date: new Date().toISOString().split('T')[0],
+    content: ''
   })
   const [submitting, setSubmitting] = useState(false)
 
@@ -77,7 +78,8 @@ function ArticleManager() {
       description: '',
       category: 'Java核心',
       readTime: '',
-      date: new Date().toISOString().split('T')[0]
+      date: new Date().toISOString().split('T')[0],
+      content: ''
     })
     setShowForm(true)
   }
@@ -92,7 +94,8 @@ function ArticleManager() {
       description: article.description,
       category: article.category,
       readTime: article.readTime,
-      date: article.date
+      date: article.date,
+      content: article.content || ''
     })
     setShowForm(true)
   }
@@ -250,6 +253,22 @@ function ArticleManager() {
                 rows="3"
                 required
               />
+            </div>
+
+            <div className="form-group">
+              <label htmlFor="content">文章正文</label>
+              <textarea
+                id="content"
+                name="content"
+                value={formData.content}
+                onChange={handleInputChange}
+                placeholder="输入文章的详细内容...支持 Markdown 格式（可选）"
+                rows="10"
+                style={{ fontFamily: 'monospace', fontSize: '14px' }}
+              />
+              <small style={{ color: '#999', marginTop: '5px', display: 'block' }}>
+                💡 提示：支持使用 ## 标题、代码块等 Markdown 语法
+              </small>
             </div>
 
             <div className="form-row">
