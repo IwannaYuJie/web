@@ -56,7 +56,23 @@ function ArticleManager() {
         setIsAuthenticated(true)
         localStorage.setItem('adminKey', inputKey)
       } else {
-        alert('密码错误，请重试！')
+        // 解析错误信息
+        let errorMsg = '验证失败'
+        try {
+          const data = await response.json()
+          errorMsg = data.error || errorMsg
+        } catch (e) {
+          errorMsg = `HTTP ${response.status}: ${response.statusText}`
+        }
+
+        if (response.status === 500) {
+          alert(`服务器错误：${errorMsg}\n\n提示：如果是线上环境，请确保已在 Cloudflare 设置 ADMIN_KEY 环境变量，并【重新部署】了项目。`)
+        } else if (response.status === 401) {
+          alert('密码错误，请重试！')
+        } else {
+          alert(`验证失败：${errorMsg}`)
+        }
+        
         e.target.elements.key.value = ''
         e.target.elements.key.focus()
       }
