@@ -49,7 +49,7 @@ API Keys 存储位置：
 
 ### 橘猫主题配色（严格遵守）
 
-项目使用**统一的橘色系配色**，参考 `DESIGN_GUIDE.md` 和 `src/App.css`：
+项目使用**统一的橘色系配色**，参考 `docs/DESIGN_GUIDE.md` 和 `src/App.css`：
 
 ```css
 --primary-color: #FF9F45;    /* 橘猫主色 */
@@ -185,9 +185,9 @@ fetch('/api/articles/1', { method: 'PUT' })
 
 ## 参考文档
 
-- 橘猫配色规范: `DESIGN_GUIDE.md`
-- 游戏开发文档: `雨姐游戏开发文档.md`
-- 部署指南: `DEPLOYMENT.md`, `KV_SETUP_GUIDE.md`
+- 橘猫配色规范: `docs/DESIGN_GUIDE.md`
+- 游戏开发文档: `docs/雨姐游戏开发文档.md`
+- 部署指南: `docs/DEPLOYMENT.md`, `docs/KV_SETUP_GUIDE.md`
 - 完整 README: `README.md`
 
 ## 避免的错误

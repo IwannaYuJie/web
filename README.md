@@ -294,7 +294,7 @@ npm run preview
 
 ### Cloudflare KV 配置
 
-详细的 KV 配置步骤请参考：[KV_SETUP_GUIDE.md](./KV_SETUP_GUIDE.md)
+详细的 KV 配置步骤请参考：[docs/KV_SETUP_GUIDE.md](docs/KV_SETUP_GUIDE.md)
 
 包含以下内容：
 - 创建 KV 命名空间
