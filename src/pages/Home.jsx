@@ -34,6 +34,14 @@ function Home() {
     { text: '完成比完美更重要', author: 'Facebook工程师文化' }
   ]
 
+  // 网页模板数据
+  const webTemplates = [
+    { id: 1, title: '极简博客', desc: '专注于阅读体验的纯净博客模板', icon: '📝', link: '#' },
+    { id: 2, title: '创意作品集', desc: '适合设计师的视觉系展示模板', icon: '🎨', link: '#' },
+    { id: 3, title: '文档中心', desc: '清晰的文档与知识库管理模板', icon: '📚', link: '#' },
+    { id: 4, title: '营销落地页', desc: '高转化率的产品推广落地页', icon: '🚀', link: '#' }
+  ]
+
   // 初始化数据
   useEffect(() => {
     fetchArticles()
@@ -169,6 +177,30 @@ function Home() {
         {/* Left Content (Articles) - 8/12 */}
         <div className="lg:col-span-8 space-y-8">
           
+          {/* Web Templates Module */}
+          <div className="glass p-6 rounded-2xl">
+            <h2 className="text-2xl font-bold mb-6 flex items-center gap-2 text-primary">
+              <span>🎨</span> 精选网页模板
+            </h2>
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+              {webTemplates.map(template => (
+                <a 
+                  key={template.id}
+                  href={template.link}
+                  className="group p-4 rounded-xl bg-white/50 hover:bg-white transition-all border border-transparent hover:border-primary/30 hover:shadow-md flex items-start gap-4"
+                >
+                  <div className="text-3xl bg-primary/10 w-12 h-12 rounded-lg flex items-center justify-center group-hover:scale-110 transition-transform">
+                    {template.icon}
+                  </div>
+                  <div>
+                    <h3 className="font-bold text-lg mb-1 group-hover:text-primary transition-colors">{template.title}</h3>
+                    <p className="text-sm text-text-secondary leading-relaxed">{template.desc}</p>
+                  </div>
+                </a>
+              ))}
+            </div>
+          </div>
+
           {/* Filter Tabs */}
           <div className="glass p-4 rounded-2xl flex flex-wrap gap-2 sticky top-[80px] z-30 shadow-sm">
             {categories.map(category => (
