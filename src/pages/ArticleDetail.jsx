@@ -6,123 +6,162 @@ import { useParams, Link } from 'react-router-dom'
  * 根据 URL 参数从 API 获取并显示对应文章内容
  */
 function ArticleDetail() {
-  // 获取 URL 参数中的文章 ID
   const { id } = useParams()
-
-  // 状态管理
   const [article, setArticle] = useState(null)
   const [loading, setLoading] = useState(true)
   const [error, setError] = useState(null)
 
-  // 从 API 获取文章数据
   useEffect(() => {
     const fetchArticle = async () => {
       setLoading(true)
       setError(null)
-      
       try {
         const response = await fetch('/api/articles')
-        
-        if (!response.ok) {
-          throw new Error('获取文章失败')
-        }
-        
+        if (!response.ok) throw new Error('获取文章失败')
         const articles = await response.json()
-        // 根据 ID 找到对应文章（ID 需要转换为数字进行比较）
         const foundArticle = articles.find(a => a.id === parseInt(id))
-        
-        if (!foundArticle) {
-          throw new Error('文章不存在')
-        }
-        
+        if (!foundArticle) throw new Error('文章不存在')
         setArticle(foundArticle)
       } catch (err) {
-        console.error('获取文章详情失败:', err)
         setError(err.message)
       } finally {
         setLoading(false)
       }
     }
-    
     fetchArticle()
-  }, [id]) // 当 ID 改变时重新获取
+  }, [id])
 
-  // 加载中状态
   if (loading) {
     return (
-      <div className="container">
-        <div className="loading-message">
-          <h2>🐱 加载中...</h2>
-          <p>正在获取文章内容，请稍候～</p>
+      <div className="container flex-center min-h-[60vh]">
+        <div className="text-center animate-bounce">
+          <div className="text-6xl mb-4">🐱</div>
+          <h2 className="text-xl font-bold text-primary">正在潜心阅读中...</h2>
         </div>
       </div>
     )
   }
 
-  // 错误状态
   if (error || !article) {
     return (
-      <div className="container">
-        <div className="not-found">
-          <h1>😢 {error || '文章不存在'}</h1>
-          <p>抱歉,找不到您要查看的文章。</p>
-          <Link to="/" className="back-button">返回首页</Link>
+      <div className="container flex-center min-h-[60vh]">
+        <div className="glass p-12 rounded-3xl text-center max-w-lg border border-red-100">
+          <div className="text-6xl mb-4">😿</div>
+          <h1 className="text-2xl font-bold text-red-500 mb-4">{error || '文章不存在'}</h1>
+          <p className="text-text-secondary mb-8">这篇文章可能已经被橘猫藏起来了...</p>
+          <Link to="/" className="btn btn-primary">
+            🏠 返回首页
+          </Link>
         </div>
       </div>
     )
   }
 
   return (
-    <div className="container">
-      {/* 返回按钮 */}
-      <Link to="/" className="back-link">← 返回首页</Link>
-      
-      {/* 文章内容 */}
-      <article className="article-detail">
-        <header className="article-header">
-          <h1>{article.title}</h1>
-          <div className="article-meta">
-            <span>👤 {article.author || '橘猫'}</span>
-            <span>📅 {article.date}</span>
-            <span>🏷️ {article.category}</span>
-            {article.readTime && <span>⏱️ {article.readTime} 分钟</span>}
-          </div>
-        </header>
+    <div className="container pb-12 max-w-4xl mx-auto">
+      {/* Navigation */}
+      <div className="mb-8 animate-fade-in">
+        <Link to="/" className="btn btn-ghost pl-0 hover:pl-2 transition-all">
+          ← 返回文章列表
+        </Link>
+      </div>
+
+      {/* Article Header */}
+      <header className="mb-12 animate-slide-up">
+        <div className="flex items-center gap-2 mb-4">
+          <span className="bg-primary/10 text-primary px-3 py-1 rounded-full text-sm font-bold">
+            {article.category}
+          </span>
+          <span className="text-text-light text-sm">
+            ⏱️ {article.readTime} 分钟阅读
+          </span>
+        </div>
         
-        <div className="article-content">
-          {/* 显示文章描述 */}
-          {article.description && (
-            <div className="article-description">
-              <p><strong>📝 摘要：</strong>{article.description}</p>
-            </div>
-          )}
-          
-          {/* 显示文章正文内容 */}
+        <h1 className="text-3xl md:text-5xl font-extrabold mb-6 leading-tight text-gradient">
+          {article.title}
+        </h1>
+
+        <div className="flex items-center gap-4 pb-8 border-b border-border-color">
+           <img src="/images/cat-avatar.png" alt="Author" className="w-12 h-12 rounded-full border-2 border-primary" />
+           <div>
+             <div className="font-bold text-text-color">{article.author || '橘猫博主'}</div>
+             <div className="text-sm text-text-secondary">发布于 {article.date}</div>
+           </div>
+        </div>
+      </header>
+      
+      {/* Article Content */}
+      <article className="glass p-8 md:p-12 rounded-3xl animate-slide-up shadow-sm" style={{ animationDelay: '0.1s' }}>
+        {article.description && (
+          <div className="bg-secondary/10 p-6 rounded-xl mb-8 border-l-4 border-primary">
+            <p className="text-lg italic text-text-secondary font-medium">
+              {article.description}
+            </p>
+          </div>
+        )}
+        
+        <div className="space-y-6 leading-relaxed text-lg text-text-color">
           {article.content ? (
-            // 如果有正文内容，按段落分割并渲染
             article.content.split('\n').map((paragraph, index) => {
-              // 处理代码块
-              if (paragraph.trim().startsWith('```')) {
-                return null // 简化处理,实际项目可使用 markdown 解析器
+              const trimmed = paragraph.trim()
+              
+              // Code Block (Simplified)
+              if (trimmed.startsWith('```')) {
+                return null 
               }
-              // 处理标题
-              if (paragraph.trim().startsWith('##')) {
-                return <h2 key={index}>{paragraph.replace(/##/g, '').trim()}</h2>
+              
+              // Heading 2
+              if (trimmed.startsWith('##')) {
+                return (
+                  <h2 key={index} className="text-2xl font-bold mt-8 mb-4 text-primary flex items-center gap-2">
+                    <span className="w-2 h-8 bg-primary rounded-full inline-block"></span>
+                    {trimmed.replace(/##/g, '').trim()}
+                  </h2>
+                )
               }
-              // 处理普通段落
-              if (paragraph.trim()) {
-                return <p key={index}>{paragraph.trim()}</p>
+              
+              // Bullet points
+              if (trimmed.startsWith('- ')) {
+                return (
+                  <li key={index} className="ml-4 list-disc marker:text-primary pl-2">
+                    {trimmed.substring(2)}
+                  </li>
+                )
               }
-              return null
+
+              // Numbered list
+              if (/^\d+\./.test(trimmed)) {
+                 return (
+                   <div key={index} className="ml-4 pl-2 font-medium text-text-secondary">
+                     {trimmed}
+                   </div>
+                 )
+              }
+
+              // Normal paragraph
+              if (trimmed) {
+                return <p key={index} className="text-justify">{trimmed}</p>
+              }
+              return <br key={index} />
             })
           ) : (
-            // 如果没有正文，显示提示信息
-            <div className="no-content">
-              <p>📄 该文章暂无详细内容，敬请期待更新～</p>
+            <div className="text-center py-12 text-text-light">
+              <div className="text-4xl mb-4">📝</div>
+              <p>该文章暂无详细内容，敬请期待更新～</p>
             </div>
           )}
         </div>
       </article>
+
+      {/* Footer Actions */}
+      <div className="mt-12 flex justify-center gap-4 animate-slide-up" style={{ animationDelay: '0.2s' }}>
+         <button className="btn btn-secondary rounded-full px-8" onClick={() => window.scrollTo({top: 0, behavior: 'smooth'})}>
+            ⬆️ 回到顶部
+         </button>
+         <button className="btn btn-primary rounded-full px-8">
+            🧡 点赞文章
+         </button>
+      </div>
     </div>
   )
 }

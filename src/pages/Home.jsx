@@ -6,24 +6,22 @@ import { Link } from 'react-router-dom'
  * 展示文章列表和随机名言功能
  */
 function Home() {
-  // 状态管理：文章数据
+  // 状态管理
   const [articles, setArticles] = useState([])
   const [articlesLoading, setArticlesLoading] = useState(true)
   const [articlesError, setArticlesError] = useState(null)
   
-  // 状态管理：随机名言
   const [quote, setQuote] = useState(null)
-  const [loading, setLoading] = useState(false)
-  const [error, setError] = useState(null)
-  const [catMood, setCatMood] = useState('😺') // 橘猫心情
-  const [visitorCount, setVisitorCount] = useState(12345) // 访问计数
+  const [quoteLoading, setQuoteLoading] = useState(false)
+  const [visitorCount, setVisitorCount] = useState(12345)
   const [currentTime, setCurrentTime] = useState(new Date())
   const [selectedCategory, setSelectedCategory] = useState('全部')
-  const [showBackToTop, setShowBackToTop] = useState(false) // 返回顶部按钮显示状态
+  const [showBackToTop, setShowBackToTop] = useState(false)
 
   // 橘猫心情数组
   const catMoods = ['😺', '😸', '😹', '😻', '😼', '😽', '🙀', '😿', '😾']
-  
+  const [catMood, setCatMood] = useState(catMoods[0])
+
   // 文章分类
   const categories = ['全部', 'Java核心', 'Spring框架', '微服务', '数据库', 'JVM', '中间件', '云原生', '架构设计', '搜索引擎', '持久层']
 
@@ -36,119 +34,85 @@ function Home() {
     { text: '完成比完美更重要', author: 'Facebook工程师文化' }
   ]
 
-  // 获取文章列表
+  // 初始化数据
   useEffect(() => {
     fetchArticles()
+    const timer = setInterval(() => setCurrentTime(new Date()), 1000)
+    const moodTimer = setInterval(() => setCatMood(catMoods[Math.floor(Math.random() * catMoods.length)]), 3000)
+    const countTimer = setInterval(() => setVisitorCount(prev => prev + Math.floor(Math.random() * 3)), 5000)
+    
+    const handleScroll = () => setShowBackToTop(window.scrollY > 400)
+    window.addEventListener('scroll', handleScroll)
+
+    // 修复 Google CSE 在 React 路由切换后不重新渲染的问题
+    const initGCSE = () => {
+      if (window.google && window.google.search && window.google.search.cse && window.google.search.cse.element) {
+        try {
+          window.google.search.cse.element.go();
+        } catch (e) {
+          console.warn('GCSE init error:', e);
+        }
+      }
+    };
+    // 延迟执行以确保 DOM 已挂载
+    const gcseTimer = setTimeout(initGCSE, 100);
+    // 轮询几次以确保脚本加载完成
+    const gcseInterval = setInterval(initGCSE, 1000);
+    const gcseStopTimer = setTimeout(() => clearInterval(gcseInterval), 5000);
+
+    return () => {
+      clearInterval(timer)
+      clearInterval(moodTimer)
+      clearInterval(countTimer)
+      clearInterval(gcseInterval)
+      clearTimeout(gcseStopTimer)
+      clearTimeout(gcseTimer)
+      window.removeEventListener('scroll', handleScroll)
+    }
   }, [])
 
-  /**
-   * 从 API 获取文章列表
-   */
   const fetchArticles = async () => {
     setArticlesLoading(true)
-    setArticlesError(null)
-    
     try {
       const response = await fetch('/api/articles')
-      
-      if (!response.ok) {
-        throw new Error('获取文章列表失败')
-      }
-      
+      if (!response.ok) throw new Error('获取文章列表失败')
       const data = await response.json()
       setArticles(data)
     } catch (err) {
-      console.error('获取文章失败:', err)
       setArticlesError(err.message)
     } finally {
       setArticlesLoading(false)
     }
   }
 
-  // 更新时间
-  useEffect(() => {
-    const timer = setInterval(() => {
-      setCurrentTime(new Date())
-    }, 1000)
-    return () => clearInterval(timer)
-  }, [])
-
-  // 随机改变橘猫心情
-  useEffect(() => {
-    const moodTimer = setInterval(() => {
-      setCatMood(catMoods[Math.floor(Math.random() * catMoods.length)])
-    }, 3000)
-    return () => clearInterval(moodTimer)
-  }, [])
-
-  // 模拟访问计数增长
-  useEffect(() => {
-    const countTimer = setInterval(() => {
-      setVisitorCount(prev => prev + Math.floor(Math.random() * 3))
-    }, 5000)
-    return () => clearInterval(countTimer)
-  }, [])
-
-  // 监听滚动，显示/隐藏返回顶部按钮
-  useEffect(() => {
-    const handleScroll = () => {
-      setShowBackToTop(window.scrollY > 400)
-    }
-    
-    window.addEventListener('scroll', handleScroll)
-    return () => window.removeEventListener('scroll', handleScroll)
-  }, [])
-
-  /**
-   * 滚动到页面顶部
-   */
-  const scrollToTop = () => {
-    window.scrollTo({
-      top: 0,
-      behavior: 'smooth'
-    })
-  }
-
-  /**
-   * 获取随机名言
-   * 调用 quotable.io API 或使用橘猫语录
-   */
   const fetchRandomQuote = async () => {
-    setLoading(true)
-    setError(null)
-    
+    setQuoteLoading(true)
     // 50% 概率使用橘猫语录
     if (Math.random() > 0.5) {
       setTimeout(() => {
         const catQuote = catQuotes[Math.floor(Math.random() * catQuotes.length)]
         setQuote({ content: catQuote.text, author: catQuote.author })
-        setLoading(false)
+        setQuoteLoading(false)
       }, 500)
-      return
-    }
-    
-    try {
-      const response = await fetch('https://api.quotable.io/random')
-      if (!response.ok) {
-        throw new Error('获取名言失败')
+    } else {
+      try {
+        const response = await fetch('https://api.quotable.io/random')
+        if (!response.ok) throw new Error('Failed')
+        const data = await response.json()
+        setQuote(data)
+      } catch {
+        const catQuote = catQuotes[Math.floor(Math.random() * catQuotes.length)]
+        setQuote({ content: catQuote.text, author: catQuote.author })
+      } finally {
+        setQuoteLoading(false)
       }
-      const data = await response.json()
-      setQuote(data)
-    } catch (err) {
-      // 失败时使用橘猫语录
-      const catQuote = catQuotes[Math.floor(Math.random() * catQuotes.length)]
-      setQuote({ content: catQuote.text, author: catQuote.author })
-    } finally {
-      setLoading(false)
     }
   }
 
-  // 根据分类筛选文章
-  const filteredArticles = selectedCategory === '全部' 
-    ? articles 
-    : articles.filter(article => article.category === selectedCategory)
+  const scrollToTop = () => {
+    window.scrollTo({ top: 0, behavior: 'smooth' })
+  }
 
-  // 获取问候语
   const getGreeting = () => {
     const hour = currentTime.getHours()
     if (hour < 6) return '🌙 夜深了，记得早点休息哦~'
@@ -160,152 +124,180 @@ function Home() {
     return '🌃 夜深了，早点休息吧~'
   }
 
+  const filteredArticles = selectedCategory === '全部' 
+    ? articles 
+    : articles.filter(article => article.category === selectedCategory)
+
   return (
-    <div className="container">
-      {/* 页面标题 - 橘猫主题（精简版） */}
-      <header className="page-header home-header-compact">
-        <div className="welcome-section">
-          <div className="cat-mood-mini">
-            <img src="/images/cat-avatar.png" alt="橘猫" className="cat-avatar-small" />
+    <div className="container pb-12">
+      {/* Hero Section */}
+      <section className="glass rounded-[32px] p-8 md:p-12 mb-12 flex flex-col md:flex-row items-center justify-between gap-8 animate-fade-in relative overflow-hidden">
+        <div className="relative z-10 text-center md:text-left max-w-2xl">
+          <div className="inline-flex items-center gap-2 bg-white/50 px-4 py-1 rounded-full mb-4 text-primary font-bold text-sm backdrop-blur-sm">
+            <span>{catMood}</span>
+            <span>{getGreeting()}</span>
           </div>
-          <div className="welcome-text">
-            <h1>🐱 橘猫的小窝</h1>
-            <p className="greeting-compact">{getGreeting()}</p>
+          <h1 className="text-4xl md:text-5xl font-extrabold mb-4 text-gradient leading-tight">
+            橘猫的技术小窝
+          </h1>
+          <p className="text-lg text-text-secondary mb-8 leading-relaxed">
+            这里是 Java 技术分享的温馨角落，记录学习，分享感悟。
+            <br />让我们一起在代码的世界里，保持好奇，持续探索。
+          </p>
+          <div className="flex gap-4 justify-center md:justify-start">
+            <a href="#articles" className="btn btn-primary">
+              📚 开始阅读
+            </a>
+            <a href="https://github.com/IwannaYuJie" target="_blank" rel="noreferrer" className="btn btn-secondary">
+              💻 GitHub
+            </a>
           </div>
         </div>
-      </header>
+        
+        <div className="relative z-10 animate-bounce">
+           <img src="/images/cat-avatar.png" alt="橘猫" className="w-48 h-48 md:w-64 md:h-64 rounded-full shadow-lg border-4 border-white/50 object-cover" />
+        </div>
 
-      {/* Google 自定义搜索 */}
-      <section className="search-section">
-        <div className="gcse-search"></div>
+        {/* 装饰背景 */}
+        <div className="absolute top-0 right-0 w-64 h-64 bg-primary/10 rounded-full blur-3xl -translate-y-1/2 translate-x-1/2 pointer-events-none"></div>
+        <div className="absolute bottom-0 left-0 w-64 h-64 bg-secondary/10 rounded-full blur-3xl translate-y-1/2 -translate-x-1/2 pointer-events-none"></div>
       </section>
 
-      {/* 主要内容区 - 两栏布局 */}
-      <div className="main-content-layout">
-        {/* 左侧：开源项目大卡片 */}
-        <aside className="sidebar-project">
-          <div className="project-card-featured">
-            <div className="project-icon">💻</div>
-            <h3>开源项目</h3>
-            <p className="project-description">查看我的 GitHub 代码仓库，探索技术实践与开源贡献</p>
-            <a 
-              href="https://github.com/IwannaYuJie" 
-              target="_blank" 
-              rel="noopener noreferrer" 
-              className="project-button"
-            >
-              <span>访问 GitHub</span>
-              <span className="button-icon">→</span>
-            </a>
-            <div className="project-stats">
-              <div className="stat-item">
-                <span className="stat-icon">⭐</span>
-                <span>Star 项目</span>
-              </div>
-              <div className="stat-item">
-                <span className="stat-icon">🔗</span>
-                <span>Fork 代码</span>
-              </div>
-            </div>
+      {/* Main Grid Layout */}
+      <div className="grid grid-cols-1 lg:grid-cols-12 gap-8">
+        
+        {/* Left Content (Articles) - 8/12 */}
+        <div className="lg:col-span-8 space-y-8">
+          
+          {/* Filter Tabs */}
+          <div className="glass p-4 rounded-2xl flex flex-wrap gap-2 sticky top-[80px] z-30 shadow-sm">
+            {categories.map(category => (
+              <button
+                key={category}
+                className={`px-4 py-2 rounded-full text-sm font-medium transition-all ${
+                  selectedCategory === category 
+                    ? 'bg-primary text-white shadow-md' 
+                    : 'bg-transparent text-text-secondary hover:bg-primary/10 hover:text-primary'
+                }`}
+                onClick={() => setSelectedCategory(category)}
+              >
+                {category}
+              </button>
+            ))}
           </div>
-        </aside>
 
-        {/* 右侧：主内容区域 */}
-        <div className="main-content-area">
-          {/* 随机名言区域 - 橘猫的智慧 */}
-          <section className="quote-section" id="quote">
-            <h2>🐾 橘猫的每日智慧</h2>
-            <button 
-              onClick={fetchRandomQuote} 
-              disabled={loading}
-              className="quote-button"
-            >
-              {loading ? '🐱 思考中...' : '🎲 获取今日名言'}
-            </button>
-            
-            {/* 显示名言 */}
-            {quote && (
-              <div className="quote-card">
-                <p className="quote-text">"{quote.content}"</p>
-                <p className="quote-author">— {quote.author}</p>
+          {/* Articles List */}
+          <div className="grid gap-6">
+            {articlesLoading ? (
+              <div className="glass p-12 rounded-2xl text-center">
+                <div className="text-4xl mb-4 animate-bounce">🐱</div>
+                <p className="text-text-secondary">正在努力加载文章...</p>
               </div>
-            )}
-            
-            {/* 显示错误信息 */}
-            {error && (
-              <div className="error-message">
-                ❌ {error}
+            ) : articlesError ? (
+              <div className="glass p-12 rounded-2xl text-center border-red-200 border">
+                <div className="text-4xl mb-4">😿</div>
+                <p className="text-red-500 mb-4">{articlesError}</p>
+                <button onClick={fetchArticles} className="btn btn-primary">🔄 重试</button>
               </div>
-            )}
-          </section>
-
-          {/* 文章列表 - 橘猫的笔记本 */}
-          <section className="articles-section" id="articles">
-            <div className="section-header">
-              <h2>☕ Java技术文章精选</h2>
-              <div className="category-tabs">
-                {categories.map(category => (
-                  <button
-                    key={category}
-                    className={`category-tab ${selectedCategory === category ? 'active' : ''}`}
-                    onClick={() => setSelectedCategory(category)}
-                  >
-                    {category}
-                  </button>
-                ))}
-              </div>
-            </div>
-            
-            {/* 加载状态 */}
-            {articlesLoading && (
-              <div className="loading-message">
-                🐱 正在加载文章列表...
-              </div>
-            )}
-            
-            {/* 错误提示 */}
-            {articlesError && (
-              <div className="error-message">
-                ❌ {articlesError}
-                <button onClick={fetchArticles} className="retry-button">
-                  🔄 重试
-                </button>
-              </div>
-            )}
-            
-            {/* 文章列表 */}
-            {!articlesLoading && !articlesError && (
-              <div className="articles-grid">
-                {filteredArticles.length > 0 ? (
-                  filteredArticles.map(article => (
-                    <Link 
-                      to={`/article/${article.id}`} 
-                      key={article.id}
-                      className="article-card enhanced"
-                    >
-                      <div className="article-category">{article.category}</div>
-                      <h3>{article.title}</h3>
-                      <p className="article-description">{article.description}</p>
-                      <div className="article-meta">
-                        <span className="article-date">📅 {article.date}</span>
-                        <span className="article-read-time">🕒 {article.readTime}</span>
+            ) : filteredArticles.length > 0 ? (
+              filteredArticles.map((article, idx) => (
+                <Link 
+                  to={`/article/${article.id}`} 
+                  key={article.id}
+                  className="card card-hover group block animate-slide-up"
+                  style={{ animationDelay: `${idx * 0.1}s` }}
+                >
+                  <div className="flex flex-col md:flex-row gap-6">
+                    <div className="flex-1">
+                      <div className="flex items-center gap-3 mb-2">
+                         <span className="bg-secondary/20 text-primary px-3 py-1 rounded-full text-xs font-bold">
+                           {article.category}
+                         </span>
+                         <span className="text-text-light text-xs">📅 {article.date}</span>
                       </div>
-                    </Link>
-                  ))
-                ) : (
-                  <div className="empty-message">
-                    📝 暂无文章,快去添加一篇吧!
+                      <h3 className="text-xl font-bold mb-3 group-hover:text-primary transition-colors">
+                        {article.title}
+                      </h3>
+                      <p className="text-text-secondary line-clamp-2 mb-4">
+                        {article.description}
+                      </p>
+                      <div className="flex items-center gap-4 text-sm text-text-light">
+                        <span>⏱️ {article.readTime} 分钟阅读</span>
+                        <span className="group-hover:translate-x-1 transition-transform inline-block text-primary">阅读全文 →</span>
+                      </div>
+                    </div>
                   </div>
+                </Link>
+              ))
+            ) : (
+              <div className="glass p-12 rounded-2xl text-center">
+                <div className="text-4xl mb-4">🍃</div>
+                <p className="text-text-secondary">该分类下暂无文章，去看看别的吧~</p>
+              </div>
+            )}
+          </div>
+        </div>
+
+        {/* Right Sidebar - 4/12 */}
+        <aside className="lg:col-span-4 space-y-8">
+           {/* Quote Card */}
+           <div className="glass p-6 rounded-2xl relative overflow-hidden">
+              <div className="absolute -right-4 -top-4 text-9xl text-primary/5 opacity-20 select-none">”</div>
+              <h2 className="text-lg font-bold mb-4 flex items-center gap-2">
+                <span>🐾</span> 每日智慧
+              </h2>
+              <div className="mb-6 min-h-[100px] flex flex-col justify-center">
+                {quote ? (
+                  <blockquote className="italic text-text-secondary">
+                    "{quote.content}"
+                    <footer className="text-right mt-2 text-sm font-bold not-italic text-primary">— {quote.author}</footer>
+                  </blockquote>
+                ) : (
+                  <div className="text-center text-text-light text-sm">点击下方按钮获取灵感...</div>
                 )}
               </div>
-            )}
-          </section>
-        </div>
+              <button 
+                onClick={fetchRandomQuote} 
+                disabled={quoteLoading}
+                className="w-full btn btn-secondary justify-center"
+              >
+                {quoteLoading ? '🤔 思考中...' : '🎲 获取灵感'}
+              </button>
+           </div>
+
+           {/* Search Card */}
+           <div className="glass p-6 rounded-2xl">
+              <h2 className="text-lg font-bold mb-4 flex items-center gap-2">
+                <span>🔍</span> 搜索
+              </h2>
+              <div className="gcse-search-wrapper min-h-[60px] relative z-0">
+                <div className="gcse-search"></div>
+              </div>
+              <p className="text-xs text-text-light mt-2 text-center">Powered by Google</p>
+           </div>
+
+           {/* Stats Card */}
+           <div className="glass p-6 rounded-2xl">
+              <h2 className="text-lg font-bold mb-4 flex items-center gap-2">
+                 <span>📊</span> 站点统计
+              </h2>
+              <div className="space-y-3">
+                 <div className="flex justify-between items-center p-3 bg-white/50 rounded-xl">
+                    <span className="text-text-secondary">👥 总访问量</span>
+                    <span className="font-bold text-primary">{visitorCount.toLocaleString()}</span>
+                 </div>
+                 <div className="flex justify-between items-center p-3 bg-white/50 rounded-xl">
+                    <span className="text-text-secondary">📝 文章总数</span>
+                    <span className="font-bold text-primary">{articles.length}</span>
+                 </div>
+              </div>
+           </div>
+        </aside>
       </div>
-      
-      {/* 返回顶部按钮 */}
+
+      {/* Back to Top */}
       <button 
-        className={`back-to-top ${showBackToTop ? 'visible' : ''}`}
+        className={`fixed bottom-8 right-8 z-40 p-4 rounded-full bg-primary text-white shadow-lg transition-all transform hover:scale-110 ${showBackToTop ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-10 pointer-events-none'}`}
         onClick={scrollToTop}
         aria-label="返回顶部"
       >
@@ -316,3 +308,4 @@ function Home() {
 }
 
 export default Home
+

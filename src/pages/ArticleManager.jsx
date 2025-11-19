@@ -198,207 +198,224 @@ function ArticleManager() {
   }
 
   return (
-    <div className="container">
-      {/* 页面标题 */}
-      <header className="page-header">
-        <Link to="/" className="back-link">← 返回首页</Link>
-        <h1>📝 文章管理</h1>
-        <p>管理你的Java技术文章</p>
-      </header>
-
-      {/* 操作按钮 */}
-      <div className="manager-actions">
-        <button 
-          onClick={handleAddNew} 
-          className="btn-primary"
-          disabled={showForm}
-        >
-          ➕ 新增文章
-        </button>
-        <button 
-          onClick={fetchArticles} 
-          className="btn-secondary"
-          disabled={loading}
-        >
-          🔄 刷新列表
-        </button>
-      </div>
-
-      {/* 新增/编辑表单 */}
-      {showForm && (
-        <div className="article-form-container">
-          <h2>{editingArticle ? '✏️ 编辑文章' : '➕ 新增文章'}</h2>
-          <form onSubmit={handleSubmit} className="article-form">
-            <div className="form-group">
-              <label htmlFor="title">文章标题 *</label>
-              <input
-                type="text"
-                id="title"
-                name="title"
-                value={formData.title}
-                onChange={handleInputChange}
-                placeholder="例如：☕ Spring Boot 3.0 新特性深度解析"
-                required
-              />
-            </div>
-
-            <div className="form-group">
-              <label htmlFor="description">文章描述 *</label>
-              <textarea
-                id="description"
-                name="description"
-                value={formData.description}
-                onChange={handleInputChange}
-                placeholder="简要描述文章内容..."
-                rows="3"
-                required
-              />
-            </div>
-
-            <div className="form-group">
-              <label htmlFor="content">文章正文</label>
-              <textarea
-                id="content"
-                name="content"
-                value={formData.content}
-                onChange={handleInputChange}
-                placeholder="输入文章的详细内容...支持 Markdown 格式（可选）"
-                rows="10"
-                style={{ fontFamily: 'monospace', fontSize: '14px' }}
-              />
-              <small style={{ color: '#999', marginTop: '5px', display: 'block' }}>
-                💡 提示：支持使用 ## 标题、代码块等 Markdown 语法
-              </small>
-            </div>
-
-            <div className="form-row">
-              <div className="form-group">
-                <label htmlFor="category">文章分类 *</label>
-                <select
-                  id="category"
-                  name="category"
-                  value={formData.category}
-                  onChange={handleInputChange}
-                  required
-                >
-                  {categories.map(cat => (
-                    <option key={cat} value={cat}>{cat}</option>
-                  ))}
-                </select>
-              </div>
-
-              <div className="form-group">
-                <label htmlFor="readTime">阅读时长 *</label>
-                <input
-                  type="text"
-                  id="readTime"
-                  name="readTime"
-                  value={formData.readTime}
-                  onChange={handleInputChange}
-                  placeholder="例如：15 分钟"
-                  required
-                />
-              </div>
-
-              <div className="form-group">
-                <label htmlFor="date">发布日期</label>
-                <input
-                  type="date"
-                  id="date"
-                  name="date"
-                  value={formData.date}
-                  onChange={handleInputChange}
-                />
-              </div>
-            </div>
-
-            <div className="form-actions">
-              <button 
-                type="submit" 
-                className="btn-primary"
-                disabled={submitting}
-              >
-                {submitting ? '提交中...' : (editingArticle ? '💾 保存修改' : '✅ 创建文章')}
-              </button>
-              <button 
-                type="button" 
-                onClick={handleCancel}
-                className="btn-secondary"
-                disabled={submitting}
-              >
-                ❌ 取消
-              </button>
-            </div>
-          </form>
+    <div className="container pb-12 max-w-6xl mx-auto">
+      {/* Header */}
+      <header className="mb-8 flex justify-between items-end animate-fade-in">
+        <div>
+          <h1 className="text-3xl font-extrabold text-gradient mb-2">📝 文章管理</h1>
+          <p className="text-text-secondary">管理你的Java技术文章库</p>
         </div>
-      )}
-
-      {/* 加载状态 */}
-      {loading && (
-        <div className="loading-message">
-          🐱 正在加载文章列表...
-        </div>
-      )}
-
-      {/* 错误提示 */}
-      {error && (
-        <div className="error-message">
-          ❌ {error}
-          <button onClick={fetchArticles} className="retry-button">
-            🔄 重试
+        <div className="flex gap-3">
+          <button 
+            onClick={fetchArticles} 
+            className="btn btn-secondary"
+            disabled={loading}
+          >
+            🔄 刷新
+          </button>
+          <button 
+            onClick={handleAddNew} 
+            className="btn btn-primary"
+            disabled={showForm}
+          >
+            ➕ 新增文章
           </button>
         </div>
+      </header>
+
+      {/* Form Modal/Section */}
+      {showForm && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/20 backdrop-blur-sm p-4 animate-fade-in">
+          <div className="glass w-full max-w-3xl max-h-[90vh] overflow-y-auto rounded-2xl shadow-2xl border border-white/40 animate-slide-up">
+            <div className="p-6 border-b border-white/20 sticky top-0 bg-white/80 backdrop-blur-md z-10 flex justify-between items-center">
+              <h2 className="text-xl font-bold flex items-center gap-2">
+                {editingArticle ? '✏️ 编辑文章' : '➕ 新增文章'}
+              </h2>
+              <button onClick={handleCancel} className="text-text-light hover:text-primary text-xl">✕</button>
+            </div>
+            
+            <form onSubmit={handleSubmit} className="p-6 space-y-6">
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                <div className="space-y-2">
+                  <label className="text-sm font-bold text-text-secondary">文章标题 *</label>
+                  <input
+                    type="text"
+                    name="title"
+                    value={formData.title}
+                    onChange={handleInputChange}
+                    placeholder="例如：☕ Spring Boot 3.0 新特性"
+                    className="w-full p-3 rounded-xl border border-border-color bg-white/50 focus:bg-white focus:border-primary outline-none transition-all"
+                    required
+                  />
+                </div>
+                <div className="space-y-2">
+                  <label className="text-sm font-bold text-text-secondary">分类 *</label>
+                  <select
+                    name="category"
+                    value={formData.category}
+                    onChange={handleInputChange}
+                    className="w-full p-3 rounded-xl border border-border-color bg-white/50 focus:bg-white focus:border-primary outline-none transition-all"
+                    required
+                  >
+                    {categories.map(cat => (
+                      <option key={cat} value={cat}>{cat}</option>
+                    ))}
+                  </select>
+                </div>
+              </div>
+
+              <div className="space-y-2">
+                <label className="text-sm font-bold text-text-secondary">文章描述 *</label>
+                <textarea
+                  name="description"
+                  value={formData.description}
+                  onChange={handleInputChange}
+                  placeholder="简要描述文章内容..."
+                  rows="3"
+                  className="w-full p-3 rounded-xl border border-border-color bg-white/50 focus:bg-white focus:border-primary outline-none transition-all resize-none"
+                  required
+                />
+              </div>
+
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                <div className="space-y-2">
+                  <label className="text-sm font-bold text-text-secondary">阅读时长 (分钟) *</label>
+                  <input
+                    type="text"
+                    name="readTime"
+                    value={formData.readTime}
+                    onChange={handleInputChange}
+                    placeholder="例如：15"
+                    className="w-full p-3 rounded-xl border border-border-color bg-white/50 focus:bg-white focus:border-primary outline-none transition-all"
+                    required
+                  />
+                </div>
+                <div className="space-y-2">
+                  <label className="text-sm font-bold text-text-secondary">发布日期</label>
+                  <input
+                    type="date"
+                    name="date"
+                    value={formData.date}
+                    onChange={handleInputChange}
+                    className="w-full p-3 rounded-xl border border-border-color bg-white/50 focus:bg-white focus:border-primary outline-none transition-all"
+                  />
+                </div>
+              </div>
+
+              <div className="space-y-2">
+                <label className="text-sm font-bold text-text-secondary flex justify-between">
+                  <span>文章正文</span>
+                  <span className="text-xs font-normal text-text-light">支持 Markdown</span>
+                </label>
+                <textarea
+                  name="content"
+                  value={formData.content}
+                  onChange={handleInputChange}
+                  placeholder="输入文章的详细内容... 使用 ## 标题, - 列表等 Markdown 语法"
+                  rows="12"
+                  className="w-full p-4 rounded-xl border border-border-color bg-white/50 focus:bg-white focus:border-primary outline-none transition-all font-mono text-sm leading-relaxed"
+                />
+              </div>
+
+              <div className="flex justify-end gap-4 pt-4 border-t border-border-color">
+                <button 
+                  type="button" 
+                  onClick={handleCancel}
+                  className="btn btn-ghost"
+                  disabled={submitting}
+                >
+                  取消
+                </button>
+                <button 
+                  type="submit" 
+                  className="btn btn-primary px-8"
+                  disabled={submitting}
+                >
+                  {submitting ? '⏳ 提交中...' : (editingArticle ? '💾 保存修改' : '✅ 立即发布')}
+                </button>
+              </div>
+            </form>
+          </div>
+        </div>
       )}
 
-      {/* 文章列表 */}
+      {/* Loading State */}
+      {loading && (
+        <div className="glass p-12 rounded-2xl text-center animate-pulse">
+          <div className="text-4xl mb-4">🐱</div>
+          <p className="text-text-secondary">正在加载文章数据...</p>
+        </div>
+      )}
+
+      {/* Error State */}
+      {error && (
+        <div className="bg-red-50 border border-red-200 p-6 rounded-2xl text-center text-red-600 mb-8">
+          <p>❌ {error}</p>
+          <button onClick={fetchArticles} className="text-sm underline mt-2 hover:text-red-800">重试</button>
+        </div>
+      )}
+
+      {/* Articles Table */}
       {!loading && !error && (
-        <div className="articles-table-container">
-          <h2>📚 文章列表 ({articles.length})</h2>
+        <div className="glass rounded-2xl overflow-hidden shadow-sm animate-slide-up">
           {articles.length > 0 ? (
-            <table className="articles-table">
-              <thead>
-                <tr>
-                  <th>ID</th>
-                  <th>标题</th>
-                  <th>分类</th>
-                  <th>阅读时长</th>
-                  <th>发布日期</th>
-                  <th>操作</th>
-                </tr>
-              </thead>
-              <tbody>
-                {articles.map(article => (
-                  <tr key={article.id}>
-                    <td>{article.id}</td>
-                    <td className="article-title-cell">{article.title}</td>
-                    <td>
-                      <span className="category-badge">{article.category}</span>
-                    </td>
-                    <td>{article.readTime}</td>
-                    <td>{article.date}</td>
-                    <td className="actions-cell">
-                      <button 
-                        onClick={() => handleEdit(article)}
-                        className="btn-edit"
-                        title="编辑"
-                      >
-                        ✏️
-                      </button>
-                      <button 
-                        onClick={() => handleDelete(article)}
-                        className="btn-delete"
-                        title="删除"
-                      >
-                        🗑️
-                      </button>
-                    </td>
+            <div className="overflow-x-auto">
+              <table className="w-full text-left border-collapse">
+                <thead>
+                  <tr className="bg-primary/5 border-b border-border-color text-text-secondary text-sm uppercase tracking-wider">
+                    <th className="p-4 font-bold w-16">ID</th>
+                    <th className="p-4 font-bold">文章标题</th>
+                    <th className="p-4 font-bold">分类</th>
+                    <th className="p-4 font-bold w-32">发布日期</th>
+                    <th className="p-4 font-bold w-32 text-center">操作</th>
                   </tr>
-                ))}
-              </tbody>
-            </table>
+                </thead>
+                <tbody className="divide-y divide-border-color/50">
+                  {articles.map((article) => (
+                    <tr key={article.id} className="hover:bg-white/40 transition-colors group">
+                      <td className="p-4 text-text-light font-mono text-sm">#{article.id}</td>
+                      <td className="p-4">
+                        <div className="font-bold text-text-color mb-1">{article.title}</div>
+                        <div className="text-xs text-text-light truncate max-w-md">{article.description}</div>
+                      </td>
+                      <td className="p-4">
+                        <span className="px-2 py-1 rounded-lg text-xs bg-white border border-border-color text-text-secondary whitespace-nowrap">
+                          {article.category}
+                        </span>
+                      </td>
+                      <td className="p-4 text-sm text-text-secondary whitespace-nowrap">
+                        {article.date}
+                      </td>
+                      <td className="p-4">
+                        <div className="flex justify-center gap-2 opacity-60 group-hover:opacity-100 transition-opacity">
+                          <button 
+                            onClick={() => handleEdit(article)}
+                            className="p-2 hover:bg-primary/10 text-primary rounded-lg transition-colors"
+                            title="编辑"
+                          >
+                            ✏️
+                          </button>
+                          <button 
+                            onClick={() => handleDelete(article)}
+                            className="p-2 hover:bg-red-100 text-red-500 rounded-lg transition-colors"
+                            title="删除"
+                          >
+                            🗑️
+                          </button>
+                        </div>
+                      </td>
+                    </tr>
+                  ))}
+                </tbody>
+              </table>
+            </div>
           ) : (
-            <div className="empty-message">
-              📝 暂无文章，点击"新增文章"按钮创建第一篇文章吧！
+            <div className="p-12 text-center">
+              <div className="text-4xl mb-4 grayscale opacity-50">📝</div>
+              <p className="text-text-secondary mb-4">暂无文章，开始创作你的第一篇博客吧！</p>
+              <button onClick={handleAddNew} className="btn btn-primary">
+                ✨ 创建文章
+              </button>
             </div>
           )}
         </div>
