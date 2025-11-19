@@ -175,18 +175,6 @@ function GameHub() {
           </div>
         )}
       </main>
-
-      {/* 页脚 */}
-      <footer className="game-hub-footer">
-        <div className="footer-content">
-          <p className="footer-message">
-            🎁 这是一个隐藏的小彩蛋页面,分享给朋友一起玩吧!
-          </p>
-          <p className="footer-tip">
-            💡 提示: 你可以把这个链接收藏起来,随时回来玩游戏~
-          </p>
-        </div>
-      </footer>
     </div>
   )
 }

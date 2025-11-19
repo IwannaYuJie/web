@@ -204,12 +204,28 @@ export const chapters = [
     events: ['event_arrival', 'event_meet_yujie', 'event_meet_laokuai']
   },
   {
+    id: 'chapter_extra1',
+    day: 2,
+    title: '东北文化',
+    scene: 'kitchen',
+    description: '学习方言与遭遇大鹅',
+    events: ['event_learn_dialect', 'event_goose_fight']
+  },
+  {
     id: 'chapter2',
     day: 5,
     title: '融入生活',
     scene: 'kitchen',
     description: '开始帮忙做农活',
     events: ['event_help_cooking', 'event_chop_wood', 'event_feed_pigs']
+  },
+  {
+    id: 'chapter_extra2',
+    day: 8,
+    title: '乐于助人',
+    scene: 'farmhouse',
+    description: '帮助邻居翠花修房顶',
+    events: ['event_help_neighbor']
   },
   {
     id: 'chapter3',
@@ -220,12 +236,28 @@ export const chapters = [
     events: ['event_market_trip', 'event_buy_gifts', 'event_meet_cuihua']
   },
   {
+    id: 'chapter_extra3',
+    day: 12,
+    title: '山中探险',
+    scene: 'snowfield',
+    description: '上山采蘑菇',
+    events: ['event_pick_mushrooms']
+  },
+  {
     id: 'chapter4',
     day: 15,
     title: '深入了解',
     scene: 'riverside',
     description: '与雨姐的深入交流',
     events: ['event_riverside_talk', 'event_share_stories', 'event_laokuai_jealous']
+  },
+  {
+    id: 'chapter_extra4',
+    day: 18,
+    title: '消除误会',
+    scene: 'farmhouse',
+    description: '解决与老蒯的误会',
+    events: ['event_misunderstanding']
   },
   {
     id: 'chapter5',
@@ -236,12 +268,28 @@ export const chapters = [
     events: ['event_kill_pig', 'event_carry_pork', 'event_big_feast']
   },
   {
+    id: 'chapter_extra5',
+    day: 22,
+    title: '欢庆时刻',
+    scene: 'farmhouse',
+    description: '扭秧歌大赛',
+    events: ['event_yangge_dance']
+  },
+  {
     id: 'chapter6',
     day: 25,
     title: '冬日情愫',
     scene: 'snowfield',
     description: '雪地里的浪漫时刻',
     events: ['event_snow_play', 'event_confession_chance', 'event_decision_time']
+  },
+  {
+    id: 'chapter_extra6',
+    day: 28,
+    title: '最后的心意',
+    scene: 'farmhouse',
+    description: '准备离别的礼物',
+    events: ['event_farewell_gift']
   },
   {
     id: 'chapter7',
