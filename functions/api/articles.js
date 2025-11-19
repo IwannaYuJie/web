@@ -237,6 +237,22 @@ export async function onRequest(context) {
     return errorResponse('KV 命名空间未配置，请在 Cloudflare Pages 设置中绑定 ARTICLES_KV', 500)
   }
 
+  // 特殊处理：验证 Key 的请求
+  if (articleId === 'auth-check' && method === 'POST') {
+    const adminKey = env.ADMIN_KEY
+    const requestKey = request.headers.get('X-Admin-Key')
+    
+    if (!adminKey) {
+      return errorResponse('服务器未配置 ADMIN_KEY', 500)
+    }
+    
+    if (requestKey === adminKey) {
+      return jsonResponse({ status: 'ok', message: '验证通过' })
+    } else {
+      return errorResponse('密码错误', 401)
+    }
+  }
+
   // 权限验证 (仅针对写操作)
   if (['POST', 'PUT', 'DELETE'].includes(method)) {
     const adminKey = env.ADMIN_KEY

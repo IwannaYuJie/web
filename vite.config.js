@@ -40,6 +40,19 @@ export default defineConfig({
             if (['POST', 'PUT', 'DELETE'].includes(req.method)) {
                const adminKey = req.headers['x-admin-key']
                // 本地开发默认密码: 123456
+               
+               // 特殊处理：验证 Key 的请求
+               if (url === '/api/articles/auth-check') {
+                 if (adminKey === '123456') {
+                   res.statusCode = 200
+                   res.end(JSON.stringify({ status: 'ok', message: '验证通过' }))
+                 } else {
+                   res.statusCode = 401
+                   res.end(JSON.stringify({ error: '密码错误' }))
+                 }
+                 return
+               }
+
                if (adminKey !== '123456') {
                  res.statusCode = 401
                  res.end(JSON.stringify({ error: '未授权的操作：密码错误' }))

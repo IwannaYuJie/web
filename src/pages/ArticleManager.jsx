@@ -35,13 +35,34 @@ function ArticleManager() {
     }
   }, [])
 
-  const handleLogin = (e) => {
+  const handleLogin = async (e) => {
     e.preventDefault()
     const inputKey = e.target.elements.key.value
-    if (inputKey) {
-      setAdminKey(inputKey)
-      setIsAuthenticated(true)
-      localStorage.setItem('adminKey', inputKey)
+    
+    if (!inputKey) return
+
+    try {
+      // 验证密码是否正确
+      const response = await fetch('/api/articles/auth-check', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          'X-Admin-Key': inputKey
+        }
+      })
+
+      if (response.ok) {
+        setAdminKey(inputKey)
+        setIsAuthenticated(true)
+        localStorage.setItem('adminKey', inputKey)
+      } else {
+        alert('密码错误，请重试！')
+        e.target.elements.key.value = ''
+        e.target.elements.key.focus()
+      }
+    } catch (err) {
+      console.error('验证失败:', err)
+      alert('验证服务暂时不可用，请稍后重试')
     }
   }
 
