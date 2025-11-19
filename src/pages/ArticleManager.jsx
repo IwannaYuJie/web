@@ -43,7 +43,8 @@ function ArticleManager() {
 
     try {
       // 验证密码是否正确
-      const response = await fetch('/api/articles/auth-check', {
+      // Cloudflare Pages 只会将 /api/articles 精准路由到当前函数，因此通过查询参数传递 auth-check 标志
+      const response = await fetch('/api/articles?id=auth-check', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',

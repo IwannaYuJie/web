@@ -4,6 +4,22 @@
 
 ---
 
+## [2025-11-19] - 🔐 管理员校验路由兼容 (Cloudflare)
+
+### 🐞 问题
+- 在自定义域名 `jumaomaomaoju.cn` 上，文章管理页的密码验证请求使用 `POST /api/articles/auth-check`
+- Cloudflare Pages Functions 只会将精确匹配 `/api/articles` 的请求交给 `functions/api/articles.js`
+- 结果：`/api/articles/auth-check` 在边缘直接返回 `405 Method Not Allowed`
+
+### ✅ 修复
+- 将管理员校验改为 `POST /api/articles?id=auth-check`，通过查询参数把动作标识传递给现有函数
+- 在 `src/pages/ArticleManager.jsx` 增加注释，说明为什么必须使用查询参数以保持与 Cloudflare 路由兼容
+
+### 🔎 影响范围
+- `src/pages/ArticleManager.jsx`
+
+---
+
 ## [2025-11-19] - 🎨 全站 UI 重构：高互动与设计感升级
 
 ### ✨ 核心重构 (Core Refactor)
