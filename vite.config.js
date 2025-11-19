@@ -35,6 +35,17 @@ export default defineConfig({
               res.end()
               return
             }
+
+            // 简单的权限验证 (仅针对写操作)
+            if (['POST', 'PUT', 'DELETE'].includes(req.method)) {
+               const adminKey = req.headers['x-admin-key']
+               // 本地开发默认密码: 123456
+               if (adminKey !== '123456') {
+                 res.statusCode = 401
+                 res.end(JSON.stringify({ error: '未授权的操作：密码错误' }))
+                 return
+               }
+            }
             
             // GET /api/articles - 获取所有文章
             if (req.method === 'GET' && url === '/api/articles') {

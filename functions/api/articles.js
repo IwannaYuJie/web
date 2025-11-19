@@ -236,6 +236,21 @@ export async function onRequest(context) {
   if (!env.ARTICLES_KV) {
     return errorResponse('KV 命名空间未配置，请在 Cloudflare Pages 设置中绑定 ARTICLES_KV', 500)
   }
+
+  // 权限验证 (仅针对写操作)
+  if (['POST', 'PUT', 'DELETE'].includes(method)) {
+    const adminKey = env.ADMIN_KEY
+    const requestKey = request.headers.get('X-Admin-Key')
+    
+    // 如果未配置 ADMIN_KEY，为了安全起见，拒绝所有写操作
+    if (!adminKey) {
+      return errorResponse('服务器未配置 ADMIN_KEY，无法执行写操作', 500)
+    }
+    
+    if (requestKey !== adminKey) {
+      return errorResponse('未授权的操作：密码错误', 401)
+    }
+  }
   
   try {
     // 路由处理

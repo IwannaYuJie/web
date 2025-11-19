@@ -21,6 +21,35 @@ function ArticleManager() {
     content: ''
   })
   const [submitting, setSubmitting] = useState(false)
+  
+  // 权限状态
+  const [adminKey, setAdminKey] = useState('')
+  const [isAuthenticated, setIsAuthenticated] = useState(false)
+
+  // 检查本地存储的密钥
+  useEffect(() => {
+    const savedKey = localStorage.getItem('adminKey')
+    if (savedKey) {
+      setAdminKey(savedKey)
+      setIsAuthenticated(true)
+    }
+  }, [])
+
+  const handleLogin = (e) => {
+    e.preventDefault()
+    const inputKey = e.target.elements.key.value
+    if (inputKey) {
+      setAdminKey(inputKey)
+      setIsAuthenticated(true)
+      localStorage.setItem('adminKey', inputKey)
+    }
+  }
+
+  const handleLogout = () => {
+    setAdminKey('')
+    setIsAuthenticated(false)
+    localStorage.removeItem('adminKey')
+  }
 
   // 文章分类选项
   const categories = [
@@ -124,10 +153,16 @@ function ArticleManager() {
         method: editingArticle ? 'POST' : 'POST',
         headers: {
           'Content-Type': 'application/json',
+          'X-Admin-Key': adminKey,
           ...(editingArticle && { 'X-HTTP-Method-Override': 'PUT' })
         },
         body: JSON.stringify(formData)
       })
+      
+      if (response.status === 401) {
+        handleLogout()
+        throw new Error('密码错误或已过期，请重新登录')
+      }
       
       if (!response.ok) {
         let errorMessage = `HTTP ${response.status}: ${response.statusText}`
@@ -165,9 +200,15 @@ function ArticleManager() {
       const response = await fetch(`/api/articles?id=${article.id}`, {
         method: 'POST',
         headers: {
-          'X-HTTP-Method-Override': 'DELETE'
+          'X-HTTP-Method-Override': 'DELETE',
+          'X-Admin-Key': adminKey
         }
       })
+      
+      if (response.status === 401) {
+        handleLogout()
+        throw new Error('密码错误或已过期，请重新登录')
+      }
       
       if (!response.ok) {
         let errorMessage = `HTTP ${response.status}: ${response.statusText}`
@@ -197,6 +238,33 @@ function ArticleManager() {
     setEditingArticle(null)
   }
 
+  if (!isAuthenticated) {
+    return (
+      <div className="container pb-12 max-w-md mx-auto pt-20">
+        <div className="glass p-8 rounded-2xl shadow-xl text-center animate-fade-in">
+          <div className="text-5xl mb-6">🔒</div>
+          <h1 className="text-2xl font-bold mb-2 text-text-color">管理员验证</h1>
+          <p className="text-text-secondary mb-6">请输入管理员密码以管理文章</p>
+          <form onSubmit={handleLogin} className="space-y-4">
+            <input 
+              type="password" 
+              name="key" 
+              placeholder="输入密码..." 
+              className="w-full p-3 rounded-xl border border-border-color bg-white/50 focus:bg-white focus:border-primary outline-none transition-all text-center"
+              autoFocus
+            />
+            <button type="submit" className="btn btn-primary w-full">
+              验证身份
+            </button>
+          </form>
+          <div className="mt-6 text-xs text-text-light">
+            <Link to="/" className="hover:text-primary">← 返回首页</Link>
+          </div>
+        </div>
+      </div>
+    )
+  }
+
   return (
     <div className="container pb-12 max-w-6xl mx-auto">
       {/* Header */}
@@ -206,6 +274,13 @@ function ArticleManager() {
           <p className="text-text-secondary">管理你的Java技术文章库</p>
         </div>
         <div className="flex gap-3">
+          <button 
+            onClick={handleLogout} 
+            className="btn btn-ghost text-text-light hover:text-red-500"
+            title="退出登录"
+          >
+            🔒 退出
+          </button>
           <button 
             onClick={fetchArticles} 
             className="btn btn-secondary"

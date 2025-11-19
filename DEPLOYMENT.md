@@ -20,6 +20,7 @@
 ```
 ARK_API_KEY=你的火山引擎API密钥
 QINIU_AI_API_KEY=你的七牛云AI API密钥
+ADMIN_KEY=你的文章管理密码（建议设置复杂密码）
 ```
 
 ### API 代理文件
