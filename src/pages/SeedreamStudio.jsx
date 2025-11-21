@@ -32,6 +32,13 @@ function SeedreamStudio() {
   const [controlScale, setControlScale] = useState(0.7)
   const [showApiKeyPanel, setShowApiKeyPanel] = useState(false)
   const [showParamsPanel, setShowParamsPanel] = useState(false)
+  
+  // 新增模型选择与参数状态
+  const [modelType, setModelType] = useState('v4') // 'v4' | 'new'
+  const [aspectRatio, setAspectRatio] = useState('9:16')
+  const [resolution, setResolution] = useState('4K')
+  const [outputFormat, setOutputFormat] = useState('png')
+
   const inputImageRef = useRef(null)
 
   /**
@@ -248,47 +255,92 @@ function SeedreamStudio() {
     try {
       fal.config({ credentials: apiKey.trim() })
 
-      const inputPayload = {
-        prompt: prompt.trim(),
-        image_size: imageSizeInput,
-        enhance_prompt_mode: enhanceMode,
-        num_images: Number.parseInt(String(numImages), 10) || 1,
-        max_images: Number.parseInt(String(maxImages), 10) || 1,
-        sync_mode: syncMode,
-        enable_safety_checker: safetyChecker
-      }
+      let inputPayload = {}
+      let modelId = ''
 
-      if (seed.trim()) {
-        const parsedSeed = Number.parseInt(seed.trim(), 10)
-        if (!Number.isNaN(parsedSeed)) {
-          inputPayload.seed = parsedSeed
+      if (modelType === 'v4') {
+        inputPayload = {
+          prompt: prompt.trim(),
+          image_size: imageSizeInput,
+          enhance_prompt_mode: enhanceMode,
+          num_images: Number.parseInt(String(numImages), 10) || 1,
+          max_images: Number.parseInt(String(maxImages), 10) || 1,
+          sync_mode: syncMode,
+          enable_safety_checker: safetyChecker
         }
-      }
 
-      let modelId = 'fal-ai/bytedance/seedream/v4/text-to-image'
-
-      if (mode === 'edit') {
-        modelId = 'fal-ai/bytedance/seedream/v4/edit'
-        inputPayload.control_scale = controlScaleNumber
-
-        if (imageInputMethod === 'upload') {
-          try {
-            console.log('上传基础图像到 Fal 存储')
-            setError('')
-            const uploadedUrl = await fal.storage.upload(uploadedImage)
-            inputPayload.image_urls = [uploadedUrl]
-          } catch (uploadError) {
-            console.error('上传基础图像失败:', uploadError)
-            setError(uploadError?.message || '😿 上传基础图像失败，请稍后再试')
-            setLoading(false)
-            return
+        if (seed.trim()) {
+          const parsedSeed = Number.parseInt(seed.trim(), 10)
+          if (!Number.isNaN(parsedSeed)) {
+            inputPayload.seed = parsedSeed
           }
-        } else {
-          inputPayload.image_urls = presetUrlList
+        }
+
+        modelId = 'fal-ai/bytedance/seedream/v4/text-to-image'
+
+        if (mode === 'edit') {
+          modelId = 'fal-ai/bytedance/seedream/v4/edit'
+          inputPayload.control_scale = controlScaleNumber
+
+          if (imageInputMethod === 'upload') {
+            try {
+              console.log('上传基础图像到 Fal 存储')
+              setError('')
+              const uploadedUrl = await fal.storage.upload(uploadedImage)
+              inputPayload.image_urls = [uploadedUrl]
+            } catch (uploadError) {
+              console.error('上传基础图像失败:', uploadError)
+              setError(uploadError?.message || '😿 上传基础图像失败，请稍后再试')
+              setLoading(false)
+              return
+            }
+          } else {
+            inputPayload.image_urls = presetUrlList
+          }
+        }
+      } else {
+        // 新模型调用逻辑
+        modelId = 'fal-ai/gemini-3-pro-image-preview'
+        
+        inputPayload = {
+          prompt: prompt.trim(),
+          num_images: Number.parseInt(String(numImages), 10) || 1,
+          aspect_ratio: aspectRatio,
+          output_format: outputFormat,
+          sync_mode: syncMode,
+          resolution: resolution
+        }
+
+        if (mode === 'edit') {
+          if (imageInputMethod === 'upload') {
+            if (!uploadedImage) {
+              setError('😿 改图模式需要先上传一张基础图像')
+              setLoading(false)
+              return
+            }
+            try {
+              console.log('上传基础图像到 Fal 存储')
+              setError('')
+              const uploadedUrl = await fal.storage.upload(uploadedImage)
+              inputPayload.image_urls = [uploadedUrl]
+            } catch (uploadError) {
+              console.error('上传基础图像失败:', uploadError)
+              setError(uploadError?.message || '😿 上传基础图像失败，请稍后再试')
+              setLoading(false)
+              return
+            }
+          } else {
+            if (presetUrlList.length === 0) {
+              setError('😿 请提供至少一个有效的图像 URL')
+              setLoading(false)
+              return
+            }
+            inputPayload.image_urls = presetUrlList
+          }
         }
       }
 
-      console.log('Seedream 输入参数:', inputPayload)
+      console.log(`[${modelType}] 输入参数:`, inputPayload)
 
       const result = await fal.subscribe(modelId, {
         input: inputPayload,
@@ -389,6 +441,21 @@ function SeedreamStudio() {
             </div>
 
             <div className="panel-card">
+              <h2>🤖 模型选择</h2>
+              <div className="field-group">
+                <label htmlFor="model-select">选择模型</label>
+                <select
+                  id="model-select"
+                  value={modelType}
+                  onChange={(e) => setModelType(e.target.value)}
+                >
+                  <option value="v4">Seedream v4 (经典)</option>
+                  <option value="new">Gemini 3 Pro (新版)</option>
+                </select>
+              </div>
+            </div>
+
+            <div className="panel-card">
               <h2>📝 提示词</h2>
               <div className="field-group">
                 <label htmlFor="seedream-prompt">Prompt</label>
@@ -480,19 +547,21 @@ function SeedreamStudio() {
                   </div>
                 )}
 
-                <div className="field-group">
-                  <label htmlFor="seedream-control-scale">编辑强度 (0 - 2)</label>
-                  <input
-                    id="seedream-control-scale"
-                    type="range"
-                    min="0"
-                    max="2"
-                    step="0.05"
-                    value={controlScale}
-                    onChange={(event) => setControlScale(event.target.value)}
-                  />
-                  <span className="range-value">当前强度：{controlScaleNumber.toFixed(2)}</span>
-                </div>
+                {modelType === 'v4' && (
+                  <div className="field-group">
+                    <label htmlFor="seedream-control-scale">编辑强度 (0 - 2)</label>
+                    <input
+                      id="seedream-control-scale"
+                      type="range"
+                      min="0"
+                      max="2"
+                      step="0.05"
+                      value={controlScale}
+                      onChange={(event) => setControlScale(event.target.value)}
+                    />
+                    <span className="range-value">当前强度：{controlScaleNumber.toFixed(2)}</span>
+                  </div>
+                )}
               </div>
             )}
 
@@ -507,106 +576,160 @@ function SeedreamStudio() {
               </button>
               {showParamsPanel && (
                 <div className="collapse-content">
-              <div className="field-grid">
-                <div className="field-group">
-                  <label htmlFor="seedream-size">图像尺寸</label>
-                  <select
-                    id="seedream-size"
-                    value={sizePreset}
-                    onChange={(event) => setSizePreset(event.target.value)}
-                  >
-                    <option value="square_hd">Square HD (1024x1024)</option>
-                    <option value="square">Square (默认)</option>
-                    <option value="portrait_4_3">Portrait 4:3</option>
-                    <option value="portrait_16_9">Portrait 16:9</option>
-                    <option value="landscape_4_3">Landscape 4:3</option>
-                    <option value="landscape_16_9">Landscape 16:9</option>
-                    <option value="auto">Auto</option>
-                    <option value="auto_2K">Auto 2K</option>
-                    <option value="auto_4K">Auto 4K</option>
-                    <option value="custom">自定义尺寸</option>
-                  </select>
-                </div>
+                  <div className="field-grid">
+                    {modelType === 'v4' ? (
+                      <>
+                        <div className="field-group">
+                          <label htmlFor="seedream-size">图像尺寸</label>
+                          <select
+                            id="seedream-size"
+                            value={sizePreset}
+                            onChange={(event) => setSizePreset(event.target.value)}
+                          >
+                            <option value="square_hd">Square HD (1024x1024)</option>
+                            <option value="square">Square (默认)</option>
+                            <option value="portrait_4_3">Portrait 4:3</option>
+                            <option value="portrait_16_9">Portrait 16:9</option>
+                            <option value="landscape_4_3">Landscape 4:3</option>
+                            <option value="landscape_16_9">Landscape 16:9</option>
+                            <option value="auto">Auto</option>
+                            <option value="auto_2K">Auto 2K</option>
+                            <option value="auto_4K">Auto 4K</option>
+                            <option value="custom">自定义尺寸</option>
+                          </select>
+                        </div>
 
-                <div className="field-group">
-                  <label htmlFor="seedream-enhance">提示增强</label>
-                  <select
-                    id="seedream-enhance"
-                    value={enhanceMode}
-                    onChange={(event) => setEnhanceMode(event.target.value)}
-                  >
-                    <option value="standard">Standard</option>
-                    <option value="fast">Fast</option>
-                  </select>
-                </div>
+                        <div className="field-group">
+                          <label htmlFor="seedream-enhance">提示增强</label>
+                          <select
+                            id="seedream-enhance"
+                            value={enhanceMode}
+                            onChange={(event) => setEnhanceMode(event.target.value)}
+                          >
+                            <option value="standard">Standard</option>
+                            <option value="fast">Fast</option>
+                          </select>
+                        </div>
 
-                {isCustomSize && (
-                  <>
+                        {isCustomSize && (
+                          <>
+                            <div className="field-group">
+                              <label htmlFor="seedream-width">宽度 (1024-4096)</label>
+                              <input
+                                id="seedream-width"
+                                type="number"
+                                min={1024}
+                                max={4096}
+                                value={customWidth}
+                                onChange={(event) => setCustomWidth(event.target.value)}
+                              />
+                            </div>
+                            <div className="field-group">
+                              <label htmlFor="seedream-height">高度 (1024-4096)</label>
+                              <input
+                                id="seedream-height"
+                                type="number"
+                                min={1024}
+                                max={4096}
+                                value={customHeight}
+                                onChange={(event) => setCustomHeight(event.target.value)}
+                              />
+                            </div>
+                          </>
+                        )}
+                      </>
+                    ) : (
+                      <>
+                        <div className="field-group">
+                          <label htmlFor="new-aspect-ratio">纵横比</label>
+                          <select
+                            id="new-aspect-ratio"
+                            value={aspectRatio}
+                            onChange={(e) => setAspectRatio(e.target.value)}
+                          >
+                            <option value="1:1">1:1</option>
+                            <option value="16:9">16:9</option>
+                            <option value="21:9">21:9</option>
+                            <option value="3:2">3:2</option>
+                            <option value="4:3">4:3</option>
+                            <option value="5:4">5:4</option>
+                            <option value="4:5">4:5</option>
+                            <option value="3:4">3:4</option>
+                            <option value="2:3">2:3</option>
+                            <option value="9:16">9:16</option>
+                          </select>
+                        </div>
+                        <div className="field-group">
+                          <label htmlFor="new-resolution">分辨率</label>
+                          <select
+                            id="new-resolution"
+                            value={resolution}
+                            onChange={(e) => setResolution(e.target.value)}
+                          >
+                            <option value="1K">1K</option>
+                            <option value="2K">2K</option>
+                            <option value="4K">4K</option>
+                          </select>
+                        </div>
+                        <div className="field-group">
+                          <label htmlFor="new-format">输出格式</label>
+                          <select
+                            id="new-format"
+                            value={outputFormat}
+                            onChange={(e) => setOutputFormat(e.target.value)}
+                          >
+                            <option value="png">PNG</option>
+                            <option value="jpeg">JPEG</option>
+                            <option value="webp">WebP</option>
+                          </select>
+                        </div>
+                      </>
+                    )}
+
                     <div className="field-group">
-                      <label htmlFor="seedream-width">宽度 (1024-4096)</label>
+                      <label htmlFor="seedream-num">生成数量</label>
                       <input
-                        id="seedream-width"
+                        id="seedream-num"
                         type="number"
-                        min={1024}
-                        max={4096}
-                        value={customWidth}
-                        onChange={(event) => setCustomWidth(event.target.value)}
+                        min={1}
+                        value={numImages}
+                        onChange={(event) => setNumImages(Number.parseInt(event.target.value, 10) || 1)}
                       />
                     </div>
-                    <div className="field-group">
-                      <label htmlFor="seedream-height">高度 (1024-4096)</label>
-                      <input
-                        id="seedream-height"
-                        type="number"
-                        min={1024}
-                        max={4096}
-                        value={customHeight}
-                        onChange={(event) => setCustomHeight(event.target.value)}
-                      />
-                    </div>
-                  </>
-                )}
 
-                <div className="field-group">
-                  <label htmlFor="seedream-num">生成批次</label>
-                  <input
-                    id="seedream-num"
-                    type="number"
-                    min={1}
-                    value={numImages}
-                    onChange={(event) => setNumImages(Number.parseInt(event.target.value, 10) || 1)}
-                  />
-                </div>
+                    {modelType === 'v4' && (
+                      <>
+                        <div className="field-group">
+                          <label htmlFor="seedream-max">每批最大图像</label>
+                          <input
+                            id="seedream-max"
+                            type="number"
+                            min={1}
+                            value={maxImages}
+                            onChange={(event) => setMaxImages(Number.parseInt(event.target.value, 10) || 1)}
+                          />
+                        </div>
 
-                <div className="field-group">
-                  <label htmlFor="seedream-max">每批最大图像</label>
-                  <input
-                    id="seedream-max"
-                    type="number"
-                    min={1}
-                    value={maxImages}
-                    onChange={(event) => setMaxImages(Number.parseInt(event.target.value, 10) || 1)}
-                  />
-                </div>
-
-                <div className="field-group seed-input">
-                  <label htmlFor="seedream-seed">随机种子</label>
-                  <div className="inline-field">
-                    <input
-                      id="seedream-seed"
-                      type="number"
-                      placeholder="留空则为随机"
-                      value={seed}
-                      onChange={(event) => setSeed(event.target.value)}
-                    />
-                    <button type="button" className="ghost" onClick={handleRandomSeed}>
-                      🎲 随机
-                    </button>
+                        <div className="field-group seed-input">
+                          <label htmlFor="seedream-seed">随机种子</label>
+                          <div className="inline-field">
+                            <input
+                              id="seedream-seed"
+                              type="number"
+                              placeholder="留空则为随机"
+                              value={seed}
+                              onChange={(event) => setSeed(event.target.value)}
+                            />
+                            <button type="button" className="ghost" onClick={handleRandomSeed}>
+                              🎲 随机
+                            </button>
+                          </div>
+                        </div>
+                      </>
+                    )}
                   </div>
-                </div>
-              </div>
 
-              <div className="toggle-group">
+                  <div className="toggle-group">
                 <label className="toggle-item">
                   <input
                     type="checkbox"
