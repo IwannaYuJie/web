@@ -35,8 +35,8 @@ function SeedreamStudio() {
   
   // 新增模型选择与参数状态
   const [modelType, setModelType] = useState('v4') // 'v4' | 'new'
-  const [aspectRatio, setAspectRatio] = useState('9:16')
-  const [resolution, setResolution] = useState('4K')
+  const [aspectRatio, setAspectRatio] = useState('1:1')
+  const [resolution, setResolution] = useState('1K')
   const [outputFormat, setOutputFormat] = useState('png')
 
   const inputImageRef = useRef(null)
@@ -300,8 +300,12 @@ function SeedreamStudio() {
         }
       } else {
         // 新模型调用逻辑
-        modelId = 'fal-ai/gemini-3-pro-image-preview'
-        
+        const isGeminiEditMode = mode === 'edit'
+        // Gemini 3 Pro 的改图需要调用 /edit 端点，否则上传的 image_urls 会被忽略
+        modelId = isGeminiEditMode
+          ? 'fal-ai/gemini-3-pro-image-preview/edit'
+          : 'fal-ai/gemini-3-pro-image-preview'
+
         inputPayload = {
           prompt: prompt.trim(),
           num_images: Number.parseInt(String(numImages), 10) || 1,
@@ -311,7 +315,7 @@ function SeedreamStudio() {
           resolution: resolution
         }
 
-        if (mode === 'edit') {
+        if (isGeminiEditMode) {
           if (imageInputMethod === 'upload') {
             if (!uploadedImage) {
               setError('😿 改图模式需要先上传一张基础图像')
