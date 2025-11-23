@@ -12,7 +12,7 @@
 ### ✅ 修复
 - `src/pages/SeedreamStudio.jsx` 中针对 Gemini 3 Pro 区分文生图与改图端点，改图模式切换为官方文档要求的 `fal-ai/gemini-3-pro-image-preview/edit`
 - 为逻辑新增注释，明确端点差异与 `image_urls` 依赖关系，避免未来回归时误用
-- 同步调整 Gemini 3 Pro 的默认纵横比与分辨率至 `1:1 @ 1K`，保持与官方示例一致
+- 同步调整 Gemini 3 Pro 的默认纵横比与分辨率至 `1:1 @ 2K`，保持与最新需求一致
 
 ### 🔎 影响范围
 - `src/pages/SeedreamStudio.jsx`

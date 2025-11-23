@@ -36,7 +36,7 @@ function SeedreamStudio() {
   // 新增模型选择与参数状态
   const [modelType, setModelType] = useState('v4') // 'v4' | 'new'
   const [aspectRatio, setAspectRatio] = useState('1:1')
-  const [resolution, setResolution] = useState('1K')
+  const [resolution, setResolution] = useState('2K')
   const [outputFormat, setOutputFormat] = useState('png')
 
   const inputImageRef = useRef(null)
