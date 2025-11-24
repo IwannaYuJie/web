@@ -62,7 +62,6 @@ function SeedreamStudio() {
   const [qiniuImages, setQiniuImages] = useState([])
   const [qiniuUsage, setQiniuUsage] = useState(null)
   const [qiniuMode, setQiniuMode] = useState('text')
-  const [qiniuImageSourceText, setQiniuImageSourceText] = useState('')
   const [qiniuImageUploads, setQiniuImageUploads] = useState([])
   const [qiniuMaskText, setQiniuMaskText] = useState('')
   const [qiniuMaskUpload, setQiniuMaskUpload] = useState('')
@@ -636,16 +635,10 @@ function SeedreamStudio() {
       setQiniuCount(sanitizedCount)
     }
 
-    const urlList = qiniuImageSourceText
-      .split('\n')
-      .map((item) => item.trim())
-      .filter(Boolean)
-
-    const uploadList = qiniuImageUploads.map((item) => item.dataUrl).filter(Boolean)
-    const imageList = [...uploadList, ...urlList]
+    const imageList = qiniuImageUploads.map((item) => item.dataUrl).filter(Boolean)
 
     if (imageList.length === 0) {
-      setQiniuError('😿 请至少上传或粘贴一张待编辑的图像')
+      setQiniuError('😿 请至少上传一张待编辑的图像')
       return
     }
 
@@ -1322,51 +1315,8 @@ function SeedreamStudio() {
                         </ul>
                       )}
                     </div>
-                    <div className="field-group">
-                      <label htmlFor="qiniu-image-sources">或粘贴在线图片 URL（每行一条）</label>
-                      <textarea
-                        id="qiniu-image-sources"
-                        rows={4}
-                        placeholder="https://example.com/base-1.png"
-                        value={qiniuImageSourceText}
-                        onChange={(event) => setQiniuImageSourceText(event.target.value)}
-                      />
-                      <p className="panel-tip">会与上传的图像合并发送，至少保留一张有效图像。</p>
-                    </div>
                   </div>
 
-                  <div className="panel-card">
-                    <h2>🎭 遮罩设置</h2>
-                    <div className="field-group">
-                      <label htmlFor="qiniu-mask-text">遮罩 Base64 / URL</label>
-                      <textarea
-                        id="qiniu-mask-text"
-                        rows={3}
-                        placeholder="可直接粘贴 data:image/png;base64,... 或在线遮罩 URL"
-                        value={qiniuMaskText}
-                        onChange={(event) => setQiniuMaskText(event.target.value)}
-                      />
-                    </div>
-                    <div className="file-upload">
-                      <label className="file-label" htmlFor="qiniu-mask-upload">
-                        <span>上传遮罩 PNG（透明区域代表可编辑）</span>
-                        <input
-                          id="qiniu-mask-upload"
-                          type="file"
-                          accept="image/*"
-                          onChange={handleQiniuMaskUpload}
-                        />
-                      </label>
-                      {(qiniuMaskFileName || qiniuMaskUpload) && (
-                        <div className="mask-preview">
-                          <p>当前遮罩：{qiniuMaskFileName || '自定义 Mask 数据'}</p>
-                          <button type="button" className="ghost" onClick={handleClearMask}>
-                            清空遮罩
-                          </button>
-                        </div>
-                      )}
-                    </div>
-                  </div>
                 </>
               )}
 
@@ -1644,6 +1594,37 @@ function SeedreamStudio() {
                           <span>stream</span>
                         </div>
                       </div>
+                    </div>
+
+                    <div className="field-group">
+                      <label htmlFor="qiniu-mask-text">遮罩 Base64 / URL</label>
+                      <textarea
+                        id="qiniu-mask-text"
+                        rows={3}
+                        placeholder="可直接粘贴 data:image/png;base64,... 或在线遮罩 URL"
+                        value={qiniuMaskText}
+                        onChange={(event) => setQiniuMaskText(event.target.value)}
+                      />
+                      <p className="panel-tip">仅在图像编辑模式下生效，透明区域代表可修改范围。</p>
+                    </div>
+                    <div className="file-upload">
+                      <label className="file-label" htmlFor="qiniu-mask-upload">
+                        <span>上传遮罩 PNG（透明区域代表可编辑）</span>
+                        <input
+                          id="qiniu-mask-upload"
+                          type="file"
+                          accept="image/*"
+                          onChange={handleQiniuMaskUpload}
+                        />
+                      </label>
+                      {(qiniuMaskFileName || qiniuMaskUpload) && (
+                        <div className="mask-preview">
+                          <p>当前遮罩：{qiniuMaskFileName || '自定义 Mask 数据'}</p>
+                          <button type="button" className="ghost" onClick={handleClearMask}>
+                            清空遮罩
+                          </button>
+                        </div>
+                      )}
                     </div>
                   </div>
                 )}
