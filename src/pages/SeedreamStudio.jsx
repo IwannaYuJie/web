@@ -32,12 +32,34 @@ function SeedreamStudio() {
   const [controlScale, setControlScale] = useState(0.7)
   const [showApiKeyPanel, setShowApiKeyPanel] = useState(false)
   const [showParamsPanel, setShowParamsPanel] = useState(false)
+  const [activeApi, setActiveApi] = useState('fal')
   
   // 新增模型选择与参数状态
   const [modelType, setModelType] = useState('v4') // 'v4' | 'new'
   const [aspectRatio, setAspectRatio] = useState('1:1')
   const [resolution, setResolution] = useState('2K')
   const [outputFormat, setOutputFormat] = useState('png')
+
+  // 七牛文生图参数
+  const [qiniuModel, setQiniuModel] = useState('gemini-3.0-pro-image-preview')
+  const [qiniuPrompt, setQiniuPrompt] = useState('')
+  const [qiniuCount, setQiniuCount] = useState(1)
+  const [qiniuSize, setQiniuSize] = useState('')
+  const [qiniuQuality, setQiniuQuality] = useState('standard')
+  const [qiniuStyle, setQiniuStyle] = useState('vivid')
+  const [qiniuTemperature, setQiniuTemperature] = useState('0.8')
+  const [qiniuTopP, setQiniuTopP] = useState('0.95')
+  const [qiniuTopK, setQiniuTopK] = useState('50')
+  const [qiniuNegativePrompt, setQiniuNegativePrompt] = useState('')
+  const [qiniuImageUrl, setQiniuImageUrl] = useState('')
+  const [qiniuImageReference, setQiniuImageReference] = useState('')
+  const [qiniuImageFidelity, setQiniuImageFidelity] = useState('0.5')
+  const [qiniuHumanFidelity, setQiniuHumanFidelity] = useState('0.45')
+  const [qiniuAspectRatio, setQiniuAspectRatio] = useState('1:1')
+  const [qiniuLoading, setQiniuLoading] = useState(false)
+  const [qiniuError, setQiniuError] = useState('')
+  const [qiniuImages, setQiniuImages] = useState([])
+  const [qiniuUsage, setQiniuUsage] = useState(null)
 
   const inputImageRef = useRef(null)
 
@@ -154,6 +176,15 @@ function SeedreamStudio() {
    */
   const handleRandomSeed = () => {
     setSeed(String(Math.floor(Math.random() * 9999999999)))
+  }
+
+  const handleApiSwitch = (nextApi) => {
+    if (nextApi === activeApi) {
+      return
+    }
+    setActiveApi(nextApi)
+    setError('')
+    setQiniuError('')
   }
 
   const handleModeChange = (nextMode) => {
@@ -397,18 +428,144 @@ function SeedreamStudio() {
     }
   }
 
+  const handleQiniuGenerate = async () => {
+    if (!qiniuPrompt.trim()) {
+      setQiniuError('😿 请先输入 Prompt')
+      return
+    }
+
+    const sanitizedCount = Math.min(10, Math.max(1, Number.parseInt(qiniuCount, 10) || 1))
+    if (sanitizedCount !== qiniuCount) {
+      setQiniuCount(sanitizedCount)
+    }
+
+    const payload = {
+      model: qiniuModel.trim() || 'gemini-3.0-pro-image-preview',
+      prompt: qiniuPrompt.trim(),
+      n: sanitizedCount
+    }
+
+    const trimmedSize = qiniuSize.trim()
+    if (trimmedSize) {
+      payload.size = trimmedSize
+    }
+
+    if (qiniuQuality) {
+      payload.quality = qiniuQuality
+    }
+
+    if (qiniuStyle) {
+      payload.style = qiniuStyle
+    }
+
+    const temperatureValue = Number.parseFloat(qiniuTemperature)
+    if (!Number.isNaN(temperatureValue)) {
+      payload.temperature = temperatureValue
+    }
+
+    const topPValue = Number.parseFloat(qiniuTopP)
+    if (!Number.isNaN(topPValue)) {
+      payload.top_p = topPValue
+    }
+
+    const topKValue = Number.parseInt(qiniuTopK, 10)
+    if (!Number.isNaN(topKValue)) {
+      payload.top_k = topKValue
+    }
+
+    const negative = qiniuNegativePrompt.trim()
+    if (negative) {
+      payload.negative_prompt = negative
+    }
+
+    const imageUrl = qiniuImageUrl.trim()
+    if (imageUrl) {
+      payload.image = imageUrl
+    }
+
+    if (qiniuImageReference) {
+      payload.image_reference = qiniuImageReference
+    }
+
+    const fidelityValue = Number.parseFloat(qiniuImageFidelity)
+    if (!Number.isNaN(fidelityValue)) {
+      payload.image_fidelity = fidelityValue
+    }
+
+    const humanValue = Number.parseFloat(qiniuHumanFidelity)
+    if (!Number.isNaN(humanValue)) {
+      payload.human_fidelity = humanValue
+    }
+
+    if (qiniuAspectRatio) {
+      payload.aspect_ratio = qiniuAspectRatio
+    }
+
+    setQiniuLoading(true)
+    setQiniuError('')
+    setQiniuImages([])
+    setQiniuUsage(null)
+
+    try {
+      const response = await fetch('/api/qiniu-images', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json'
+        },
+        body: JSON.stringify(payload)
+      })
+
+      const data = await response.json()
+
+      if (!response.ok) {
+        throw new Error(data?.error || data?.message || '七牛文生图调用失败')
+      }
+
+      const normalized = normalizeImages(data?.data)
+      if (normalized.length === 0) {
+        throw new Error('生成成功但未返回图片数据')
+      }
+
+      setQiniuImages(normalized)
+      setQiniuUsage(data?.usage || null)
+    } catch (generationError) {
+      console.error('调用七牛文生图失败:', generationError)
+      setQiniuError(generationError?.message || '七牛文生图调用失败')
+    } finally {
+      setQiniuLoading(false)
+    }
+  }
+
   const isCustomSize = sizePreset === 'custom'
 
   return (
     <div className="seedream-page">
       <div className="container">
         <header className="seedream-header">
-          <h1>🌅 Seedream v4 AI 实验室</h1>
-          <p>喵~ 在这里体验 Fal.ai Seedream v4 文生图魔法，支持高级参数调优与结果下载</p>
+          <h1>🌅 Seedream AI 实验室</h1>
+          <p>喵~ 自由切换 Fal.ai Seedream v4 与七牛 Gemini-3.0-Pro Image Preview，玩转橘猫灵感 ✨</p>
         </header>
 
-        <div className="seedream-layout">
-          <section className="seedream-panel" aria-label="生成设置面板">
+        <div className="api-switch" role="tablist" aria-label="图像生成 API 切换">
+          <button
+            type="button"
+            className={`api-switch-button${activeApi === 'fal' ? ' active' : ''}`}
+            onClick={() => handleApiSwitch('fal')}
+          >
+            🧠 Fal.ai Seedream
+          </button>
+          <button
+            type="button"
+            className={`api-switch-button${activeApi === 'qiniu' ? ' active' : ''}`}
+            onClick={() => handleApiSwitch('qiniu')}
+          >
+            🐧 七牛 Gemini
+          </button>
+        </div>
+
+        {activeApi === 'fal' ? (
+          <div className="seedream-layout">
+            <section className="seedream-panel" aria-label="生成设置面板">
             <div className="panel-card collapsible">
               <button 
                 type="button"
@@ -776,49 +933,320 @@ function SeedreamStudio() {
             {error && <p className="error-banner" role="alert">{error}</p>}
           </section>
 
-          <section 
-            className={`seedream-output ${!loading && images.length === 0 ? 'mobile-hidden' : ''}`} 
-            aria-label="生成结果区域"
-          >
-            <div className="output-card">
-              <h2>🎨 生成结果</h2>
+            <section 
+              className={`seedream-output ${!loading && images.length === 0 ? 'mobile-hidden' : ''}`} 
+              aria-label="生成结果区域"
+            >
+              <div className="output-card">
+                <h2>🎨 生成结果</h2>
 
-              {!loading && !error && images.length === 0 && (
-                <div className="output-placeholder">
-                  <p>喵~ 还没有生成记录，输入提示词后点击“生成图像”试试吧</p>
-                </div>
-              )}
+                {!loading && !error && images.length === 0 && (
+                  <div className="output-placeholder">
+                    <p>喵~ 还没有生成记录，输入提示词后点击“生成图像”试试吧</p>
+                  </div>
+                )}
 
-              {loading && (
-                <div className="output-placeholder">
-                  <p>正在调用 Seedream v4，小猫仔细绘画中...</p>
-                </div>
-              )}
+                {loading && (
+                  <div className="output-placeholder">
+                    <p>正在调用 Seedream v4，小猫仔细绘画中...</p>
+                  </div>
+                )}
 
-              {resultSeed && (
-                <div className="seed-info">
-                  <span>生成种子：</span>
-                  <strong>{resultSeed}</strong>
-                </div>
-              )}
+                {resultSeed && (
+                  <div className="seed-info">
+                    <span>生成种子：</span>
+                    <strong>{resultSeed}</strong>
+                  </div>
+                )}
 
-              {images.length > 0 && (
-                <div className="image-grid">
-                  {images.map((image, index) => (
-                    <figure key={image.src} className="seedream-image-card">
-                      <img src={image.src} alt={`Seedream 生成图像 ${index + 1}`} loading="lazy" />
-                      <figcaption>
-                        <a href={image.src} download={image.downloadName} target="_blank" rel="noreferrer">
-                          ⬇️ 下载第 {index + 1} 张
-                        </a>
-                      </figcaption>
-                    </figure>
-                  ))}
+                {images.length > 0 && (
+                  <div className="image-grid">
+                    {images.map((image, index) => (
+                      <figure key={image.src} className="seedream-image-card">
+                        <img src={image.src} alt={`Seedream 生成图像 ${index + 1}`} loading="lazy" />
+                        <figcaption>
+                          <a href={image.src} download={image.downloadName} target="_blank" rel="noreferrer">
+                            ⬇️ 下载第 {index + 1} 张
+                          </a>
+                        </figcaption>
+                      </figure>
+                    ))}
+                  </div>
+                )}
+              </div>
+            </section>
+          </div>
+        ) : (
+          <div className="seedream-layout qiniu-mode">
+            <section className="seedream-panel" aria-label="七牛生成设置">
+              <div className="panel-card">
+                <h2>🐧 七牛 Gemini 文生图</h2>
+                <p className="panel-tip">兼容官方 /v1/images/generations 接口，所有可选参数均可在此配置，默认模型为 gemini-3.0-pro-image-preview。</p>
+              </div>
+
+              <div className="panel-card">
+                <h2>📝 提示词 & 模型</h2>
+                <div className="field-group">
+                  <label htmlFor="qiniu-model">模型 ID</label>
+                  <input
+                    id="qiniu-model"
+                    type="text"
+                    placeholder="gemini-3.0-pro-image-preview"
+                    value={qiniuModel}
+                    onChange={(event) => setQiniuModel(event.target.value)}
+                  />
+                  <p className="panel-tip">可根据七牛文档填写其它模型，例如 kling-v1/2，保持与官方参数一致。</p>
                 </div>
-              )}
-            </div>
-          </section>
-        </div>
+                <div className="field-group">
+                  <label htmlFor="qiniu-prompt">Prompt</label>
+                  <textarea
+                    id="qiniu-prompt"
+                    rows={4}
+                    placeholder="一只可爱的橘猫坐在窗台上看夕阳，专业摄影，金色光晕"
+                    value={qiniuPrompt}
+                    onChange={(event) => setQiniuPrompt(event.target.value)}
+                  />
+                </div>
+              </div>
+
+              <div className="panel-card">
+                <h2>⚙️ 请求参数</h2>
+                <div className="field-grid">
+                  <div className="field-group">
+                    <label htmlFor="qiniu-n">n（1-10）</label>
+                    <input
+                      id="qiniu-n"
+                      type="number"
+                      min={1}
+                      max={10}
+                      value={qiniuCount}
+                      onChange={(event) => setQiniuCount(Number.parseInt(event.target.value, 10) || 1)}
+                    />
+                  </div>
+                  <div className="field-group">
+                    <label htmlFor="qiniu-size">size</label>
+                    <input
+                      id="qiniu-size"
+                      type="text"
+                      placeholder="1024x1024 或留空"
+                      value={qiniuSize}
+                      onChange={(event) => setQiniuSize(event.target.value)}
+                    />
+                  </div>
+                  <div className="field-group">
+                    <label htmlFor="qiniu-quality">quality</label>
+                    <select
+                      id="qiniu-quality"
+                      value={qiniuQuality}
+                      onChange={(event) => setQiniuQuality(event.target.value)}
+                    >
+                      <option value="standard">standard</option>
+                      <option value="hd">hd</option>
+                    </select>
+                  </div>
+                  <div className="field-group">
+                    <label htmlFor="qiniu-style">style</label>
+                    <select
+                      id="qiniu-style"
+                      value={qiniuStyle}
+                      onChange={(event) => setQiniuStyle(event.target.value)}
+                    >
+                      <option value="vivid">vivid</option>
+                      <option value="natural">natural</option>
+                    </select>
+                  </div>
+                </div>
+              </div>
+
+              <div className="panel-card">
+                <h2>🎛️ 采样参数</h2>
+                <div className="field-grid">
+                  <div className="field-group">
+                    <label htmlFor="qiniu-temperature">temperature (0-2)</label>
+                    <input
+                      id="qiniu-temperature"
+                      type="number"
+                      min={0}
+                      max={2}
+                      step={0.05}
+                      value={qiniuTemperature}
+                      onChange={(event) => setQiniuTemperature(event.target.value)}
+                    />
+                  </div>
+                  <div className="field-group">
+                    <label htmlFor="qiniu-top-p">top_p (0-1)</label>
+                    <input
+                      id="qiniu-top-p"
+                      type="number"
+                      min={0}
+                      max={1}
+                      step={0.01}
+                      value={qiniuTopP}
+                      onChange={(event) => setQiniuTopP(event.target.value)}
+                    />
+                  </div>
+                  <div className="field-group">
+                    <label htmlFor="qiniu-top-k">top_k (&gt;=1)</label>
+                    <input
+                      id="qiniu-top-k"
+                      type="number"
+                      min={1}
+                      value={qiniuTopK}
+                      onChange={(event) => setQiniuTopK(event.target.value)}
+                    />
+                  </div>
+                </div>
+              </div>
+
+              <div className="panel-card">
+                <h2>🚫 负向提示词</h2>
+                <div className="field-group">
+                  <label htmlFor="qiniu-negative">negative_prompt（最大 2500 字符）</label>
+                  <textarea
+                    id="qiniu-negative"
+                    rows={3}
+                    placeholder="blur, low quality, artifacts"
+                    value={qiniuNegativePrompt}
+                    onChange={(event) => setQiniuNegativePrompt(event.target.value)}
+                  />
+                </div>
+              </div>
+
+              <div className="panel-card">
+                <h2>🖼️ 参考图与 Kling 专属参数</h2>
+                <div className="field-group">
+                  <label htmlFor="qiniu-image">image（公开 URL，可为空）</label>
+                  <input
+                    id="qiniu-image"
+                    type="text"
+                    placeholder="https://example.com/your-image.png"
+                    value={qiniuImageUrl}
+                    onChange={(event) => setQiniuImageUrl(event.target.value)}
+                  />
+                  <p className="panel-tip">若需图生图，请确保 URL 可被七牛访问；如留空则走纯文生图。</p>
+                </div>
+                <div className="field-grid">
+                  <div className="field-group">
+                    <label htmlFor="qiniu-image-reference">image_reference（kling 专用）</label>
+                    <select
+                      id="qiniu-image-reference"
+                      value={qiniuImageReference}
+                      onChange={(event) => setQiniuImageReference(event.target.value)}
+                    >
+                      <option value="">不启用</option>
+                      <option value="subject">subject</option>
+                      <option value="face">face</option>
+                    </select>
+                  </div>
+                  <div className="field-group">
+                    <label htmlFor="qiniu-image-fidelity">image_fidelity (0-1)</label>
+                    <input
+                      id="qiniu-image-fidelity"
+                      type="number"
+                      min={0}
+                      max={1}
+                      step={0.05}
+                      value={qiniuImageFidelity}
+                      onChange={(event) => setQiniuImageFidelity(event.target.value)}
+                    />
+                  </div>
+                  <div className="field-group">
+                    <label htmlFor="qiniu-human-fidelity">human_fidelity (0-1)</label>
+                    <input
+                      id="qiniu-human-fidelity"
+                      type="number"
+                      min={0}
+                      max={1}
+                      step={0.05}
+                      value={qiniuHumanFidelity}
+                      onChange={(event) => setQiniuHumanFidelity(event.target.value)}
+                    />
+                  </div>
+                  <div className="field-group">
+                    <label htmlFor="qiniu-aspect">aspect_ratio</label>
+                    <select
+                      id="qiniu-aspect"
+                      value={qiniuAspectRatio}
+                      onChange={(event) => setQiniuAspectRatio(event.target.value)}
+                    >
+                      <option value="1:1">1:1</option>
+                      <option value="16:9">16:9</option>
+                      <option value="9:16">9:16</option>
+                      <option value="4:3">4:3</option>
+                      <option value="3:4">3:4</option>
+                      <option value="3:2">3:2</option>
+                      <option value="2:3">2:3</option>
+                      <option value="21:9">21:9</option>
+                    </select>
+                  </div>
+                </div>
+                <p className="panel-tip">提示：image_reference / fidelity / aspect_ratio 主要服务 kling 系列模型，Gemini 模型会忽略这些字段。</p>
+              </div>
+
+              <button
+                type="button"
+                className="generate-button"
+                onClick={handleQiniuGenerate}
+                disabled={qiniuLoading}
+              >
+                {qiniuLoading ? (
+                  <>
+                    <span>七牛生成中...</span>
+                    <span className="seedream-loader" aria-hidden="true" />
+                  </>
+                ) : (
+                  '✨ 调用七牛生成'
+                )}
+              </button>
+
+              {qiniuError && <p className="error-banner" role="alert">{qiniuError}</p>}
+            </section>
+
+            <section
+              className={`seedream-output ${!qiniuLoading && qiniuImages.length === 0 ? 'mobile-hidden' : ''}`}
+              aria-label="七牛生成结果"
+            >
+              <div className="output-card">
+                <h2>🎨 七牛生成结果</h2>
+
+                {!qiniuLoading && !qiniuError && qiniuImages.length === 0 && (
+                  <div className="output-placeholder">
+                    <p>切换到七牛后，填好提示词再点击“调用七牛生成”即可查看结果~</p>
+                  </div>
+                )}
+
+                {qiniuLoading && (
+                  <div className="output-placeholder">
+                    <p>七牛小喵绘制中，请稍等...</p>
+                  </div>
+                )}
+
+                {qiniuUsage && (
+                  <div className="seedream-usage">
+                    <span>输入 Tokens：{qiniuUsage?.input_tokens ?? '--'}</span>
+                    <span>输出 Tokens：{qiniuUsage?.output_tokens ?? '--'}</span>
+                    <span>总计：{qiniuUsage?.total_tokens ?? '--'}</span>
+                  </div>
+                )}
+
+                {qiniuImages.length > 0 && (
+                  <div className="image-grid">
+                    {qiniuImages.map((image, index) => (
+                      <figure key={image.src} className="seedream-image-card">
+                        <img src={image.src} alt={`七牛文生图 ${index + 1}`} loading="lazy" />
+                        <figcaption>
+                          <a href={image.src} download={image.downloadName} target="_blank" rel="noreferrer">
+                            ⬇️ 下载第 {index + 1} 张
+                          </a>
+                        </figcaption>
+                      </figure>
+                    ))}
+                  </div>
+                )}
+              </div>
+            </section>
+          </div>
+        )}
       </div>
     </div>
   )

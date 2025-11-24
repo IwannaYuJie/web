@@ -21,6 +21,35 @@
   font-size: 1.1rem;
 }
 
+.api-switch {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+  gap: 1rem;
+  margin-bottom: 2rem;
+}
+
+.api-switch-button {
+  border: 2px solid var(--border-color);
+  border-radius: var(--radius-full);
+  padding: 0.85rem 1rem;
+  font-weight: 700;
+  background: white;
+  color: var(--text-color);
+  transition: all 0.3s ease;
+}
+
+.api-switch-button.active {
+  background: var(--gradient-warm);
+  border-color: var(--primary-color);
+  color: white;
+  box-shadow: var(--shadow);
+}
+
+.api-switch-button:hover {
+  border-color: var(--primary-color);
+  transform: translateY(-2px);
+}
+
 .seedream-layout {
   display: grid;
   grid-template-columns: minmax(0, 420px) 1fr;
@@ -440,6 +469,17 @@
   font-weight: 600;
 }
 
+.seedream-usage {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.5rem 1rem;
+  background: rgba(255, 191, 102, 0.18);
+  border-radius: var(--radius-md);
+  padding: 0.6rem 1rem;
+  font-weight: 600;
+  color: var(--text-color);
+}
+
 .image-grid {
   display: grid;
   grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
@@ -488,6 +528,10 @@
 
   .seedream-header h1 {
     font-size: 1.8rem;
+  }
+  
+  .api-switch {
+    grid-template-columns: 1fr;
   }
   
   .seedream-header p {

@@ -4,6 +4,25 @@
 
  ---
 
+## [2025-11-24] - 🐧 七牛文生图实验室切换
+
+### ✨ 新特性 / 调整
+- `src/pages/SeedreamStudio.jsx`：隐藏入口 `/secret-seedream` 新增“Fal.ai / 七牛”双 API 切换，沿用原有 Seedream v4 面板，同时为七牛 Text-to-Image 补齐文档列出的全部参数（model/prompt/n/size/quality/style/temperature/top_p/top_k/negative_prompt/image/image_reference/image_fidelity/human_fidelity/aspect_ratio）。
+- `functions/api/qiniu-images.js` & `api/qiniu-images.js`：新增七牛 `/v1/images/generations` 代理，统一复用 `QINIU_AI_API_KEY`，默认模型 `gemini-3.0-pro-image-preview`，并提供 JSON 解析兜底。
+- `vite.config.js`：开发环境新增 `/api/qiniu-images` 代理，自动注入本地环境变量，便于无后端场景调试。
+
+### 🎨 UI 体验
+- `src/pages/SeedreamStudio.css`：新增 API 切换按钮、七牛用量徽章与移动端适配。
+
+### 📌 影响范围
+- `src/pages/SeedreamStudio.jsx`
+- `src/pages/SeedreamStudio.css`
+- `functions/api/qiniu-images.js`
+- `api/qiniu-images.js`
+- `vite.config.js`
+
+---
+
 ## [2025-11-24] - 🤖 AI 对话模型精简
 
 ### ✨ 新特性 / 调整

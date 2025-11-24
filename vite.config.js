@@ -185,6 +185,19 @@ export default defineConfig({
             proxyReq.setHeader('Authorization', `Bearer ${QINIU_AI_API_KEY_DEV}`)
           })
         }
+      },
+      // 七牛文生图 API 代理
+      '/api/qiniu-images': {
+        target: 'https://api.qnaigc.com/v1/images/generations',
+        changeOrigin: true,
+        secure: true,
+        rewrite: (path) => path.replace(/^\/api\/qiniu-images/, ''),
+        configure: (proxy) => {
+          proxy.on('proxyReq', (proxyReq) => {
+            proxyReq.setHeader('Authorization', `Bearer ${QINIU_AI_API_KEY_DEV}`)
+            proxyReq.setHeader('Content-Type', 'application/json')
+          })
+        }
       }
     }
   },
