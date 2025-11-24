@@ -61,6 +61,19 @@ function SeedreamStudio() {
   const [qiniuError, setQiniuError] = useState('')
   const [qiniuImages, setQiniuImages] = useState([])
   const [qiniuUsage, setQiniuUsage] = useState(null)
+  const [qiniuMode, setQiniuMode] = useState('text')
+  const [qiniuImageSourceText, setQiniuImageSourceText] = useState('')
+  const [qiniuImageUploads, setQiniuImageUploads] = useState([])
+  const [qiniuMaskText, setQiniuMaskText] = useState('')
+  const [qiniuMaskUpload, setQiniuMaskUpload] = useState('')
+  const [qiniuMaskFileName, setQiniuMaskFileName] = useState('')
+  const [qiniuBackground, setQiniuBackground] = useState('auto')
+  const [qiniuInputFidelity, setQiniuInputFidelity] = useState('high')
+  const [qiniuOutputFormatSetting, setQiniuOutputFormatSetting] = useState('png')
+  const [qiniuOutputCompression, setQiniuOutputCompression] = useState('90')
+  const [qiniuResponseFormat, setQiniuResponseFormat] = useState('b64_json')
+  const [qiniuStream, setQiniuStream] = useState(false)
+  const [showQiniuAdvancedPanel, setShowQiniuAdvancedPanel] = useState(false)
 
   const inputImageRef = useRef(null)
 
@@ -233,6 +246,76 @@ function SeedreamStudio() {
     if (inputImageRef.current) {
       inputImageRef.current.value = ''
     }
+  }
+
+  const fileToDataUrl = (file) => new Promise((resolve, reject) => {
+    const reader = new FileReader()
+    reader.onload = () => resolve(reader.result)
+    reader.onerror = reject
+    reader.readAsDataURL(file)
+  })
+
+  const handleQiniuModeChange = (nextMode) => {
+    if (nextMode === qiniuMode) {
+      return
+    }
+    setQiniuMode(nextMode)
+    setQiniuError('')
+    setQiniuImages([])
+    setQiniuUsage(null)
+  }
+
+  const handleQiniuImageUpload = async (event) => {
+    const files = Array.from(event.target.files || [])
+    if (files.length === 0) {
+      return
+    }
+    const currentTarget = event.target
+    try {
+      const dataUrls = await Promise.all(files.map((file) => fileToDataUrl(file)))
+      const formatted = files.map((file, index) => ({
+        name: file.name,
+        size: file.size,
+        dataUrl: dataUrls[index]
+      }))
+      setQiniuImageUploads((prev) => [...prev, ...formatted])
+    } catch (uploadError) {
+      console.error('转换图像失败:', uploadError)
+      setQiniuError(uploadError?.message || '😿 上传图像转换失败，请重试')
+    } finally {
+      if (currentTarget) {
+        currentTarget.value = ''
+      }
+    }
+  }
+
+  const handleRemoveQiniuUpload = (indexToRemove) => {
+    setQiniuImageUploads((prev) => prev.filter((_, index) => index !== indexToRemove))
+  }
+
+  const handleQiniuMaskUpload = async (event) => {
+    const file = event.target.files?.[0]
+    if (!file) {
+      setQiniuMaskUpload('')
+      setQiniuMaskFileName('')
+      return
+    }
+    try {
+      const dataUrl = await fileToDataUrl(file)
+      setQiniuMaskUpload(dataUrl)
+      setQiniuMaskFileName(file.name)
+    } catch (maskError) {
+      console.error('遮罩上传失败:', maskError)
+      setQiniuError(maskError?.message || '遮罩文件转换失败')
+    } finally {
+      event.target.value = ''
+    }
+  }
+
+  const handleClearMask = () => {
+    setQiniuMaskUpload('')
+    setQiniuMaskText('')
+    setQiniuMaskFileName('')
   }
 
   /**
@@ -429,7 +512,7 @@ function SeedreamStudio() {
     }
   }
 
-  const handleQiniuGenerate = async () => {
+  const handleQiniuTextGenerate = async () => {
     if (!qiniuPrompt.trim()) {
       setQiniuError('😿 请先输入 Prompt')
       return
@@ -475,32 +558,37 @@ function SeedreamStudio() {
     }
 
     const negative = qiniuNegativePrompt.trim()
-    // if (negative) {
-    //   payload.negative_prompt = negative
-    // }
+    if (negative) {
+      payload.negative_prompt = negative
+    }
 
-    // const imageUrl = qiniuImageUrl.trim()
-    // if (imageUrl) {
-    //   payload.image = imageUrl
-    // }
+    const imageUrl = qiniuImageUrl.trim()
+    if (imageUrl) {
+      payload.image = imageUrl
+    }
 
-    // if (qiniuImageReference) {
-    //   payload.image_reference = qiniuImageReference
-    // }
+    const reference = qiniuImageReference.trim()
+    if (reference) {
+      try {
+        payload.image_reference = JSON.parse(reference)
+      } catch (parseError) {
+        payload.image_reference = reference
+      }
+    }
 
-    // const fidelityValue = Number.parseFloat(qiniuImageFidelity)
-    // if (!Number.isNaN(fidelityValue)) {
-    //   payload.image_fidelity = fidelityValue
-    // }
+    const fidelityValue = Number.parseFloat(qiniuImageFidelity)
+    if (!Number.isNaN(fidelityValue)) {
+      payload.image_fidelity = fidelityValue
+    }
 
-    // const humanValue = Number.parseFloat(qiniuHumanFidelity)
-    // if (!Number.isNaN(humanValue)) {
-    //   payload.human_fidelity = humanValue
-    // }
+    const humanValue = Number.parseFloat(qiniuHumanFidelity)
+    if (!Number.isNaN(humanValue)) {
+      payload.human_fidelity = humanValue
+    }
 
-    // if (qiniuAspectRatio) {
-    //   payload.aspect_ratio = qiniuAspectRatio
-    // }
+    if (qiniuAspectRatio) {
+      payload.aspect_ratio = qiniuAspectRatio
+    }
 
     setQiniuLoading(true)
     setQiniuError('')
@@ -535,6 +623,176 @@ function SeedreamStudio() {
     } finally {
       setQiniuLoading(false)
     }
+  }
+
+  const handleQiniuEditGenerate = async () => {
+    if (!qiniuPrompt.trim()) {
+      setQiniuError('😿 请先输入 Prompt')
+      return
+    }
+
+    const sanitizedCount = Math.min(10, Math.max(1, Number.parseInt(qiniuCount, 10) || 1))
+    if (sanitizedCount !== qiniuCount) {
+      setQiniuCount(sanitizedCount)
+    }
+
+    const urlList = qiniuImageSourceText
+      .split('\n')
+      .map((item) => item.trim())
+      .filter(Boolean)
+
+    const uploadList = qiniuImageUploads.map((item) => item.dataUrl).filter(Boolean)
+    const imageList = [...uploadList, ...urlList]
+
+    if (imageList.length === 0) {
+      setQiniuError('😿 请至少上传或粘贴一张待编辑的图像')
+      return
+    }
+
+    const payload = {
+      model: qiniuModel.trim() || 'gemini-3.0-pro-image-preview',
+      prompt: qiniuPrompt.trim(),
+      n: sanitizedCount,
+      image: imageList.length === 1 ? imageList[0] : imageList
+    }
+
+    const maskCandidate = qiniuMaskUpload || qiniuMaskText.trim()
+    if (maskCandidate) {
+      payload.mask = maskCandidate
+    }
+
+    const trimmedSize = qiniuSize.trim()
+    if (trimmedSize) {
+      payload.size = trimmedSize
+    }
+
+    if (qiniuQuality) {
+      payload.quality = qiniuQuality
+    }
+
+    if (qiniuStyle) {
+      payload.style = qiniuStyle
+    }
+
+    if (qiniuBackground) {
+      payload.background = qiniuBackground
+    }
+
+    if (qiniuInputFidelity) {
+      payload.input_fidelity = qiniuInputFidelity
+    }
+
+    if (qiniuOutputFormatSetting) {
+      payload.output_format = qiniuOutputFormatSetting
+    }
+
+    const compressionValue = Number.parseInt(qiniuOutputCompression, 10)
+    if (!Number.isNaN(compressionValue)) {
+      payload.output_compression = compressionValue
+    }
+
+    if (qiniuResponseFormat) {
+      payload.response_format = qiniuResponseFormat
+    }
+
+    if (qiniuStream) {
+      payload.stream = true
+    }
+
+    if (qiniuTopP) {
+      const topPValue = Number.parseFloat(qiniuTopP)
+      if (!Number.isNaN(topPValue)) {
+        payload.top_p = topPValue
+      }
+    }
+
+    if (qiniuTopK) {
+      const topKValue = Number.parseInt(qiniuTopK, 10)
+      if (!Number.isNaN(topKValue)) {
+        payload.top_k = topKValue
+      }
+    }
+
+    if (qiniuTemperature) {
+      const tempValue = Number.parseFloat(qiniuTemperature)
+      if (!Number.isNaN(tempValue)) {
+        payload.temperature = tempValue
+      }
+    }
+
+    const negative = qiniuNegativePrompt.trim()
+    if (negative) {
+      payload.negative_prompt = negative
+    }
+
+    const reference = qiniuImageReference.trim()
+    if (reference) {
+      try {
+        payload.image_reference = JSON.parse(reference)
+      } catch (parseError) {
+        payload.image_reference = reference
+      }
+    }
+
+    const imageUrl = qiniuImageUrl.trim()
+    if (imageUrl) {
+      payload.image_url = imageUrl
+    }
+
+    const fidelityValue = Number.parseFloat(qiniuImageFidelity)
+    if (!Number.isNaN(fidelityValue)) {
+      payload.image_fidelity = fidelityValue
+    }
+
+    const humanValue = Number.parseFloat(qiniuHumanFidelity)
+    if (!Number.isNaN(humanValue)) {
+      payload.human_fidelity = humanValue
+    }
+
+    if (qiniuAspectRatio) {
+      payload.aspect_ratio = qiniuAspectRatio
+    }
+
+    setQiniuLoading(true)
+    setQiniuError('')
+    setQiniuImages([])
+    setQiniuUsage(null)
+
+    try {
+      const response = await fetch('/api/qiniu-image-edits', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json'
+        },
+        body: JSON.stringify(payload)
+      })
+
+      const data = await response.json()
+
+      if (!response.ok) {
+        throw new Error(data?.error || data?.message || '七牛图生图调用失败')
+      }
+
+      const normalized = normalizeImages(data?.data)
+      if (normalized.length === 0) {
+        throw new Error('生成成功但未返回图片数据')
+      }
+
+      setQiniuImages(normalized)
+      setQiniuUsage(data?.usage || null)
+    } catch (generationError) {
+      console.error('调用七牛图生图失败:', generationError)
+      setQiniuError(generationError?.message || '七牛图生图调用失败')
+    } finally {
+      setQiniuLoading(false)
+    }
+  }
+
+  const handleQiniuGenerate = () => {
+    if (qiniuMode === 'edit') {
+      return handleQiniuEditGenerate()
+    }
+    return handleQiniuTextGenerate()
   }
 
   const isCustomSize = sizePreset === 'custom'
@@ -1011,6 +1269,108 @@ function SeedreamStudio() {
                 </div>
               </div>
 
+              <div className="panel-card">
+                <h2>🧪 生成模式</h2>
+                <div className="mode-toggle" role="group" aria-label="七牛模式切换">
+                  <button
+                    type="button"
+                    className={`mode-button${qiniuMode === 'text' ? ' active' : ''}`}
+                    onClick={() => handleQiniuModeChange('text')}
+                  >
+                    文生图
+                  </button>
+                  <button
+                    type="button"
+                    className={`mode-button${qiniuMode === 'edit' ? ' active' : ''}`}
+                    onClick={() => handleQiniuModeChange('edit')}
+                  >
+                    图像编辑
+                  </button>
+                </div>
+                <p className="panel-tip">文生图直接生成新画面；图像编辑会结合下方输入图像与遮罩。</p>
+              </div>
+
+              {/* 七牛图像编辑模式需要额外的输入素材与遮罩 */}
+              {qiniuMode === 'edit' && (
+                <>
+                  <div className="panel-card">
+                    <h2>🖼️ 待编辑图像</h2>
+                    <div className="file-upload">
+                      <label className="file-label" htmlFor="qiniu-image-upload">
+                        <span>上传一张或多张基础图像</span>
+                        <input
+                          id="qiniu-image-upload"
+                          type="file"
+                          accept="image/*"
+                          multiple
+                          onChange={handleQiniuImageUpload}
+                        />
+                      </label>
+                      {qiniuImageUploads.length > 0 && (
+                        <ul className="upload-list">
+                          {qiniuImageUploads.map((item, index) => (
+                            <li key={`${item.name}-${index}`} className="upload-item">
+                              <div>
+                                <strong>{item.name}</strong>
+                                <span className="upload-size">{Math.round(item.size / 1024)} KB</span>
+                              </div>
+                              <button type="button" className="ghost" onClick={() => handleRemoveQiniuUpload(index)}>
+                                移除
+                              </button>
+                            </li>
+                          ))}
+                        </ul>
+                      )}
+                    </div>
+                    <div className="field-group">
+                      <label htmlFor="qiniu-image-sources">或粘贴在线图片 URL（每行一条）</label>
+                      <textarea
+                        id="qiniu-image-sources"
+                        rows={4}
+                        placeholder="https://example.com/base-1.png"
+                        value={qiniuImageSourceText}
+                        onChange={(event) => setQiniuImageSourceText(event.target.value)}
+                      />
+                      <p className="panel-tip">会与上传的图像合并发送，至少保留一张有效图像。</p>
+                    </div>
+                  </div>
+
+                  <div className="panel-card">
+                    <h2>🎭 遮罩设置</h2>
+                    <div className="field-group">
+                      <label htmlFor="qiniu-mask-text">遮罩 Base64 / URL</label>
+                      <textarea
+                        id="qiniu-mask-text"
+                        rows={3}
+                        placeholder="可直接粘贴 data:image/png;base64,... 或在线遮罩 URL"
+                        value={qiniuMaskText}
+                        onChange={(event) => setQiniuMaskText(event.target.value)}
+                      />
+                    </div>
+                    <div className="file-upload">
+                      <label className="file-label" htmlFor="qiniu-mask-upload">
+                        <span>上传遮罩 PNG（透明区域代表可编辑）</span>
+                        <input
+                          id="qiniu-mask-upload"
+                          type="file"
+                          accept="image/*"
+                          onChange={handleQiniuMaskUpload}
+                        />
+                      </label>
+                      {(qiniuMaskFileName || qiniuMaskUpload) && (
+                        <div className="mask-preview">
+                          <p>当前遮罩：{qiniuMaskFileName || '自定义 Mask 数据'}</p>
+                          <button type="button" className="ghost" onClick={handleClearMask}>
+                            清空遮罩
+                          </button>
+                        </div>
+                      )}
+                    </div>
+                  </div>
+                </>
+              )}
+
+              {/* 高级参数折叠面板，集中放置所有可选字段 */}
               <div className="panel-card collapsible">
                 <button 
                   type="button"
@@ -1118,6 +1478,171 @@ function SeedreamStudio() {
                           value={qiniuTopK}
                           onChange={(event) => setQiniuTopK(event.target.value)}
                         />
+                      </div>
+                    </div>
+                  </div>
+                )}
+              </div>
+
+              {/* 高级参数折叠面板，集中管理所有可选字段 */}
+              <div className="panel-card collapsible">
+                <button
+                  type="button"
+                  className="collapse-header"
+                  onClick={() => setShowQiniuAdvancedPanel(!showQiniuAdvancedPanel)}
+                >
+                  <h2>🧰 高级参数</h2>
+                  <span className="collapse-icon">{showQiniuAdvancedPanel ? '▼' : '▶'}</span>
+                </button>
+                {showQiniuAdvancedPanel && (
+                  <div className="collapse-content">
+                    <div className="field-group">
+                      <label htmlFor="qiniu-negative">负面提示词</label>
+                      <textarea
+                        id="qiniu-negative"
+                        rows={3}
+                        placeholder="例如：低清晰度、奇怪的手"
+                        value={qiniuNegativePrompt}
+                        onChange={(event) => setQiniuNegativePrompt(event.target.value)}
+                      />
+                    </div>
+
+                    <div className="field-grid">
+                      <div className="field-group">
+                        <label htmlFor="qiniu-reference-image">参考图片 URL</label>
+                        <input
+                          id="qiniu-reference-image"
+                          type="text"
+                          placeholder="https://example.com/style.png"
+                          value={qiniuImageUrl}
+                          onChange={(event) => setQiniuImageUrl(event.target.value)}
+                        />
+                      </div>
+                      <div className="field-group">
+                        <label htmlFor="qiniu-reference-data">image_reference JSON</label>
+                        <textarea
+                          id="qiniu-reference-data"
+                          rows={2}
+                          placeholder="可选：粘贴官方 image_reference JSON 字符串"
+                          value={qiniuImageReference}
+                          onChange={(event) => setQiniuImageReference(event.target.value)}
+                        />
+                      </div>
+                    </div>
+
+                    <div className="field-grid">
+                      <div className="field-group">
+                        <label htmlFor="qiniu-image-fidelity">image_fidelity (0-1)</label>
+                        <input
+                          id="qiniu-image-fidelity"
+                          type="number"
+                          step={0.05}
+                          min={0}
+                          max={1}
+                          value={qiniuImageFidelity}
+                          onChange={(event) => setQiniuImageFidelity(event.target.value)}
+                        />
+                      </div>
+                      <div className="field-group">
+                        <label htmlFor="qiniu-human-fidelity">human_fidelity (0-1)</label>
+                        <input
+                          id="qiniu-human-fidelity"
+                          type="number"
+                          step={0.05}
+                          min={0}
+                          max={1}
+                          value={qiniuHumanFidelity}
+                          onChange={(event) => setQiniuHumanFidelity(event.target.value)}
+                        />
+                      </div>
+                      <div className="field-group">
+                        <label htmlFor="qiniu-aspect">画面比例</label>
+                        <select
+                          id="qiniu-aspect"
+                          value={qiniuAspectRatio}
+                          onChange={(event) => setQiniuAspectRatio(event.target.value)}
+                        >
+                          <option value="">默认</option>
+                          <option value="1:1">1:1</option>
+                          <option value="16:9">16:9</option>
+                          <option value="9:16">9:16</option>
+                          <option value="3:4">3:4</option>
+                          <option value="4:3">4:3</option>
+                        </select>
+                      </div>
+                    </div>
+
+                    <div className="field-grid">
+                      <div className="field-group">
+                        <label htmlFor="qiniu-background">背景设置</label>
+                        <input
+                          id="qiniu-background"
+                          type="text"
+                          placeholder="auto / transparent / #fff"
+                          value={qiniuBackground}
+                          onChange={(event) => setQiniuBackground(event.target.value)}
+                        />
+                      </div>
+                      <div className="field-group">
+                        <label htmlFor="qiniu-input-fidelity">输入忠实度</label>
+                        <select
+                          id="qiniu-input-fidelity"
+                          value={qiniuInputFidelity}
+                          onChange={(event) => setQiniuInputFidelity(event.target.value)}
+                        >
+                          <option value="high">high</option>
+                          <option value="low">low</option>
+                          <option value="auto">auto</option>
+                        </select>
+                      </div>
+                      <div className="field-group">
+                        <label htmlFor="qiniu-output-format">输出格式</label>
+                        <select
+                          id="qiniu-output-format"
+                          value={qiniuOutputFormatSetting}
+                          onChange={(event) => setQiniuOutputFormatSetting(event.target.value)}
+                        >
+                          <option value="png">png</option>
+                          <option value="jpeg">jpeg</option>
+                          <option value="webp">webp</option>
+                        </select>
+                      </div>
+                    </div>
+
+                    <div className="field-grid">
+                      <div className="field-group">
+                        <label htmlFor="qiniu-output-compression">压缩质量 (0-100)</label>
+                        <input
+                          id="qiniu-output-compression"
+                          type="number"
+                          min={0}
+                          max={100}
+                          value={qiniuOutputCompression}
+                          onChange={(event) => setQiniuOutputCompression(event.target.value)}
+                        />
+                      </div>
+                      <div className="field-group">
+                        <label htmlFor="qiniu-response-format">响应格式</label>
+                        <select
+                          id="qiniu-response-format"
+                          value={qiniuResponseFormat}
+                          onChange={(event) => setQiniuResponseFormat(event.target.value)}
+                        >
+                          <option value="b64_json">b64_json</option>
+                          <option value="url">url</option>
+                        </select>
+                      </div>
+                      <div className="field-group checkbox-field">
+                        <label htmlFor="qiniu-stream">开启流式</label>
+                        <div className="toggle-item">
+                          <input
+                            id="qiniu-stream"
+                            type="checkbox"
+                            checked={qiniuStream}
+                            onChange={(event) => setQiniuStream(event.target.checked)}
+                          />
+                          <span>stream</span>
+                        </div>
                       </div>
                     </div>
                   </div>

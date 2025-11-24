@@ -324,6 +324,35 @@
   cursor: pointer;
 }
 
+/* 七牛图像编辑上传与遮罩区域 */
+.upload-list {
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
+}
+
+.upload-item {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  border: 2px solid rgba(255, 191, 102, 0.4);
+  border-radius: var(--radius-md);
+  padding: 0.6rem 0.9rem;
+  background: white;
+  gap: 0.5rem;
+}
+
+.upload-item strong {
+  display: block;
+  color: var(--text-color);
+}
+
+.upload-size {
+  font-size: 0.85rem;
+  color: var(--text-secondary);
+  margin-left: 0.4rem;
+}
+
 .upload-preview {
   position: relative;
   border: 2px solid rgba(255, 191, 102, 0.4);
@@ -352,6 +381,21 @@
 
 .remove-button:hover {
   background: var(--primary-hover);
+}
+
+.mask-preview {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  background: rgba(255, 191, 102, 0.18);
+  border-radius: var(--radius-md);
+  padding: 0.65rem 0.9rem;
+  font-weight: 600;
+  color: var(--text-color);
+}
+
+.checkbox-field .toggle-item {
+  margin-top: 0.35rem;
 }
 
 .range-value {
