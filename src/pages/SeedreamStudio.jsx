@@ -474,32 +474,32 @@ function SeedreamStudio() {
     }
 
     const negative = qiniuNegativePrompt.trim()
-    if (negative) {
-      payload.negative_prompt = negative
-    }
+    // if (negative) {
+    //   payload.negative_prompt = negative
+    // }
 
-    const imageUrl = qiniuImageUrl.trim()
-    if (imageUrl) {
-      payload.image = imageUrl
-    }
+    // const imageUrl = qiniuImageUrl.trim()
+    // if (imageUrl) {
+    //   payload.image = imageUrl
+    // }
 
-    if (qiniuImageReference) {
-      payload.image_reference = qiniuImageReference
-    }
+    // if (qiniuImageReference) {
+    //   payload.image_reference = qiniuImageReference
+    // }
 
-    const fidelityValue = Number.parseFloat(qiniuImageFidelity)
-    if (!Number.isNaN(fidelityValue)) {
-      payload.image_fidelity = fidelityValue
-    }
+    // const fidelityValue = Number.parseFloat(qiniuImageFidelity)
+    // if (!Number.isNaN(fidelityValue)) {
+    //   payload.image_fidelity = fidelityValue
+    // }
 
-    const humanValue = Number.parseFloat(qiniuHumanFidelity)
-    if (!Number.isNaN(humanValue)) {
-      payload.human_fidelity = humanValue
-    }
+    // const humanValue = Number.parseFloat(qiniuHumanFidelity)
+    // if (!Number.isNaN(humanValue)) {
+    //   payload.human_fidelity = humanValue
+    // }
 
-    if (qiniuAspectRatio) {
-      payload.aspect_ratio = qiniuAspectRatio
-    }
+    // if (qiniuAspectRatio) {
+    //   payload.aspect_ratio = qiniuAspectRatio
+    // }
 
     setQiniuLoading(true)
     setQiniuError('')
@@ -993,9 +993,10 @@ function SeedreamStudio() {
                     type="text"
                     placeholder="gemini-3.0-pro-image-preview"
                     value={qiniuModel}
-                    onChange={(event) => setQiniuModel(event.target.value)}
+                    readOnly
+                    className="readonly-input"
                   />
-                  <p className="panel-tip">可根据七牛文档填写其它模型，例如 kling-v1/2，保持与官方参数一致。</p>
+                  <p className="panel-tip">当前固定使用 Gemini 3.0 Pro Image Preview 模型。</p>
                 </div>
                 <div className="field-group">
                   <label htmlFor="qiniu-prompt">Prompt</label>
@@ -1031,13 +1032,23 @@ function SeedreamStudio() {
                       onChange={(event) => setQiniuSize(event.target.value)}
                     >
                       <option value="">默认 (不传)</option>
-                      <option value="1024x1024">1024x1024 (1:1)</option>
-                      <option value="1024x1792">1024x1792 (9:16)</option>
-                      <option value="1792x1024">1792x1024 (16:9)</option>
-                      <option value="512x512">512x512</option>
-                      <option value="256x256">256x256</option>
+                      <optgroup label="1:1 Square">
+                        <option value="1024x1024">1K (1024x1024)</option>
+                        <option value="2048x2048">2K (2048x2048)</option>
+                        <option value="4096x4096">4K (4096x4096)</option>
+                      </optgroup>
+                      <optgroup label="9:16 Portrait">
+                        <option value="1024x1792">1K (1024x1792)</option>
+                        <option value="2048x3584">2K (2048x3584)</option>
+                        <option value="4096x7168">4K (4096x7168)</option>
+                      </optgroup>
+                      <optgroup label="16:9 Landscape">
+                        <option value="1792x1024">1K (1792x1024)</option>
+                        <option value="3584x2048">2K (3584x2048)</option>
+                        <option value="7168x4096">4K (7168x4096)</option>
+                      </optgroup>
                     </select>
-                    <p className="panel-tip">Gemini 模型可能不支持自定义尺寸，建议留空。</p>
+                    <p className="panel-tip">Gemini 模型可能不支持超高分辨率，建议优先使用 1K/2K。</p>
                   </div>
                   <div className="field-group">
                     <label htmlFor="qiniu-quality">quality</label>
@@ -1102,91 +1113,6 @@ function SeedreamStudio() {
                     />
                   </div>
                 </div>
-              </div>
-
-              <div className="panel-card">
-                <h2>🚫 负向提示词</h2>
-                <div className="field-group">
-                  <label htmlFor="qiniu-negative">negative_prompt（最大 2500 字符）</label>
-                  <textarea
-                    id="qiniu-negative"
-                    rows={3}
-                    placeholder="blur, low quality, artifacts"
-                    value={qiniuNegativePrompt}
-                    onChange={(event) => setQiniuNegativePrompt(event.target.value)}
-                  />
-                </div>
-              </div>
-
-              <div className="panel-card">
-                <h2>🖼️ 参考图与 Kling 专属参数</h2>
-                <div className="field-group">
-                  <label htmlFor="qiniu-image">image（公开 URL，可为空）</label>
-                  <input
-                    id="qiniu-image"
-                    type="text"
-                    placeholder="https://example.com/your-image.png"
-                    value={qiniuImageUrl}
-                    onChange={(event) => setQiniuImageUrl(event.target.value)}
-                  />
-                  <p className="panel-tip">若需图生图，请确保 URL 可被七牛访问；如留空则走纯文生图。</p>
-                </div>
-                <div className="field-grid">
-                  <div className="field-group">
-                    <label htmlFor="qiniu-image-reference">image_reference（kling 专用）</label>
-                    <select
-                      id="qiniu-image-reference"
-                      value={qiniuImageReference}
-                      onChange={(event) => setQiniuImageReference(event.target.value)}
-                    >
-                      <option value="">不启用</option>
-                      <option value="subject">subject</option>
-                      <option value="face">face</option>
-                    </select>
-                  </div>
-                  <div className="field-group">
-                    <label htmlFor="qiniu-image-fidelity">image_fidelity (0-1)</label>
-                    <input
-                      id="qiniu-image-fidelity"
-                      type="number"
-                      min={0}
-                      max={1}
-                      step={0.05}
-                      value={qiniuImageFidelity}
-                      onChange={(event) => setQiniuImageFidelity(event.target.value)}
-                    />
-                  </div>
-                  <div className="field-group">
-                    <label htmlFor="qiniu-human-fidelity">human_fidelity (0-1)</label>
-                    <input
-                      id="qiniu-human-fidelity"
-                      type="number"
-                      min={0}
-                      max={1}
-                      step={0.05}
-                      value={qiniuHumanFidelity}
-                      onChange={(event) => setQiniuHumanFidelity(event.target.value)}
-                    />
-                  </div>
-                  <div className="field-group">
-                    <label htmlFor="qiniu-aspect">aspect_ratio</label>
-                    <select
-                      id="qiniu-aspect"
-                      value={qiniuAspectRatio}
-                      onChange={(event) => setQiniuAspectRatio(event.target.value)}
-                    >
-                      <option value="1:1">1:1</option>
-                      <option value="16:9">16:9</option>
-                      <option value="9:16">9:16</option>
-                      <option value="4:3">4:3</option>
-                      <option value="3:4">3:4</option>
-                      <option value="3:2">3:2</option>
-                      <option value="2:3">2:3</option>
-                      <option value="21:9">21:9</option>
-                    </select>
-                  </div>
-                </div>
-                <p className="panel-tip">提示：image_reference / fidelity / aspect_ratio 主要服务 kling 系列模型，Gemini 模型会忽略这些字段。</p>
               </div>
 
               <button
