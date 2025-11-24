@@ -46,7 +46,7 @@ function SeedreamStudio() {
   const [qiniuPrompt, setQiniuPrompt] = useState('')
   const [qiniuCount, setQiniuCount] = useState(1)
   const [qiniuSize, setQiniuSize] = useState('')
-  const [qiniuQuality, setQiniuQuality] = useState('standard')
+  const [qiniuQuality, setQiniuQuality] = useState('')
   const [qiniuStyle, setQiniuStyle] = useState('vivid')
   const [qiniuTemperature, setQiniuTemperature] = useState('0.8')
   const [qiniuTopP, setQiniuTopP] = useState('0.95')
@@ -1377,6 +1377,7 @@ function SeedreamStudio() {
                           value={qiniuQuality}
                           onChange={(event) => setQiniuQuality(event.target.value)}
                         >
+                          <option value="">默认 (不传)</option>
                           <option value="standard">Standard</option>
                           <option value="hd">HD</option>
                         </select>
