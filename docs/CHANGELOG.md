@@ -2,6 +2,18 @@
 
 本文档记录项目的所有重要变更和版本更新。
 
+ ---
+
+## [2025-11-24] - 🤖 AI 对话模型精简
+
+### ✨ 新特性 / 调整
+- `src/pages/AIChat.jsx`：移除模型目录分组，改为单层列表，让移动端切换模型无需二次点击。
+- 只保留 `gemini-3.0-pro-preview`、`gemini-2.5-pro`、`openai/gpt-5`、`claude-4.5-sonnet`、`deepseek/deepseek-v3.2-exp-thinking`，与最新后端可用模型保持一致。
+- 为卡片补充描述与 ID badge，方便排查调用参数。
+
+### 📌 影响范围
+- `src/pages/AIChat.jsx`
+
 ---
 
 ## [2025-11-22] - 🛠️ Gemini 3 Pro 改图端点修复

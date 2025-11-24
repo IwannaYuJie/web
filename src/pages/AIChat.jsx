@@ -6,29 +6,47 @@ import React, { useState, useRef, useEffect } from 'react'
  * 使用七牛云AI推理API
  */
 function AIChat() {
-  // 模型配置 - 按系列分类
-  const modelCategories = {
-    'DeepSeek系列': [
-      { id: 'deepseek-v3', name: 'DeepSeek V3', inputPrice: 0.5, outputPrice: 2, desc: '通用大模型，性价比高' },
-      { id: 'deepseek-r1', name: 'DeepSeek R1', inputPrice: 1, outputPrice: 4, desc: '推理能力强' },
-    ],
-    'Claude系列': [
-      { id: 'claude-3.5-sonnet', name: 'Claude 3.5 Sonnet', inputPrice: 5.4, outputPrice: 27, desc: '逻辑与代码能力卓越' },
-      { id: 'claude-3.5-haiku', name: 'Claude 3.5 Haiku', inputPrice: 1.44, outputPrice: 7.2, desc: '速度快，成本低' },
-    ],
-    'GPT系列': [
-      { id: 'gpt-4o', name: 'GPT-4o', inputPrice: 2.5, outputPrice: 10, desc: 'OpenAI 最新旗舰' },
-      { id: 'gpt-4o-mini', name: 'GPT-4o Mini', inputPrice: 0.15, outputPrice: 0.6, desc: '轻量级模型' },
-    ],
-    'Qwen系列': [
-      { id: 'qwen-max', name: 'Qwen Max', inputPrice: 1.2, outputPrice: 4.8, desc: '通义千问最强模型' },
-      { id: 'qwen-turbo', name: 'Qwen Turbo', inputPrice: 0.1, outputPrice: 0.2, desc: '极速响应' },
-    ]
-  }
+  // 单一模型列表，保持与后端允许的模型 ID 一致，避免目录嵌套造成额外选择步骤
+  const aiModels = [
+    {
+      id: 'gemini-3.0-pro-preview',
+      name: 'Gemini 3.0 Pro Preview',
+      desc: 'Gemini 新版多模态旗舰（预览版）',
+      inputPrice: '待定',
+      outputPrice: '待定'
+    },
+    {
+      id: 'gemini-2.5-pro',
+      name: 'Gemini 2.5 Pro',
+      desc: '面对复杂推理与多轮对话的主力模型',
+      inputPrice: '待定',
+      outputPrice: '待定'
+    },
+    {
+      id: 'openai/gpt-5',
+      name: 'OpenAI GPT-5',
+      desc: 'OpenAI 最新通用模型，综合表现强',
+      inputPrice: '待定',
+      outputPrice: '待定'
+    },
+    {
+      id: 'claude-4.5-sonnet',
+      name: 'Claude 4.5 Sonnet',
+      desc: 'Anthropic 最新旗舰，擅长代码与写作',
+      inputPrice: '待定',
+      outputPrice: '待定'
+    },
+    {
+      id: 'deepseek/deepseek-v3.2-exp-thinking',
+      name: 'DeepSeek V3.2 EXP Thinking',
+      desc: 'DeepSeek 思维链升级款，推理细腻',
+      inputPrice: '待定',
+      outputPrice: '待定'
+    }
+  ]
 
   // 状态管理
-  const [selectedCategory, setSelectedCategory] = useState('DeepSeek系列')
-  const [selectedModel, setSelectedModel] = useState('deepseek-v3')
+  const [selectedModel, setSelectedModel] = useState(aiModels[0].id)
   const [messages, setMessages] = useState([])
   const [inputMessage, setInputMessage] = useState('')
   const [isLoading, setIsLoading] = useState(false)
@@ -181,7 +199,7 @@ function AIChat() {
     }
   }
 
-  const currentModel = Object.values(modelCategories).flat().find(m => m.id === selectedModel)
+  const currentModel = aiModels.find(m => m.id === selectedModel)
 
   return (
     <div className="container h-[calc(100vh-80px)] flex flex-col md:flex-row gap-6 pb-6 animate-fade-in">
@@ -207,30 +225,10 @@ function AIChat() {
           </div>
           
           <div className="flex-1 overflow-y-auto p-4 space-y-6">
-             {/* Categories */}
-             <div className="space-y-2">
-               <label className="text-xs font-bold text-text-light uppercase tracking-wider">模型系列</label>
-               <div className="flex flex-wrap gap-2">
-                 {Object.keys(modelCategories).map(cat => (
-                   <button
-                     key={cat}
-                     onClick={() => setSelectedCategory(cat)}
-                     className={`px-3 py-1.5 rounded-lg text-sm transition-all ${
-                       selectedCategory === cat 
-                         ? 'bg-primary text-white shadow-md' 
-                         : 'bg-white/50 hover:bg-white text-text-secondary'
-                     }`}
-                   >
-                     {cat}
-                   </button>
-                 ))}
-               </div>
-             </div>
-
              {/* Model List */}
              <div className="space-y-2">
                <label className="text-xs font-bold text-text-light uppercase tracking-wider">可用模型</label>
-               {modelCategories[selectedCategory]?.map(model => (
+               {aiModels.map(model => (
                  <div
                    key={model.id}
                    onClick={() => {
@@ -248,12 +246,15 @@ function AIChat() {
                      <span className={`font-bold ${selectedModel === model.id ? 'text-primary' : 'text-text-color'}`}>
                        {model.name}
                      </span>
+                     <span className="text-[10px] uppercase tracking-wide text-text-secondary bg-white/50 px-2 py-0.5 rounded-full">
+                       {model.id}
+                     </span>
                    </div>
                    <p className="text-xs text-text-light line-clamp-2 mb-2">{model.desc}</p>
                    <div className="flex gap-2 text-[10px] text-text-secondary bg-white/40 p-1.5 rounded-lg">
-                     <span>输入 ${model.inputPrice}</span>
+                     <span>输入 ${model.inputPrice || '—'}</span>
                      <span className="opacity-30">|</span>
-                     <span>输出 ${model.outputPrice}</span>
+                     <span>输出 ${model.outputPrice || '—'}</span>
                    </div>
                  </div>
                ))}
