@@ -1025,13 +1025,19 @@ function SeedreamStudio() {
                   </div>
                   <div className="field-group">
                     <label htmlFor="qiniu-size">size</label>
-                    <input
+                    <select
                       id="qiniu-size"
-                      type="text"
-                      placeholder="1024x1024 或留空"
                       value={qiniuSize}
                       onChange={(event) => setQiniuSize(event.target.value)}
-                    />
+                    >
+                      <option value="">默认 (不传)</option>
+                      <option value="1024x1024">1024x1024 (1:1)</option>
+                      <option value="1024x1792">1024x1792 (9:16)</option>
+                      <option value="1792x1024">1792x1024 (16:9)</option>
+                      <option value="512x512">512x512</option>
+                      <option value="256x256">256x256</option>
+                    </select>
+                    <p className="panel-tip">Gemini 模型可能不支持自定义尺寸，建议留空。</p>
                   </div>
                   <div className="field-group">
                     <label htmlFor="qiniu-quality">quality</label>
