@@ -4,6 +4,20 @@
 
  ---
 
+## [2025-11-25] - 🛰️ 七牛图生图代理
+
+### ✨ 新特性 / 调整
+- `functions/api/qiniu-image-edits.js`：Cloudflare Pages 函数新增 `/api/qiniu-image-edits` 代理，包含 CORS 处理、参数校验与 JSON 解析兜底，默认模型为 `gemini-3.0-pro-image-preview`。
+- `api/qiniu-image-edits.js`：Vercel/本地 Serverless 版本与 Cloudflare 保持一致，实现 prompt/image 校验与错误提示。
+- `vite.config.js`：开发模式增加 `/api/qiniu-image-edits` 代理，自动注入 `QINIU_AI_API_KEY`，便于前端在本地直接调用编辑端点。
+
+### 📌 影响范围
+- `functions/api/qiniu-image-edits.js`
+- `api/qiniu-image-edits.js`
+- `vite.config.js`
+
+---
+
 ## [2025-11-25] - ♻️ 移除 Kling 相关配置
 
 ### ✂️ 调整
