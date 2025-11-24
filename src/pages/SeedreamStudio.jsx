@@ -32,6 +32,7 @@ function SeedreamStudio() {
   const [controlScale, setControlScale] = useState(0.7)
   const [showApiKeyPanel, setShowApiKeyPanel] = useState(false)
   const [showParamsPanel, setShowParamsPanel] = useState(false)
+  const [showQiniuParamsPanel, setShowQiniuParamsPanel] = useState(false)
   const [activeApi, setActiveApi] = useState('fal')
   
   // 新增模型选择与参数状态
@@ -1010,109 +1011,117 @@ function SeedreamStudio() {
                 </div>
               </div>
 
-              <div className="panel-card">
-                <h2>⚙️ 请求参数</h2>
-                <div className="field-grid">
-                  <div className="field-group">
-                    <label htmlFor="qiniu-n">n（1-10）</label>
-                    <input
-                      id="qiniu-n"
-                      type="number"
-                      min={1}
-                      max={10}
-                      value={qiniuCount}
-                      onChange={(event) => setQiniuCount(Number.parseInt(event.target.value, 10) || 1)}
-                    />
-                  </div>
-                  <div className="field-group">
-                    <label htmlFor="qiniu-size">size</label>
-                    <select
-                      id="qiniu-size"
-                      value={qiniuSize}
-                      onChange={(event) => setQiniuSize(event.target.value)}
-                    >
-                      <option value="">默认 (不传)</option>
-                      <optgroup label="1:1 Square">
-                        <option value="1024x1024">1K (1024x1024)</option>
-                        <option value="2048x2048">2K (2048x2048)</option>
-                        <option value="4096x4096">4K (4096x4096)</option>
-                      </optgroup>
-                      <optgroup label="9:16 Portrait">
-                        <option value="1024x1792">1K (1024x1792)</option>
-                        <option value="2048x3584">2K (2048x3584)</option>
-                        <option value="4096x7168">4K (4096x7168)</option>
-                      </optgroup>
-                      <optgroup label="16:9 Landscape">
-                        <option value="1792x1024">1K (1792x1024)</option>
-                        <option value="3584x2048">2K (3584x2048)</option>
-                        <option value="7168x4096">4K (7168x4096)</option>
-                      </optgroup>
-                    </select>
-                    <p className="panel-tip">Gemini 模型可能不支持超高分辨率，建议优先使用 1K/2K。</p>
-                  </div>
-                  <div className="field-group">
-                    <label htmlFor="qiniu-quality">quality</label>
-                    <select
-                      id="qiniu-quality"
-                      value={qiniuQuality}
-                      onChange={(event) => setQiniuQuality(event.target.value)}
-                    >
-                      <option value="standard">standard</option>
-                      <option value="hd">hd</option>
-                    </select>
-                  </div>
-                  <div className="field-group">
-                    <label htmlFor="qiniu-style">style</label>
-                    <select
-                      id="qiniu-style"
-                      value={qiniuStyle}
-                      onChange={(event) => setQiniuStyle(event.target.value)}
-                    >
-                      <option value="vivid">vivid</option>
-                      <option value="natural">natural</option>
-                    </select>
-                  </div>
-                </div>
-              </div>
+              <div className="panel-card collapsible">
+                <button 
+                  type="button"
+                  className="collapse-header"
+                  onClick={() => setShowQiniuParamsPanel(!showQiniuParamsPanel)}
+                >
+                  <h2>⚙️ 参数设置</h2>
+                  <span className="collapse-icon">{showQiniuParamsPanel ? '▼' : '▶'}</span>
+                </button>
+                {showQiniuParamsPanel && (
+                  <div className="collapse-content">
+                    <div className="field-grid">
+                      <div className="field-group">
+                        <label htmlFor="qiniu-n">生成数量 (n)</label>
+                        <input
+                          id="qiniu-n"
+                          type="number"
+                          min={1}
+                          max={10}
+                          value={qiniuCount}
+                          onChange={(event) => setQiniuCount(Number.parseInt(event.target.value, 10) || 1)}
+                        />
+                      </div>
+                      <div className="field-group">
+                        <label htmlFor="qiniu-size">图像尺寸 (size)</label>
+                        <select
+                          id="qiniu-size"
+                          value={qiniuSize}
+                          onChange={(event) => setQiniuSize(event.target.value)}
+                        >
+                          <option value="">默认 (不传)</option>
+                          <optgroup label="1:1 Square">
+                            <option value="1024x1024">1K (1024x1024)</option>
+                            <option value="2048x2048">2K (2048x2048)</option>
+                            <option value="4096x4096">4K (4096x4096)</option>
+                          </optgroup>
+                          <optgroup label="9:16 Portrait">
+                            <option value="1024x1792">1K (1024x1792)</option>
+                            <option value="2048x3584">2K (2048x3584)</option>
+                            <option value="4096x7168">4K (4096x7168)</option>
+                          </optgroup>
+                          <optgroup label="16:9 Landscape">
+                            <option value="1792x1024">1K (1792x1024)</option>
+                            <option value="3584x2048">2K (3584x2048)</option>
+                            <option value="7168x4096">4K (7168x4096)</option>
+                          </optgroup>
+                        </select>
+                        <p className="panel-tip">Gemini 模型可能不支持超高分辨率，建议优先使用 1K/2K。</p>
+                      </div>
+                      <div className="field-group">
+                        <label htmlFor="qiniu-quality">画质 (quality)</label>
+                        <select
+                          id="qiniu-quality"
+                          value={qiniuQuality}
+                          onChange={(event) => setQiniuQuality(event.target.value)}
+                        >
+                          <option value="standard">Standard</option>
+                          <option value="hd">HD</option>
+                        </select>
+                      </div>
+                      <div className="field-group">
+                        <label htmlFor="qiniu-style">风格 (style)</label>
+                        <select
+                          id="qiniu-style"
+                          value={qiniuStyle}
+                          onChange={(event) => setQiniuStyle(event.target.value)}
+                        >
+                          <option value="vivid">Vivid</option>
+                          <option value="natural">Natural</option>
+                        </select>
+                      </div>
+                    </div>
 
-              <div className="panel-card">
-                <h2>🎛️ 采样参数</h2>
-                <div className="field-grid">
-                  <div className="field-group">
-                    <label htmlFor="qiniu-temperature">temperature (0-2)</label>
-                    <input
-                      id="qiniu-temperature"
-                      type="number"
-                      min={0}
-                      max={2}
-                      step={0.05}
-                      value={qiniuTemperature}
-                      onChange={(event) => setQiniuTemperature(event.target.value)}
-                    />
+                    <div className="field-grid" style={{ marginTop: '1rem', borderTop: '1px solid var(--border-color)', paddingTop: '1rem' }}>
+                      <div className="field-group">
+                        <label htmlFor="qiniu-temperature">随机性 (temp)</label>
+                        <input
+                          id="qiniu-temperature"
+                          type="number"
+                          min={0}
+                          max={2}
+                          step={0.05}
+                          value={qiniuTemperature}
+                          onChange={(event) => setQiniuTemperature(event.target.value)}
+                        />
+                      </div>
+                      <div className="field-group">
+                        <label htmlFor="qiniu-top-p">核采样 (top_p)</label>
+                        <input
+                          id="qiniu-top-p"
+                          type="number"
+                          min={0}
+                          max={1}
+                          step={0.01}
+                          value={qiniuTopP}
+                          onChange={(event) => setQiniuTopP(event.target.value)}
+                        />
+                      </div>
+                      <div className="field-group">
+                        <label htmlFor="qiniu-top-k">Top-K</label>
+                        <input
+                          id="qiniu-top-k"
+                          type="number"
+                          min={1}
+                          value={qiniuTopK}
+                          onChange={(event) => setQiniuTopK(event.target.value)}
+                        />
+                      </div>
+                    </div>
                   </div>
-                  <div className="field-group">
-                    <label htmlFor="qiniu-top-p">top_p (0-1)</label>
-                    <input
-                      id="qiniu-top-p"
-                      type="number"
-                      min={0}
-                      max={1}
-                      step={0.01}
-                      value={qiniuTopP}
-                      onChange={(event) => setQiniuTopP(event.target.value)}
-                    />
-                  </div>
-                  <div className="field-group">
-                    <label htmlFor="qiniu-top-k">top_k (&gt;=1)</label>
-                    <input
-                      id="qiniu-top-k"
-                      type="number"
-                      min={1}
-                      value={qiniuTopK}
-                      onChange={(event) => setQiniuTopK(event.target.value)}
-                    />
-                  </div>
-                </div>
+                )}
               </div>
 
               <button
