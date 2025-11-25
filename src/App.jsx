@@ -8,6 +8,8 @@ import AIChat from './pages/AIChat'
 import ArticleManager from './pages/ArticleManager'
 import GameHub from './pages/GameHub'
 import SeedreamStudio from './pages/SeedreamStudio'
+import Toolbox from './pages/Toolbox'
+import SpriteSheetToGif from './pages/tools/SpriteSheetToGif'
 
 function App() {
   return (
@@ -21,6 +23,8 @@ function App() {
           <Route path="/admin/articles" element={<ArticleManager />} />
           <Route path="/secret-games" element={<GameHub />} />
           <Route path="/secret-seedream" element={<SeedreamStudio />} />
+          <Route path="/toolbox" element={<Toolbox />} />
+          <Route path="/toolbox/sprite-sheet-to-gif" element={<SpriteSheetToGif />} />
         </Routes>
       </Layout>
     </Router>

@@ -297,6 +297,19 @@ function Home() {
               </button>
            </div>
 
+           {/* Tools Card */}
+           <div className="glass p-6 rounded-2xl">
+              <h2 className="text-lg font-bold mb-4 flex items-center gap-2">
+                <span>🧰</span> 实用工具箱
+              </h2>
+              <p className="text-sm text-text-secondary mb-4">
+                这里有一些好用的小工具，比如精灵图转GIF等。
+              </p>
+              <Link to="/toolbox" className="w-full btn btn-primary justify-center text-center block">
+                🚀 进入工具箱
+              </Link>
+           </div>
+
            {/* Search Card */}
            <div className="glass p-6 rounded-2xl">
               <h2 className="text-lg font-bold mb-4 flex items-center gap-2">

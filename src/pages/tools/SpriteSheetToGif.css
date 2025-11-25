@@ -1,0 +1,184 @@
+.tool-container {
+  display: grid;
+  grid-template-columns: 350px 1fr;
+  gap: 2rem;
+  align-items: start;
+}
+
+@media (max-width: 900px) {
+  .tool-container {
+    grid-template-columns: 1fr;
+  }
+}
+
+.tool-panel {
+  background: var(--card-bg);
+  border: 2px solid var(--border-color);
+  border-radius: var(--radius-md);
+  padding: 1.5rem;
+  box-shadow: var(--shadow);
+  margin-bottom: 1.5rem;
+}
+
+.tool-panel h3 {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  margin-bottom: 1rem;
+  font-size: 1.1rem;
+  color: var(--primary-color);
+}
+
+/* Upload Area */
+/* 1. 上传区域布局微调 */
+.upload-area {
+  position: relative;
+  border: 2px dashed var(--border-color);
+  border-radius: var(--radius-md);
+  padding: 2.5rem 1.5rem;
+  text-align: center;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  background: rgba(255, 255, 255, 0.5);
+  box-shadow: none;
+}
+
+/* 强制清除可能残留的伪元素 */
+.upload-area::before,
+.upload-area::after {
+  content: none !important;
+  display: none !important;
+}
+
+.upload-area:hover {
+  border-color: var(--primary-color);
+  background: rgba(255, 159, 69, 0.05);
+  box-shadow: none;
+}
+
+.upload-icon {
+  font-size: 2.4rem;
+  margin-bottom: 0.5rem;
+  display: block;
+}
+
+/* Settings */
+.setting-group {
+  margin-bottom: 1rem;
+}
+
+.setting-row {
+  display: flex;
+  gap: 1rem;
+}
+
+.setting-item {
+  flex: 1;
+}
+
+.setting-item label {
+  display: block;
+  font-size: 0.9rem;
+  color: var(--text-secondary);
+  margin-bottom: 0.3rem;
+}
+
+.setting-input {
+  width: 100%;
+  padding: 0.5rem;
+  border: 1px solid var(--border-color);
+  border-radius: var(--radius-sm);
+  background: white;
+  color: var(--text-color);
+}
+
+.setting-input:focus {
+  outline: none;
+  border-color: var(--primary-color);
+}
+
+.info-display {
+  background: rgba(0, 0, 0, 0.03);
+  padding: 0.8rem;
+  border-radius: var(--radius-sm);
+  font-size: 0.85rem;
+  color: var(--text-secondary);
+  margin-top: 1rem;
+}
+
+.info-row {
+  display: flex;
+  justify-content: space-between;
+  margin-bottom: 0.2rem;
+}
+
+/* Preview Animation */
+.preview-box {
+  background: url('data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAABAAAAAQCAYAAAAf8/9hAAAAMUlEQVQ4T2NkYGAQYcAP3uCTZhw1gGGYhAGBZIA/nYDCgBDAm9BGDWAAJyRCgLaBCAAgXwixzAS0pgAAAABJRU5ErkJggg=='); /* Checkerboard pattern */
+  border: 1px solid var(--border-color);
+  border-radius: var(--radius-sm);
+  min-height: 150px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  overflow: hidden;
+  position: relative;
+}
+
+.preview-controls {
+  display: flex;
+  justify-content: center;
+  margin-top: 0.5rem;
+}
+
+.control-btn {
+  background: var(--primary-color);
+  color: white;
+  border: none;
+  border-radius: var(--radius-full);
+  width: 36px;
+  height: 36px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  transition: all 0.2s;
+}
+
+.control-btn:hover {
+  background: var(--primary-hover);
+  transform: scale(1.1);
+}
+
+/* Grid View */
+.grid-view-container {
+  width: 100%;
+  overflow: auto;
+  background: url('data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAABAAAAAQCAYAAAAf8/9hAAAAMUlEQVQ4T2NkYGAQYcAP3uCTZhw1gGGYhAGBZIA/nYDCgBDAm9BGDWAAJyRCgLaBCAAgXwixzAS0pgAAAABJRU5ErkJggg==');
+  border: 1px solid var(--border-color);
+  border-radius: var(--radius-sm);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  min-height: 300px;
+  padding: 1rem;
+}
+
+.generate-btn {
+  width: 100%;
+  margin-top: 1rem;
+  padding: 1rem;
+  font-size: 1.1rem;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.5rem;
+}
+
+.empty-state {
+  color: var(--text-secondary);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 0.5rem;
+}
