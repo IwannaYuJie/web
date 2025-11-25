@@ -33,7 +33,7 @@ function SeedreamStudio() {
   const [showApiKeyPanel, setShowApiKeyPanel] = useState(false)
   const [showParamsPanel, setShowParamsPanel] = useState(false)
   const [showQiniuParamsPanel, setShowQiniuParamsPanel] = useState(false)
-  const [activeApi, setActiveApi] = useState('fal')
+  const [activeApi, setActiveApi] = useState('qiniu')
   
   // 新增模型选择与参数状态
   const [modelType, setModelType] = useState('v4') // 'v4' | 'new'

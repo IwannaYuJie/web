@@ -10,6 +10,7 @@
 - `src/pages/SeedreamStudio.jsx`：移除图像编辑模式的在线 URL 粘贴选项，仅支持本地文件上传，并将遮罩设置合并进高级参数面板，界面更加紧凑。
 - `src/pages/SeedreamStudio.jsx`：七牛画质 (quality) 下拉新增“默认(不传)”选项并设置为默认值，便于保持官方默认画质。
 - `src/pages/SeedreamStudio.jsx`：Fal Prompt、七牛 Prompt 以及七牛负面提示词均新增“清空”按钮，便于快速重写提示词。
+- `src/pages/SeedreamStudio.jsx`：默认加载时直接展示七牛分页，方便优先使用七牛 Gemini 模块。
 
 ### 📌 影响范围
 - `src/pages/SeedreamStudio.jsx`
