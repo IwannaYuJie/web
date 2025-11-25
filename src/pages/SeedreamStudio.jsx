@@ -871,7 +871,17 @@ function SeedreamStudio() {
             <div className="panel-card">
               <h2>📝 提示词</h2>
               <div className="field-group">
-                <label htmlFor="seedream-prompt">Prompt</label>
+                <div className="field-label-row">
+                  <label htmlFor="seedream-prompt">Prompt</label>
+                  <button
+                    type="button"
+                    className="clear-button"
+                    onClick={() => setPrompt('')}
+                    disabled={!prompt}
+                  >
+                    清空
+                  </button>
+                </div>
                 <textarea
                   id="seedream-prompt"
                   rows={4}
@@ -1251,7 +1261,17 @@ function SeedreamStudio() {
                   <p className="panel-tip">当前固定使用 Gemini 3.0 Pro Image Preview 模型。</p>
                 </div>
                 <div className="field-group">
-                  <label htmlFor="qiniu-prompt">Prompt</label>
+                  <div className="field-label-row">
+                    <label htmlFor="qiniu-prompt">Prompt</label>
+                    <button
+                      type="button"
+                      className="clear-button"
+                      onClick={() => setQiniuPrompt('')}
+                      disabled={!qiniuPrompt}
+                    >
+                      清空
+                    </button>
+                  </div>
                   <textarea
                     id="qiniu-prompt"
                     rows={4}
@@ -1448,7 +1468,17 @@ function SeedreamStudio() {
                 {showQiniuAdvancedPanel && (
                   <div className="collapse-content">
                     <div className="field-group">
-                      <label htmlFor="qiniu-negative">负面提示词</label>
+                      <div className="field-label-row">
+                        <label htmlFor="qiniu-negative">负面提示词</label>
+                        <button
+                          type="button"
+                          className="clear-button"
+                          onClick={() => setQiniuNegativePrompt('')}
+                          disabled={!qiniuNegativePrompt}
+                        >
+                          清空
+                        </button>
+                      </div>
                       <textarea
                         id="qiniu-negative"
                         rows={3}
