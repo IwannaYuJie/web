@@ -1242,11 +1242,6 @@ function SeedreamStudio() {
           <div className="seedream-layout qiniu-mode">
             <section className="seedream-panel" aria-label="七牛生成设置">
               <div className="panel-card">
-                <h2>🐧 七牛 Gemini 文生图</h2>
-                <p className="panel-tip">兼容官方 /v1/images/generations 接口，所有可选参数均可在此配置，默认模型为 gemini-3.0-pro-image-preview。</p>
-              </div>
-
-              <div className="panel-card">
                 <h2>📝 提示词 & 模型</h2>
                 <div className="field-group">
                   <label htmlFor="qiniu-model">模型 ID</label>
