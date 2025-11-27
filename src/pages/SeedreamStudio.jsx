@@ -154,6 +154,33 @@ function SeedreamStudio() {
   }
 
   /**
+   * 发送邮件通知（Fal.ai 生成结果）
+   * @param {boolean} success - 是否成功
+   * @param {Array} images - 图片数组（成功时）
+   * @param {string} error - 错误信息（失败时）
+   * @param {string} promptText - 生成用的 prompt
+   * @param {string} source - 来源标识 ('fal-text' | 'fal-edit')
+   */
+  const sendEmailNotification = async (success, images, error, promptText, source) => {
+    try {
+      await fetch('/api/notify-email', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          success,
+          images: success ? images : undefined,
+          error: success ? undefined : error,
+          prompt: promptText,
+          source
+        })
+      })
+      console.log('邮件通知已发送')
+    } catch (emailError) {
+      console.error('发送邮件通知失败:', emailError)
+    }
+  }
+
+  /**
    * 保存 API Key 到浏览器本地存储
    */
   const handleSaveKey = () => {
@@ -472,8 +499,13 @@ function SeedreamStudio() {
 
       console.log('Fal.ai 完整返回结果:', result)
 
+      // 确定来源标识
+      const emailSource = mode === 'edit' ? 'fal-edit' : 'fal-text'
+
       if (!result) {
         setError('😿 没有收到返回结果，请稍后重试')
+        // 发送失败邮件
+        sendEmailNotification(false, null, '没有收到返回结果', prompt.trim(), emailSource)
         return
       }
 
@@ -489,6 +521,8 @@ function SeedreamStudio() {
       if (!imageList || !Array.isArray(imageList) || imageList.length === 0) {
         setError('😿 生成成功但没有返回图像，请检查控制台日志')
         console.error('图片数据异常 - 完整结果:', JSON.stringify(result, null, 2))
+        // 发送失败邮件
+        sendEmailNotification(false, null, '生成成功但没有返回图像', prompt.trim(), emailSource)
         return
       }
 
@@ -499,13 +533,21 @@ function SeedreamStudio() {
       if (normalizedImages.length === 0) {
         setError('😿 图片格式转换失败，请检查控制台日志')
         console.error('所有图片转换后为空，原始数据:', imageList)
+        // 发送失败邮件
+        sendEmailNotification(false, null, '图片格式转换失败', prompt.trim(), emailSource)
         return
       }
 
       setImages(normalizedImages)
+      // 发送成功邮件（传递原始 imageList，包含 url）
+      sendEmailNotification(true, imageList, null, prompt.trim(), emailSource)
     } catch (generationError) {
       console.error('调用 Fal Seedream 失败:', generationError)
-      setError(generationError?.message || '😿 发生未知错误，请稍后再试')
+      const errorMsg = generationError?.message || '发生未知错误'
+      setError(errorMsg.startsWith('😿') ? errorMsg : `😿 ${errorMsg}`)
+      // 发送失败邮件
+      const emailSource = mode === 'edit' ? 'fal-edit' : 'fal-text'
+      sendEmailNotification(false, null, errorMsg, prompt.trim(), emailSource)
     } finally {
       setLoading(false)
     }

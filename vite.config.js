@@ -149,6 +149,48 @@ export default defineConfig({
             res.end(JSON.stringify({ error: '不支持的请求方法' }))
             return
           }
+
+          // 处理邮件通知 API（本地 Mock - 仅打印日志）
+          if (url === '/api/notify-email' && req.method === 'POST') {
+            res.setHeader('Content-Type', 'application/json')
+            res.setHeader('Access-Control-Allow-Origin', '*')
+            res.setHeader('Access-Control-Allow-Methods', 'POST, OPTIONS')
+            res.setHeader('Access-Control-Allow-Headers', 'Content-Type')
+            
+            let body = ''
+            req.on('data', chunk => { body += chunk })
+            req.on('end', () => {
+              try {
+                const payload = JSON.parse(body)
+                console.log('[Mock] 📧 邮件通知请求:', {
+                  success: payload.success,
+                  source: payload.source,
+                  prompt: payload.prompt?.substring(0, 50) + '...',
+                  imageCount: payload.images?.length || 0,
+                  error: payload.error
+                })
+                res.statusCode = 200
+                res.end(JSON.stringify({ 
+                  success: true, 
+                  message: '[Mock] 本地开发模式，邮件未实际发送' 
+                }))
+              } catch (error) {
+                res.statusCode = 400
+                res.end(JSON.stringify({ error: '无效的请求数据' }))
+              }
+            })
+            return
+          }
+          
+          // 处理 OPTIONS 预检请求
+          if (url === '/api/notify-email' && req.method === 'OPTIONS') {
+            res.setHeader('Access-Control-Allow-Origin', '*')
+            res.setHeader('Access-Control-Allow-Methods', 'POST, OPTIONS')
+            res.setHeader('Access-Control-Allow-Headers', 'Content-Type')
+            res.statusCode = 204
+            res.end()
+            return
+          }
           
           next()
         })
