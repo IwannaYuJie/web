@@ -84,32 +84,32 @@ export async function onRequest(context) {
     console.log('[DEBUG] body.data 是数组:', Array.isArray(body?.data))
     console.log('[DEBUG] body.data 长度:', body?.data?.length)
 
-    // 发送邮件通知（使用 waitUntil 确保异步任务完成）
+    // 同步发送邮件并获取结果（调试用）
+    let emailResult = null
     if (upstreamResponse.ok && body?.data && Array.isArray(body.data) && body.data.length > 0) {
-      // 成功 - 发送成功邮件
       console.log('[DEBUG] 准备发送成功邮件...')
-      waitUntil(sendSuccessEmail(env, {
+      emailResult = await sendSuccessEmail(env, {
         images: body.data,
         prompt,
         source: 'qiniu-text'
-      }))
+      })
     } else {
-      // 失败 - 发送失败邮件
       const errorMsg = body?.error || body?.message || body?.raw || '未知错误'
       console.log('[DEBUG] 准备发送失败邮件, 错误:', errorMsg)
-      waitUntil(sendFailureEmail(env, {
+      emailResult = await sendFailureEmail(env, {
         error: errorMsg,
         prompt,
         source: 'qiniu-text'
-      }))
+      })
     }
 
-    // 在响应中加入调试信息
+    // 在响应中加入调试信息（包含邮件发送结果）
     const responseBody = {
       ...body,
       _debug: {
         hasResendKey: !!env.RESEND_API_KEY,
-        emailTarget: NOTIFY_EMAIL
+        emailTarget: NOTIFY_EMAIL,
+        emailResult: emailResult
       }
     }
 
