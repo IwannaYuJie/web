@@ -7,7 +7,7 @@
 const NOTIFY_EMAIL = 'meicuowoniubi@gmail.com'
 
 export async function onRequest(context) {
-  const { request, env } = context
+  const { request, env, waitUntil } = context
 
   const corsHeaders = {
     'Access-Control-Allow-Origin': '*',
@@ -84,22 +84,22 @@ export async function onRequest(context) {
     const text = await upstreamResponse.text()
     const body = safeParseJson(text)
 
-    // 发送邮件通知（异步，不阻塞响应）
+    // 发送邮件通知（使用 waitUntil 确保异步任务完成）
     if (upstreamResponse.ok && body?.data && Array.isArray(body.data) && body.data.length > 0) {
       // 成功 - 发送成功邮件
-      sendSuccessEmail(env, {
+      waitUntil(sendSuccessEmail(env, {
         images: body.data,
         prompt,
         source: 'qiniu-edit'
-      }).catch(e => console.error('发送成功邮件失败:', e))
+      }))
     } else {
       // 失败 - 发送失败邮件
       const errorMsg = body?.error || body?.message || body?.raw || '未知错误'
-      sendFailureEmail(env, {
+      waitUntil(sendFailureEmail(env, {
         error: errorMsg,
         prompt,
         source: 'qiniu-edit'
-      }).catch(e => console.error('发送失败邮件失败:', e))
+      }))
     }
 
     return new Response(JSON.stringify(body), {
@@ -110,11 +110,11 @@ export async function onRequest(context) {
     console.error('七牛图生图代理异常:', error)
     
     // 发送失败邮件
-    sendFailureEmail(env, {
+    waitUntil(sendFailureEmail(env, {
       error: error.message,
       prompt,
       source: 'qiniu-edit'
-    }).catch(e => console.error('发送失败邮件失败:', e))
+    }))
     
     return new Response(
       JSON.stringify({ error: '服务器内部错误', message: error.message }),
