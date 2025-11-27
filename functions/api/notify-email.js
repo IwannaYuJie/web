@@ -4,7 +4,7 @@
  */
 
 // 固定接收邮箱
-const NOTIFY_EMAIL = 'meicuowoniubi@gmail.com'
+const NOTIFY_EMAIL = 'penghaoxiang2019@gmail.com'
 
 export async function onRequest(context) {
   const { request, env } = context
