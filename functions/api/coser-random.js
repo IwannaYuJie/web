@@ -93,7 +93,7 @@ A beautiful young Chinese girl, wearing [服装描述], [发型发色], [妆容]
         'Authorization': `Bearer ${API_KEY}`
       },
       body: JSON.stringify({
-        model: 'gemini-2.5-pro',
+        model: 'claude-4.5-sonnet',
         messages: [
           { role: 'system', content: baseRequirements },
           { role: 'user', content: userMessage }
