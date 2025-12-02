@@ -2003,20 +2003,6 @@ function SeedreamStudio() {
           /* 随机 Coser 面板 */
           <div className="seedream-layout coser-mode">
             <section className="seedream-panel coser-panel" aria-label="随机 Coser 生成设置">
-              <div className="panel-card coser-intro-card">
-                <h2>🎀 随机 Coser 写真</h2>
-                <p className="panel-tip">
-                  一键生成中国年轻女生 Coser 写真！AI 将随机选择动漫/游戏角色，
-                  自动生成专业级提示词，然后同时调用 <strong>Fal Seedream v4</strong> 与 
-                  <strong>七牛 Gemini</strong> 双引擎生图，对比不同风格的生成效果~
-                </p>
-                <div className="coser-features">
-                  <span className="feature-tag">🎲 随机角色</span>
-                  <span className="feature-tag">✨ AI 提示词</span>
-                  <span className="feature-tag">🔀 双引擎对比</span>
-                </div>
-              </div>
-
               {/* 用户自定义输入 */}
               <div className="panel-card">
                 <h2>💭 自定义需求（可选）</h2>
