@@ -4,6 +4,28 @@
 
  ---
 
+## [2025-12-02] - 🎀 随机 Coser 写真生成器
+
+### ✨ 新特性
+- `src/pages/SeedreamStudio.jsx`：隐藏入口 `/secret-seedream` 新增「随机 Coser」功能模块，与 Fal.ai / 七牛并列展示。
+- `src/pages/SeedreamStudio.jsx`：一键生成中国年轻女生 Coser 写真，流程为：
+  1. 调用七牛文本对话 API（gemini-2.5-flash）生成随机动漫/游戏角色 Cosplay 提示词
+  2. 并行调用 Fal Seedream v4 与七牛 Gemini 3.0 Pro Image Preview 双引擎生图
+  3. 双栏对比展示两个引擎的生成结果
+- `functions/api/coser-random.js`：新增 Cloudflare Pages 函数端点 `/api/coser-random`，使用七牛文本对话 API 生成随机 Coser 写真提示词，复用 `QINIU_AI_API_KEY` 环境变量。
+- `vite.config.js`：开发环境新增 `/api/coser-random` 代理配置，自动注入本地 API Key。
+
+### 🎨 UI 体验
+- `src/pages/SeedreamStudio.css`：新增粉色主题的 Coser 按钮、介绍卡片、提示词展示区域与双引擎对比布局样式。
+
+### 📌 影响范围
+- `src/pages/SeedreamStudio.jsx`
+- `src/pages/SeedreamStudio.css`
+- `functions/api/coser-random.js`
+- `vite.config.js`
+
+---
+
 ## [2025-11-25] - 🧹 移除七牛提示卡片
 
 ### ✂️ 调整

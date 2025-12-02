@@ -41,13 +41,17 @@ export async function onRequest(context) {
 
     // 七牛云 AI API 配置
     const API_ENDPOINT = 'https://api.qnaigc.com/v1/chat/completions'
-    const API_KEY = context.env.QINIU_CHAT_API_KEY
+
+    // 优先使用专用聊天密钥，缺省时回退到通用的图像密钥，便于统一配置
+    const primaryKey = context.env.QINIU_CHAT_API_KEY
+    const fallbackKey = context.env.QINIU_AI_API_KEY
+    const API_KEY = primaryKey || fallbackKey
     
     // 安全检查：必须配置环境变量
     if (!API_KEY) {
       return new Response(JSON.stringify({ 
         error: '服务器配置错误', 
-        message: '未配置 QINIU_CHAT_API_KEY 环境变量，请在 Cloudflare Dashboard 中添加' 
+        message: '未配置 QINIU_CHAT_API_KEY 或 QINIU_AI_API_KEY，请在 Cloudflare Dashboard 中添加任意一个有效密钥' 
       }), {
         status: 500,
         headers: {

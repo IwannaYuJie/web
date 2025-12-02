@@ -660,3 +660,181 @@
     grid-template-columns: 1fr;
   }
 }
+
+/* ========================================
+   随机 Coser 功能样式
+   ======================================== */
+
+/* Coser 切换按钮特殊样式 */
+.api-switch-button.coser-button {
+  background: linear-gradient(135deg, #ff6b9d 0%, #c44569 100%);
+  border-color: #ff6b9d;
+  color: white;
+}
+
+.api-switch-button.coser-button:not(.active) {
+  background: white;
+  color: #ff6b9d;
+  border-color: #ffb8d0;
+}
+
+.api-switch-button.coser-button:hover {
+  border-color: #ff6b9d;
+  transform: translateY(-2px);
+}
+
+.api-switch-button.coser-button.active {
+  background: linear-gradient(135deg, #ff6b9d 0%, #c44569 100%);
+  border-color: #ff6b9d;
+  color: white;
+  box-shadow: 0 4px 15px rgba(255, 107, 157, 0.4);
+}
+
+/* Coser 布局模式 */
+.seedream-layout.coser-mode {
+  grid-template-columns: minmax(0, 480px) 1fr;
+}
+
+@media (max-width: 1024px) {
+  .seedream-layout.coser-mode {
+    grid-template-columns: 1fr;
+  }
+}
+
+/* Coser 介绍卡片 */
+.coser-intro-card {
+  background: linear-gradient(135deg, rgba(255, 107, 157, 0.1) 0%, rgba(196, 69, 105, 0.05) 100%);
+  border-color: rgba(255, 107, 157, 0.3);
+}
+
+.coser-intro-card h2 {
+  color: #ff6b9d;
+}
+
+.coser-features {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.75rem;
+  margin-top: 1rem;
+}
+
+.feature-tag {
+  background: linear-gradient(135deg, #ff6b9d 0%, #c44569 100%);
+  color: white;
+  padding: 0.4rem 0.9rem;
+  border-radius: var(--radius-full);
+  font-size: 0.85rem;
+  font-weight: 600;
+}
+
+/* 警告卡片 */
+.warning-card {
+  background: rgba(255, 193, 7, 0.15);
+  border-color: rgba(255, 193, 7, 0.4);
+}
+
+.warning-card p {
+  color: #856404;
+  font-weight: 600;
+  margin: 0;
+}
+
+/* Coser 生成按钮 */
+.coser-generate-button {
+  background: linear-gradient(135deg, #ff6b9d 0%, #c44569 100%);
+  box-shadow: 0 4px 15px rgba(255, 107, 157, 0.4);
+}
+
+.coser-generate-button:hover:not(:disabled) {
+  box-shadow: 0 6px 20px rgba(255, 107, 157, 0.5);
+}
+
+/* Coser 提示词展示卡片 */
+.coser-prompt-card {
+  background: linear-gradient(135deg, rgba(255, 107, 157, 0.08) 0%, rgba(255, 255, 255, 1) 100%);
+  border-color: rgba(255, 107, 157, 0.25);
+}
+
+.coser-prompt-card h2 {
+  color: #c44569;
+  font-size: 1.1rem;
+}
+
+.coser-prompt-content {
+  background: white;
+  border: 1px solid rgba(255, 107, 157, 0.2);
+  border-radius: var(--radius-md);
+  padding: 1rem;
+  max-height: 200px;
+  overflow-y: auto;
+}
+
+.coser-prompt-content p {
+  color: var(--text-color);
+  font-size: 0.95rem;
+  line-height: 1.6;
+  margin: 0;
+  word-break: break-word;
+}
+
+/* Coser 双引擎对比布局 */
+.coser-image-compare {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 1.5rem;
+}
+
+@media (max-width: 768px) {
+  .coser-image-compare {
+    grid-template-columns: 1fr;
+  }
+}
+
+.coser-image-column {
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
+}
+
+.engine-label {
+  font-size: 1rem;
+  font-weight: 700;
+  padding: 0.5rem 1rem;
+  border-radius: var(--radius-full);
+  text-align: center;
+}
+
+.engine-label.fal-label {
+  background: linear-gradient(135deg, rgba(255, 159, 69, 0.15) 0%, rgba(255, 191, 102, 0.1) 100%);
+  color: var(--primary-color);
+  border: 2px solid rgba(255, 159, 69, 0.3);
+}
+
+.engine-label.qiniu-label {
+  background: linear-gradient(135deg, rgba(34, 211, 238, 0.15) 0%, rgba(56, 189, 248, 0.1) 100%);
+  color: #0891b2;
+  border: 2px solid rgba(34, 211, 238, 0.3);
+}
+
+/* Coser 图片占位符 */
+.coser-image-placeholder {
+  background: rgba(0, 0, 0, 0.05);
+  border: 2px dashed var(--border-color);
+  border-radius: var(--radius-md);
+  padding: 3rem 1rem;
+  text-align: center;
+  min-height: 200px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.coser-image-placeholder p {
+  color: var(--text-secondary);
+  font-weight: 600;
+}
+
+/* Coser 输出区域 */
+.coser-output .output-card {
+  min-height: 400px;
+}

@@ -253,6 +253,19 @@ export default defineConfig({
             proxyReq.setHeader('Content-Type', 'application/json')
           })
         }
+      },
+      // 随机 Coser 提示词生成 API 代理
+      '/api/coser-random': {
+        target: 'https://api.qnaigc.com/v1/chat/completions',
+        changeOrigin: true,
+        secure: true,
+        rewrite: (path) => path.replace(/^\/api\/coser-random/, ''),
+        configure: (proxy) => {
+          proxy.on('proxyReq', (proxyReq, req, res) => {
+            proxyReq.setHeader('Authorization', `Bearer ${QINIU_AI_API_KEY_DEV}`)
+            proxyReq.setHeader('Content-Type', 'application/json')
+          })
+        }
       }
     }
   },
