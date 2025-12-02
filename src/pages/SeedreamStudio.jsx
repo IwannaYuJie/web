@@ -231,6 +231,44 @@ function SeedreamStudio() {
     setSeed(String(Math.floor(Math.random() * 9999999999)))
   }
 
+  /**
+   * 通用图片下载处理函数
+   * 支持 URL 和 Base64 两种格式
+   */
+  const handleImageDownload = async (imageSrc, fileName) => {
+    try {
+      // 如果是 Base64 或 Data URL，直接下载
+      if (imageSrc.startsWith('data:')) {
+        const link = document.createElement('a')
+        link.href = imageSrc
+        link.download = fileName
+        document.body.appendChild(link)
+        link.click()
+        document.body.removeChild(link)
+        return
+      }
+
+      // 如果是 URL，需要先 fetch 转为 Blob
+      const response = await fetch(imageSrc)
+      const blob = await response.blob()
+      const blobUrl = URL.createObjectURL(blob)
+      
+      const link = document.createElement('a')
+      link.href = blobUrl
+      link.download = fileName
+      document.body.appendChild(link)
+      link.click()
+      document.body.removeChild(link)
+      
+      // 清理 Blob URL
+      URL.revokeObjectURL(blobUrl)
+    } catch (err) {
+      console.error('下载图片失败:', err)
+      // 降级处理：在新标签页打开
+      window.open(imageSrc, '_blank')
+    }
+  }
+
   const handleApiSwitch = (nextApi) => {
     if (nextApi === activeApi) {
       return
@@ -2063,9 +2101,13 @@ function SeedreamStudio() {
                         <figure className="seedream-image-card">
                           <img src={coserFalImage.src} alt="Fal Seedream 生成的 Coser 写真" loading="lazy" />
                           <figcaption>
-                            <a href={coserFalImage.src} download={coserFalImage.downloadName} target="_blank" rel="noreferrer">
+                            <button
+                              type="button"
+                              className="download-link"
+                              onClick={() => handleImageDownload(coserFalImage.src, coserFalImage.downloadName)}
+                            >
                               ⬇️ 下载 Fal 图片
-                            </a>
+                            </button>
                           </figcaption>
                         </figure>
                       ) : (
@@ -2089,9 +2131,13 @@ function SeedreamStudio() {
                         <figure className="seedream-image-card">
                           <img src={coserQiniuImage.src} alt="七牛 Gemini 生成的 Coser 写真" loading="lazy" />
                           <figcaption>
-                            <a href={coserQiniuImage.src} download={coserQiniuImage.downloadName} target="_blank" rel="noreferrer">
+                            <button
+                              type="button"
+                              className="download-link"
+                              onClick={() => handleImageDownload(coserQiniuImage.src, coserQiniuImage.downloadName)}
+                            >
                               ⬇️ 下载七牛图片
-                            </a>
+                            </button>
                           </figcaption>
                         </figure>
                       ) : (

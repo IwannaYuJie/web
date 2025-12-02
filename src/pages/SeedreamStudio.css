@@ -590,6 +590,23 @@
   color: var(--primary-hover);
 }
 
+/* 下载按钮样式（模拟链接外观） */
+.seedream-image-card .download-link {
+  background: none;
+  border: none;
+  color: var(--primary-color);
+  font-weight: 600;
+  font-size: inherit;
+  cursor: pointer;
+  padding: 0;
+  text-decoration: none;
+}
+
+.seedream-image-card .download-link:hover {
+  color: var(--primary-hover);
+  text-decoration: underline;
+}
+
 @media (max-width: 768px) {
   .seedream-page {
     padding: 1rem 0;
