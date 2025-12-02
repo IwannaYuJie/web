@@ -84,7 +84,6 @@ function SeedreamStudio() {
   const [coserQiniuImage, setCoserQiniuImage] = useState(null)
   const [coserStep, setCoserStep] = useState('')
   const [coserUserInput, setCoserUserInput] = useState('')  // 用户自定义输入
-  const [coserAspectRatio, setCoserAspectRatio] = useState('')  // 当前使用的比例
   const [coserFalLoading, setCoserFalLoading] = useState(false)  // Fal 单独加载状态
   const [coserQiniuLoading, setCoserQiniuLoading] = useState(false)  // 七牛单独加载状态
 
@@ -845,15 +844,6 @@ function SeedreamStudio() {
     return handleQiniuTextGenerate()
   }
 
-  // 可用的比例选项（Fal 和七牛都支持的）
-  const aspectRatioOptions = [
-    { fal: 'square_hd', qiniu: '1:1', label: '1:1 方形' },
-    { fal: 'portrait_16_9', qiniu: '9:16', label: '9:16 竖版' },
-    { fal: 'landscape_16_9', qiniu: '16:9', label: '16:9 横版' },
-    { fal: 'portrait_4_3', qiniu: '3:4', label: '3:4 竖版' },
-    { fal: 'landscape_4_3', qiniu: '4:3', label: '4:3 横版' }
-  ]
-
   /**
    * 随机 Coser 写真一键生成
    * 1. 调用文本 API 生成随机提示词
@@ -865,10 +855,6 @@ function SeedreamStudio() {
       setCoserError('😿 请先在上方 Fal.ai 面板填写 API Key 才能使用双引擎生成')
       return
     }
-
-    // 随机选择一个比例
-    const randomRatio = aspectRatioOptions[Math.floor(Math.random() * aspectRatioOptions.length)]
-    setCoserAspectRatio(randomRatio.label)
 
     setCoserLoading(true)
     setCoserFalLoading(true)
@@ -904,9 +890,9 @@ function SeedreamStudio() {
       setCoserPromptLoading(false)
       setCoserStep('提示词已生成，正在调用双引擎生图...')
 
-      // Step 2: 并行调用两个生图 API，使用相同比例，即时展示结果
-      // Fal 生图（独立处理）
-      generateFalImage(generatedPrompt, randomRatio.fal)
+      // Step 2: 并行调用两个生图 API，即时展示结果
+      // Fal 生图（独立处理，使用 auto_4K）
+      generateFalImage(generatedPrompt)
         .then((result) => {
           setCoserFalImage(result)
           setCoserFalLoading(false)
@@ -916,8 +902,8 @@ function SeedreamStudio() {
           setCoserFalLoading(false)
         })
 
-      // 七牛生图（独立处理）
-      generateQiniuCoserImage(generatedPrompt, randomRatio.qiniu)
+      // 七牛生图（独立处理，使用默认设置）
+      generateQiniuCoserImage(generatedPrompt)
         .then((result) => {
           setCoserQiniuImage(result)
           setCoserQiniuLoading(false)
@@ -945,15 +931,14 @@ function SeedreamStudio() {
   /**
    * 使用 Fal Seedream v4 生成图片
    * @param {string} promptText - 提示词
-   * @param {string} imageSize - Fal 支持的尺寸参数
    */
-  const generateFalImage = async (promptText, imageSize = 'portrait_16_9') => {
+  const generateFalImage = async (promptText) => {
     try {
       fal.config({ credentials: apiKey.trim() })
 
       const inputPayload = {
         prompt: promptText,
-        image_size: imageSize,
+        image_size: 'auto_4K',
         enhance_prompt_mode: 'standard',
         num_images: 1,
         max_images: 1,
@@ -993,15 +978,13 @@ function SeedreamStudio() {
   /**
    * 使用七牛 Gemini 3.0 Pro Image Preview 生成图片
    * @param {string} promptText - 提示词
-   * @param {string} aspectRatio - 七牛支持的比例参数
    */
-  const generateQiniuCoserImage = async (promptText, aspectRatio = '9:16') => {
+  const generateQiniuCoserImage = async (promptText) => {
     try {
       const payload = {
         model: 'gemini-3.0-pro-image-preview',
         prompt: promptText,
         n: 1,
-        aspect_ratio: aspectRatio,
         style: 'vivid',
         temperature: 0.8
       }
@@ -2051,11 +2034,6 @@ function SeedreamStudio() {
               {coserPrompt && (
                 <div className="panel-card coser-prompt-card">
                   <h2>📝 生成的提示词</h2>
-                  {coserAspectRatio && (
-                    <div className="coser-ratio-badge">
-                      <span>📐 图片比例：{coserAspectRatio}</span>
-                    </div>
-                  )}
                   <div className="coser-prompt-content">
                     <p>{coserPrompt}</p>
                   </div>
