@@ -68,7 +68,7 @@ export default async function handler(req, res) {
         'Authorization': `Bearer ${API_KEY}`
       },
       body: JSON.stringify({
-        model: 'claude-4.5-haiku',
+        model: 'gemini-3.0-pro-preview',
         messages: [
           { role: 'system', content: baseRequirements },
           { role: 'user', content: userMessage }
