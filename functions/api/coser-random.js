@@ -63,25 +63,26 @@ export async function onRequest(context) {
     }
 
     // 根据是否有用户输入构建不同的系统提示词
-    const baseRequirements = `你是一个专业的 AI 绘画提示词生成器。你的任务是生成一个中国年轻女生 Coser 写真的详细英文提示词。
+    const baseRequirements = `你是一个专业的 AI 绘画提示词生成器。你的任务是生成一个中国年轻女生的详细英文写真提示词。
 
 要求：
-1. 随机选择一个知名动漫/游戏角色进行 Cosplay（如原神、崩坏、王者荣耀、明日方舟、鬼灭之刃等）
-2. 描述角色的服装特点、发型发色、妆容
-3. 随机选择一个自然或室内场景
-4. 随机选择一个优美的动作或姿势
-5. 添加摄影相关描述（光线、构图、镜头效果等）
-6. 输出纯英文提示词，适合 AI 绘画模型使用
-7. 不要输出任何解释，只输出提示词本身
-8. 提示词长度控制在 100-200 词之间
+1. 主体必须是中国年轻女生，外貌甜美可爱或清纯动人。
+2. 服装风格随机多样（可以是 Cosplay、日常穿搭、汉服、JK制服、洛丽塔、礼服、运动装、赛博朋克风格等，不局限于特定游戏角色）。
+3. 场景随机多样（可以是自然风景、城市街头、室内影棚、校园、咖啡厅、幻想场景等）。
+4. 拍摄风格和视角随机（可以是日系小清新、电影感、胶片风、广角、特写、全身照等）。
+5. 详细描述光线、构图、镜头效果等摄影要素。
+6. 如果用户提供了特定的关键词（如"巨乳"、"黑丝"、"海边"等），请在提示词中显著增加这些元素的比重和细节描述，确保画面体现用户的核心需求。
+7. 输出纯英文提示词，适合 AI 绘画模型使用。
+8. 不要输出任何解释，只输出提示词本身。
+9. 提示词长度控制在 100-200 词之间。
 
 示例输出格式：
-A beautiful young Chinese girl cosplaying as [角色名] from [作品名], wearing [服装描述], [发型发色], [妆容], [姿势/动作], [场景], [光线/氛围], professional photography, 8k, ultra detailed, soft lighting, bokeh background`
+A beautiful young Chinese girl, wearing [服装描述], [发型发色], [妆容], [姿势/动作], [场景], [光线/氛围], [拍摄风格], professional photography, 8k, ultra detailed, soft lighting, bokeh background`
 
     // 构建用户消息
-    let userMessage = '请生成一个随机的中国年轻女生 Coser 写真提示词。'
+    let userMessage = '请生成一个随机的中国年轻女生写真提示词，包含随机的服装、场景和拍摄风格。'
     if (userInput) {
-      userMessage = `请生成一个中国年轻女生 Coser 写真提示词，要求包含以下元素：${userInput}`
+      userMessage = `请生成一个中国年轻女生写真提示词，重点满足以下用户需求：${userInput}。请确保在提示词中强调这些元素，并围绕这些元素构建画面。`
     }
 
     // 调用七牛文本对话 API 生成随机提示词
@@ -92,7 +93,7 @@ A beautiful young Chinese girl cosplaying as [角色名] from [作品名], weari
         'Authorization': `Bearer ${API_KEY}`
       },
       body: JSON.stringify({
-        model: 'gemini-2.5-flash',
+        model: 'gemini-2.5-pro',
         messages: [
           { role: 'system', content: baseRequirements },
           { role: 'user', content: userMessage }
