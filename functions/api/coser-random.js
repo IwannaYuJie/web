@@ -93,7 +93,7 @@ export async function onRequest(context) {
         'Authorization': `Bearer ${API_KEY}`
       },
       body: JSON.stringify({
-        model: 'claude-4.5-sonnet',
+        model: 'claude-4.5-haiku',
         messages: [
           { role: 'system', content: baseRequirements },
           { role: 'user', content: userMessage }
