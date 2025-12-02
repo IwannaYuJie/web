@@ -24,7 +24,6 @@ export default function Navbar() {
   const navLinks = [
     { path: '/', label: '🏠 首页' },
     { path: '/image-generator', label: '🎨 AI画板' },
-    { path: '/ai-chat', label: '🤖 AI对话' },
     { path: '/toolbox', label: '🧰 工具箱' },
     { path: '/admin/articles', label: '📝 文章管理' },
   ]

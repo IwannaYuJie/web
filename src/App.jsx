@@ -19,7 +19,7 @@ function App() {
           <Route path="/" element={<Home />} />
           <Route path="/article/:id" element={<ArticleDetail />} />
           <Route path="/image-generator" element={<ImageGenerator />} />
-          <Route path="/ai-chat" element={<AIChat />} />
+          <Route path="/secret-chat" element={<AIChat />} />
           <Route path="/admin/articles" element={<ArticleManager />} />
           <Route path="/secret-games" element={<GameHub />} />
           <Route path="/secret-seedream" element={<SeedreamStudio />} />
