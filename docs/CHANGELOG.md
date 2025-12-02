@@ -18,10 +18,18 @@
 ### 🎨 UI 体验
 - `src/pages/SeedreamStudio.css`：新增粉色主题的 Coser 按钮、介绍卡片、提示词展示区域与双引擎对比布局样式。
 
+### 🔧 优化改进 (2025-12-02 第二次更新)
+- `src/pages/SeedreamStudio.jsx`：图片即时展示，哪个引擎先返回就先显示，无需等待两个都完成。
+- `src/pages/SeedreamStudio.jsx`：统一图片比例，随机选择 1:1 / 9:16 / 16:9 / 3:4 / 4:3 中的一种，两个引擎使用相同比例。
+- `src/pages/SeedreamStudio.jsx`：新增自定义输入框，用户可输入想要的元素，AI 会在此基础上生成提示词。
+- `src/pages/SeedreamStudio.css`：新增比例徽章样式和加载状态动画。
+- `functions/api/coser-random.js` & `api/coser-random.js`：支持 `userInput` 参数，可在用户输入的基础上生成提示词。
+
 ### 📌 影响范围
 - `src/pages/SeedreamStudio.jsx`
 - `src/pages/SeedreamStudio.css`
 - `functions/api/coser-random.js`
+- `api/coser-random.js`
 - `vite.config.js`
 
 ---

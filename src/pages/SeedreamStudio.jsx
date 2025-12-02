@@ -83,6 +83,10 @@ function SeedreamStudio() {
   const [coserFalImage, setCoserFalImage] = useState(null)
   const [coserQiniuImage, setCoserQiniuImage] = useState(null)
   const [coserStep, setCoserStep] = useState('')
+  const [coserUserInput, setCoserUserInput] = useState('')  // 用户自定义输入
+  const [coserAspectRatio, setCoserAspectRatio] = useState('')  // 当前使用的比例
+  const [coserFalLoading, setCoserFalLoading] = useState(false)  // Fal 单独加载状态
+  const [coserQiniuLoading, setCoserQiniuLoading] = useState(false)  // 七牛单独加载状态
 
   const inputImageRef = useRef(null)
 
@@ -841,10 +845,19 @@ function SeedreamStudio() {
     return handleQiniuTextGenerate()
   }
 
+  // 可用的比例选项（Fal 和七牛都支持的）
+  const aspectRatioOptions = [
+    { fal: 'square_hd', qiniu: '1:1', label: '1:1 方形' },
+    { fal: 'portrait_16_9', qiniu: '9:16', label: '9:16 竖版' },
+    { fal: 'landscape_16_9', qiniu: '16:9', label: '16:9 横版' },
+    { fal: 'portrait_4_3', qiniu: '3:4', label: '3:4 竖版' },
+    { fal: 'landscape_4_3', qiniu: '4:3', label: '4:3 横版' }
+  ]
+
   /**
    * 随机 Coser 写真一键生成
    * 1. 调用文本 API 生成随机提示词
-   * 2. 同时调用 Fal Seedream v4 和七牛 Gemini 生图
+   * 2. 同时调用 Fal Seedream v4 和七牛 Gemini 生图（即时展示）
    */
   const handleCoserGenerate = async () => {
     // 检查 Fal API Key
@@ -853,7 +866,13 @@ function SeedreamStudio() {
       return
     }
 
+    // 随机选择一个比例
+    const randomRatio = aspectRatioOptions[Math.floor(Math.random() * aspectRatioOptions.length)]
+    setCoserAspectRatio(randomRatio.label)
+
     setCoserLoading(true)
+    setCoserFalLoading(true)
+    setCoserQiniuLoading(true)
     setCoserError('')
     setCoserPrompt('')
     setCoserFalImage(null)
@@ -866,7 +885,7 @@ function SeedreamStudio() {
       const promptResponse = await fetch('/api/coser-random', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({})
+        body: JSON.stringify({ userInput: coserUserInput.trim() })
       })
 
       if (!promptResponse.ok) {
@@ -885,54 +904,56 @@ function SeedreamStudio() {
       setCoserPromptLoading(false)
       setCoserStep('提示词已生成，正在调用双引擎生图...')
 
-      // Step 2: 同时调用两个生图 API
-      const falPromise = generateFalImage(generatedPrompt)
-      const qiniuPromise = generateQiniuCoserImage(generatedPrompt)
+      // Step 2: 并行调用两个生图 API，使用相同比例，即时展示结果
+      // Fal 生图（独立处理）
+      generateFalImage(generatedPrompt, randomRatio.fal)
+        .then((result) => {
+          setCoserFalImage(result)
+          setCoserFalLoading(false)
+        })
+        .catch((error) => {
+          console.error('Fal 生图失败:', error)
+          setCoserFalLoading(false)
+        })
 
-      // 并行等待两个结果
-      const [falResult, qiniuResult] = await Promise.allSettled([falPromise, qiniuPromise])
+      // 七牛生图（独立处理）
+      generateQiniuCoserImage(generatedPrompt, randomRatio.qiniu)
+        .then((result) => {
+          setCoserQiniuImage(result)
+          setCoserQiniuLoading(false)
+        })
+        .catch((error) => {
+          console.error('七牛生图失败:', error)
+          setCoserQiniuLoading(false)
+        })
 
-      // 处理 Fal 结果
-      if (falResult.status === 'fulfilled' && falResult.value) {
-        setCoserFalImage(falResult.value)
-      } else {
-        console.error('Fal 生图失败:', falResult.reason)
-      }
-
-      // 处理七牛结果
-      if (qiniuResult.status === 'fulfilled' && qiniuResult.value) {
-        setCoserQiniuImage(qiniuResult.value)
-      } else {
-        console.error('七牛生图失败:', qiniuResult.reason)
-      }
-
-      // 检查是否至少有一个成功
-      if (falResult.status === 'rejected' && qiniuResult.status === 'rejected') {
-        throw new Error('两个生图引擎均失败，请稍后重试')
-      }
-
-      setCoserStep('')
+      // 提示词生成完成后，主 loading 状态改为等待图片
+      setCoserStep('双引擎生图中，先完成的会先显示...')
+      setCoserLoading(false)
 
     } catch (generationError) {
       console.error('随机 Coser 生成失败:', generationError)
       setCoserError(generationError?.message || '生成失败，请稍后重试')
       setCoserStep('')
-    } finally {
       setCoserLoading(false)
+      setCoserFalLoading(false)
+      setCoserQiniuLoading(false)
       setCoserPromptLoading(false)
     }
   }
 
   /**
    * 使用 Fal Seedream v4 生成图片
+   * @param {string} promptText - 提示词
+   * @param {string} imageSize - Fal 支持的尺寸参数
    */
-  const generateFalImage = async (promptText) => {
+  const generateFalImage = async (promptText, imageSize = 'portrait_16_9') => {
     try {
       fal.config({ credentials: apiKey.trim() })
 
       const inputPayload = {
         prompt: promptText,
-        image_size: 'portrait_16_9',
+        image_size: imageSize,
         enhance_prompt_mode: 'standard',
         num_images: 1,
         max_images: 1,
@@ -942,12 +963,7 @@ function SeedreamStudio() {
 
       const result = await fal.subscribe('fal-ai/bytedance/seedream/v4/text-to-image', {
         input: inputPayload,
-        logs: true,
-        onQueueUpdate: (update) => {
-          if (update.status === 'IN_PROGRESS') {
-            setCoserStep('Fal Seedream 绘制中...')
-          }
-        }
+        logs: true
       })
 
       const resultData = result.data || result
@@ -976,14 +992,16 @@ function SeedreamStudio() {
 
   /**
    * 使用七牛 Gemini 3.0 Pro Image Preview 生成图片
+   * @param {string} promptText - 提示词
+   * @param {string} aspectRatio - 七牛支持的比例参数
    */
-  const generateQiniuCoserImage = async (promptText) => {
+  const generateQiniuCoserImage = async (promptText, aspectRatio = '9:16') => {
     try {
       const payload = {
         model: 'gemini-3.0-pro-image-preview',
         prompt: promptText,
         n: 1,
-        aspect_ratio: '9:16',
+        aspect_ratio: aspectRatio,
         style: 'vivid',
         temperature: 0.8
       }
@@ -1978,6 +1996,32 @@ function SeedreamStudio() {
                 </div>
               </div>
 
+              {/* 用户自定义输入 */}
+              <div className="panel-card">
+                <h2>💭 自定义需求（可选）</h2>
+                <div className="field-group">
+                  <div className="field-label-row">
+                    <label htmlFor="coser-user-input">输入你想要的元素</label>
+                    <button
+                      type="button"
+                      className="clear-button"
+                      onClick={() => setCoserUserInput('')}
+                      disabled={!coserUserInput}
+                    >
+                      清空
+                    </button>
+                  </div>
+                  <textarea
+                    id="coser-user-input"
+                    rows={3}
+                    placeholder="例如：穿和服、在樱花树下、甜美笑容、蓝色长发..."
+                    value={coserUserInput}
+                    onChange={(event) => setCoserUserInput(event.target.value)}
+                  />
+                  <p className="panel-tip">留空则完全随机，填写后 AI 会在你的需求基础上生成提示词</p>
+                </div>
+              </div>
+
               {/* Fal API Key 提示 */}
               {!apiKey.trim() && (
                 <div className="panel-card warning-card">
@@ -1989,9 +2033,9 @@ function SeedreamStudio() {
                 type="button"
                 className="generate-button coser-generate-button"
                 onClick={handleCoserGenerate}
-                disabled={coserLoading}
+                disabled={coserLoading || coserPromptLoading}
               >
-                {coserLoading ? (
+                {coserLoading || coserPromptLoading ? (
                   <>
                     <span>{coserStep || '生成中...'}</span>
                     <span className="seedream-loader" aria-hidden="true" />
@@ -2007,6 +2051,11 @@ function SeedreamStudio() {
               {coserPrompt && (
                 <div className="panel-card coser-prompt-card">
                   <h2>📝 生成的提示词</h2>
+                  {coserAspectRatio && (
+                    <div className="coser-ratio-badge">
+                      <span>📐 图片比例：{coserAspectRatio}</span>
+                    </div>
+                  )}
                   <div className="coser-prompt-content">
                     <p>{coserPrompt}</p>
                   </div>
@@ -2015,25 +2064,19 @@ function SeedreamStudio() {
             </section>
 
             <section
-              className={`seedream-output coser-output ${!coserLoading && !coserFalImage && !coserQiniuImage ? 'mobile-hidden' : ''}`}
+              className={`seedream-output coser-output ${!coserLoading && !coserPromptLoading && !coserFalImage && !coserQiniuImage && !coserFalLoading && !coserQiniuLoading ? 'mobile-hidden' : ''}`}
               aria-label="随机 Coser 生成结果"
             >
               <div className="output-card">
                 <h2>🎨 双引擎生成结果</h2>
 
-                {!coserLoading && !coserFalImage && !coserQiniuImage && (
+                {!coserLoading && !coserPromptLoading && !coserFalImage && !coserQiniuImage && !coserFalLoading && !coserQiniuLoading && (
                   <div className="output-placeholder">
                     <p>点击「一键生成随机 Coser」开始体验双引擎对比生成~</p>
                   </div>
                 )}
 
-                {coserLoading && (
-                  <div className="output-placeholder">
-                    <p>{coserStep || '正在生成中，请稍候...'}</p>
-                  </div>
-                )}
-
-                {(coserFalImage || coserQiniuImage) && (
+                {(coserFalImage || coserQiniuImage || coserFalLoading || coserQiniuLoading) && (
                   <div className="coser-image-compare">
                     {/* Fal 生成结果 */}
                     <div className="coser-image-column">
@@ -2049,7 +2092,14 @@ function SeedreamStudio() {
                         </figure>
                       ) : (
                         <div className="coser-image-placeholder">
-                          <p>{coserLoading ? '生成中...' : '生成失败'}</p>
+                          {coserFalLoading ? (
+                            <>
+                              <span className="seedream-loader" aria-hidden="true" />
+                              <p>Fal 生成中...</p>
+                            </>
+                          ) : (
+                            <p>生成失败</p>
+                          )}
                         </div>
                       )}
                     </div>
@@ -2068,7 +2118,14 @@ function SeedreamStudio() {
                         </figure>
                       ) : (
                         <div className="coser-image-placeholder">
-                          <p>{coserLoading ? '生成中...' : '生成失败'}</p>
+                          {coserQiniuLoading ? (
+                            <>
+                              <span className="seedream-loader" aria-hidden="true" />
+                              <p>七牛生成中...</p>
+                            </>
+                          ) : (
+                            <p>生成失败</p>
+                          )}
                         </div>
                       )}
                     </div>

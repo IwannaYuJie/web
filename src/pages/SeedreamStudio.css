@@ -760,6 +760,18 @@
   font-size: 1.1rem;
 }
 
+.coser-ratio-badge {
+  display: inline-flex;
+  align-items: center;
+  background: linear-gradient(135deg, #ff6b9d 0%, #c44569 100%);
+  color: white;
+  padding: 0.35rem 0.85rem;
+  border-radius: var(--radius-full);
+  font-size: 0.85rem;
+  font-weight: 600;
+  margin-bottom: 0.75rem;
+}
+
 .coser-prompt-content {
   background: white;
   border: 1px solid rgba(255, 107, 157, 0.2);
@@ -825,13 +837,22 @@
   text-align: center;
   min-height: 200px;
   display: flex;
+  flex-direction: column;
   align-items: center;
   justify-content: center;
+  gap: 0.75rem;
 }
 
 .coser-image-placeholder p {
   color: var(--text-secondary);
   font-weight: 600;
+  margin: 0;
+}
+
+.coser-image-placeholder .seedream-loader {
+  width: 32px;
+  height: 32px;
+  border-width: 4px;
 }
 
 /* Coser 输出区域 */

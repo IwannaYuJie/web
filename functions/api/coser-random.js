@@ -53,8 +53,17 @@ export async function onRequest(context) {
       })
     }
 
-    // 系统提示词：用于生成随机 Coser 写真描述
-    const systemPrompt = `你是一个专业的 AI 绘画提示词生成器。你的任务是生成一个中国年轻女生 Coser 写真的详细英文提示词。
+    // 解析请求体获取用户输入
+    let userInput = ''
+    try {
+      const body = await request.json()
+      userInput = body?.userInput?.trim() || ''
+    } catch (parseError) {
+      // 忽略解析错误，使用空字符串
+    }
+
+    // 根据是否有用户输入构建不同的系统提示词
+    const baseRequirements = `你是一个专业的 AI 绘画提示词生成器。你的任务是生成一个中国年轻女生 Coser 写真的详细英文提示词。
 
 要求：
 1. 随机选择一个知名动漫/游戏角色进行 Cosplay（如原神、崩坏、王者荣耀、明日方舟、鬼灭之刃等）
@@ -69,6 +78,12 @@ export async function onRequest(context) {
 示例输出格式：
 A beautiful young Chinese girl cosplaying as [角色名] from [作品名], wearing [服装描述], [发型发色], [妆容], [姿势/动作], [场景], [光线/氛围], professional photography, 8k, ultra detailed, soft lighting, bokeh background`
 
+    // 构建用户消息
+    let userMessage = '请生成一个随机的中国年轻女生 Coser 写真提示词。'
+    if (userInput) {
+      userMessage = `请生成一个中国年轻女生 Coser 写真提示词，要求包含以下元素：${userInput}`
+    }
+
     // 调用七牛文本对话 API 生成随机提示词
     const response = await fetch('https://api.qnaigc.com/v1/chat/completions', {
       method: 'POST',
@@ -79,8 +94,8 @@ A beautiful young Chinese girl cosplaying as [角色名] from [作品名], weari
       body: JSON.stringify({
         model: 'gemini-2.5-flash',
         messages: [
-          { role: 'system', content: systemPrompt },
-          { role: 'user', content: '请生成一个随机的中国年轻女生 Coser 写真提示词。' }
+          { role: 'system', content: baseRequirements },
+          { role: 'user', content: userMessage }
         ],
         max_tokens: 512,
         temperature: 1.2  // 较高的温度以增加随机性
