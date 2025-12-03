@@ -86,8 +86,52 @@ function SeedreamStudio() {
   const [coserUserInput, setCoserUserInput] = useState('')  // 用户自定义输入
   const [coserFalLoading, setCoserFalLoading] = useState(false)  // Fal 单独加载状态
   const [coserQiniuLoading, setCoserQiniuLoading] = useState(false)  // 七牛单独加载状态
+  const [randomPromptLoading, setRandomPromptLoading] = useState(false) // 随机提示词加载状态
 
   const inputImageRef = useRef(null)
+
+  /**
+   * 生成随机提示词（用于 Fal 和 七牛 面板）
+   * @param {string} target - 'fal' | 'qiniu'
+   */
+  const handleGenerateRandomPrompt = async (target) => {
+    setRandomPromptLoading(true)
+    // 清除之前的错误信息
+    if (target === 'fal') setError('')
+    else setQiniuError('')
+
+    try {
+      const response = await fetch('/api/coser-random', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ userInput: '' }) // 空输入表示完全随机
+      })
+
+      if (!response.ok) {
+        throw new Error('提示词生成服务响应异常')
+      }
+
+      const data = await response.json()
+      const generatedPrompt = data?.prompt
+
+      if (!generatedPrompt) {
+        throw new Error('未能获取到有效的提示词')
+      }
+
+      if (target === 'fal') {
+        setPrompt(generatedPrompt)
+      } else if (target === 'qiniu') {
+        setQiniuPrompt(generatedPrompt)
+      }
+    } catch (err) {
+      console.error('随机提示词生成失败:', err)
+      const errorMsg = '😿 随机提示词生成失败，请稍后重试'
+      if (target === 'fal') setError(errorMsg)
+      else setQiniuError(errorMsg)
+    } finally {
+      setRandomPromptLoading(false)
+    }
+  }
 
   /**
    * 初始化时尝试读取已保存的 API Key
@@ -1153,14 +1197,25 @@ function SeedreamStudio() {
               <div className="field-group">
                 <div className="field-label-row">
                   <label htmlFor="seedream-prompt">Prompt</label>
-                  <button
-                    type="button"
-                    className="clear-button"
-                    onClick={() => setPrompt('')}
-                    disabled={!prompt}
-                  >
-                    清空
-                  </button>
+                  <div className="field-actions">
+                    <button
+                      type="button"
+                      className="clear-button"
+                      onClick={() => handleGenerateRandomPrompt('fal')}
+                      disabled={randomPromptLoading}
+                      style={{ marginRight: '0.5rem', color: 'var(--primary-color)' }}
+                    >
+                      {randomPromptLoading ? '🎲 生成中...' : '🎲 随机提示词'}
+                    </button>
+                    <button
+                      type="button"
+                      className="clear-button"
+                      onClick={() => setPrompt('')}
+                      disabled={!prompt}
+                    >
+                      清空
+                    </button>
+                  </div>
                 </div>
                 <textarea
                   id="seedream-prompt"
@@ -1507,9 +1562,13 @@ function SeedreamStudio() {
                       <figure key={image.src} className="seedream-image-card">
                         <img src={image.src} alt={`Seedream 生成图像 ${index + 1}`} loading="lazy" />
                         <figcaption>
-                          <a href={image.src} download={image.downloadName} target="_blank" rel="noreferrer">
+                          <button
+                            type="button"
+                            className="download-link"
+                            onClick={() => handleImageDownload(image.src, image.downloadName)}
+                          >
                             ⬇️ 下载第 {index + 1} 张
-                          </a>
+                          </button>
                         </figcaption>
                       </figure>
                     ))}
@@ -1538,14 +1597,25 @@ function SeedreamStudio() {
                 <div className="field-group">
                   <div className="field-label-row">
                     <label htmlFor="qiniu-prompt">Prompt</label>
-                    <button
-                      type="button"
-                      className="clear-button"
-                      onClick={() => setQiniuPrompt('')}
-                      disabled={!qiniuPrompt}
-                    >
-                      清空
-                    </button>
+                    <div className="field-actions">
+                      <button
+                        type="button"
+                        className="clear-button"
+                        onClick={() => handleGenerateRandomPrompt('qiniu')}
+                        disabled={randomPromptLoading}
+                        style={{ marginRight: '0.5rem', color: 'var(--primary-color)' }}
+                      >
+                        {randomPromptLoading ? '🎲 生成中...' : '🎲 随机提示词'}
+                      </button>
+                      <button
+                        type="button"
+                        className="clear-button"
+                        onClick={() => setQiniuPrompt('')}
+                        disabled={!qiniuPrompt}
+                      >
+                        清空
+                      </button>
+                    </div>
                   </div>
                   <textarea
                     id="qiniu-prompt"
