@@ -100,11 +100,19 @@ function SeedreamStudio() {
     if (target === 'fal') setError('')
     else setQiniuError('')
 
+    // 获取当前输入框的内容作为基础
+    let currentInput = ''
+    if (target === 'fal') {
+      currentInput = prompt
+    } else if (target === 'qiniu') {
+      currentInput = qiniuPrompt
+    }
+
     try {
       const response = await fetch('/api/coser-random', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ userInput: '' }) // 空输入表示完全随机
+        body: JSON.stringify({ userInput: currentInput }) // 将当前输入作为用户需求传给 API
       })
 
       if (!response.ok) {
