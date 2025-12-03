@@ -46,7 +46,7 @@ function SeedreamStudio() {
   const [qiniuModel, setQiniuModel] = useState('gemini-3.0-pro-image-preview')
   const [qiniuPrompt, setQiniuPrompt] = useState('')
   const [qiniuCount, setQiniuCount] = useState(1)
-  const [qiniuSize, setQiniuSize] = useState('')
+  const [qiniuSize, setQiniuSize] = useState('1792x1024')
   const [qiniuQuality, setQiniuQuality] = useState('')
   const [qiniuStyle, setQiniuStyle] = useState('vivid')
   const [qiniuTemperature, setQiniuTemperature] = useState('0.8')
@@ -1724,24 +1724,19 @@ function SeedreamStudio() {
                           value={qiniuSize}
                           onChange={(event) => setQiniuSize(event.target.value)}
                         >
-                          <option value="">默认 (不传)</option>
                           <optgroup label="1:1 Square">
-                            <option value="1024x1024">1K (1024x1024)</option>
-                            <option value="2048x2048">2K (2048x2048)</option>
-                            <option value="4096x4096">4K (4096x4096)</option>
+                            <option value="1024x1024">1024x1024</option>
                           </optgroup>
-                          <optgroup label="9:16 Portrait">
-                            <option value="1024x1792">1K (1024x1792)</option>
-                            <option value="2048x3584">2K (2048x3584)</option>
-                            <option value="4096x7168">4K (4096x7168)</option>
+                          <optgroup label="Landscape">
+                            <option value="1536x1024">1536x1024 (3:2)</option>
+                            <option value="1792x1024">1792x1024 (16:9)</option>
                           </optgroup>
-                          <optgroup label="16:9 Landscape">
-                            <option value="1792x1024">1K (1792x1024)</option>
-                            <option value="3584x2048">2K (3584x2048)</option>
-                            <option value="7168x4096">4K (7168x4096)</option>
+                          <optgroup label="Portrait">
+                            <option value="1024x1536">1024x1536 (2:3)</option>
+                            <option value="1024x1792">1024x1792 (9:16)</option>
                           </optgroup>
                         </select>
-                        <p className="panel-tip">Gemini 模型可能不支持超高分辨率，建议优先使用 1K/2K。</p>
+                        <p className="panel-tip">Gemini 模型支持的特定分辨率。</p>
                       </div>
                       <div className="field-group">
                         <label htmlFor="qiniu-quality">画质 (quality)</label>
