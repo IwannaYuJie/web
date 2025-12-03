@@ -1208,6 +1208,7 @@ function SeedreamStudio() {
                   onChange={(e) => setModelType(e.target.value)}
                 >
                   <option value="v4">Seedream v4 (经典)</option>
+                  <option value="v4.5">Seedream v4.5 (最新)</option>
                   <option value="new">Gemini 3 Pro (新版)</option>
                 </select>
               </div>
