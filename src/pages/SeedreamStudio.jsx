@@ -46,7 +46,7 @@ function SeedreamStudio() {
   const [qiniuModel, setQiniuModel] = useState('gemini-3.0-pro-image-preview')
   const [qiniuPrompt, setQiniuPrompt] = useState('')
   const [qiniuCount, setQiniuCount] = useState(1)
-  const [qiniuSize, setQiniuSize] = useState('1792x1024')
+  const [qiniuSize, setQiniuSize] = useState('')
   const [qiniuQuality, setQiniuQuality] = useState('')
   const [qiniuStyle, setQiniuStyle] = useState('vivid')
   const [qiniuTemperature, setQiniuTemperature] = useState('0.8')
@@ -1742,6 +1742,7 @@ function SeedreamStudio() {
                           value={qiniuSize}
                           onChange={(event) => setQiniuSize(event.target.value)}
                         >
+                          <option value="">默认 (不传)</option>
                           <optgroup label="1:1 Square">
                             <option value="1024x1024">1024x1024</option>
                           </optgroup>
