@@ -37,7 +37,7 @@ function SeedreamStudio() {
   const [activeApi, setActiveApi] = useState('qiniu')
   
   // 新增模型选择与参数状态
-  const [modelType, setModelType] = useState('v4') // 'v4' | 'new'
+  const [modelType, setModelType] = useState('v4') // 'v4' | 'v4.5' | 'new'
   const [aspectRatio, setAspectRatio] = useState('1:1')
   const [resolution, setResolution] = useState('2K')
   const [outputFormat, setOutputFormat] = useState('png')
@@ -503,13 +503,11 @@ function SeedreamStudio() {
       let inputPayload = {}
       let modelId = ''
 
-      if (modelType === 'v4') {
+      if (modelType === 'v4' || modelType === 'v4.5') {
         inputPayload = {
           prompt: prompt.trim(),
           image_size: imageSizeInput,
-          enhance_prompt_mode: enhanceMode,
           num_images: Number.parseInt(String(numImages), 10) || 1,
-          max_images: Number.parseInt(String(maxImages), 10) || 1,
           sync_mode: syncMode,
           enable_safety_checker: safetyChecker
         }
@@ -521,26 +519,41 @@ function SeedreamStudio() {
           }
         }
 
-        modelId = 'fal-ai/bytedance/seedream/v4/text-to-image'
+        if (modelType === 'v4') {
+          modelId = 'fal-ai/bytedance/seedream/v4/text-to-image'
+          inputPayload.enhance_prompt_mode = enhanceMode
+          inputPayload.max_images = Number.parseInt(String(maxImages), 10) || 1
+        } else {
+          modelId = 'fal-ai/bytedance/seedream/v4.5/text-to-image'
+        }
 
         if (mode === 'edit') {
-          modelId = 'fal-ai/bytedance/seedream/v4/edit'
-          inputPayload.control_scale = controlScaleNumber
+          if (modelType === 'v4' || modelType === 'v4.5') {
+            modelId = modelType === 'v4' 
+              ? 'fal-ai/bytedance/seedream/v4/edit' 
+              : 'fal-ai/bytedance/seedream/v4.5/edit'
+            
+            inputPayload.control_scale = controlScaleNumber
 
-          if (imageInputMethod === 'upload') {
-            try {
-              console.log('上传基础图像到 Fal 存储')
-              setError('')
-              const uploadedUrl = await fal.storage.upload(uploadedImage)
-              inputPayload.image_urls = [uploadedUrl]
-            } catch (uploadError) {
-              console.error('上传基础图像失败:', uploadError)
-              setError(uploadError?.message || '😿 上传基础图像失败，请稍后再试')
-              setLoading(false)
-              return
+            if (imageInputMethod === 'upload') {
+              try {
+                console.log('上传基础图像到 Fal 存储')
+                setError('')
+                const uploadedUrl = await fal.storage.upload(uploadedImage)
+                inputPayload.image_urls = [uploadedUrl]
+              } catch (uploadError) {
+                console.error('上传基础图像失败:', uploadError)
+                setError(uploadError?.message || '😿 上传基础图像失败，请稍后再试')
+                setLoading(false)
+                return
+              }
+            } else {
+              inputPayload.image_urls = presetUrlList
             }
           } else {
-            inputPayload.image_urls = presetUrlList
+            setError('😿 当前模型不支持编辑模式')
+            setLoading(false)
+            return
           }
         }
       } else {
@@ -1313,7 +1326,7 @@ function SeedreamStudio() {
                   </div>
                 )}
 
-                {modelType === 'v4' && (
+                {(modelType === 'v4' || modelType === 'v4.5') && (
                   <div className="field-group">
                     <label htmlFor="seedream-control-scale">编辑强度 (0 - 2)</label>
                     <input
@@ -1343,7 +1356,7 @@ function SeedreamStudio() {
               {showParamsPanel && (
                 <div className="collapse-content">
                   <div className="field-grid">
-                    {modelType === 'v4' ? (
+                    {modelType === 'v4' || modelType === 'v4.5' ? (
                       <>
                         <div className="field-group">
                           <label htmlFor="seedream-size">图像尺寸</label>
@@ -1365,6 +1378,7 @@ function SeedreamStudio() {
                           </select>
                         </div>
 
+                        {modelType === 'v4' && (
                         <div className="field-group">
                           <label htmlFor="seedream-enhance">提示增强</label>
                           <select
@@ -1376,6 +1390,7 @@ function SeedreamStudio() {
                             <option value="fast">Fast</option>
                           </select>
                         </div>
+                        )}
 
                         {isCustomSize && (
                           <>
@@ -1463,8 +1478,9 @@ function SeedreamStudio() {
                       />
                     </div>
 
-                    {modelType === 'v4' && (
+                    {(modelType === 'v4' || modelType === 'v4.5') && (
                       <>
+                        {modelType === 'v4' && (
                         <div className="field-group">
                           <label htmlFor="seedream-max">每批最大图像</label>
                           <input
@@ -1475,6 +1491,7 @@ function SeedreamStudio() {
                             onChange={(event) => setMaxImages(Number.parseInt(event.target.value, 10) || 1)}
                           />
                         </div>
+                        )}
 
                         <div className="field-group seed-input">
                           <label htmlFor="seedream-seed">随机种子</label>
