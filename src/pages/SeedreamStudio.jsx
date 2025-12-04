@@ -37,7 +37,7 @@ function SeedreamStudio() {
   const [activeApi, setActiveApi] = useState('qiniu')
   
   // 新增模型选择与参数状态
-  const [modelType, setModelType] = useState('v4') // 'v4' | 'v4.5' | 'new'
+  const [modelType, setModelType] = useState('v4.5') // 'v4' | 'v4.5' | 'new'
   const [aspectRatio, setAspectRatio] = useState('1:1')
   const [resolution, setResolution] = useState('2K')
   const [outputFormat, setOutputFormat] = useState('png')
