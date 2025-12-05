@@ -35,6 +35,7 @@ function SeedreamStudio() {
   const [showParamsPanel, setShowParamsPanel] = useState(false)
   const [showQiniuParamsPanel, setShowQiniuParamsPanel] = useState(false)
   const [activeApi, setActiveApi] = useState('qiniu')
+  const [playgroundMode, setPlaygroundMode] = useState('list') // 'list' | 'random-coser'
   
   // 新增模型选择与参数状态
   const [modelType, setModelType] = useState('v4.5') // 'v4' | 'v4.5' | 'new'
@@ -329,6 +330,9 @@ function SeedreamStudio() {
     setError('')
     setQiniuError('')
     setCoserError('')
+    if (nextApi === 'playground') {
+      setPlaygroundMode('list')
+    }
   }
 
   const handleModeChange = (nextMode) => {
@@ -1153,10 +1157,10 @@ function SeedreamStudio() {
           </button>
           <button
             type="button"
-            className={`api-switch-button coser-button${activeApi === 'coser' ? ' active' : ''}`}
-            onClick={() => handleApiSwitch('coser')}
+            className={`api-switch-button coser-button${activeApi === 'playground' ? ' active' : ''}`}
+            onClick={() => handleApiSwitch('playground')}
           >
-            🎀 随机 Coser
+            🎮 更多玩法
           </button>
         </div>
 
@@ -2092,8 +2096,45 @@ function SeedreamStudio() {
             </section>
           </div>
         ) : (
-          /* 随机 Coser 面板 */
-          <div className="seedream-layout coser-mode">
+          /* 更多玩法面板 */
+          <div className="seedream-layout playground-mode">
+            {playgroundMode === 'list' ? (
+              <div className="playground-list-container">
+                <div className="playground-grid">
+                  <div 
+                    className="playground-card" 
+                    onClick={() => setPlaygroundMode('random-coser')}
+                    role="button"
+                    tabIndex={0}
+                  >
+                    <div className="card-icon">🎀</div>
+                    <div className="card-content">
+                      <h3>随机 Coser 生成</h3>
+                      <p>双引擎驱动，一键生成高质量 Coser 写真，支持自定义特征。</p>
+                    </div>
+                    <div className="card-arrow">→</div>
+                  </div>
+                  <div className="playground-card disabled">
+                    <div className="card-icon">🚧</div>
+                    <div className="card-content">
+                      <h3>更多玩法开发中</h3>
+                      <p>敬请期待...</p>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            ) : (
+              <div className="playground-content-wrapper">
+                <div className="playground-header">
+                  <button 
+                    className="back-button" 
+                    onClick={() => setPlaygroundMode('list')}
+                  >
+                    ← 返回玩法列表
+                  </button>
+                  <h2>随机 Coser 生成</h2>
+                </div>
+                <div className="seedream-layout coser-mode">
             <section className="seedream-panel coser-panel" aria-label="随机 Coser 生成设置">
               {/* 用户自定义输入 */}
               <div className="panel-card">
@@ -2235,6 +2276,9 @@ function SeedreamStudio() {
                 )}
               </div>
             </section>
+                </div>
+              </div>
+            )}
           </div>
         )}
       </div>
