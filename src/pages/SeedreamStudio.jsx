@@ -14,9 +14,7 @@ function SeedreamStudio() {
   const [sizePreset, setSizePreset] = useState('auto_4K')
   const [customWidth, setCustomWidth] = useState('1024')
   const [customHeight, setCustomHeight] = useState('1024')
-  const [enhanceMode, setEnhanceMode] = useState('standard')
   const [numImages, setNumImages] = useState(1)
-  const [maxImages, setMaxImages] = useState(1)
   const [seed, setSeed] = useState('')
   const [syncMode, setSyncMode] = useState(false)
   const [safetyChecker, setSafetyChecker] = useState(false)
@@ -38,7 +36,7 @@ function SeedreamStudio() {
   const [playgroundMode, setPlaygroundMode] = useState('list') // 'list' | 'random-coser'
   
   // 新增模型选择与参数状态
-  const [modelType, setModelType] = useState('v4.5') // 'v4' | 'v4.5' | 'new'
+  const [modelType, setModelType] = useState('v4') // 'v4' | 'v4.5' | 'new'
   const [aspectRatio, setAspectRatio] = useState('1:1')
   const [resolution, setResolution] = useState('2K')
   const [outputFormat, setOutputFormat] = useState('png')
@@ -523,41 +521,31 @@ function SeedreamStudio() {
           }
         }
 
-        if (modelType === 'v4') {
-          modelId = 'fal-ai/bytedance/seedream/v4/text-to-image'
-          inputPayload.enhance_prompt_mode = enhanceMode
-          inputPayload.max_images = Number.parseInt(String(maxImages), 10) || 1
-        } else {
-          modelId = 'fal-ai/bytedance/seedream/v4.5/text-to-image'
-        }
+        // v4 与 v4.5 统一使用相同的入参模板，避免旧版增强参数造成兼容问题
+        const baseModelId = modelType === 'v4'
+          ? 'fal-ai/bytedance/seedream/v4'
+          : 'fal-ai/bytedance/seedream/v4.5'
+        modelId = mode === 'edit'
+          ? `${baseModelId}/edit`
+          : `${baseModelId}/text-to-image`
 
         if (mode === 'edit') {
-          if (modelType === 'v4' || modelType === 'v4.5') {
-            modelId = modelType === 'v4' 
-              ? 'fal-ai/bytedance/seedream/v4/edit' 
-              : 'fal-ai/bytedance/seedream/v4.5/edit'
-            
-            inputPayload.control_scale = controlScaleNumber
+          inputPayload.control_scale = controlScaleNumber
 
-            if (imageInputMethod === 'upload') {
-              try {
-                console.log('上传基础图像到 Fal 存储')
-                setError('')
-                const uploadedUrl = await fal.storage.upload(uploadedImage)
-                inputPayload.image_urls = [uploadedUrl]
-              } catch (uploadError) {
-                console.error('上传基础图像失败:', uploadError)
-                setError(uploadError?.message || '😿 上传基础图像失败，请稍后再试')
-                setLoading(false)
-                return
-              }
-            } else {
-              inputPayload.image_urls = presetUrlList
+          if (imageInputMethod === 'upload') {
+            try {
+              console.log('上传基础图像到 Fal 存储')
+              setError('')
+              const uploadedUrl = await fal.storage.upload(uploadedImage)
+              inputPayload.image_urls = [uploadedUrl]
+            } catch (uploadError) {
+              console.error('上传基础图像失败:', uploadError)
+              setError(uploadError?.message || '😿 上传基础图像失败，请稍后再试')
+              setLoading(false)
+              return
             }
           } else {
-            setError('😿 当前模型不支持编辑模式')
-            setLoading(false)
-            return
+            inputPayload.image_urls = presetUrlList
           }
         }
       } else {
@@ -1043,12 +1031,11 @@ function SeedreamStudio() {
     try {
       fal.config({ credentials: apiKey.trim() })
 
+      // 随机 Coser 也保持与 v4.5 相同的字段，防止旧参数触发接口校验
       const inputPayload = {
         prompt: promptText,
         image_size: 'auto_4K',
-        enhance_prompt_mode: 'standard',
         num_images: 1,
-        max_images: 1,
         sync_mode: false,
         enable_safety_checker: false
       }
@@ -1383,20 +1370,6 @@ function SeedreamStudio() {
                           </select>
                         </div>
 
-                        {modelType === 'v4' && (
-                        <div className="field-group">
-                          <label htmlFor="seedream-enhance">提示增强</label>
-                          <select
-                            id="seedream-enhance"
-                            value={enhanceMode}
-                            onChange={(event) => setEnhanceMode(event.target.value)}
-                          >
-                            <option value="standard">Standard</option>
-                            <option value="fast">Fast</option>
-                          </select>
-                        </div>
-                        )}
-
                         {isCustomSize && (
                           <>
                             <div className="field-group">
@@ -1484,36 +1457,21 @@ function SeedreamStudio() {
                     </div>
 
                     {(modelType === 'v4' || modelType === 'v4.5') && (
-                      <>
-                        {modelType === 'v4' && (
-                        <div className="field-group">
-                          <label htmlFor="seedream-max">每批最大图像</label>
+                      <div className="field-group seed-input">
+                        <label htmlFor="seedream-seed">随机种子</label>
+                        <div className="inline-field">
                           <input
-                            id="seedream-max"
+                            id="seedream-seed"
                             type="number"
-                            min={1}
-                            value={maxImages}
-                            onChange={(event) => setMaxImages(Number.parseInt(event.target.value, 10) || 1)}
+                            placeholder="留空则为随机"
+                            value={seed}
+                            onChange={(event) => setSeed(event.target.value)}
                           />
+                          <button type="button" className="ghost" onClick={handleRandomSeed}>
+                            🎲 随机
+                          </button>
                         </div>
-                        )}
-
-                        <div className="field-group seed-input">
-                          <label htmlFor="seedream-seed">随机种子</label>
-                          <div className="inline-field">
-                            <input
-                              id="seedream-seed"
-                              type="number"
-                              placeholder="留空则为随机"
-                              value={seed}
-                              onChange={(event) => setSeed(event.target.value)}
-                            />
-                            <button type="button" className="ghost" onClick={handleRandomSeed}>
-                              🎲 随机
-                            </button>
-                          </div>
-                        </div>
-                      </>
+                      </div>
                     )}
                   </div>
 
