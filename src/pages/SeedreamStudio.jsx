@@ -86,6 +86,7 @@ function SeedreamStudio() {
   const [coserFalLoading, setCoserFalLoading] = useState(false)  // Fal 单独加载状态
   const [coserQiniuLoading, setCoserQiniuLoading] = useState(false)  // 七牛单独加载状态
   const [randomPromptLoading, setRandomPromptLoading] = useState(false) // 随机提示词加载状态
+  const [optimizePromptLoading, setOptimizePromptLoading] = useState(false) // 提示词优化加载状态
 
   const inputImageRef = useRef(null)
 
@@ -137,6 +138,58 @@ function SeedreamStudio() {
       else setQiniuError(errorMsg)
     } finally {
       setRandomPromptLoading(false)
+    }
+  }
+
+  /**
+   * 根据输入内容优化提示词（仅在已有输入时可用）
+   * @param {string} target - 'fal' | 'qiniu'
+   */
+  const handleOptimizePrompt = async (target) => {
+    const currentInput = target === 'fal' ? prompt : qiniuPrompt
+    const trimmedInput = currentInput.trim()
+
+    if (!trimmedInput) {
+      const emptyMessage = '😿 先写点想法再让我优化吧'
+      if (target === 'fal') setError(emptyMessage)
+      else setQiniuError(emptyMessage)
+      return
+    }
+
+    setOptimizePromptLoading(true)
+    if (target === 'fal') setError('')
+    else setQiniuError('')
+
+    try {
+      const response = await fetch('/api/coser-optimize', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ userInput: trimmedInput })
+      })
+
+      if (!response.ok) {
+        throw new Error('提示词优化服务响应异常')
+      }
+
+      const data = await response.json()
+      const optimizedPrompt = data?.prompt
+
+      if (!optimizedPrompt) {
+        throw new Error('未能获取到优化后的提示词')
+      }
+
+      if (target === 'fal') {
+        setPrompt(optimizedPrompt)
+      } else {
+        setQiniuPrompt(optimizedPrompt)
+      }
+    } catch (err) {
+      console.error('提示词优化失败:', err)
+      const errorMsg = '😿 提示词优化失败，请稍后重试'
+      if (target === 'fal') setError(errorMsg)
+      else setQiniuError(errorMsg)
+    } finally {
+      setOptimizePromptLoading(false)
     }
   }
 
@@ -1215,10 +1268,19 @@ function SeedreamStudio() {
                       type="button"
                       className="clear-button"
                       onClick={() => handleGenerateRandomPrompt('fal')}
-                      disabled={randomPromptLoading}
+                      disabled={randomPromptLoading || optimizePromptLoading}
                       style={{ marginRight: '0.5rem', color: 'var(--primary-color)' }}
                     >
                       {randomPromptLoading ? '🎲 生成中...' : '🎲 随机提示词'}
+                    </button>
+                    <button
+                      type="button"
+                      className="clear-button"
+                      onClick={() => handleOptimizePrompt('fal')}
+                      disabled={!prompt.trim() || optimizePromptLoading || randomPromptLoading}
+                      style={{ marginRight: '0.5rem', color: 'var(--primary-color)' }}
+                    >
+                      {optimizePromptLoading ? '✨ 优化中...' : '✨ 优化提示词'}
                     </button>
                     <button
                       type="button"
@@ -1590,10 +1652,19 @@ function SeedreamStudio() {
                         type="button"
                         className="clear-button"
                         onClick={() => handleGenerateRandomPrompt('qiniu')}
-                        disabled={randomPromptLoading}
+                        disabled={randomPromptLoading || optimizePromptLoading}
                         style={{ marginRight: '0.5rem', color: 'var(--primary-color)' }}
                       >
                         {randomPromptLoading ? '🎲 生成中...' : '🎲 随机提示词'}
+                      </button>
+                      <button
+                        type="button"
+                        className="clear-button"
+                        onClick={() => handleOptimizePrompt('qiniu')}
+                        disabled={!qiniuPrompt.trim() || optimizePromptLoading || randomPromptLoading}
+                        style={{ marginRight: '0.5rem', color: 'var(--primary-color)' }}
+                      >
+                        {optimizePromptLoading ? '✨ 优化中...' : '✨ 优化提示词'}
                       </button>
                       <button
                         type="button"

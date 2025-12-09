@@ -266,6 +266,19 @@ export default defineConfig({
             proxyReq.setHeader('Content-Type', 'application/json')
           })
         }
+      },
+      // 提示词优化 API 代理
+      '/api/coser-optimize': {
+        target: 'https://api.qnaigc.com/v1/chat/completions',
+        changeOrigin: true,
+        secure: true,
+        rewrite: (path) => path.replace(/^\/api\/coser-optimize/, ''),
+        configure: (proxy) => {
+          proxy.on('proxyReq', (proxyReq) => {
+            proxyReq.setHeader('Authorization', `Bearer ${QINIU_AI_API_KEY_DEV}`)
+            proxyReq.setHeader('Content-Type', 'application/json')
+          })
+        }
       }
     }
   },

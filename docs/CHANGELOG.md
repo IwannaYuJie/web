@@ -4,6 +4,23 @@
 
  ---
 
+## [2025-12-09] - ✨ 提示词优化双引擎上线
+
+### ✨ 新特性
+- `src/pages/SeedreamStudio.jsx`：在 Fal 与七牛提示词输入框旁新增“✨ 优化提示词”按钮，仅在输入非空时可用，调用优化接口围绕用户原文进行深描且不跑题。
+- `functions/api/coser-optimize.js` & `api/coser-optimize.js`：新增提示词优化端点，使用七牛文本对话 API 深度扩写用户提示词，严格限制只补充相关细节。
+
+### 🔧 开发支持
+- `vite.config.js`：为 `/api/coser-optimize` 增加本地开发代理，便于直接调用优化端点。
+
+### 📌 影响范围
+- `src/pages/SeedreamStudio.jsx`
+- `functions/api/coser-optimize.js`
+- `api/coser-optimize.js`
+- `vite.config.js`
+
+---
+
 ## [2025-12-08] - 🐾 Seedream v4 默认与调用统一
 
 ### ✨ 调整
