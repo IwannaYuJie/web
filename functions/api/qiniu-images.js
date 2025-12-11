@@ -28,6 +28,7 @@ export async function onRequest(context) {
 
   const primaryKey = env.QINIU_AI_API_KEY
   const secondaryKey = env.QINIU_API_KEY_2 || env.QINIU_AI_API_KEY_2
+  const keyChoice = request.headers.get('x-qiniu-key')?.toLowerCase() || 'auto'
 
   if (!primaryKey && !secondaryKey) {
     return new Response(
@@ -67,10 +68,23 @@ export async function onRequest(context) {
   const prompt = finalPayload.prompt
 
   try {
-    const primaryResult = await callQiniuApi(finalPayload, primaryKey)
+    const primaryResult = keyChoice === 'secondary'
+      ? { ok: false, shouldRetry: true }
+      : await callQiniuApi(finalPayload, primaryKey)
 
-    if (!primaryResult.ok && primaryResult.shouldRetry && secondaryKey) {
-      console.warn('主 key 被限流/拒绝，切换备用 key 重试')
+    if (keyChoice === 'primary') {
+      return handleUpstreamResult({
+        upstreamResponse: primaryResult.response,
+        body: primaryResult.body,
+        prompt,
+        env,
+        waitUntil,
+        source: 'qiniu-text'
+      })
+    }
+
+    if (secondaryKey && (!primaryResult.ok && primaryResult.shouldRetry || keyChoice === 'secondary')) {
+      console.warn('使用备用 key 调用七牛文生图')
       const secondaryResult = await callQiniuApi(finalPayload, secondaryKey)
       return handleUpstreamResult({
         upstreamResponse: secondaryResult.response,

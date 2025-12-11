@@ -15,7 +15,11 @@ export default async function handler(req, res) {
     return res.status(405).json({ error: 'Method not allowed' })
   }
 
-  const apiKey = process.env.QINIU_AI_API_KEY || process.env.QINIU_API_KEY_2
+  const keyChoice = (req.headers['x-qiniu-key'] || '').toString().toLowerCase() || 'auto'
+  const primaryKey = process.env.QINIU_AI_API_KEY
+  const secondaryKey = process.env.QINIU_API_KEY_2
+  const apiKey = keyChoice === 'secondary' ? secondaryKey : keyChoice === 'primary' ? primaryKey : (primaryKey || secondaryKey)
+
   if (!apiKey) {
     return res.status(500).json({
       error: '服务器配置错误',

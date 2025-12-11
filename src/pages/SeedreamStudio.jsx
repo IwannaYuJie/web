@@ -73,6 +73,7 @@ function SeedreamStudio() {
   const [qiniuResponseFormat, setQiniuResponseFormat] = useState('b64_json')
   const [qiniuStream, setQiniuStream] = useState(false)
   const [showQiniuAdvancedPanel, setShowQiniuAdvancedPanel] = useState(false)
+  const [qiniuKeyChoice, setQiniuKeyChoice] = useState('auto')
 
   // 随机 Coser 功能状态
   const [coserLoading, setCoserLoading] = useState(false)
@@ -812,7 +813,8 @@ function SeedreamStudio() {
       const response = await fetch('/api/qiniu-images', {
         method: 'POST',
         headers: {
-          'Content-Type': 'application/json'
+          'Content-Type': 'application/json',
+          'X-Qiniu-Key': qiniuKeyChoice
         },
         body: JSON.stringify(payload)
       })
@@ -968,7 +970,8 @@ function SeedreamStudio() {
       const response = await fetch('/api/qiniu-image-edits', {
         method: 'POST',
         headers: {
-          'Content-Type': 'application/json'
+          'Content-Type': 'application/json',
+          'X-Qiniu-Key': qiniuKeyChoice
         },
         body: JSON.stringify(payload)
       })
@@ -1151,7 +1154,7 @@ function SeedreamStudio() {
 
       const response = await fetch('/api/qiniu-images', {
         method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
+        headers: { 'Content-Type': 'application/json', 'X-Qiniu-Key': qiniuKeyChoice },
         body: JSON.stringify(payload)
       })
 
@@ -1657,6 +1660,19 @@ function SeedreamStudio() {
                     className="readonly-input"
                   />
                   <p className="panel-tip">当前固定使用 Gemini 3.0 Pro Image Preview 模型。</p>
+                </div>
+                <div className="field-group">
+                  <label htmlFor="qiniu-key-choice">使用的 Key</label>
+                  <select
+                    id="qiniu-key-choice"
+                    value={qiniuKeyChoice}
+                    onChange={(event) => setQiniuKeyChoice(event.target.value)}
+                  >
+                    <option value="auto">自动切换（默认）</option>
+                    <option value="primary">主 Key</option>
+                    <option value="secondary">备用 Key</option>
+                  </select>
+                  <p className="panel-tip">当主 Key 被限流/未认证时可手动切换备用 Key。</p>
                 </div>
                 <div className="field-group">
                   <div className="field-label-row">

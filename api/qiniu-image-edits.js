@@ -18,7 +18,10 @@ export default async function handler(req, res) {
     return
   }
 
-  const apiKey = process.env.QINIU_AI_API_KEY || process.env.QINIU_API_KEY_2
+  const keyChoice = (req.headers['x-qiniu-key'] || '').toString().toLowerCase() || 'auto'
+  const primaryKey = process.env.QINIU_AI_API_KEY
+  const secondaryKey = process.env.QINIU_API_KEY_2
+  const apiKey = keyChoice === 'secondary' ? secondaryKey : keyChoice === 'primary' ? primaryKey : (primaryKey || secondaryKey)
   if (!apiKey) {
     res.status(500).json({ error: '服务器配置错误', message: '未配置 QINIU_AI_API_KEY 环境变量' })
     return

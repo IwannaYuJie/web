@@ -9,7 +9,9 @@
 ### ✂️ 调整
 - `src/pages/SeedreamStudio.jsx`：七牛文生图移除旧 `size` 字段，改用 `image_config` 统一下发 `aspect_ratio` 与 `image_size`，默认不传比例、分辨率默认 2K。
 - `src/pages/SeedreamStudio.jsx`：参数面板新增最新官方比例选项，Coser 快速生成也复用新的 `image_config` 默认值（2K）。
-- `functions/api/qiniu-images.js` & `functions/api/qiniu-image-edits.js`：新增备用 Key `QINIU_API_KEY_2` 自动降级，统一错误文案为字符串，避免前端出现 [object Object]。
+- `src/pages/SeedreamStudio.jsx`：七牛面板新增 Key 选择下拉（自动/主 Key/备用 Key），请求携带 `X-Qiniu-Key` 头部。
+- `functions/api/qiniu-images.js` & `functions/api/qiniu-image-edits.js`：新增备用 Key `QINIU_API_KEY_2` 自动降级并支持前端强制选择；统一错误文案为字符串，避免前端出现 [object Object]。
+- `api/qiniu-images.js` & `api/qiniu-image-edits.js`：Vercel 版本同样支持 `X-Qiniu-Key` 选择与备用 Key。
 
 ### 📌 影响范围
 - `src/pages/SeedreamStudio.jsx`
