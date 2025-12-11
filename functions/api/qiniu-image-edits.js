@@ -6,14 +6,15 @@
 // 固定接收邮箱
 const NOTIFY_EMAIL = 'meicuowoniubi@gmail.com'
 
+// 跨域头（外层定义，供所有助手函数复用）
+const corsHeaders = {
+  'Access-Control-Allow-Origin': '*',
+  'Access-Control-Allow-Methods': 'POST, OPTIONS',
+  'Access-Control-Allow-Headers': 'Content-Type, Authorization'
+}
+
 export async function onRequest(context) {
   const { request, env, waitUntil } = context
-
-  const corsHeaders = {
-    'Access-Control-Allow-Origin': '*',
-    'Access-Control-Allow-Methods': 'POST, OPTIONS',
-    'Access-Control-Allow-Headers': 'Content-Type, Authorization'
-  }
 
   if (request.method === 'OPTIONS') {
     return new Response(null, { status: 204, headers: corsHeaders })
