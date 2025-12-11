@@ -1650,18 +1650,6 @@ function SeedreamStudio() {
               <div className="panel-card">
                 <h2>📝 提示词 & 模型</h2>
                 <div className="field-group">
-                  <label htmlFor="qiniu-model">模型 ID</label>
-                  <input
-                    id="qiniu-model"
-                    type="text"
-                    placeholder="gemini-3.0-pro-image-preview"
-                    value={qiniuModel}
-                    readOnly
-                    className="readonly-input"
-                  />
-                  <p className="panel-tip">当前固定使用 Gemini 3.0 Pro Image Preview 模型。</p>
-                </div>
-                <div className="field-group">
                   <label htmlFor="qiniu-key-choice">使用的 Key</label>
                   <select
                     id="qiniu-key-choice"
