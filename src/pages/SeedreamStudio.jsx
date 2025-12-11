@@ -90,6 +90,7 @@ function SeedreamStudio() {
   const [optimizePromptLoading, setOptimizePromptLoading] = useState(false) // 提示词优化加载状态
 
   const inputImageRef = useRef(null)
+  const qiniuAbortControllerRef = useRef(null)
 
   /**
    * 生成随机提示词（用于 Fal 和 七牛 面板）
@@ -445,10 +446,15 @@ function SeedreamStudio() {
     if (nextMode === qiniuMode) {
       return
     }
+    if (qiniuAbortControllerRef.current) {
+      qiniuAbortControllerRef.current.abort()
+      qiniuAbortControllerRef.current = null
+    }
     setQiniuMode(nextMode)
     setQiniuError('')
     setQiniuImages([])
     setQiniuUsage(null)
+    setQiniuLoading(false)
   }
 
   const handleQiniuImageUpload = async (event) => {
@@ -809,6 +815,12 @@ function SeedreamStudio() {
     setQiniuImages([])
     setQiniuUsage(null)
 
+    const controller = new AbortController()
+    if (qiniuAbortControllerRef.current) {
+      qiniuAbortControllerRef.current.abort()
+    }
+    qiniuAbortControllerRef.current = controller
+
     try {
       const response = await fetch('/api/qiniu-images', {
         method: 'POST',
@@ -816,7 +828,8 @@ function SeedreamStudio() {
           'Content-Type': 'application/json',
           'X-Qiniu-Key': qiniuKeyChoice
         },
-        body: JSON.stringify(payload)
+        body: JSON.stringify(payload),
+        signal: controller.signal
       })
 
       const data = await response.json()
@@ -834,10 +847,15 @@ function SeedreamStudio() {
       setQiniuImages(normalized)
       setQiniuUsage(data?.usage || null)
     } catch (generationError) {
+      if (generationError.name === 'AbortError') {
+        setQiniuError('已取消本次七牛请求')
+        return
+      }
       console.error('调用七牛文生图失败:', generationError)
       setQiniuError(generationError?.message || '七牛文生图调用失败')
     } finally {
       setQiniuLoading(false)
+      qiniuAbortControllerRef.current = null
     }
   }
 
@@ -966,6 +984,12 @@ function SeedreamStudio() {
     setQiniuImages([])
     setQiniuUsage(null)
 
+    const controller = new AbortController()
+    if (qiniuAbortControllerRef.current) {
+      qiniuAbortControllerRef.current.abort()
+    }
+    qiniuAbortControllerRef.current = controller
+
     try {
       const response = await fetch('/api/qiniu-image-edits', {
         method: 'POST',
@@ -973,7 +997,8 @@ function SeedreamStudio() {
           'Content-Type': 'application/json',
           'X-Qiniu-Key': qiniuKeyChoice
         },
-        body: JSON.stringify(payload)
+        body: JSON.stringify(payload),
+        signal: controller.signal
       })
 
       const data = await response.json()
@@ -991,10 +1016,15 @@ function SeedreamStudio() {
       setQiniuImages(normalized)
       setQiniuUsage(data?.usage || null)
     } catch (generationError) {
+      if (generationError.name === 'AbortError') {
+        setQiniuError('已取消本次七牛请求')
+        return
+      }
       console.error('调用七牛图生图失败:', generationError)
       setQiniuError(generationError?.message || '七牛图生图调用失败')
     } finally {
       setQiniuLoading(false)
+      qiniuAbortControllerRef.current = null
     }
   }
 
@@ -1003,6 +1033,16 @@ function SeedreamStudio() {
       return handleQiniuEditGenerate()
     }
     return handleQiniuTextGenerate()
+  }
+
+  const cancelQiniuRequest = () => {
+    if (qiniuAbortControllerRef.current) {
+      qiniuAbortControllerRef.current.abort()
+      qiniuAbortControllerRef.current = null
+    }
+    setQiniuLoading(false)
+    setQiniuError('已取消本次七牛请求')
+    setQiniuUsage(null)
   }
 
   /**
@@ -2091,6 +2131,17 @@ function SeedreamStudio() {
                   '✨ 调用七牛生成'
                 )}
               </button>
+
+              {qiniuLoading && (
+                <button
+                  type="button"
+                  className="ghost"
+                  onClick={cancelQiniuRequest}
+                  style={{ marginTop: '0.5rem' }}
+                >
+                  ⏹ 停止等待
+                </button>
+              )}
 
               {qiniuError && <p className="error-banner" role="alert">{qiniuError}</p>}
             </section>
