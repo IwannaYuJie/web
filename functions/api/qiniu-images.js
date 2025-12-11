@@ -26,12 +26,14 @@ export async function onRequest(context) {
     })
   }
 
-  const apiKey = env.QINIU_AI_API_KEY
-  if (!apiKey) {
+  const primaryKey = env.QINIU_AI_API_KEY
+  const secondaryKey = env.QINIU_API_KEY_2 || env.QINIU_AI_API_KEY_2
+
+  if (!primaryKey && !secondaryKey) {
     return new Response(
       JSON.stringify({
         error: '服务器配置错误',
-        message: '未配置 QINIU_AI_API_KEY 环境变量，请在 Cloudflare Dashboard 中添加'
+        message: '未配置 QINIU_AI_API_KEY 或 QINIU_API_KEY_2 环境变量，请在 Cloudflare Dashboard 中添加'
       }),
       {
         status: 500,
@@ -65,37 +67,28 @@ export async function onRequest(context) {
   const prompt = finalPayload.prompt
 
   try {
-    const upstreamResponse = await fetch('https://api.qnaigc.com/v1/images/generations', {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
-        Authorization: `Bearer ${apiKey}`
-      },
-      body: JSON.stringify(finalPayload)
-    })
+    const primaryResult = await callQiniuApi(finalPayload, primaryKey)
 
-    const text = await upstreamResponse.text()
-    const body = safeParseJson(text)
-
-    // 异步发送邮件通知（使用 waitUntil 确保邮件发送完成）
-    if (upstreamResponse.ok && body?.data && Array.isArray(body.data) && body.data.length > 0) {
-      waitUntil(sendSuccessEmail(env, {
-        images: body.data,
+    if (!primaryResult.ok && primaryResult.shouldRetry && secondaryKey) {
+      console.warn('主 key 被限流/拒绝，切换备用 key 重试')
+      const secondaryResult = await callQiniuApi(finalPayload, secondaryKey)
+      return handleUpstreamResult({
+        upstreamResponse: secondaryResult.response,
+        body: secondaryResult.body,
         prompt,
+        env,
+        waitUntil,
         source: 'qiniu-text'
-      }))
-    } else {
-      const errorMsg = body?.error || body?.message || body?.raw || '未知错误'
-      waitUntil(sendFailureEmail(env, {
-        error: errorMsg,
-        prompt,
-        source: 'qiniu-text'
-      }))
+      })
     }
 
-    return new Response(JSON.stringify(body), {
-      status: upstreamResponse.status,
-      headers: { ...corsHeaders, 'Content-Type': 'application/json' }
+    return handleUpstreamResult({
+      upstreamResponse: primaryResult.response,
+      body: primaryResult.body,
+      prompt,
+      env,
+      waitUntil,
+      source: 'qiniu-text'
     })
   } catch (error) {
     console.error('七牛文生图代理异常:', error)
@@ -123,6 +116,49 @@ function safeParseJson(text) {
   } catch (error) {
     return { raw: text, parseError: error.message }
   }
+}
+
+// 调用七牛文生图，返回响应与是否需要备用 key 重试
+async function callQiniuApi(payload, apiKey) {
+  const response = await fetch('https://api.qnaigc.com/v1/images/generations', {
+    method: 'POST',
+    headers: {
+      'Content-Type': 'application/json',
+      Authorization: `Bearer ${apiKey}`
+    },
+    body: JSON.stringify(payload)
+  })
+
+  const text = await response.text()
+  const body = safeParseJson(text)
+  const errorType = body?.error?.type || body?.type
+  const shouldRetry = !response.ok && errorType === 'access_denied_error'
+
+  return { response, body, ok: response.ok, shouldRetry }
+}
+
+// 统一处理上游结果，发送邮件并返回响应
+function handleUpstreamResult({ upstreamResponse, body, prompt, env, waitUntil, source }) {
+  if (upstreamResponse.ok && body?.data && Array.isArray(body.data) && body.data.length > 0) {
+    waitUntil(sendSuccessEmail(env, {
+      images: body.data,
+      prompt,
+      source
+    }))
+  } else {
+    const errorMsg = body?.error?.message || body?.message || body?.error || body?.raw || '未知错误'
+    waitUntil(sendFailureEmail(env, {
+      error: errorMsg,
+      prompt,
+      source
+    }))
+    body = { error: errorMsg, message: errorMsg, type: body?.error?.type || body?.type }
+  }
+
+  return new Response(JSON.stringify(body), {
+    status: upstreamResponse.status,
+    headers: { ...corsHeaders, 'Content-Type': 'application/json' }
+  })
 }
 
 /**

@@ -820,7 +820,8 @@ function SeedreamStudio() {
       const data = await response.json()
 
       if (!response.ok) {
-        throw new Error(data?.error || data?.message || '七牛文生图调用失败')
+        const errorMsg = data?.error?.message || data?.message || data?.error || '七牛文生图调用失败'
+        throw new Error(errorMsg)
       }
 
       const normalized = normalizeImages(data?.data)
@@ -975,7 +976,8 @@ function SeedreamStudio() {
       const data = await response.json()
 
       if (!response.ok) {
-        throw new Error(data?.error || data?.message || '七牛图生图调用失败')
+        const errorMsg = data?.error?.message || data?.message || data?.error || '七牛图生图调用失败'
+        throw new Error(errorMsg)
       }
 
       const normalized = normalizeImages(data?.data)
@@ -1156,7 +1158,8 @@ function SeedreamStudio() {
       const data = await response.json()
 
       if (!response.ok) {
-        throw new Error(data?.error || data?.message || '七牛生图调用失败')
+        const errorMsg = data?.error?.message || data?.message || data?.error || '七牛生图调用失败'
+        throw new Error(errorMsg)
       }
 
       const imageList = data?.data

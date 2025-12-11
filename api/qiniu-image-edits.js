@@ -18,7 +18,7 @@ export default async function handler(req, res) {
     return
   }
 
-  const apiKey = process.env.QINIU_AI_API_KEY
+  const apiKey = process.env.QINIU_AI_API_KEY || process.env.QINIU_API_KEY_2
   if (!apiKey) {
     res.status(500).json({ error: '服务器配置错误', message: '未配置 QINIU_AI_API_KEY 环境变量' })
     return
@@ -59,9 +59,14 @@ export default async function handler(req, res) {
 
     const text = await upstreamResponse.text()
     const body = safeParseJson(text)
+    const errorMsg = body?.error?.message || body?.message || body?.error
+
+    const shapedBody = upstreamResponse.ok
+      ? body
+      : { error: errorMsg || '七牛图生图调用失败', message: errorMsg || '七牛图生图调用失败', type: body?.error?.type || body?.type }
 
     res.writeHead(upstreamResponse.status, { ...corsHeaders, 'Content-Type': 'application/json' })
-    res.end(JSON.stringify(body))
+    res.end(JSON.stringify(shapedBody))
   } catch (error) {
     console.error('七牛图生图代理异常:', error)
     res.status(500).json({ error: '服务器内部错误', message: error.message })
