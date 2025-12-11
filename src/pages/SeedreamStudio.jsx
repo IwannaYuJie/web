@@ -45,7 +45,7 @@ function SeedreamStudio() {
   const [qiniuModel, setQiniuModel] = useState('gemini-3.0-pro-image-preview')
   const [qiniuPrompt, setQiniuPrompt] = useState('')
   const [qiniuCount, setQiniuCount] = useState(1)
-  const [qiniuImageSize, setQiniuImageSize] = useState('4K')
+  const [qiniuImageSize, setQiniuImageSize] = useState('2K')
   const [qiniuQuality, setQiniuQuality] = useState('')
   const [qiniuStyle, setQiniuStyle] = useState('vivid')
   const [qiniuTemperature, setQiniuTemperature] = useState('0.8')
@@ -1145,7 +1145,7 @@ function SeedreamStudio() {
       }
 
       const imageConfig = buildQiniuImageConfig()
-      payload.image_config = imageConfig || { image_size: '4K' }
+      payload.image_config = imageConfig || { image_size: '2K' }
 
       const response = await fetch('/api/qiniu-images', {
         method: 'POST',
@@ -1807,11 +1807,11 @@ function SeedreamStudio() {
                           value={qiniuImageSize}
                           onChange={(event) => setQiniuImageSize(event.target.value)}
                         >
-                          <option value="4K">4K (默认)</option>
-                          <option value="2K">2K</option>
+                          <option value="2K">2K (默认)</option>
+                          <option value="4K">4K</option>
                           <option value="1K">1K</option>
                         </select>
-                        <p className="panel-tip">仅 Gemini 3.0 Pro Image Preview 支持 image_config，默认分辨率 4K。</p>
+                        <p className="panel-tip">仅 Gemini 3.0 Pro Image Preview 支持 image_config，默认分辨率 2K。</p>
                       </div>
                       <div className="field-group">
                         <label htmlFor="qiniu-quality">画质 (quality)</label>
