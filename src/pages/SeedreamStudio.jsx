@@ -226,7 +226,7 @@ function SeedreamStudio() {
     if (prevModelTypeRef.current !== modelType) {
       if (modelType === 'z-image-turbo') {
         // Z-Image Turbo 默认参数
-        setSizePreset('auto')
+        setSizePreset('square')
         setNumInferenceSteps(8)
         setAcceleration('none')
         setOutputFormat('png')
@@ -1627,13 +1627,12 @@ function SeedreamStudio() {
                             value={sizePreset}
                             onChange={(event) => setSizePreset(event.target.value)}
                           >
-                            <option value="landscape_4_3">Landscape 4:3 (默认)</option>
+                            <option value="square">Square (默认)</option>
+                            <option value="square_hd">Square HD</option>
+                            <option value="landscape_4_3">Landscape 4:3</option>
                             <option value="landscape_16_9">Landscape 16:9</option>
                             <option value="portrait_4_3">Portrait 4:3</option>
                             <option value="portrait_16_9">Portrait 16:9</option>
-                            <option value="square">Square</option>
-                            <option value="square_hd">Square HD</option>
-                            <option value="auto">Auto</option>
                           </select>
                         </div>
                         <div className="field-group">
