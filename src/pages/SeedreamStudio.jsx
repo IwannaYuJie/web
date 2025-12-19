@@ -36,10 +36,14 @@ function SeedreamStudio() {
   const [playgroundMode, setPlaygroundMode] = useState('list') // 'list' | 'random-coser'
   
   // 新增模型选择与参数状态
-  const [modelType, setModelType] = useState('v4') // 'v4' | 'v4.5' | 'new'
+  const [modelType, setModelType] = useState('v4') // 'v4' | 'v4.5' | 'new' | 'z-image-turbo'
   const [aspectRatio, setAspectRatio] = useState('1:1')
   const [resolution, setResolution] = useState('2K')
   const [outputFormat, setOutputFormat] = useState('png')
+  const [numInferenceSteps, setNumInferenceSteps] = useState(8)
+  const [enablePromptExpansion, setEnablePromptExpansion] = useState(false)
+  const [acceleration, setAcceleration] = useState('none')
+  const [zImageStrength, setZImageStrength] = useState(0.6)
 
   // 七牛文生图参数
   const [qiniuModel, setQiniuModel] = useState('gemini-3.0-pro-image-preview')
@@ -214,6 +218,31 @@ function SeedreamStudio() {
       URL.revokeObjectURL(uploadedImagePreview)
     }
   }, [uploadedImagePreview])
+
+  // 当切换模型时，重置和适配参数
+  const prevModelTypeRef = useRef(modelType)
+  useEffect(() => {
+    // 只在模型真正切换时才重置参数，避免初始化时触发
+    if (prevModelTypeRef.current !== modelType) {
+      if (modelType === 'z-image-turbo') {
+        // Z-Image Turbo 默认参数
+        setSizePreset('auto')
+        setNumInferenceSteps(8)
+        setAcceleration('none')
+        setOutputFormat('png')
+        setEnablePromptExpansion(false)
+      } else if (modelType === 'v4' || modelType === 'v4.5') {
+        // Seedream v4/v4.5 默认参数
+        setSizePreset('auto_4K')
+      } else if (modelType === 'new') {
+        // Gemini 3 Pro 默认参数
+        setAspectRatio('1:1')
+        setResolution('2K')
+        setOutputFormat('png')
+      }
+      prevModelTypeRef.current = modelType
+    }
+  }, [modelType])
 
   /**
    * 根据当前选择构建 Fal API 所需的尺寸参数
@@ -618,6 +647,62 @@ function SeedreamStudio() {
             }
           } else {
             inputPayload.image_urls = presetUrlList
+          }
+        }
+      } else if (modelType === 'z-image-turbo') {
+        // Z-Image Turbo 模型配置
+        const isZImageEdit = mode === 'edit'
+        modelId = isZImageEdit 
+          ? 'fal-ai/z-image/turbo/image-to-image'
+          : 'fal-ai/z-image/turbo'
+        
+        inputPayload = {
+          prompt: prompt.trim(),
+          image_size: imageSizeInput || (isZImageEdit ? 'auto' : 'landscape_4_3'),
+          num_inference_steps: numInferenceSteps,
+          num_images: Number.parseInt(String(numImages), 10) || 1,
+          enable_safety_checker: safetyChecker,
+          enable_prompt_expansion: enablePromptExpansion,
+          output_format: outputFormat,
+          acceleration: acceleration,
+          sync_mode: syncMode
+        }
+
+        if (seed.trim()) {
+          const parsedSeed = Number.parseInt(seed.trim(), 10)
+          if (!Number.isNaN(parsedSeed)) {
+            inputPayload.seed = parsedSeed
+          }
+        }
+
+        // 图生图模式需要上传图像
+        if (isZImageEdit) {
+          inputPayload.strength = zImageStrength
+
+          if (imageInputMethod === 'upload') {
+            if (!uploadedImage) {
+              setError('😿 图生图模式需要先上传一张基础图像')
+              setLoading(false)
+              return
+            }
+            try {
+              console.log('上传基础图像到 Fal 存储 (Z-Image Turbo)')
+              setError('')
+              const uploadedUrl = await fal.storage.upload(uploadedImage)
+              inputPayload.image_url = uploadedUrl
+            } catch (uploadError) {
+              console.error('上传基础图像失败:', uploadError)
+              setError(uploadError?.message || '😿 上传基础图像失败，请稍后再试')
+              setLoading(false)
+              return
+            }
+          } else {
+            if (presetUrlList.length === 0) {
+              setError('😿 请提供至少一个有效的图像 URL')
+              setLoading(false)
+              return
+            }
+            inputPayload.image_url = presetUrlList[0]
           }
         }
       } else {
@@ -1311,6 +1396,7 @@ function SeedreamStudio() {
                   <option value="v4">Seedream v4 (经典)</option>
                   <option value="v4.5">Seedream v4.5 (最新)</option>
                   <option value="new">Gemini 3 Pro (新版)</option>
+                  <option value="z-image-turbo">Z-Image Turbo (6B 超快速)</option>
                 </select>
               </div>
             </div>
@@ -1452,6 +1538,22 @@ function SeedreamStudio() {
                     <span className="range-value">当前强度：{controlScaleNumber.toFixed(2)}</span>
                   </div>
                 )}
+                {modelType === 'z-image-turbo' && (
+                  <div className="field-group">
+                    <label htmlFor="z-image-strength">图生图强度 (0 - 1)</label>
+                    <input
+                      id="z-image-strength"
+                      type="range"
+                      min="0"
+                      max="1"
+                      step="0.05"
+                      value={zImageStrength}
+                      onChange={(event) => setZImageStrength(Number.parseFloat(event.target.value))}
+                    />
+                    <span className="range-value">当前强度：{zImageStrength.toFixed(2)}</span>
+                    <p className="panel-tip" style={{fontSize: '0.75rem', marginTop: '0.25rem'}}>强度越高，生成图像与原图差异越大</p>
+                  </div>
+                )}
               </div>
             )}
 
@@ -1516,6 +1618,61 @@ function SeedreamStudio() {
                           </>
                         )}
                       </>
+                    ) : modelType === 'z-image-turbo' ? (
+                      <>
+                        <div className="field-group">
+                          <label htmlFor="z-image-size">图像尺寸</label>
+                          <select
+                            id="z-image-size"
+                            value={sizePreset}
+                            onChange={(event) => setSizePreset(event.target.value)}
+                          >
+                            <option value="landscape_4_3">Landscape 4:3 (默认)</option>
+                            <option value="landscape_16_9">Landscape 16:9</option>
+                            <option value="portrait_4_3">Portrait 4:3</option>
+                            <option value="portrait_16_9">Portrait 16:9</option>
+                            <option value="square">Square</option>
+                            <option value="square_hd">Square HD</option>
+                            <option value="auto">Auto</option>
+                          </select>
+                        </div>
+                        <div className="field-group">
+                          <label htmlFor="z-image-steps">推理步数 (1-8)</label>
+                          <input
+                            id="z-image-steps"
+                            type="number"
+                            min={1}
+                            max={8}
+                            value={numInferenceSteps}
+                            onChange={(e) => setNumInferenceSteps(Number.parseInt(e.target.value, 10) || 8)}
+                          />
+                          <p className="panel-tip" style={{fontSize: '0.75rem', marginTop: '0.25rem'}}>默认 8，值越高质量越好但速度较慢</p>
+                        </div>
+                        <div className="field-group">
+                          <label htmlFor="z-image-format">输出格式</label>
+                          <select
+                            id="z-image-format"
+                            value={outputFormat}
+                            onChange={(e) => setOutputFormat(e.target.value)}
+                          >
+                            <option value="png">PNG</option>
+                            <option value="jpeg">JPEG</option>
+                            <option value="webp">WebP</option>
+                          </select>
+                        </div>
+                        <div className="field-group">
+                          <label htmlFor="z-image-acceleration">加速等级</label>
+                          <select
+                            id="z-image-acceleration"
+                            value={acceleration}
+                            onChange={(e) => setAcceleration(e.target.value)}
+                          >
+                            <option value="none">无加速 (默认)</option>
+                            <option value="regular">常规加速</option>
+                            <option value="high">高速加速</option>
+                          </select>
+                        </div>
+                      </>
                     ) : (
                       <>
                         <div className="field-group">
@@ -1570,12 +1727,16 @@ function SeedreamStudio() {
                         id="seedream-num"
                         type="number"
                         min={1}
+                        max={modelType === 'z-image-turbo' ? 4 : undefined}
                         value={numImages}
                         onChange={(event) => setNumImages(Number.parseInt(event.target.value, 10) || 1)}
                       />
+                      {modelType === 'z-image-turbo' && (
+                        <p className="panel-tip" style={{fontSize: '0.75rem', marginTop: '0.25rem'}}>最多 4 张</p>
+                      )}
                     </div>
 
-                    {(modelType === 'v4' || modelType === 'v4.5') && (
+                    {(modelType === 'v4' || modelType === 'v4.5' || modelType === 'z-image-turbo') && (
                       <div className="field-group seed-input">
                         <label htmlFor="seedream-seed">随机种子</label>
                         <div className="inline-field">
@@ -1611,6 +1772,16 @@ function SeedreamStudio() {
                   />
                   <span>启用安全检查</span>
                 </label>
+                {modelType === 'z-image-turbo' && (
+                  <label className="toggle-item">
+                    <input
+                      type="checkbox"
+                      checked={enablePromptExpansion}
+                      onChange={(event) => setEnablePromptExpansion(event.target.checked)}
+                    />
+                    <span>启用提示词扩展 (+0.0025 积分)</span>
+                  </label>
+                )}
               </div>
                 </div>
               )}
