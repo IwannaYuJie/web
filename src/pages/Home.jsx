@@ -1,8 +1,10 @@
-import { useState, useEffect } from 'react'
+import { useState, useEffect, useMemo } from 'react'
 import { Link } from 'react-router-dom'
+import Pagination from '../components/Pagination'
 
 // 橘猫心情数组 - 移到组件外部避免重复创建
 const CAT_MOODS = ['😺', '😸', '😹', '😻', '😼', '😽', '🙀', '😿', '😾']
+const PAGE_SIZE = 6
 
 /**
  * 首页组件
@@ -20,6 +22,8 @@ function Home() {
   const [currentTime, setCurrentTime] = useState(new Date())
   const [selectedCategory, setSelectedCategory] = useState('全部')
   const [showBackToTop, setShowBackToTop] = useState(false)
+  const [searchQuery, setSearchQuery] = useState('')
+  const [currentPage, setCurrentPage] = useState(1)
 
   const [catMood, setCatMood] = useState(CAT_MOODS[0])
 
@@ -133,9 +137,40 @@ function Home() {
     return '🌃 夜深了，早点休息吧~'
   }
 
-  const filteredArticles = selectedCategory === '全部'
-    ? articles
-    : articles.filter(article => article.category === selectedCategory)
+  const filteredArticles = useMemo(() => {
+    let result = articles
+
+    // 搜索过滤
+    if (searchQuery.trim()) {
+      const query = searchQuery.toLowerCase().trim()
+      result = result.filter(article =>
+        article.title?.toLowerCase().includes(query) ||
+        article.description?.toLowerCase().includes(query) ||
+        article.category?.toLowerCase().includes(query) ||
+        (article.tags && article.tags.some(t => t.toLowerCase().includes(query)))
+      )
+    }
+
+    // 分类过滤
+    if (selectedCategory !== '全部') {
+      result = result.filter(a => a.category === selectedCategory)
+    }
+
+    return result
+  }, [articles, searchQuery, selectedCategory])
+
+  // 分页后的文章
+  const paginatedArticles = useMemo(() => {
+    const start = (currentPage - 1) * PAGE_SIZE
+    return filteredArticles.slice(start, start + PAGE_SIZE)
+  }, [filteredArticles, currentPage])
+
+  const totalPages = Math.ceil(filteredArticles.length / PAGE_SIZE)
+
+  // 重置分页
+  useEffect(() => {
+    setCurrentPage(1)
+  }, [searchQuery, selectedCategory])
 
   return (
     <div className="container pb-12">
@@ -202,25 +237,59 @@ function Home() {
             </div>
           </div>
 
-          {/* Filter Tabs */}
-          <div className="glass p-4 rounded-2xl flex flex-wrap gap-2 sticky top-[80px] z-30 shadow-sm">
-            {categories.map(category => (
-              <button
-                key={category}
-                className={`px-4 py-2 rounded-full text-sm font-medium transition-all ${
-                  selectedCategory === category
-                    ? 'bg-primary text-white shadow-md'
-                    : 'bg-transparent text-text-secondary hover:bg-primary/10 hover:text-primary'
-                }`}
-                onClick={() => setSelectedCategory(category)}
-              >
-                {category}
-              </button>
-            ))}
+          {/* Search and Filter */}
+          <div id="articles" className="glass p-4 rounded-2xl sticky top-[80px] z-30 shadow-sm space-y-4">
+            {/* 搜索框 */}
+            <div className="relative">
+              <div className="absolute left-4 top-1/2 -translate-y-1/2 text-text-light pointer-events-none">
+                🔍
+              </div>
+              <input
+                type="text"
+                value={searchQuery}
+                onChange={(e) => setSearchQuery(e.target.value)}
+                placeholder="搜索文章标题、描述或标签..."
+                className="w-full pl-11 pr-10 py-2.5 rounded-xl border border-border-color bg-white/70 focus:bg-white focus:border-primary outline-none transition-all"
+              />
+              {searchQuery && (
+                <button
+                  onClick={() => setSearchQuery('')}
+                  className="absolute right-3 top-1/2 -translate-y-1/2 text-text-light hover:text-text-color transition-colors p-1"
+                >
+                  ✕
+                </button>
+              )}
+            </div>
+
+            {/* 分类标签 */}
+            <div className="flex flex-wrap gap-2">
+              {categories.map(category => (
+                <button
+                  key={category}
+                  className={`px-4 py-2 rounded-full text-sm font-medium transition-all ${
+                    selectedCategory === category
+                      ? 'bg-primary text-white shadow-md'
+                      : 'bg-transparent text-text-secondary hover:bg-primary/10 hover:text-primary'
+                  }`}
+                  onClick={() => setSelectedCategory(category)}
+                >
+                  {category}
+                </button>
+              ))}
+            </div>
+
+            {/* 搜索结果统计 */}
+            {(searchQuery || selectedCategory !== '全部') && (
+              <div className="text-sm text-text-secondary pt-2 border-t border-border-color/50">
+                找到 <span className="font-bold text-primary">{filteredArticles.length}</span> 篇文章
+                {searchQuery && <span className="ml-2">· 搜索: "{searchQuery}"</span>}
+                {selectedCategory !== '全部' && <span className="ml-2">· 分类: {selectedCategory}</span>}
+              </div>
+            )}
           </div>
 
           {/* Articles List */}
-          <div className="grid gap-6">
+          <div className="space-y-6">
             {articlesLoading ? (
               <div className="glass p-12 rounded-2xl text-center">
                 <div className="text-4xl mb-4 animate-bounce">🐱</div>
@@ -232,40 +301,79 @@ function Home() {
                 <p className="text-red-500 mb-4">{articlesError}</p>
                 <button onClick={fetchArticles} className="btn btn-primary">🔄 重试</button>
               </div>
-            ) : filteredArticles.length > 0 ? (
-              filteredArticles.map((article, idx) => (
-                <Link
-                  to={`/article/${article.id}`}
-                  key={article.id}
-                  className="card card-hover group block animate-slide-up"
-                  style={{ animationDelay: `${idx * 0.1}s` }}
-                >
-                  <div className="flex flex-col md:flex-row gap-6">
-                    <div className="flex-1">
-                      <div className="flex items-center gap-3 mb-2">
-                         <span className="bg-secondary/20 text-primary px-3 py-1 rounded-full text-xs font-bold">
-                           {article.category}
-                         </span>
-                         <span className="text-text-light text-xs">📅 {article.date}</span>
+            ) : paginatedArticles.length > 0 ? (
+              <>
+                <div className="grid gap-6">
+                  {paginatedArticles.map((article, idx) => (
+                    <Link
+                      to={`/article/${article.id}`}
+                      key={article.id}
+                      className="card card-hover group block animate-slide-up"
+                      style={{ animationDelay: `${idx * 0.05}s` }}
+                    >
+                      <div className="flex flex-col md:flex-row gap-6">
+                        <div className="flex-1">
+                          <div className="flex flex-wrap items-center gap-2 mb-2">
+                            <span className="bg-secondary/20 text-primary px-3 py-1 rounded-full text-xs font-bold">
+                              {article.category}
+                            </span>
+                            <span className="text-text-light text-xs">📅 {article.date}</span>
+                            {article.tags && article.tags.length > 0 && (
+                              <div className="flex gap-1">
+                                {article.tags.slice(0, 2).map(tag => (
+                                  <span key={tag} className="text-xs text-text-light">#{tag}</span>
+                                ))}
+                              </div>
+                            )}
+                          </div>
+                          <h3 className="text-xl font-bold mb-3 group-hover:text-primary transition-colors">
+                            {article.title}
+                          </h3>
+                          <p className="text-text-secondary line-clamp-2 mb-4">
+                            {article.description}
+                          </p>
+                          <div className="flex items-center gap-4 text-sm text-text-light">
+                            <span>⏱️ {article.readTime} 分钟阅读</span>
+                            <span className="group-hover:translate-x-1 transition-transform inline-block text-primary">阅读全文 →</span>
+                          </div>
+                        </div>
                       </div>
-                      <h3 className="text-xl font-bold mb-3 group-hover:text-primary transition-colors">
-                        {article.title}
-                      </h3>
-                      <p className="text-text-secondary line-clamp-2 mb-4">
-                        {article.description}
-                      </p>
-                      <div className="flex items-center gap-4 text-sm text-text-light">
-                        <span>⏱️ {article.readTime} 分钟阅读</span>
-                        <span className="group-hover:translate-x-1 transition-transform inline-block text-primary">阅读全文 →</span>
-                      </div>
-                    </div>
+                    </Link>
+                  ))}
+                </div>
+
+                {/* 分页 */}
+                {totalPages > 1 && (
+                  <div className="glass p-4 rounded-2xl">
+                    <Pagination
+                      currentPage={currentPage}
+                      totalPages={totalPages}
+                      totalCount={filteredArticles.length}
+                      onPageChange={(page) => {
+                        setCurrentPage(page)
+                        document.getElementById('articles')?.scrollIntoView({ behavior: 'smooth' })
+                      }}
+                    />
                   </div>
-                </Link>
-              ))
+                )}
+              </>
             ) : (
               <div className="glass p-12 rounded-2xl text-center">
                 <div className="text-4xl mb-4">🍃</div>
-                <p className="text-text-secondary">该分类下暂无文章，去看看别的吧~</p>
+                <p className="text-text-secondary mb-4">
+                  {searchQuery ? `没有找到包含 "${searchQuery}" 的文章` : '该分类下暂无文章，去看看别的吧~'}
+                </p>
+                {(searchQuery || selectedCategory !== '全部') && (
+                  <button
+                    onClick={() => {
+                      setSearchQuery('')
+                      setSelectedCategory('全部')
+                    }}
+                    className="btn btn-secondary"
+                  >
+                    🔄 清除筛选
+                  </button>
+                )}
               </div>
             )}
           </div>

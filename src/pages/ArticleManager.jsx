@@ -1,5 +1,6 @@
 import { useState, useEffect } from 'react'
 import { Link } from 'react-router-dom'
+import MarkdownRenderer from '../components/MarkdownRenderer'
 
 /**
  * 文章管理页面
@@ -18,9 +19,14 @@ function ArticleManager() {
     category: 'Java核心',
     readTime: '',
     date: new Date().toISOString().split('T')[0],
-    content: ''
+    content: '',
+    tags: [],
+    author: '橘猫博主'
   })
   const [submitting, setSubmitting] = useState(false)
+  const [showPreview, setShowPreview] = useState(false)
+  const [tagInput, setTagInput] = useState('')
+  const [searchQuery, setSearchQuery] = useState('')
 
   // 权限状态
   const [adminKey, setAdminKey] = useState('')
@@ -146,8 +152,12 @@ function ArticleManager() {
       category: 'Java核心',
       readTime: '',
       date: new Date().toISOString().split('T')[0],
-      content: ''
+      content: '',
+      tags: [],
+      author: '橘猫博主'
     })
+    setTagInput('')
+    setShowPreview(false)
     setShowForm(true)
   }
 
@@ -162,10 +172,51 @@ function ArticleManager() {
       category: article.category,
       readTime: article.readTime,
       date: article.date,
-      content: article.content || ''
+      content: article.content || '',
+      tags: article.tags || [],
+      author: article.author || '橘猫博主'
     })
+    setTagInput('')
+    setShowPreview(false)
     setShowForm(true)
   }
+
+  /**
+   * 添加标签
+   */
+  const handleAddTag = () => {
+    const tag = tagInput.trim()
+    if (tag && !formData.tags.includes(tag)) {
+      setFormData(prev => ({
+        ...prev,
+        tags: [...prev.tags, tag]
+      }))
+    }
+    setTagInput('')
+  }
+
+  /**
+   * 删除标签
+   */
+  const handleRemoveTag = (tagToRemove) => {
+    setFormData(prev => ({
+      ...prev,
+      tags: prev.tags.filter(t => t !== tagToRemove)
+    }))
+  }
+
+  /**
+   * 过滤文章列表
+   */
+  const filteredArticles = articles.filter(article => {
+    if (!searchQuery.trim()) return true
+    const query = searchQuery.toLowerCase()
+    return (
+      article.title?.toLowerCase().includes(query) ||
+      article.description?.toLowerCase().includes(query) ||
+      article.category?.toLowerCase().includes(query)
+    )
+  })
 
   /**
    * 提交表单（新增或编辑）
@@ -306,34 +357,64 @@ function ArticleManager() {
   return (
     <div className="container pb-12 max-w-6xl mx-auto">
       {/* Header */}
-      <header className="mb-8 flex justify-between items-end animate-fade-in">
-        <div>
-          <h1 className="text-3xl font-extrabold text-gradient mb-2">📝 文章管理</h1>
-          <p className="text-text-secondary">管理你的Java技术文章库</p>
+      <header className="mb-8 animate-fade-in">
+        <div className="flex justify-between items-end mb-6">
+          <div>
+            <h1 className="text-3xl font-extrabold text-gradient mb-2">📝 文章管理</h1>
+            <p className="text-text-secondary">管理你的Java技术文章库</p>
+          </div>
+          <div className="flex gap-3">
+            <button
+              onClick={handleLogout}
+              className="btn btn-ghost text-text-light hover:text-red-500"
+              title="退出登录"
+            >
+              🔒 退出
+            </button>
+            <button
+              onClick={fetchArticles}
+              className="btn btn-secondary"
+              disabled={loading}
+            >
+              🔄 刷新
+            </button>
+            <button
+              onClick={handleAddNew}
+              className="btn btn-primary"
+              disabled={showForm}
+            >
+              ➕ 新增文章
+            </button>
+          </div>
         </div>
-        <div className="flex gap-3">
-          <button
-            onClick={handleLogout}
-            className="btn btn-ghost text-text-light hover:text-red-500"
-            title="退出登录"
-          >
-            🔒 退出
-          </button>
-          <button
-            onClick={fetchArticles}
-            className="btn btn-secondary"
-            disabled={loading}
-          >
-            🔄 刷新
-          </button>
-          <button
-            onClick={handleAddNew}
-            className="btn btn-primary"
-            disabled={showForm}
-          >
-            ➕ 新增文章
-          </button>
+
+        {/* 搜索框 */}
+        <div className="relative max-w-md">
+          <div className="absolute left-4 top-1/2 -translate-y-1/2 text-text-light pointer-events-none">
+            🔍
+          </div>
+          <input
+            type="text"
+            value={searchQuery}
+            onChange={(e) => setSearchQuery(e.target.value)}
+            placeholder="搜索文章标题、描述或分类..."
+            className="w-full pl-11 pr-10 py-3 rounded-xl border border-border-color bg-white/70 focus:bg-white focus:border-primary focus:shadow-md outline-none transition-all"
+          />
+          {searchQuery && (
+            <button
+              onClick={() => setSearchQuery('')}
+              className="absolute right-3 top-1/2 -translate-y-1/2 text-text-light hover:text-text-color transition-colors p-1"
+              title="清空搜索"
+            >
+              ✕
+            </button>
+          )}
         </div>
+        {searchQuery && (
+          <p className="text-sm text-text-secondary mt-2">
+            找到 <span className="font-bold text-primary">{filteredArticles.length}</span> 篇相关文章
+          </p>
+        )}
       </header>
 
       {/* Form Modal/Section */}
@@ -415,19 +496,93 @@ function ArticleManager() {
                 </div>
               </div>
 
+              {/* 作者字段 */}
+              <div className="space-y-2">
+                <label className="text-sm font-bold text-text-secondary">作者</label>
+                <input
+                  type="text"
+                  name="author"
+                  value={formData.author}
+                  onChange={handleInputChange}
+                  placeholder="作者名称"
+                  className="w-full p-3 rounded-xl border border-border-color bg-white/50 focus:bg-white focus:border-primary outline-none transition-all"
+                />
+              </div>
+
+              {/* 标签字段 */}
+              <div className="space-y-2">
+                <label className="text-sm font-bold text-text-secondary">文章标签</label>
+                <div className="flex gap-2">
+                  <input
+                    type="text"
+                    value={tagInput}
+                    onChange={(e) => setTagInput(e.target.value)}
+                    onKeyPress={(e) => {
+                      if (e.key === 'Enter') {
+                        e.preventDefault()
+                        handleAddTag()
+                      }
+                    }}
+                    placeholder="输入标签后按回车添加"
+                    className="flex-1 p-3 rounded-xl border border-border-color bg-white/50 focus:bg-white focus:border-primary outline-none transition-all"
+                  />
+                  <button
+                    type="button"
+                    onClick={handleAddTag}
+                    className="btn btn-secondary px-4"
+                  >
+                    添加
+                  </button>
+                </div>
+                {formData.tags.length > 0 && (
+                  <div className="flex flex-wrap gap-2 mt-2">
+                    {formData.tags.map(tag => (
+                      <span
+                        key={tag}
+                        className="inline-flex items-center gap-1 px-3 py-1 bg-primary/10 text-primary rounded-full text-sm"
+                      >
+                        #{tag}
+                        <button
+                          type="button"
+                          onClick={() => handleRemoveTag(tag)}
+                          className="hover:text-red-500 ml-1"
+                        >
+                          ✕
+                        </button>
+                      </span>
+                    ))}
+                  </div>
+                )}
+              </div>
+
               <div className="space-y-2">
                 <label className="text-sm font-bold text-text-secondary flex justify-between">
                   <span>文章正文</span>
-                  <span className="text-xs font-normal text-text-light">支持 Markdown</span>
+                  <div className="flex items-center gap-2">
+                    <button
+                      type="button"
+                      onClick={() => setShowPreview(!showPreview)}
+                      className="text-xs font-normal text-primary hover:underline"
+                    >
+                      {showPreview ? '📝 编辑' : '👁️ 预览'}
+                    </button>
+                    <span className="text-xs font-normal text-text-light">支持 Markdown</span>
+                  </div>
                 </label>
-                <textarea
-                  name="content"
-                  value={formData.content}
-                  onChange={handleInputChange}
-                  placeholder="输入文章的详细内容... 使用 ## 标题, - 列表等 Markdown 语法"
-                  rows="12"
-                  className="w-full p-4 rounded-xl border border-border-color bg-white/50 focus:bg-white focus:border-primary outline-none transition-all font-mono text-sm leading-relaxed"
-                />
+                {showPreview ? (
+                  <div className="w-full p-4 rounded-xl border border-border-color bg-white min-h-[300px] max-h-[500px] overflow-y-auto">
+                    <MarkdownRenderer content={formData.content} />
+                  </div>
+                ) : (
+                  <textarea
+                    name="content"
+                    value={formData.content}
+                    onChange={handleInputChange}
+                    placeholder="输入文章的详细内容... 使用 ## 标题, - 列表等 Markdown 语法"
+                    rows="12"
+                    className="w-full p-4 rounded-xl border border-border-color bg-white/50 focus:bg-white focus:border-primary outline-none transition-all font-mono text-sm leading-relaxed"
+                  />
+                )}
               </div>
 
               <div className="flex justify-end gap-4 pt-4 border-t border-border-color">
@@ -471,20 +626,20 @@ function ArticleManager() {
       {/* Articles Table */}
       {!loading && !error && (
         <div className="glass rounded-2xl overflow-hidden shadow-sm animate-slide-up">
-          {articles.length > 0 ? (
+          {filteredArticles.length > 0 ? (
             <div className="overflow-x-auto">
               <table className="w-full text-left border-collapse">
                 <thead>
                   <tr className="bg-primary/5 border-b border-border-color text-text-secondary text-sm uppercase tracking-wider">
                     <th className="p-4 font-bold w-16">ID</th>
                     <th className="p-4 font-bold">文章标题</th>
-                    <th className="p-4 font-bold">分类</th>
+                    <th className="p-4 font-bold">分类 / 标签</th>
                     <th className="p-4 font-bold w-32">发布日期</th>
-                    <th className="p-4 font-bold w-32 text-center">操作</th>
+                    <th className="p-4 font-bold w-40 text-center">操作</th>
                   </tr>
                 </thead>
                 <tbody className="divide-y divide-border-color/50">
-                  {articles.map((article) => (
+                  {filteredArticles.map((article) => (
                     <tr key={article.id} className="hover:bg-white/40 transition-colors group">
                       <td className="p-4 text-text-light font-mono text-sm">#{article.id}</td>
                       <td className="p-4">
@@ -495,12 +650,30 @@ function ArticleManager() {
                         <span className="px-2 py-1 rounded-lg text-xs bg-white border border-border-color text-text-secondary whitespace-nowrap">
                           {article.category}
                         </span>
+                        {article.tags && article.tags.length > 0 && (
+                          <div className="flex flex-wrap gap-1 mt-1">
+                            {article.tags.slice(0, 3).map(tag => (
+                              <span key={tag} className="text-xs text-primary">#{tag}</span>
+                            ))}
+                            {article.tags.length > 3 && (
+                              <span className="text-xs text-text-light">+{article.tags.length - 3}</span>
+                            )}
+                          </div>
+                        )}
                       </td>
                       <td className="p-4 text-sm text-text-secondary whitespace-nowrap">
                         {article.date}
                       </td>
                       <td className="p-4">
                         <div className="flex justify-center gap-2 opacity-60 group-hover:opacity-100 transition-opacity">
+                          <Link
+                            to={`/article/${article.id}`}
+                            target="_blank"
+                            className="p-2 hover:bg-blue-100 text-blue-500 rounded-lg transition-colors"
+                            title="预览"
+                          >
+                            👁️
+                          </Link>
                           <button
                             onClick={() => handleEdit(article)}
                             className="p-2 hover:bg-primary/10 text-primary rounded-lg transition-colors"
@@ -525,12 +698,31 @@ function ArticleManager() {
           ) : (
             <div className="p-12 text-center">
               <div className="text-4xl mb-4 grayscale opacity-50">📝</div>
-              <p className="text-text-secondary mb-4">暂无文章，开始创作你的第一篇博客吧！</p>
-              <button onClick={handleAddNew} className="btn btn-primary">
-                ✨ 创建文章
-              </button>
+              {searchQuery ? (
+                <>
+                  <p className="text-text-secondary mb-4">没有找到匹配的文章</p>
+                  <button onClick={() => setSearchQuery('')} className="btn btn-secondary">
+                    🔄 清除搜索
+                  </button>
+                </>
+              ) : (
+                <>
+                  <p className="text-text-secondary mb-4">暂无文章，开始创作你的第一篇博客吧！</p>
+                  <button onClick={handleAddNew} className="btn btn-primary">
+                    ✨ 创建文章
+                  </button>
+                </>
+              )}
             </div>
           )}
+        </div>
+      )}
+
+      {/* 统计信息 */}
+      {!loading && !error && articles.length > 0 && (
+        <div className="mt-6 text-center text-sm text-text-secondary">
+          共 <span className="font-bold text-primary">{articles.length}</span> 篇文章
+          {searchQuery && ` · 当前显示 ${filteredArticles.length} 篇`}
         </div>
       )}
     </div>
