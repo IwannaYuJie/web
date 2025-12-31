@@ -1,4 +1,4 @@
-import React, { useState, useRef } from 'react'
+import { useState, useRef, useEffect } from 'react'
 
 /**
  * 图片生成页面组件
@@ -6,25 +6,25 @@ import React, { useState, useRef } from 'react'
  */
 function ImageGenerator() {
   // 状态管理
-  const [prompt, setPrompt] = useState('') 
-  const [uploadedImage, setUploadedImage] = useState(null) 
-  const [imagePreview, setImagePreview] = useState(null) 
-  const [sizeMode, setSizeMode] = useState('aspectRatio') 
-  const [aspectRatio, setAspectRatio] = useState([1, 1]) 
-  const [resolution, setResolution] = useState('2K') 
-  const [numImages, setNumImages] = useState(2) 
-  const [watermark, setWatermark] = useState(false) 
-  const [sequentialGeneration, setSequentialGeneration] = useState('disabled') 
-  const [loading, setLoading] = useState(false) 
-  const [error, setError] = useState(null) 
-  const [generatedImages, setGeneratedImages] = useState([]) 
-  const [usageInfo, setUsageInfo] = useState(null) 
-  const [selectedStyle, setSelectedStyle] = useState('') 
-  const [selectedTemplate, setSelectedTemplate] = useState('') 
-  const [imageHistory, setImageHistory] = useState([]) 
-  const [showHistory, setShowHistory] = useState(false) 
-  
-  const fileInputRef = useRef(null) 
+  const [prompt, setPrompt] = useState('')
+  const [uploadedImage, setUploadedImage] = useState(null)
+  const [imagePreview, setImagePreview] = useState(null)
+  const [sizeMode, setSizeMode] = useState('aspectRatio')
+  const [aspectRatio, setAspectRatio] = useState([1, 1])
+  const [resolution, setResolution] = useState('2K')
+  const [numImages, setNumImages] = useState(2)
+  const [watermark, setWatermark] = useState(false)
+  const [sequentialGeneration, setSequentialGeneration] = useState('disabled')
+  const [loading, setLoading] = useState(false)
+  const [error, setError] = useState(null)
+  const [generatedImages, setGeneratedImages] = useState([])
+  const [usageInfo, setUsageInfo] = useState(null)
+  const [selectedStyle, setSelectedStyle] = useState('')
+  const [selectedTemplate, setSelectedTemplate] = useState('')
+  const [imageHistory, setImageHistory] = useState([])
+  const [_showHistory, _setShowHistory] = useState(false)
+
+  const fileInputRef = useRef(null)
 
   // Options
   const aspectRatioOptions = [
@@ -68,7 +68,7 @@ function ImageGenerator() {
 
   const handleImageUpload = (e) => {
     const file = e.target.files[0]
-    if (!file) return
+    if (!file) {return}
     if (!file.type.startsWith('image/')) {
       setError('🐱 请上传图片文件哦！')
       return
@@ -90,7 +90,7 @@ function ImageGenerator() {
   const clearUploadedImage = () => {
     setUploadedImage(null)
     setImagePreview(null)
-    if (fileInputRef.current) fileInputRef.current.value = ''
+    if (fileInputRef.current) {fileInputRef.current.value = ''}
   }
 
   const applyTemplate = (template) => {
@@ -124,7 +124,7 @@ function ImageGenerator() {
     localStorage.setItem('imageHistory', JSON.stringify(newHistory))
   }
 
-  React.useEffect(() => {
+  useEffect(() => {
     const savedHistory = localStorage.getItem('imageHistory')
     if (savedHistory) {
       try { setImageHistory(JSON.parse(savedHistory)) } catch (e) { console.error(e) }
@@ -145,8 +145,8 @@ function ImageGenerator() {
     try {
       let finalPrompt = prompt
       const selectedStyleObj = artStyles.find(s => s.id === selectedStyle)
-      if (selectedStyleObj) finalPrompt = `${prompt}，${selectedStyleObj.prompt}`
-      if (sequentialGeneration === 'auto' && numImages > 1) finalPrompt = `${finalPrompt}。生成一组共${numImages}张连贯的图片`
+      if (selectedStyleObj) {finalPrompt = `${prompt}，${selectedStyleObj.prompt}`}
+      if (sequentialGeneration === 'auto' && numImages > 1) {finalPrompt = `${finalPrompt}。生成一组共${numImages}张连贯的图片`}
 
       const requestBody = {
         model: 'doubao-seedream-4-0-250828',
@@ -164,7 +164,7 @@ function ImageGenerator() {
         requestBody.sequential_image_generation = 'disabled'
       }
 
-      if (uploadedImage) requestBody.image = uploadedImage
+      if (uploadedImage) {requestBody.image = uploadedImage}
 
       const response = await fetch(API_ENDPOINT, {
         method: 'POST',
@@ -183,9 +183,13 @@ function ImageGenerator() {
         let buffer = ''
         const allImages = []
 
-        while (true) {
+        let reading = true
+        while (reading) {
           const { done, value } = await reader.read()
-          if (done) break
+          if (done) {
+            reading = false
+            break
+          }
           buffer += decoder.decode(value, { stream: true })
           const lines = buffer.split('\n')
           buffer = lines.pop() || ''
@@ -193,19 +197,19 @@ function ImageGenerator() {
           for (const line of lines) {
             if (line.startsWith('data: ')) {
               const jsonStr = line.slice(6).trim()
-              if (jsonStr === '[DONE]') continue
+              if (jsonStr === '[DONE]') {continue}
               try {
                 const data = JSON.parse(jsonStr)
                 if (data.type === 'image_generation.partial_succeeded' && data.url) {
                   allImages.push({ url: data.url, size: data.size, image_index: data.image_index })
                   setGeneratedImages(allImages.map((img, index) => ({ url: img.url, size: img.size, index: index + 1 })))
                 }
-                if (data.type === 'image_generation.completed') setUsageInfo(data.usage)
+                if (data.type === 'image_generation.completed') {setUsageInfo(data.usage)}
               } catch (e) { console.warn(e) }
             }
           }
         }
-        if (allImages.length === 0) throw new Error('未能生成图片')
+        if (allImages.length === 0) {throw new Error('未能生成图片')}
         saveToHistory(allImages.map((img, index) => ({ url: img.url, size: img.size, index: index + 1 })), finalPrompt)
       } else {
         const data = await response.json()
@@ -252,16 +256,16 @@ function ImageGenerator() {
       </header>
 
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
-        
+
         {/* Left Control Panel */}
         <div className="lg:col-span-1 space-y-6 animate-slide-up">
-          
+
           {/* Upload Area */}
           <div className="glass p-6 rounded-2xl">
              <h3 className="font-bold mb-4 flex items-center gap-2">
                <span>🖼️</span> 参考图片 (可选)
              </h3>
-             <div 
+             <div
                className={`
                  border-2 border-dashed border-primary/30 rounded-xl p-6 text-center transition-all cursor-pointer relative overflow-hidden
                  ${imagePreview ? 'bg-black/5' : 'bg-white/50 hover:bg-primary/5 hover:border-primary'}
@@ -271,7 +275,7 @@ function ImageGenerator() {
                 {imagePreview ? (
                   <>
                     <img src={imagePreview} alt="Preview" className="w-full h-48 object-contain rounded-lg" />
-                    <button 
+                    <button
                       onClick={(e) => { e.stopPropagation(); clearUploadedImage(); }}
                       className="absolute top-2 right-2 bg-red-500 text-white p-1 rounded-full shadow-md hover:bg-red-600"
                     >
@@ -294,7 +298,7 @@ function ImageGenerator() {
              <h3 className="font-bold flex items-center gap-2">
                <span>⚙️</span> 生成设置
              </h3>
-             
+
              {/* Size Mode */}
              <div className="space-y-2">
                <label className="text-xs font-bold text-text-light uppercase">尺寸模式</label>
@@ -344,13 +348,13 @@ function ImageGenerator() {
                   ))}
                 </div>
              )}
-             
+
              {/* Advanced Settings */}
              <div className="pt-4 border-t border-border-color space-y-4">
                <div className="flex items-center justify-between">
                  <span className="text-sm text-text-secondary">连续生成</span>
-                 <select 
-                   value={sequentialGeneration} 
+                 <select
+                   value={sequentialGeneration}
                    onChange={(e) => setSequentialGeneration(e.target.value)}
                    className="bg-white/50 border-none text-sm rounded-lg p-1 outline-none"
                  >
@@ -358,7 +362,7 @@ function ImageGenerator() {
                    <option value="auto">连贯多图</option>
                  </select>
                </div>
-               
+
                {sequentialGeneration === 'auto' && (
                  <div className="flex items-center justify-between">
                    <span className="text-sm text-text-secondary">数量</span>
@@ -375,7 +379,7 @@ function ImageGenerator() {
                    </div>
                  </div>
                )}
-               
+
                <label className="flex items-center gap-2 cursor-pointer">
                  <input type="checkbox" checked={watermark} onChange={(e) => setWatermark(e.target.checked)} className="accent-primary" />
                  <span className="text-sm text-text-secondary">添加水印 (Watermark)</span>
@@ -386,7 +390,7 @@ function ImageGenerator() {
 
         {/* Right Display Area */}
         <div className="lg:col-span-2 space-y-6 animate-slide-up" style={{ animationDelay: '0.1s' }}>
-           
+
            {/* Prompt Input */}
            <div className="glass p-6 rounded-2xl">
               <div className="mb-4 flex items-center justify-between">
@@ -395,17 +399,17 @@ function ImageGenerator() {
                 </h3>
                 <button onClick={resetForm} className="text-xs text-text-secondary hover:text-primary">🔄 重置所有</button>
               </div>
-              
+
               <div className="relative">
-                <textarea 
+                <textarea
                   value={prompt}
                   onChange={(e) => setPrompt(e.target.value)}
                   placeholder="描述你想象中的画面，越具体越好..."
                   className="w-full p-4 rounded-xl bg-white/50 border-2 border-transparent focus:border-primary/50 focus:bg-white outline-none transition-all resize-none min-h-[120px] text-text-color"
                 />
                 <div className="absolute bottom-3 right-3 flex gap-2">
-                   <button 
-                     onClick={generateImage} 
+                   <button
+                     onClick={generateImage}
                      disabled={loading || !prompt.trim()}
                      className="btn btn-primary px-6 py-2 shadow-lg disabled:opacity-50 disabled:cursor-not-allowed"
                    >
@@ -417,8 +421,8 @@ function ImageGenerator() {
               {/* Templates & Styles Pills */}
               <div className="mt-4 flex flex-wrap gap-2">
                  {promptTemplates.slice(0, 3).map(t => (
-                   <button 
-                     key={t.id} 
+                   <button
+                     key={t.id}
                      onClick={() => applyTemplate(t)}
                      className={`px-3 py-1 rounded-full text-xs border transition-all ${selectedTemplate === t.id ? 'bg-secondary text-white border-secondary' : 'bg-white/30 border-border-color hover:border-primary text-text-secondary'}`}
                    >
@@ -427,8 +431,8 @@ function ImageGenerator() {
                  ))}
                  <div className="w-px h-6 bg-border-color mx-2"></div>
                  {artStyles.slice(0, 4).map(s => (
-                   <button 
-                     key={s.id} 
+                   <button
+                     key={s.id}
                      onClick={() => applyStyle(s)}
                      className={`px-3 py-1 rounded-full text-xs border transition-all ${selectedStyle === s.id ? 'bg-accent text-white border-accent' : 'bg-white/30 border-border-color hover:border-primary text-text-secondary'}`}
                    >

@@ -1,5 +1,8 @@
-import React, { useState, useEffect } from 'react'
+import { useState, useEffect } from 'react'
 import { Link } from 'react-router-dom'
+
+// 橘猫心情数组 - 移到组件外部避免重复创建
+const CAT_MOODS = ['😺', '😸', '😹', '😻', '😼', '😽', '🙀', '😿', '😾']
 
 /**
  * 首页组件
@@ -10,7 +13,7 @@ function Home() {
   const [articles, setArticles] = useState([])
   const [articlesLoading, setArticlesLoading] = useState(true)
   const [articlesError, setArticlesError] = useState(null)
-  
+
   const [quote, setQuote] = useState(null)
   const [quoteLoading, setQuoteLoading] = useState(false)
   const [visitorCount, setVisitorCount] = useState(12345)
@@ -18,9 +21,7 @@ function Home() {
   const [selectedCategory, setSelectedCategory] = useState('全部')
   const [showBackToTop, setShowBackToTop] = useState(false)
 
-  // 橘猫心情数组
-  const catMoods = ['😺', '😸', '😹', '😻', '😼', '😽', '🙀', '😿', '😾']
-  const [catMood, setCatMood] = useState(catMoods[0])
+  const [catMood, setCatMood] = useState(CAT_MOODS[0])
 
   // 文章分类
   const categories = ['全部', 'Java核心', 'Spring框架', '微服务', '数据库', 'JVM', '中间件', '云原生', '架构设计', '搜索引擎', '持久层']
@@ -46,9 +47,9 @@ function Home() {
   useEffect(() => {
     fetchArticles()
     const timer = setInterval(() => setCurrentTime(new Date()), 1000)
-    const moodTimer = setInterval(() => setCatMood(catMoods[Math.floor(Math.random() * catMoods.length)]), 3000)
+    const moodTimer = setInterval(() => setCatMood(CAT_MOODS[Math.floor(Math.random() * CAT_MOODS.length)]), 3000)
     const countTimer = setInterval(() => setVisitorCount(prev => prev + Math.floor(Math.random() * 3)), 5000)
-    
+
     const handleScroll = () => setShowBackToTop(window.scrollY > 400)
     window.addEventListener('scroll', handleScroll)
 
@@ -83,7 +84,7 @@ function Home() {
     setArticlesLoading(true)
     try {
       const response = await fetch('/api/articles')
-      if (!response.ok) throw new Error('获取文章列表失败')
+      if (!response.ok) {throw new Error('获取文章列表失败')}
       const data = await response.json()
       setArticles(data)
     } catch (err) {
@@ -105,7 +106,7 @@ function Home() {
     } else {
       try {
         const response = await fetch('https://api.quotable.io/random')
-        if (!response.ok) throw new Error('Failed')
+        if (!response.ok) {throw new Error('Failed')}
         const data = await response.json()
         setQuote(data)
       } catch {
@@ -123,17 +124,17 @@ function Home() {
 
   const getGreeting = () => {
     const hour = currentTime.getHours()
-    if (hour < 6) return '🌙 夜深了，记得早点休息哦~'
-    if (hour < 9) return '🌅 早安！新的一天开始啦~'
-    if (hour < 12) return '☀️ 上午好！元气满满地工作吧~'
-    if (hour < 14) return '🍴 中午好！记得吃午饭哦~'
-    if (hour < 18) return '🌤️ 下午好！继续加油鸭~'
-    if (hour < 22) return '🌆 晚上好！今天辛苦啦~'
+    if (hour < 6) {return '🌙 夜深了，记得早点休息哦~'}
+    if (hour < 9) {return '🌅 早安！新的一天开始啦~'}
+    if (hour < 12) {return '☀️ 上午好！元气满满地工作吧~'}
+    if (hour < 14) {return '🍴 中午好！记得吃午饭哦~'}
+    if (hour < 18) {return '🌤️ 下午好！继续加油鸭~'}
+    if (hour < 22) {return '🌆 晚上好！今天辛苦啦~'}
     return '🌃 夜深了，早点休息吧~'
   }
 
-  const filteredArticles = selectedCategory === '全部' 
-    ? articles 
+  const filteredArticles = selectedCategory === '全部'
+    ? articles
     : articles.filter(article => article.category === selectedCategory)
 
   return (
@@ -161,7 +162,7 @@ function Home() {
             </a>
           </div>
         </div>
-        
+
         <div className="relative z-10 animate-bounce">
            <img src="/images/cat-avatar.png" alt="橘猫" className="w-48 h-48 md:w-64 md:h-64 rounded-full shadow-lg border-4 border-white/50 object-cover" />
         </div>
@@ -173,10 +174,10 @@ function Home() {
 
       {/* Main Grid Layout */}
       <div className="grid grid-cols-1 lg:grid-cols-12 gap-8">
-        
+
         {/* Left Content (Articles) - 8/12 */}
         <div className="lg:col-span-8 space-y-8">
-          
+
           {/* Web Templates Module */}
           <div className="glass p-6 rounded-2xl">
             <h2 className="text-2xl font-bold mb-6 flex items-center gap-2 text-primary">
@@ -184,7 +185,7 @@ function Home() {
             </h2>
             <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
               {webTemplates.map(template => (
-                <a 
+                <a
                   key={template.id}
                   href={template.link}
                   className="group p-4 rounded-xl bg-white/50 hover:bg-white transition-all border border-transparent hover:border-primary/30 hover:shadow-md flex items-start gap-4"
@@ -207,8 +208,8 @@ function Home() {
               <button
                 key={category}
                 className={`px-4 py-2 rounded-full text-sm font-medium transition-all ${
-                  selectedCategory === category 
-                    ? 'bg-primary text-white shadow-md' 
+                  selectedCategory === category
+                    ? 'bg-primary text-white shadow-md'
                     : 'bg-transparent text-text-secondary hover:bg-primary/10 hover:text-primary'
                 }`}
                 onClick={() => setSelectedCategory(category)}
@@ -233,8 +234,8 @@ function Home() {
               </div>
             ) : filteredArticles.length > 0 ? (
               filteredArticles.map((article, idx) => (
-                <Link 
-                  to={`/article/${article.id}`} 
+                <Link
+                  to={`/article/${article.id}`}
                   key={article.id}
                   className="card card-hover group block animate-slide-up"
                   style={{ animationDelay: `${idx * 0.1}s` }}
@@ -281,15 +282,15 @@ function Home() {
               <div className="mb-6 min-h-[100px] flex flex-col justify-center">
                 {quote ? (
                   <blockquote className="italic text-text-secondary">
-                    "{quote.content}"
+                    &ldquo;{quote.content}&rdquo;
                     <footer className="text-right mt-2 text-sm font-bold not-italic text-primary">— {quote.author}</footer>
                   </blockquote>
                 ) : (
                   <div className="text-center text-text-light text-sm">点击下方按钮获取灵感...</div>
                 )}
               </div>
-              <button 
-                onClick={fetchRandomQuote} 
+              <button
+                onClick={fetchRandomQuote}
                 disabled={quoteLoading}
                 className="w-full btn btn-secondary justify-center"
               >
@@ -341,7 +342,7 @@ function Home() {
       </div>
 
       {/* Back to Top */}
-      <button 
+      <button
         className={`fixed bottom-8 right-8 z-40 p-4 rounded-full bg-primary text-white shadow-lg transition-all transform hover:scale-110 ${showBackToTop ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-10 pointer-events-none'}`}
         onClick={scrollToTop}
         aria-label="返回顶部"

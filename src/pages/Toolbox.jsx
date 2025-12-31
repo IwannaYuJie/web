@@ -1,4 +1,4 @@
-import React from 'react';
+// React 17+ JSX 自动导入
 import { Link } from 'react-router-dom';
 
 function Toolbox() {

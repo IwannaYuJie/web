@@ -1,7 +1,7 @@
-import React, { useState, useEffect } from 'react'
+import { useState, useEffect, memo } from 'react'
 import './Footer.css'
 
-export default function Footer() {
+function Footer() {
   const [visitorCount, setVisitorCount] = useState(12345)
   const [currentTime, setCurrentTime] = useState(new Date())
 
@@ -51,3 +51,5 @@ export default function Footer() {
     </footer>
   )
 }
+
+export default memo(Footer)

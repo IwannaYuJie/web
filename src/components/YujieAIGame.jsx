@@ -1,13 +1,13 @@
-import React, { useState, useRef, useEffect } from 'react'
+import { useState, useRef, useEffect } from 'react'
 import './YujieAIGame.css'
 
 /**
  * 东北雨姐AI攻略游戏 💕
- * 
+ *
  * 玩家角色：从外国归来的黑人小哥
  * 目标：通过对话提升雨姐的好感度到100
  * AI模型：gemini-2.5-flash (通过七牛云API)
- * 
+ *
  * 雨姐人物设定（基于真实资料）:
  * - 本名常小雨，辽宁本溪人
  * - 性格豪爽、直率、幽默、接地气
@@ -41,7 +41,7 @@ function YujieAIGame() {
   const [messages, setMessages] = useState([])
   const [inputText, setInputText] = useState('')
   const [isAITyping, setIsAITyping] = useState(false)
-  
+
   // ===== 游戏统计 =====
   const [turnCount, setTurnCount] = useState(0) // 对话回合数
   const [startTime, setStartTime] = useState(null)
@@ -66,7 +66,7 @@ function YujieAIGame() {
   const startGame = () => {
     setGameState('playing')
     setStartTime(Date.now())
-    
+
     // 雨姐的开场白
     const openingMessage = {
       role: 'assistant',
@@ -75,7 +75,7 @@ function YujieAIGame() {
       affectionChange: 0,
       emotions: { ...emotions }
     }
-    
+
     setMessages([openingMessage])
   }
 
@@ -169,7 +169,7 @@ function YujieAIGame() {
    * 发送玩家消息
    */
   const handleSendMessage = async () => {
-    if (!inputText.trim() || isAITyping) return
+    if (!inputText.trim() || isAITyping) {return}
 
     const userMessage = {
       role: 'user',
@@ -257,7 +257,7 @@ function YujieAIGame() {
 
     } catch (error) {
       console.error('AI对话错误:', error)
-      
+
       // 错误处理：添加错误提示消息
       const errorMessage = {
         role: 'system',
@@ -265,7 +265,7 @@ function YujieAIGame() {
         timestamp: new Date().toLocaleTimeString('zh-CN'),
         isError: true
       }
-      
+
       setMessages(prev => [...prev, errorMessage])
       setIsAITyping(false)
     }
@@ -294,7 +294,7 @@ function YujieAIGame() {
           AI攻略：东北雨姐的心
           <span className="title-emoji">💕</span>
         </h1>
-        
+
         <div className="character-intro">
           <div className="character-card">
             <div className="character-avatar">🧔🏿</div>
@@ -380,18 +380,18 @@ function YujieAIGame() {
             <span className="affection-value">{affection}/100</span>
           </div>
           <div className="affection-bar-container">
-            <div 
-              className="affection-bar" 
-              style={{ 
+            <div
+              className="affection-bar"
+              style={{
                 width: `${affection}%`,
                 backgroundColor: affection >= 80 ? '#FF9F45' : affection >= 50 ? '#FFB366' : '#FFC999'
               }}
             />
           </div>
           <div className="affection-status">
-            {affection >= 86 ? '❤️ 极度亲密' : 
-             affection >= 61 ? '😊 热情友好' : 
-             affection >= 31 ? '🙂 普通朋友' : 
+            {affection >= 86 ? '❤️ 极度亲密' :
+             affection >= 61 ? '😊 热情友好' :
+             affection >= 31 ? '🙂 普通朋友' :
              '😐 陌生冷淡'}
           </div>
         </div>
@@ -437,8 +437,8 @@ function YujieAIGame() {
       <div className="chat-container">
         <div className="messages-area">
           {messages.map((msg, index) => (
-            <div 
-              key={index} 
+            <div
+              key={index}
               className={`message ${msg.role} ${msg.isError ? 'error-message' : ''}`}
             >
               <div className="message-avatar">
@@ -454,7 +454,7 @@ function YujieAIGame() {
                 <div className="message-text">{msg.content}</div>
                 {msg.affectionChange !== undefined && msg.affectionChange !== 0 && (
                   <div className="affection-change">
-                    {msg.affectionChange > 0 ? '💗' : '💔'} 好感度 
+                    {msg.affectionChange > 0 ? '💗' : '💔'} 好感度
                     {msg.affectionChange > 0 ? '+' : ''}{msg.affectionChange}
                   </div>
                 )}
@@ -488,8 +488,8 @@ function YujieAIGame() {
             disabled={isAITyping}
             rows={3}
           />
-          <button 
-            className="send-btn" 
+          <button
+            className="send-btn"
             onClick={handleSendMessage}
             disabled={!inputText.trim() || isAITyping}
           >
@@ -516,9 +516,9 @@ function YujieAIGame() {
               <div className="ending-icon success">🎉💕✨</div>
               <h1 className="ending-title success">攻略成功！</h1>
               <p className="ending-message">
-                "哎呀妈呀，没想到你这黑小伙儿还挺有意思的！<br/>
+                &ldquo;哎呀妈呀，没想到你这黑小伙儿还挺有意思的！<br/>
                 俺雨姐这辈子头一回遇到像你这样的人！<br/>
-                以后常来俺这儿玩啊，姐给你整好吃的！"<br/>
+                以后常来俺这儿玩啊，姐给你整好吃的！&rdquo;<br/>
                 <br/>
                 <strong>——雨姐眼里闪着光，脸上洋溢着真诚的笑容</strong>
               </p>
@@ -528,9 +528,9 @@ function YujieAIGame() {
               <div className="ending-icon failure">😢💔</div>
               <h1 className="ending-title failure">攻略失败...</h1>
               <p className="ending-message">
-                "得得得，你这人不行啊！<br/>
+                &ldquo;得得得，你这人不行啊！<br/>
                 跟俺不是一路的，你还是回你那儿去吧！<br/>
-                俺雨姐忙着呢，没工夫搭理你！"<br/>
+                俺雨姐忙着呢，没工夫搭理你！&rdquo;<br/>
                 <br/>
                 <strong>——雨姐转身离开，没再回头...</strong>
               </p>

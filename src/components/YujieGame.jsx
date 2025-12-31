@@ -1,20 +1,20 @@
-import React, { useState, useEffect, useRef } from 'react'
+import { useState, useRef } from 'react'
 import './YujieGame.css'
 import gameData from '../data/yujieGameData'
 import gameEvents from '../data/yujieGameEvents'
 
 /**
  * 雨姐的心动时刻 - 重制版核心引擎
- * 
+ *
  * 这是一个基于状态机的Galgame引擎
  * 包含：剧情播放、选项分支、好感度系统、结局判定
  */
 const YujieGame = () => {
   // ==================== 状态定义 ====================
-  
+
   // 游戏阶段: 'start' | 'playing' | 'ending'
   const [gamePhase, setGamePhase] = useState('start')
-  
+
   // 玩家属性
   const [stats, setStats] = useState({
     affection: 0,      // 雨姐好感度
@@ -23,12 +23,12 @@ const YujieGame = () => {
     money: 100,        // 初始资金
     items: []          // 物品栏
   })
-  
+
   // 当前剧情状态
   const [currentEventId, setCurrentEventId] = useState('event_arrival')
   const [dialogueIndex, setDialogueIndex] = useState(0)
-  const [history, setHistory] = useState([]) // 记录选择历史
-  
+  const [_history, setHistory] = useState([]) // 记录选择历史 (unused but for future)
+
   // 结局数据
   const [endingId, setEndingId] = useState(null)
 
@@ -63,7 +63,7 @@ const YujieGame = () => {
 
   // 处理点击继续剧情
   const handleContinue = () => {
-    if (!currentEvent.dialogue) return
+    if (!currentEvent.dialogue) {return}
 
     if (dialogueIndex < currentEvent.dialogue.length - 1) {
       setDialogueIndex(prev => prev + 1)
@@ -106,19 +106,19 @@ const YujieGame = () => {
 
   // 检查选项条件
   const checkCondition = (condition) => {
-    if (!condition) return true
-    
-    if (condition.minAffection && stats.affection < condition.minAffection) return false
-    if (condition.maxAffection && stats.affection > condition.maxAffection) return false
-    if (condition.minAlert && stats.laokuaiAlert < condition.minAlert) return false
-    if (condition.maxAlert && stats.laokuaiAlert > condition.maxAlert) return false
-    if (condition.hasItem && !stats.items.includes(condition.hasItem)) return false
+    if (!condition) {return true}
+
+    if (condition.minAffection && stats.affection < condition.minAffection) {return false}
+    if (condition.maxAffection && stats.affection > condition.maxAffection) {return false}
+    if (condition.minAlert && stats.laokuaiAlert < condition.minAlert) {return false}
+    if (condition.maxAlert && stats.laokuaiAlert > condition.maxAlert) {return false}
+    if (condition.hasItem && !stats.items.includes(condition.hasItem)) {return false}
     // 检查是否拥有所有物品 (用于隐藏结局)
     if (condition.hasAllItems) {
        // 简单检查数量，假设至少收集4个核心物品
-       if (stats.items.length < 4) return false 
+       if (stats.items.length < 4) {return false}
     }
-    
+
     return true
   }
 
@@ -128,8 +128,8 @@ const YujieGame = () => {
     setGamePhase('ending')
   }
 
-  // 获取角色图片
-  const getCharacterImage = (charId) => {
+  // 获取角色图片 (预留，未来扩展用)
+  const _getCharacterImage = (charId) => {
     const char = gameData.characters[charId]
     return char ? `/images/${char.avatar}` : null
   }
@@ -190,7 +190,7 @@ const YujieGame = () => {
             <div className="ending-text">
               <p>{ending.text}</p>
             </div>
-            
+
             <div className="ending-stats">
               <div className="stat-item">
                 <span className="stat-label">最终好感度</span>
@@ -213,11 +213,11 @@ const YujieGame = () => {
 
   // 2. 游戏主界面 (Playing)
   const currentDialogue = currentEvent.dialogue ? currentEvent.dialogue[dialogueIndex] : null
-  
+
   // 如果对话还没完，或者当前是最后一句且还没有显示选项，则显示继续
   // 如果对话完了，就显示选项
   const showChoices = dialogueIndex >= (currentEvent.dialogue?.length || 0) - 1
-  
+
   // 当前正在说话的角色
   const speaker = currentDialogue ? gameData.characters[currentDialogue.character] : null
 
@@ -233,8 +233,8 @@ const YujieGame = () => {
           <span className="status-icon">❤️</span>
           <span>雨姐好感度</span>
           <div className="status-bar">
-            <div 
-              className="status-fill affection" 
+            <div
+              className="status-fill affection"
               style={{width: `${Math.min(stats.affection, 100)}%`}}
             ></div>
           </div>
@@ -243,8 +243,8 @@ const YujieGame = () => {
           <span className="status-icon">👀</span>
           <span>老蒯警觉度</span>
           <div className="status-bar">
-            <div 
-              className="status-fill alert" 
+            <div
+              className="status-fill alert"
               style={{width: `${Math.min(stats.laokuaiAlert, 100)}%`}}
             ></div>
           </div>
@@ -254,14 +254,14 @@ const YujieGame = () => {
       {/* 游戏主舞台 */}
       <div className="game-main-area">
         {/* 背景层 */}
-        <div 
+        <div
           className="scene-background"
-          style={{ 
+          style={{
             backgroundImage: getSceneImage(currentEvent.scene) ? `url(${getSceneImage(currentEvent.scene)})` : 'none',
             backgroundColor: '#333' // Fallback
           }}
         ></div>
-        
+
         {/* 遮罩层 (让文字更清晰) */}
         <div className="scene-overlay"></div>
 
@@ -275,8 +275,8 @@ const YujieGame = () => {
           <div className="character-area">
             <div className="character-sprite">
               {/* 暂时使用占位符，实际应加载 speaker.avatar */}
-               <img 
-                src={`/images/${speaker.avatar}`} 
+               <img
+                src={`/images/${speaker.avatar}`}
                 alt={speaker.name}
                 className="character-image"
                 onError={(e) => {e.target.style.display='none'}} //如果图片不存在隐藏
@@ -299,8 +299,8 @@ const YujieGame = () => {
               <div className="dialogue-header">
                 <div className="character-avatar">
                   {/* 头像 */}
-                  <img 
-                    src={`/images/${speaker?.avatar}`} 
+                  <img
+                    src={`/images/${speaker?.avatar}`}
                     alt={speaker?.name}
                     onError={(e) => {e.target.src = 'https://placehold.co/60x60?text=?'}}
                   />
@@ -310,7 +310,7 @@ const YujieGame = () => {
               <div className="dialogue-text">
                 {currentDialogue.text}
               </div>
-              
+
               {/* 继续按钮 (如果不是最后一句，或者还没显示选项) */}
               {!showChoices ? (
                 <div className="dialogue-continue" onClick={handleContinue}>
@@ -324,18 +324,18 @@ const YujieGame = () => {
                    {currentEvent.choices && currentEvent.choices
                      .filter(choice => checkCondition(choice.condition))
                      .map((choice, idx) => (
-                     <button 
-                      key={choice.id} 
+                     <button
+                      key={choice.id}
                       className="choice-button"
                       onClick={() => handleChoice(choice)}
                     >
                       <span className="choice-number">{idx + 1}</span>
                       <span className="choice-text">{choice.text}</span>
                       {/* 调试模式下显示效果，正式版可隐藏 */}
-                      {/* 
+                      {/*
                       <div className="choice-effects">
                         {choice.effects?.affection > 0 && <span className="effect-positive">好感+{choice.effects.affection}</span>}
-                      </div> 
+                      </div>
                       */}
                     </button>
                    ))}
@@ -348,8 +348,8 @@ const YujieGame = () => {
                 {currentEvent.choices && currentEvent.choices
                   .filter(choice => checkCondition(choice.condition))
                   .map((choice, idx) => (
-                   <button 
-                    key={choice.id} 
+                   <button
+                    key={choice.id}
                     className="choice-button"
                     onClick={() => handleChoice(choice)}
                   >

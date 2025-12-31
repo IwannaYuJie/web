@@ -1,4 +1,4 @@
-import React, { useEffect, useMemo, useRef, useState } from 'react'
+import { useEffect, useMemo, useRef, useState } from 'react'
 import { fal } from '@fal-ai/client'
 import './SeedreamStudio.css'
 
@@ -34,9 +34,9 @@ function SeedreamStudio() {
   const [showQiniuParamsPanel, setShowQiniuParamsPanel] = useState(false)
   const [activeApi, setActiveApi] = useState('qiniu')
   const [playgroundMode, setPlaygroundMode] = useState('list') // 'list' | 'random-coser'
-  
+
   // 新增模型选择与参数状态
-  const [modelType, setModelType] = useState('v4.5') // 'v4' | 'v4.5' | 'new' | 'z-image-turbo'
+  const [modelType, setModelType] = useState('v4') // 'v4' | 'v4.5' | 'new' | 'z-image-turbo'
   const [aspectRatio, setAspectRatio] = useState('1:1')
   const [resolution, setResolution] = useState('2K')
   const [outputFormat, setOutputFormat] = useState('png')
@@ -46,7 +46,7 @@ function SeedreamStudio() {
   const [zImageStrength, setZImageStrength] = useState(0.6)
 
   // 七牛文生图参数
-  const [qiniuModel, setQiniuModel] = useState('gemini-3.0-pro-image-preview')
+  const [qiniuModel, _setQiniuModel] = useState('gemini-3.0-pro-image-preview')
   const [qiniuPrompt, setQiniuPrompt] = useState('')
   const [qiniuCount, setQiniuCount] = useState(1)
   const [qiniuImageSize, setQiniuImageSize] = useState('2K')
@@ -103,8 +103,8 @@ function SeedreamStudio() {
   const handleGenerateRandomPrompt = async (target) => {
     setRandomPromptLoading(true)
     // 清除之前的错误信息
-    if (target === 'fal') setError('')
-    else setQiniuError('')
+    if (target === 'fal') {setError('')}
+    else {setQiniuError('')}
 
     // 获取当前输入框的内容作为基础
     let currentInput = ''
@@ -140,8 +140,8 @@ function SeedreamStudio() {
     } catch (err) {
       console.error('随机提示词生成失败:', err)
       const errorMsg = '😿 随机提示词生成失败，请稍后重试'
-      if (target === 'fal') setError(errorMsg)
-      else setQiniuError(errorMsg)
+      if (target === 'fal') {setError(errorMsg)}
+      else {setQiniuError(errorMsg)}
     } finally {
       setRandomPromptLoading(false)
     }
@@ -157,14 +157,14 @@ function SeedreamStudio() {
 
     if (!trimmedInput) {
       const emptyMessage = '😿 先写点想法再让我优化吧'
-      if (target === 'fal') setError(emptyMessage)
-      else setQiniuError(emptyMessage)
+      if (target === 'fal') {setError(emptyMessage)}
+      else {setQiniuError(emptyMessage)}
       return
     }
 
     setOptimizePromptLoading(true)
-    if (target === 'fal') setError('')
-    else setQiniuError('')
+    if (target === 'fal') {setError('')}
+    else {setQiniuError('')}
 
     try {
       const response = await fetch('/api/coser-optimize', {
@@ -192,8 +192,8 @@ function SeedreamStudio() {
     } catch (err) {
       console.error('提示词优化失败:', err)
       const errorMsg = '😿 提示词优化失败，请稍后重试'
-      if (target === 'fal') setError(errorMsg)
-      else setQiniuError(errorMsg)
+      if (target === 'fal') {setError(errorMsg)}
+      else {setQiniuError(errorMsg)}
     } finally {
       setOptimizePromptLoading(false)
     }
@@ -273,10 +273,10 @@ function SeedreamStudio() {
       console.warn('图片列表不是数组:', imageList)
       return []
     }
-    
+
     return imageList.map((item, index) => {
       console.log(`处理图片 ${index + 1}:`, item)
-      
+
       // 优先使用 url 字段
       if (item?.url) {
         console.log(`图片 ${index + 1} 使用 URL 模式:`, item.url)
@@ -387,14 +387,14 @@ function SeedreamStudio() {
       const response = await fetch(imageSrc)
       const blob = await response.blob()
       const blobUrl = URL.createObjectURL(blob)
-      
+
       const link = document.createElement('a')
       link.href = blobUrl
       link.download = fileName
       document.body.appendChild(link)
       link.click()
       document.body.removeChild(link)
-      
+
       // 清理 Blob URL
       URL.revokeObjectURL(blobUrl)
     } catch (err) {
@@ -652,10 +652,10 @@ function SeedreamStudio() {
       } else if (modelType === 'z-image-turbo') {
         // Z-Image Turbo 模型配置
         const isZImageEdit = mode === 'edit'
-        modelId = isZImageEdit 
+        modelId = isZImageEdit
           ? 'fal-ai/z-image/turbo/image-to-image'
           : 'fal-ai/z-image/turbo'
-        
+
         inputPayload = {
           prompt: prompt.trim(),
           image_size: imageSizeInput || (isZImageEdit ? 'auto' : 'landscape_4_3'),
@@ -1247,7 +1247,7 @@ function SeedreamStudio() {
       if (firstImage?.url) {
         return { src: firstImage.url, downloadName: 'coser_fal.png' }
       }
-      
+
       const base64 = firstImage?.base64 || firstImage?.b64_json || firstImage?.content
       if (base64) {
         return { src: `data:image/png;base64,${base64}`, downloadName: 'coser_fal.png' }
@@ -1350,7 +1350,7 @@ function SeedreamStudio() {
           <div className="seedream-layout">
             <section className="seedream-panel" aria-label="生成设置面板">
             <div className="panel-card collapsible">
-              <button 
+              <button
                 type="button"
                 className="collapse-header"
                 onClick={() => setShowApiKeyPanel(!showApiKeyPanel)}
@@ -1558,7 +1558,7 @@ function SeedreamStudio() {
             )}
 
             <div className="panel-card collapsible">
-              <button 
+              <button
                 type="button"
                 className="collapse-header"
                 onClick={() => setShowParamsPanel(!showParamsPanel)}
@@ -1807,8 +1807,8 @@ function SeedreamStudio() {
             {error && <p className="error-banner" role="alert">{error}</p>}
           </section>
 
-            <section 
-              className={`seedream-output ${!loading && images.length === 0 ? 'mobile-hidden' : ''}`} 
+            <section
+              className={`seedream-output ${!loading && images.length === 0 ? 'mobile-hidden' : ''}`}
               aria-label="生成结果区域"
             >
               <div className="output-card">
@@ -1974,7 +1974,7 @@ function SeedreamStudio() {
 
               {/* 高级参数折叠面板，集中放置所有可选字段 */}
               <div className="panel-card collapsible">
-                <button 
+                <button
                   type="button"
                   className="collapse-header"
                   onClick={() => setShowQiniuParamsPanel(!showQiniuParamsPanel)}
@@ -2366,8 +2366,8 @@ function SeedreamStudio() {
             {playgroundMode === 'list' ? (
               <div className="playground-list-container">
                 <div className="playground-grid">
-                  <div 
-                    className="playground-card" 
+                  <div
+                    className="playground-card"
                     onClick={() => setPlaygroundMode('random-coser')}
                     role="button"
                     tabIndex={0}
@@ -2391,8 +2391,8 @@ function SeedreamStudio() {
             ) : (
               <div className="playground-content-wrapper">
                 <div className="playground-header">
-                  <button 
-                    className="back-button" 
+                  <button
+                    className="back-button"
                     onClick={() => setPlaygroundMode('list')}
                   >
                     ← 返回玩法列表

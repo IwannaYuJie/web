@@ -1,17 +1,17 @@
-import React, { useState, useRef, useEffect } from 'react';
+import { useState, useRef, useEffect } from 'react';
 import GIF from 'gif.js/dist/gif';
 import './SpriteSheetToGif.css';
 
 function SpriteSheetToGif() {
   const [image, setImage] = useState(null);
-  const [imageFile, setImageFile] = useState(null);
+  const [_imageFile, setImageFile] = useState(null);
   const [cols, setCols] = useState(4);
   const [rows, setRows] = useState(1);
   const [fps, setFps] = useState(10);
   const [isPlaying, setIsPlaying] = useState(true);
   const [isGenerating, setIsGenerating] = useState(false);
   const [generatedGif, setGeneratedGif] = useState(null);
-  
+
   const gridCanvasRef = useRef(null);
   const previewCanvasRef = useRef(null);
   const animationRef = useRef(null);
@@ -20,8 +20,8 @@ function SpriteSheetToGif() {
   // Handle Image Upload
   const handleImageUpload = (e) => {
     const file = e.target.files?.[0];
-    if (!file) return;
-    
+    if (!file) {return;}
+
     const reader = new FileReader();
     reader.onload = (event) => {
       const img = new Image();
@@ -42,11 +42,11 @@ function SpriteSheetToGif() {
 
   // Draw Grid View
   useEffect(() => {
-    if (!image || !gridCanvasRef.current) return;
+    if (!image || !gridCanvasRef.current) {return;}
 
     const canvas = gridCanvasRef.current;
     const ctx = canvas.getContext('2d');
-    
+
     // Resize canvas to fit image but keep aspect ratio if too big
     // For grid view, we might want to show the whole image scaled down if necessary
     // But for the tool to be precise, maybe scrollable is better.
@@ -83,7 +83,7 @@ function SpriteSheetToGif() {
 
   // Animation Preview Loop
   useEffect(() => {
-    if (!image || !previewCanvasRef.current) return;
+    if (!image || !previewCanvasRef.current) {return;}
 
     const canvas = previewCanvasRef.current;
     const ctx = canvas.getContext('2d');
@@ -94,7 +94,7 @@ function SpriteSheetToGif() {
     canvas.height = frameHeight;
 
     const totalFrames = cols * rows;
-    
+
     const renderFrame = () => {
       const currentFrame = frameIndexRef.current;
       const colIndex = currentFrame % cols;
@@ -124,12 +124,12 @@ function SpriteSheetToGif() {
     }
 
     return () => {
-      if (animationRef.current) clearInterval(animationRef.current);
+      if (animationRef.current) {clearInterval(animationRef.current);}
     };
   }, [image, cols, rows, fps, isPlaying]);
 
   const handleGenerateGif = () => {
-    if (!image) return;
+    if (!image) {return;}
     setIsGenerating(true);
 
     const gif = new GIF({
@@ -191,11 +191,11 @@ function SpriteSheetToGif() {
           <div className="tool-panel">
             <h3>🖼️ 1. 选择图像</h3>
             <label className="upload-area">
-              <input 
-                type="file" 
-                accept="image/png, image/jpeg" 
-                onChange={handleImageUpload} 
-                style={{ display: 'none' }} 
+              <input
+                type="file"
+                accept="image/png, image/jpeg"
+                onChange={handleImageUpload}
+                style={{ display: 'none' }}
               />
               <span className="upload-icon">📤</span>
               <p>点击或拖拽上传</p>
@@ -210,8 +210,8 @@ function SpriteSheetToGif() {
               <div className="setting-row">
                 <div className="setting-item">
                   <label>横向分割数 (列)</label>
-                  <input 
-                    type="number" 
+                  <input
+                    type="number"
                     className="setting-input"
                     value={cols}
                     min="1"
@@ -220,8 +220,8 @@ function SpriteSheetToGif() {
                 </div>
                 <div className="setting-item">
                   <label>纵向分割数 (行)</label>
-                  <input 
-                    type="number" 
+                  <input
+                    type="number"
                     className="setting-input"
                     value={rows}
                     min="1"
@@ -233,11 +233,11 @@ function SpriteSheetToGif() {
 
             <div className="setting-group">
               <label>动画速度 (FPS): {fps}</label>
-              <input 
-                type="range" 
-                min="1" 
-                max="60" 
-                value={fps} 
+              <input
+                type="range"
+                min="1"
+                max="60"
+                value={fps}
                 onChange={(e) => setFps(parseInt(e.target.value))}
                 style={{ width: '100%', accentColor: 'var(--primary-color)' }}
               />
@@ -265,15 +265,15 @@ function SpriteSheetToGif() {
           <div className="tool-panel">
             <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '1rem' }}>
               <h3 style={{ margin: 0 }}>▷ 3. 预览</h3>
-              <button 
-                className="control-btn" 
+              <button
+                className="control-btn"
                 onClick={() => setIsPlaying(!isPlaying)}
                 title={isPlaying ? "暂停" : "播放"}
               >
                 {isPlaying ? "⏸" : "▶"}
               </button>
             </div>
-            
+
             <div className="preview-box">
               {image ? (
                 <canvas ref={previewCanvasRef} style={{ maxWidth: '100%', maxHeight: '200px', objectFit: 'contain' }} />
@@ -299,8 +299,8 @@ function SpriteSheetToGif() {
               )}
             </div>
 
-            <button 
-              className="primary-button generate-btn" 
+            <button
+              className="primary-button generate-btn"
               onClick={handleGenerateGif}
               disabled={!image || isGenerating}
               style={{ opacity: (!image || isGenerating) ? 0.7 : 1, cursor: (!image || isGenerating) ? 'not-allowed' : 'pointer' }}
@@ -312,9 +312,9 @@ function SpriteSheetToGif() {
               <div style={{ marginTop: '1rem', textAlign: 'center', animation: 'fadeIn 0.5s' }}>
                 <p style={{ marginBottom: '0.5rem', color: 'var(--primary-color)', fontWeight: 'bold' }}>✨ 生成成功!</p>
                 <img src={generatedGif} alt="Generated GIF" style={{ maxWidth: '100%', border: '2px solid var(--primary-color)', borderRadius: 'var(--radius-sm)', marginBottom: '1rem' }} />
-                <a 
-                  href={generatedGif} 
-                  download="sprite-animation.gif" 
+                <a
+                  href={generatedGif}
+                  download="sprite-animation.gif"
                   className="secondary-button"
                   style={{ display: 'inline-block', textDecoration: 'none' }}
                 >

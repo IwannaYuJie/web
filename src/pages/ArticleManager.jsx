@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react'
+import { useState, useEffect } from 'react'
 import { Link } from 'react-router-dom'
 
 /**
@@ -21,7 +21,7 @@ function ArticleManager() {
     content: ''
   })
   const [submitting, setSubmitting] = useState(false)
-  
+
   // 权限状态
   const [adminKey, setAdminKey] = useState('')
   const [isAuthenticated, setIsAuthenticated] = useState(false)
@@ -38,8 +38,8 @@ function ArticleManager() {
   const handleLogin = async (e) => {
     e.preventDefault()
     const inputKey = e.target.elements.key.value
-    
-    if (!inputKey) return
+
+    if (!inputKey) {return}
 
     try {
       // 验证密码是否正确
@@ -73,7 +73,7 @@ function ArticleManager() {
         } else {
           alert(`验证失败：${errorMsg}`)
         }
-        
+
         e.target.elements.key.value = ''
         e.target.elements.key.focus()
       }
@@ -91,7 +91,7 @@ function ArticleManager() {
 
   // 文章分类选项
   const categories = [
-    'Java核心', 'Spring框架', '微服务', '数据库', 'JVM', 
+    'Java核心', 'Spring框架', '微服务', '数据库', 'JVM',
     '中间件', '云原生', '架构设计', '搜索引擎', '持久层'
   ]
 
@@ -106,14 +106,14 @@ function ArticleManager() {
   const fetchArticles = async () => {
     setLoading(true)
     setError(null)
-    
+
     try {
       const response = await fetch('/api/articles')
-      
+
       if (!response.ok) {
         throw new Error('获取文章列表失败')
       }
-      
+
       const data = await response.json()
       setArticles(data)
     } catch (err) {
@@ -172,21 +172,21 @@ function ArticleManager() {
    */
   const handleSubmit = async (e) => {
     e.preventDefault()
-    
+
     // 表单验证
     if (!formData.title.trim() || !formData.description.trim() || !formData.readTime.trim()) {
       alert('请填写所有必填字段！')
       return
     }
-    
+
     setSubmitting(true)
-    
+
     try {
       // 使用查询参数而不是路径参数，避免被Cloudflare拦截
-      const url = editingArticle 
-        ? `/api/articles?id=${editingArticle.id}` 
+      const url = editingArticle
+        ? `/api/articles?id=${editingArticle.id}`
         : '/api/articles'
-      
+
       const response = await fetch(url, {
         method: editingArticle ? 'POST' : 'POST',
         headers: {
@@ -196,12 +196,12 @@ function ArticleManager() {
         },
         body: JSON.stringify(formData)
       })
-      
+
       if (response.status === 401) {
         handleLogout()
         throw new Error('密码错误或已过期，请重新登录')
       }
-      
+
       if (!response.ok) {
         let errorMessage = `HTTP ${response.status}: ${response.statusText}`
         try {
@@ -212,7 +212,7 @@ function ArticleManager() {
         }
         throw new Error(errorMessage)
       }
-      
+
       // 成功后刷新列表并关闭表单
       await fetchArticles()
       setShowForm(false)
@@ -232,7 +232,7 @@ function ArticleManager() {
     if (!confirm(`确定要删除文章《${article.title}》吗？`)) {
       return
     }
-    
+
     try {
       // 使用查询参数而不是路径参数，避免被Cloudflare拦截
       const response = await fetch(`/api/articles?id=${article.id}`, {
@@ -242,12 +242,12 @@ function ArticleManager() {
           'X-Admin-Key': adminKey
         }
       })
-      
+
       if (response.status === 401) {
         handleLogout()
         throw new Error('密码错误或已过期，请重新登录')
       }
-      
+
       if (!response.ok) {
         let errorMessage = `HTTP ${response.status}: ${response.statusText}`
         try {
@@ -258,7 +258,7 @@ function ArticleManager() {
         }
         throw new Error(errorMessage)
       }
-      
+
       // 成功后刷新列表
       await fetchArticles()
       alert('文章删除成功！')
@@ -284,10 +284,10 @@ function ArticleManager() {
           <h1 className="text-2xl font-bold mb-2 text-text-color">管理员验证</h1>
           <p className="text-text-secondary mb-6">请输入管理员密码以管理文章</p>
           <form onSubmit={handleLogin} className="space-y-4">
-            <input 
-              type="password" 
-              name="key" 
-              placeholder="输入密码..." 
+            <input
+              type="password"
+              name="key"
+              placeholder="输入密码..."
               className="w-full p-3 rounded-xl border border-border-color bg-white/50 focus:bg-white focus:border-primary outline-none transition-all text-center"
               autoFocus
             />
@@ -312,22 +312,22 @@ function ArticleManager() {
           <p className="text-text-secondary">管理你的Java技术文章库</p>
         </div>
         <div className="flex gap-3">
-          <button 
-            onClick={handleLogout} 
+          <button
+            onClick={handleLogout}
             className="btn btn-ghost text-text-light hover:text-red-500"
             title="退出登录"
           >
             🔒 退出
           </button>
-          <button 
-            onClick={fetchArticles} 
+          <button
+            onClick={fetchArticles}
             className="btn btn-secondary"
             disabled={loading}
           >
             🔄 刷新
           </button>
-          <button 
-            onClick={handleAddNew} 
+          <button
+            onClick={handleAddNew}
             className="btn btn-primary"
             disabled={showForm}
           >
@@ -346,7 +346,7 @@ function ArticleManager() {
               </h2>
               <button onClick={handleCancel} className="text-text-light hover:text-primary text-xl">✕</button>
             </div>
-            
+
             <form onSubmit={handleSubmit} className="p-6 space-y-6">
               <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                 <div className="space-y-2">
@@ -431,16 +431,16 @@ function ArticleManager() {
               </div>
 
               <div className="flex justify-end gap-4 pt-4 border-t border-border-color">
-                <button 
-                  type="button" 
+                <button
+                  type="button"
                   onClick={handleCancel}
                   className="btn btn-ghost"
                   disabled={submitting}
                 >
                   取消
                 </button>
-                <button 
-                  type="submit" 
+                <button
+                  type="submit"
                   className="btn btn-primary px-8"
                   disabled={submitting}
                 >
@@ -501,14 +501,14 @@ function ArticleManager() {
                       </td>
                       <td className="p-4">
                         <div className="flex justify-center gap-2 opacity-60 group-hover:opacity-100 transition-opacity">
-                          <button 
+                          <button
                             onClick={() => handleEdit(article)}
                             className="p-2 hover:bg-primary/10 text-primary rounded-lg transition-colors"
                             title="编辑"
                           >
                             ✏️
                           </button>
-                          <button 
+                          <button
                             onClick={() => handleDelete(article)}
                             className="p-2 hover:bg-red-100 text-red-500 rounded-lg transition-colors"
                             title="删除"

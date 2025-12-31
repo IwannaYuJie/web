@@ -1,4 +1,4 @@
-import React, { useState, useRef, useEffect } from 'react'
+import { useState, useRef, useEffect } from 'react'
 
 /**
  * AI对话组件
@@ -72,7 +72,7 @@ function AIChat() {
    * 发送消息到AI
    */
   const sendMessage = async () => {
-    if (!inputMessage.trim() || isLoading) return
+    if (!inputMessage.trim() || isLoading) {return}
 
     const userMessage = {
       role: 'user',
@@ -114,11 +114,11 @@ function AIChat() {
       })
     })
 
-    if (!response.ok) throw new Error(`API请求失败: ${response.status}`)
+    if (!response.ok) {throw new Error(`API请求失败: ${response.status}`)}
 
     const reader = response.body.getReader()
     const decoder = new TextDecoder()
-    let assistantMessage = {
+    const assistantMessage = {
       role: 'assistant',
       content: '',
       timestamp: new Date().toLocaleTimeString('zh-CN')
@@ -127,9 +127,13 @@ function AIChat() {
     setMessages(prev => [...prev, assistantMessage])
 
     try {
-      while (true) {
+      let reading = true
+      while (reading) {
         const { done, value } = await reader.read()
-        if (done) break
+        if (done) {
+          reading = false
+          break
+        }
 
         const chunk = decoder.decode(value)
         const lines = chunk.split('\n').filter(line => line.trim() !== '')
@@ -137,7 +141,7 @@ function AIChat() {
         for (const line of lines) {
           if (line.startsWith('data: ')) {
             const data = line.slice(6)
-            if (data === '[DONE]') continue
+            if (data === '[DONE]') {continue}
             try {
               const parsed = JSON.parse(data)
               const content = parsed.choices?.[0]?.delta?.content
@@ -173,7 +177,7 @@ function AIChat() {
       })
     })
 
-    if (!response.ok) throw new Error(`API请求失败: ${response.status}`)
+    if (!response.ok) {throw new Error(`API请求失败: ${response.status}`)}
 
     const data = await response.json()
     const assistantMessage = {
@@ -183,7 +187,7 @@ function AIChat() {
     }
 
     setMessages(prev => [...prev, assistantMessage])
-    if (data.usage) setTotalTokens(prev => prev + data.usage.total_tokens)
+    if (data.usage) {setTotalTokens(prev => prev + data.usage.total_tokens)}
   }
 
   const clearChat = () => {
@@ -204,7 +208,7 @@ function AIChat() {
   return (
     <div className="container h-[calc(100vh-80px)] flex flex-col md:flex-row gap-6 pb-6 animate-fade-in">
       {/* Mobile Toggle */}
-      <button 
+      <button
         className="md:hidden btn btn-secondary w-full mb-2"
         onClick={() => setIsSidebarOpen(!isSidebarOpen)}
       >
@@ -213,7 +217,7 @@ function AIChat() {
 
       {/* Sidebar - Model Selection */}
       <aside className={`
-        fixed inset-0 z-50 bg-bg-color/95 backdrop-blur-xl p-6 transition-transform duration-300 transform 
+        fixed inset-0 z-50 bg-bg-color/95 backdrop-blur-xl p-6 transition-transform duration-300 transform
         md:relative md:translate-x-0 md:w-80 md:bg-transparent md:backdrop-blur-none md:p-0 md:flex md:flex-col
         ${isSidebarOpen ? 'translate-x-0' : '-translate-x-full'}
       `}>
@@ -223,7 +227,7 @@ function AIChat() {
               <span>🎯</span> 模型控制台
             </h3>
           </div>
-          
+
           <div className="flex-1 overflow-y-auto p-4 space-y-6">
              {/* Model List */}
              <div className="space-y-2">
@@ -237,8 +241,8 @@ function AIChat() {
                    }}
                    className={`
                      p-3 rounded-xl cursor-pointer border transition-all
-                     ${selectedModel === model.id 
-                       ? 'bg-primary/10 border-primary shadow-sm' 
+                     ${selectedModel === model.id
+                       ? 'bg-primary/10 border-primary shadow-sm'
                        : 'bg-white/30 border-transparent hover:bg-white/60 hover:border-primary/30'}
                    `}
                  >
@@ -278,7 +282,7 @@ function AIChat() {
 
       {/* Chat Area */}
       <main className="flex-1 flex flex-col glass rounded-2xl overflow-hidden shadow-xl border border-white/20 relative">
-        
+
         {/* Header */}
         <div className="p-4 border-b border-white/10 bg-white/30 backdrop-blur-md flex justify-between items-center z-10">
            <div className="flex items-center gap-3">
@@ -297,9 +301,9 @@ function AIChat() {
               <span className="text-xs px-2 py-1 bg-white/50 rounded-md text-text-secondary hidden sm:block">
                  消耗 Tokens: {totalTokens}
               </span>
-              <button 
-                onClick={clearChat} 
-                className="p-2 hover:bg-red-100 text-red-500 rounded-lg transition-colors" 
+              <button
+                onClick={clearChat}
+                className="p-2 hover:bg-red-100 text-red-500 rounded-lg transition-colors"
                 title="清空对话"
               >
                 🗑️
@@ -314,10 +318,10 @@ function AIChat() {
                 <div className="text-6xl mb-4 animate-bounce">💬</div>
                 <h3 className="text-xl font-bold mb-2">开始新的对话</h3>
                 <p className="text-sm max-w-xs">选择一个模型，问我任何问题，比如代码生成、创意写作或知识问答。</p>
-                
+
                 <div className="mt-8 grid grid-cols-1 sm:grid-cols-2 gap-3 w-full max-w-lg px-4">
                   {['👋 介绍一下你自己', '💻 写一个快速排序', '🧠 什么是机器学习', '🎨 给我讲个故事'].map(hint => (
-                    <button 
+                    <button
                       key={hint}
                       onClick={() => setInputMessage(hint)}
                       className="p-3 bg-white/40 hover:bg-white/80 rounded-xl text-sm text-left transition-all border border-transparent hover:border-primary/30 hover:shadow-sm"
@@ -336,7 +340,7 @@ function AIChat() {
                  `}>
                    {msg.role === 'user' ? '👤' : '🤖'}
                  </div>
-                 
+
                  <div className={`flex flex-col gap-1 max-w-[80%] ${msg.role === 'user' ? 'items-end' : 'items-start'}`}>
                     <div className="flex items-center gap-2 text-xs text-text-light px-1">
                       <span>{msg.role === 'user' ? '你' : currentModel?.name}</span>
@@ -344,8 +348,8 @@ function AIChat() {
                     </div>
                     <div className={`
                       p-4 rounded-2xl shadow-sm leading-relaxed break-words text-sm md:text-base
-                      ${msg.role === 'user' 
-                        ? 'bg-gradient-to-br from-primary to-primary-hover text-white rounded-tr-none' 
+                      ${msg.role === 'user'
+                        ? 'bg-gradient-to-br from-primary to-primary-hover text-white rounded-tr-none'
                         : 'bg-white text-text-color rounded-tl-none border border-border-color'}
                     `}>
                       <div className="whitespace-pre-wrap font-sans">
@@ -387,8 +391,8 @@ function AIChat() {
                    disabled={isLoading || !inputMessage.trim()}
                    className={`
                      p-2.5 rounded-xl flex items-center justify-center transition-all
-                     ${isLoading || !inputMessage.trim() 
-                       ? 'bg-gray-200 text-gray-400 cursor-not-allowed' 
+                     ${isLoading || !inputMessage.trim()
+                       ? 'bg-gray-200 text-gray-400 cursor-not-allowed'
                        : 'bg-primary text-white shadow-md hover:bg-primary-hover hover:scale-105 active:scale-95'}
                    `}
                  >

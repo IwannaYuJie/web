@@ -17,10 +17,10 @@ function ArticleDetail() {
       setError(null)
       try {
         const response = await fetch('/api/articles')
-        if (!response.ok) throw new Error('获取文章失败')
+        if (!response.ok) {throw new Error('获取文章失败')}
         const articles = await response.json()
         const foundArticle = articles.find(a => a.id === parseInt(id))
-        if (!foundArticle) throw new Error('文章不存在')
+        if (!foundArticle) {throw new Error('文章不存在')}
         setArticle(foundArticle)
       } catch (err) {
         setError(err.message)

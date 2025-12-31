@@ -1,4 +1,4 @@
-import React from 'react'
+// React 17+ JSX 自动导入
 import Navbar from './Navbar'
 import Footer from './Footer'
 import { useLocation } from 'react-router-dom'
