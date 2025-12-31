@@ -27,8 +27,29 @@ function Home() {
 
   const [catMood, setCatMood] = useState(CAT_MOODS[0])
 
-  // 文章分类
-  const categories = ['全部', 'Java核心', 'Spring框架', '微服务', '数据库', 'JVM', '中间件', '云原生', '架构设计', '搜索引擎', '持久层']
+  // 动态生成文章分类 - 只显示有文章的分类
+  const categories = useMemo(() => {
+    if (!articles.length) return ['全部']
+    const categorySet = new Set()
+    articles.forEach(article => {
+      if (article.category) {
+        categorySet.add(article.category)
+      }
+    })
+    return ['全部', ...Array.from(categorySet).sort()]
+  }, [articles])
+
+  // 动态生成文章标签 - 只显示有文章使用的标签
+  const availableTags = useMemo(() => {
+    if (!articles.length) return []
+    const tagSet = new Set()
+    articles.forEach(article => {
+      if (article.tags && Array.isArray(article.tags)) {
+        article.tags.forEach(tag => tagSet.add(tag))
+      }
+    })
+    return Array.from(tagSet).sort()
+  }, [articles])
 
   // 编程智慧语录
   const catQuotes = [
@@ -261,22 +282,24 @@ function Home() {
               )}
             </div>
 
-            {/* 分类标签 */}
-            <div className="flex flex-wrap gap-2">
-              {categories.map(category => (
-                <button
-                  key={category}
-                  className={`px-4 py-2 rounded-full text-sm font-medium transition-all ${
-                    selectedCategory === category
-                      ? 'bg-primary text-white shadow-md'
-                      : 'bg-transparent text-text-secondary hover:bg-primary/10 hover:text-primary'
-                  }`}
-                  onClick={() => setSelectedCategory(category)}
-                >
-                  {category}
-                </button>
-              ))}
-            </div>
+            {/* 分类标签 - 只有多个分类时才显示 */}
+            {categories.length > 1 && (
+              <div className="flex flex-wrap gap-2">
+                {categories.map(category => (
+                  <button
+                    key={category}
+                    className={`px-4 py-2 rounded-full text-sm font-medium transition-all ${
+                      selectedCategory === category
+                        ? 'bg-primary text-white shadow-md'
+                        : 'bg-transparent text-text-secondary hover:bg-primary/10 hover:text-primary'
+                    }`}
+                    onClick={() => setSelectedCategory(category)}
+                  >
+                    {category}
+                  </button>
+                ))}
+              </div>
+            )}
 
             {/* 搜索结果统计 */}
             {(searchQuery || selectedCategory !== '全部') && (
