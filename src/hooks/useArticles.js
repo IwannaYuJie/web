@@ -1,4 +1,5 @@
 import { useState, useEffect, useMemo, useCallback } from 'react'
+import { fetchArticlesList, fetchArticleById, getLikedArticleIds, setLikedArticleIds } from '../services/articles'
 
 /**
  * 文章列表管理 Hook
@@ -28,11 +29,7 @@ export function useArticles(options = {}) {
     setError(null)
 
     try {
-      const response = await fetch('/api/articles')
-      if (!response.ok) {
-        throw new Error('获取文章列表失败')
-      }
-      const data = await response.json()
+      const data = await fetchArticlesList()
       setArticles(data)
     } catch (err) {
       console.error('获取文章失败:', err)
@@ -200,12 +197,14 @@ export function useArticle(id) {
 
   // 从 localStorage 读取点赞状态
   useEffect(() => {
-    const likedArticles = JSON.parse(localStorage.getItem('likedArticles') || '[]')
-    setLiked(likedArticles.includes(parseInt(id)))
+    const likedArticles = getLikedArticleIds()
+    setLiked(likedArticles.includes(parseInt(id, 10)))
   }, [id])
 
   // 获取文章详情
   useEffect(() => {
+    const controller = new AbortController()
+
     const fetchArticle = async () => {
       if (!id) {
         return
@@ -215,34 +214,36 @@ export function useArticle(id) {
       setError(null)
 
       try {
-        const response = await fetch(`/api/articles?id=${id}`)
-        if (!response.ok) {
-          throw new Error('获取文章失败')
-        }
-        const data = await response.json()
+        const data = await fetchArticleById(id, controller.signal)
         setArticle(data)
       } catch (err) {
+        if (err.name === 'AbortError') {
+          return
+        }
         console.error('获取文章详情失败:', err)
         setError(err.message)
       } finally {
-        setLoading(false)
+        if (!controller.signal.aborted) {
+          setLoading(false)
+        }
       }
     }
 
     fetchArticle()
+
+    return () => controller.abort()
   }, [id])
 
   // 点赞文章
   const toggleLike = useCallback(() => {
-    const likedArticles = JSON.parse(localStorage.getItem('likedArticles') || '[]')
-    const articleId = parseInt(id)
+    const likedArticles = getLikedArticleIds()
+    const articleId = parseInt(id, 10)
 
     if (liked) {
       const newLiked = likedArticles.filter(a => a !== articleId)
-      localStorage.setItem('likedArticles', JSON.stringify(newLiked))
-    } else {
-      likedArticles.push(articleId)
-      localStorage.setItem('likedArticles', JSON.stringify(likedArticles))
+      setLikedArticleIds(newLiked)
+    } else if (!likedArticles.includes(articleId)) {
+      setLikedArticleIds([...likedArticles, articleId])
     }
 
     setLiked(!liked)

@@ -1,6 +1,7 @@
-import { useState, useEffect, useMemo } from 'react'
+import { useState, useEffect, useMemo, useCallback } from 'react'
 import { Link } from 'react-router-dom'
 import Pagination from '../components/Pagination'
+import { fetchArticlesList } from '../services/articles'
 
 // 橘猫心情数组 - 移到组件外部避免重复创建
 const CAT_MOODS = ['😺', '😸', '😹', '😻', '😼', '😽', '🙀', '😿', '😾']
@@ -72,6 +73,19 @@ function Home() {
     { id: 4, title: '营销落地页', desc: '高转化率的产品推广落地页', icon: '🚀', link: '#' }
   ]
 
+  const fetchArticles = useCallback(async () => {
+    setArticlesLoading(true)
+    setArticlesError(null)
+    try {
+      const data = await fetchArticlesList()
+      setArticles(data)
+    } catch (err) {
+      setArticlesError(err.message)
+    } finally {
+      setArticlesLoading(false)
+    }
+  }, [])
+
   // 初始化数据
   useEffect(() => {
     fetchArticles()
@@ -82,21 +96,19 @@ function Home() {
     const handleScroll = () => setShowBackToTop(window.scrollY > 400)
     window.addEventListener('scroll', handleScroll)
 
-    // 修复 Google CSE 在 React 路由切换后不重新渲染的问题
     const initGCSE = () => {
       if (window.google && window.google.search && window.google.search.cse && window.google.search.cse.element) {
         try {
-          window.google.search.cse.element.go();
+          window.google.search.cse.element.go()
         } catch (e) {
-          console.warn('GCSE init error:', e);
+          console.warn('GCSE init error:', e)
         }
       }
-    };
-    // 延迟执行以确保 DOM 已挂载
-    const gcseTimer = setTimeout(initGCSE, 100);
-    // 轮询几次以确保脚本加载完成
-    const gcseInterval = setInterval(initGCSE, 1000);
-    const gcseStopTimer = setTimeout(() => clearInterval(gcseInterval), 5000);
+    }
+
+    const gcseTimer = setTimeout(initGCSE, 100)
+    const gcseInterval = setInterval(initGCSE, 1000)
+    const gcseStopTimer = setTimeout(() => clearInterval(gcseInterval), 5000)
 
     return () => {
       clearInterval(timer)
@@ -107,21 +119,7 @@ function Home() {
       clearTimeout(gcseTimer)
       window.removeEventListener('scroll', handleScroll)
     }
-  }, [])
-
-  const fetchArticles = async () => {
-    setArticlesLoading(true)
-    try {
-      const response = await fetch('/api/articles')
-      if (!response.ok) {throw new Error('获取文章列表失败')}
-      const data = await response.json()
-      setArticles(data)
-    } catch (err) {
-      setArticlesError(err.message)
-    } finally {
-      setArticlesLoading(false)
-    }
-  }
+  }, [fetchArticles])
 
   const fetchRandomQuote = async () => {
     setQuoteLoading(true)

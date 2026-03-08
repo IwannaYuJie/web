@@ -10,6 +10,40 @@ const QINIU_AI_API_KEY_DEV = process.env.QINIU_AI_API_KEY || 'YOUR_QINIU_AI_API_
 // 注意：所有测试示例文章已清空，可通过文章管理页面添加新文章
 let mockArticles = []
 
+
+function parseRequestMeta(req) {
+  const parsedUrl = new URL(req.url || '/', 'http://localhost')
+  const pathname = parsedUrl.pathname
+  const queryId = parsedUrl.searchParams.get('id')
+  const pathMatch = pathname.match(/^\/api\/articles\/(\d+)$/)
+
+  return {
+    pathname,
+    articleId: queryId || pathMatch?.[1] || null,
+    isAuthCheck: queryId === 'auth-check' || pathname === '/api/articles/auth-check',
+  }
+}
+
+function readRequestBody(req) {
+  return new Promise((resolve, reject) => {
+    let body = ''
+    req.on('data', chunk => { body += chunk })
+    req.on('end', () => {
+      if (!body) {
+        resolve({})
+        return
+      }
+
+      try {
+        resolve(JSON.parse(body))
+      } catch (error) {
+        reject(error)
+      }
+    })
+    req.on('error', reject)
+  })
+}
+
 // Vite 配置文件
 // https://vitejs.dev/config/
 export default defineConfig({
@@ -21,56 +55,55 @@ export default defineConfig({
       configureServer(server) {
         server.middlewares.use((req, res, next) => {
           const url = req.url || ''
-          
+          const { pathname, articleId, isAuthCheck } = parseRequestMeta(req)
+          let method = req.method || 'GET'
+          const methodOverride = req.headers['x-http-method-override']
+
+          if (method === 'POST' && methodOverride) {
+            method = String(methodOverride).toUpperCase()
+          }
+
           // 处理文章 API 请求
-          if (url.startsWith('/api/articles')) {
+          if (pathname.startsWith('/api/articles')) {
             res.setHeader('Content-Type', 'application/json')
             res.setHeader('Access-Control-Allow-Origin', '*')
             res.setHeader('Access-Control-Allow-Methods', 'GET, POST, PUT, DELETE, OPTIONS')
-            res.setHeader('Access-Control-Allow-Headers', 'Content-Type')
-            
-            // 处理 OPTIONS 预检请求
-            if (req.method === 'OPTIONS') {
+            res.setHeader('Access-Control-Allow-Headers', 'Content-Type, X-Admin-Key, X-HTTP-Method-Override')
+
+            if (method === 'OPTIONS') {
               res.statusCode = 204
               res.end()
               return
             }
 
-            // 简单的权限验证 (仅针对写操作)
-            if (['POST', 'PUT', 'DELETE'].includes(req.method)) {
-               const adminKey = req.headers['x-admin-key']
-               // 本地开发默认密码: 123456
-               
-               // 特殊处理：验证 Key 的请求
-               if (url === '/api/articles/auth-check') {
-                 if (adminKey === '123456') {
-                   res.statusCode = 200
-                   res.end(JSON.stringify({ status: 'ok', message: '验证通过' }))
-                 } else {
-                   res.statusCode = 401
-                   res.end(JSON.stringify({ error: '密码错误' }))
-                 }
-                 return
-               }
-
-               if (adminKey !== '123456') {
-                 res.statusCode = 401
-                 res.end(JSON.stringify({ error: '未授权的操作：密码错误' }))
-                 return
-               }
+            if (isAuthCheck && method === 'POST') {
+              if (req.headers['x-admin-key'] === '123456') {
+                res.statusCode = 200
+                res.end(JSON.stringify({ status: 'ok', message: '验证通过' }))
+              } else {
+                res.statusCode = 401
+                res.end(JSON.stringify({ error: '密码错误' }))
+              }
+              return
             }
-            
-            // GET /api/articles - 获取所有文章
-            if (req.method === 'GET' && url === '/api/articles') {
+
+            if (['POST', 'PUT', 'DELETE'].includes(method)) {
+              const adminKey = req.headers['x-admin-key']
+              if (adminKey !== '123456') {
+                res.statusCode = 401
+                res.end(JSON.stringify({ error: '未授权的操作：密码错误' }))
+                return
+              }
+            }
+
+            if (method === 'GET' && pathname === '/api/articles' && !articleId) {
               res.statusCode = 200
               res.end(JSON.stringify(mockArticles))
               return
             }
-            
-            // GET /api/articles/:id - 获取单篇文章
-            const getMatch = url.match(/^\/api\/articles\/(\d+)$/)
-            if (req.method === 'GET' && getMatch) {
-              const id = parseInt(getMatch[1])
+
+            if (method === 'GET' && articleId) {
+              const id = parseInt(articleId, 10)
               const article = mockArticles.find(a => a.id === id)
               if (article) {
                 res.statusCode = 200
@@ -81,36 +114,27 @@ export default defineConfig({
               }
               return
             }
-            
-            // POST /api/articles - 创建文章
-            if (req.method === 'POST' && url === '/api/articles') {
-              let body = ''
-              req.on('data', chunk => { body += chunk })
-              req.on('end', () => {
-                try {
-                  const newArticle = JSON.parse(body)
+
+            if (method === 'POST' && pathname === '/api/articles' && !articleId) {
+              readRequestBody(req)
+                .then((newArticle) => {
                   const maxId = mockArticles.length > 0 ? Math.max(...mockArticles.map(a => a.id)) : 0
-                  newArticle.id = maxId + 1
-                  mockArticles.push(newArticle)
+                  const article = { ...newArticle, id: maxId + 1 }
+                  mockArticles.push(article)
                   res.statusCode = 201
-                  res.end(JSON.stringify(newArticle))
-                } catch (error) {
+                  res.end(JSON.stringify(article))
+                })
+                .catch(() => {
                   res.statusCode = 400
                   res.end(JSON.stringify({ error: '无效的请求数据' }))
-                }
-              })
+                })
               return
             }
-            
-            // PUT /api/articles/:id - 更新文章
-            const putMatch = url.match(/^\/api\/articles\/(\d+)$/)
-            if (req.method === 'PUT' && putMatch) {
-              const id = parseInt(putMatch[1])
-              let body = ''
-              req.on('data', chunk => { body += chunk })
-              req.on('end', () => {
-                try {
-                  const updateData = JSON.parse(body)
+
+            if (method === 'PUT' && articleId) {
+              const id = parseInt(articleId, 10)
+              readRequestBody(req)
+                .then((updateData) => {
                   const index = mockArticles.findIndex(a => a.id === id)
                   if (index !== -1) {
                     mockArticles[index] = { ...mockArticles[index], ...updateData, id }
@@ -120,18 +144,16 @@ export default defineConfig({
                     res.statusCode = 404
                     res.end(JSON.stringify({ error: '文章不存在' }))
                   }
-                } catch (error) {
+                })
+                .catch(() => {
                   res.statusCode = 400
                   res.end(JSON.stringify({ error: '无效的请求数据' }))
-                }
-              })
+                })
               return
             }
-            
-            // DELETE /api/articles/:id - 删除文章
-            const deleteMatch = url.match(/^\/api\/articles\/(\d+)$/)
-            if (req.method === 'DELETE' && deleteMatch) {
-              const id = parseInt(deleteMatch[1])
+
+            if (method === 'DELETE' && articleId) {
+              const id = parseInt(articleId, 10)
               const index = mockArticles.findIndex(a => a.id === id)
               if (index !== -1) {
                 const deletedArticle = mockArticles.splice(index, 1)[0]
@@ -143,8 +165,7 @@ export default defineConfig({
               }
               return
             }
-            
-            // 不支持的方法
+
             res.statusCode = 405
             res.end(JSON.stringify({ error: '不支持的请求方法' }))
             return

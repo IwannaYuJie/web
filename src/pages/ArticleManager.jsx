@@ -1,6 +1,7 @@
 import { useState, useEffect } from 'react'
 import { Link } from 'react-router-dom'
 import MarkdownRenderer from '../components/MarkdownRenderer'
+import { clearStoredAdminKey, createArticle, deleteArticle, fetchArticlesList, getStoredAdminKey, saveAdminKey, updateArticle, verifyAdminKey } from '../services/articles'
 
 /**
  * 文章管理页面
@@ -34,7 +35,7 @@ function ArticleManager() {
 
   // 检查本地存储的密钥
   useEffect(() => {
-    const savedKey = localStorage.getItem('adminKey')
+    const savedKey = getStoredAdminKey()
     if (savedKey) {
       setAdminKey(savedKey)
       setIsAuthenticated(true)
@@ -52,26 +53,19 @@ function ArticleManager() {
     try {
       // 验证密码是否正确
       // Cloudflare Pages 只会将 /api/articles 精准路由到当前函数，因此通过查询参数传递 auth-check 标志
-      const response = await fetch('/api/articles?id=auth-check', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-          'X-Admin-Key': inputKey
-        }
-      })
+      const response = await verifyAdminKey(inputKey)
 
       if (response.ok) {
         setAdminKey(inputKey)
         setIsAuthenticated(true)
-        localStorage.setItem('adminKey', inputKey)
+        saveAdminKey(inputKey)
       } else {
         // 解析错误信息
         let errorMsg = '验证失败'
         try {
-          const data = await response.json()
-          errorMsg = data.error || errorMsg
+          errorMsg = response.data?.error || response.data?.message || errorMsg
         } catch (e) {
-          errorMsg = `HTTP ${response.status}: ${response.statusText}`
+          errorMsg = `HTTP ${response.status}`
         }
 
         if (response.status === 500) {
@@ -94,7 +88,7 @@ function ArticleManager() {
   const handleLogout = () => {
     setAdminKey('')
     setIsAuthenticated(false)
-    localStorage.removeItem('adminKey')
+    clearStoredAdminKey()
   }
 
   // 文章分类选项
@@ -116,13 +110,7 @@ function ArticleManager() {
     setError(null)
 
     try {
-      const response = await fetch('/api/articles')
-
-      if (!response.ok) {
-        throw new Error('获取文章列表失败')
-      }
-
-      const data = await response.json()
+      const data = await fetchArticlesList()
       setArticles(data)
     } catch (err) {
       console.error('获取文章失败:', err)
@@ -237,35 +225,18 @@ function ArticleManager() {
     setSubmitting(true)
 
     try {
-      // 使用查询参数而不是路径参数，避免被Cloudflare拦截
-      const url = editingArticle
-        ? `/api/articles?id=${editingArticle.id}`
-        : '/api/articles'
-
-      const response = await fetch(url, {
-        method: editingArticle ? 'POST' : 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-          'X-Admin-Key': adminKey,
-          ...(editingArticle && { 'X-HTTP-Method-Override': 'PUT' })
-        },
-        body: JSON.stringify(formData)
-      })
-
-      if (response.status === 401) {
-        handleLogout()
-        throw new Error('密码错误或已过期，请重新登录')
-      }
-
-      if (!response.ok) {
-        let errorMessage = `HTTP ${response.status}: ${response.statusText}`
-        try {
-          const errorData = await response.json()
-          errorMessage = errorData.error || errorMessage
-        } catch (e) {
-          // 如果响应不是JSON，使用状态码信息
+      try {
+        if (editingArticle) {
+          await updateArticle(editingArticle.id, formData, adminKey)
+        } else {
+          await createArticle(formData, adminKey)
         }
-        throw new Error(errorMessage)
+      } catch (err) {
+        if (err.message.includes('未授权') || err.message.includes('密码错误')) {
+          handleLogout()
+          throw new Error('密码错误或已过期，请重新登录')
+        }
+        throw err
       }
 
       // 成功后刷新列表并关闭表单
@@ -289,29 +260,14 @@ function ArticleManager() {
     }
 
     try {
-      // 使用查询参数而不是路径参数，避免被Cloudflare拦截
-      const response = await fetch(`/api/articles?id=${article.id}`, {
-        method: 'POST',
-        headers: {
-          'X-HTTP-Method-Override': 'DELETE',
-          'X-Admin-Key': adminKey
+      try {
+        await deleteArticle(article.id, adminKey)
+      } catch (err) {
+        if (err.message.includes('未授权') || err.message.includes('密码错误')) {
+          handleLogout()
+          throw new Error('密码错误或已过期，请重新登录')
         }
-      })
-
-      if (response.status === 401) {
-        handleLogout()
-        throw new Error('密码错误或已过期，请重新登录')
-      }
-
-      if (!response.ok) {
-        let errorMessage = `HTTP ${response.status}: ${response.statusText}`
-        try {
-          const errorData = await response.json()
-          errorMessage = errorData.error || errorMessage
-        } catch (e) {
-          // 如果响应不是JSON，使用状态码信息
-        }
-        throw new Error(errorMessage)
+        throw err
       }
 
       // 成功后刷新列表
