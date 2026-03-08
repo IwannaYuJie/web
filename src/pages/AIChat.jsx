@@ -1,4 +1,5 @@
 import { useState, useRef, useEffect } from 'react'
+import { consumeSSEStream } from '../utils'
 
 /**
  * AI对话组件
@@ -116,8 +117,6 @@ function AIChat() {
 
     if (!response.ok) {throw new Error(`API请求失败: ${response.status}`)}
 
-    const reader = response.body.getReader()
-    const decoder = new TextDecoder()
     const assistantMessage = {
       role: 'assistant',
       content: '',
@@ -127,36 +126,22 @@ function AIChat() {
     setMessages(prev => [...prev, assistantMessage])
 
     try {
-      let reading = true
-      while (reading) {
-        const { done, value } = await reader.read()
-        if (done) {
-          reading = false
-          break
-        }
-
-        const chunk = decoder.decode(value)
-        const lines = chunk.split('\n').filter(line => line.trim() !== '')
-
-        for (const line of lines) {
-          if (line.startsWith('data: ')) {
-            const data = line.slice(6)
-            if (data === '[DONE]') {continue}
-            try {
-              const parsed = JSON.parse(data)
-              const content = parsed.choices?.[0]?.delta?.content
-              if (content) {
-                assistantMessage.content += content
-                setMessages(prev => {
-                  const newMessages = [...prev]
-                  newMessages[newMessages.length - 1] = { ...assistantMessage }
-                  return newMessages
-                })
-              }
-            } catch (e) { console.error('Parse error:', e) }
+      await consumeSSEStream(response.body, async (data) => {
+        try {
+          const parsed = JSON.parse(data)
+          const content = parsed.choices?.[0]?.delta?.content
+          if (content) {
+            assistantMessage.content += content
+            setMessages(prev => {
+              const newMessages = [...prev]
+              newMessages[newMessages.length - 1] = { ...assistantMessage }
+              return newMessages
+            })
           }
+        } catch (e) {
+          console.error('Parse error:', e)
         }
-      }
+      })
     } catch (err) {
       throw new Error('流式传输中断')
     }
@@ -196,7 +181,7 @@ function AIChat() {
     setError(null)
   }
 
-  const handleKeyPress = (e) => {
+  const handleKeyDown = (e) => {
     if (e.key === 'Enter' && !e.shiftKey) {
       e.preventDefault()
       sendMessage()
@@ -378,7 +363,7 @@ function AIChat() {
               <textarea
                 value={inputMessage}
                 onChange={(e) => setInputMessage(e.target.value)}
-                onKeyPress={handleKeyPress}
+                onKeyDown={handleKeyDown}
                 placeholder="输入你的问题... (Shift+Enter 换行)"
                 className="w-full pl-4 pr-24 py-4 rounded-2xl border border-white/50 bg-white/80 focus:bg-white focus:border-primary focus:ring-2 focus:ring-primary/20 outline-none resize-none shadow-inner transition-all text-text-color"
                 rows={1}
