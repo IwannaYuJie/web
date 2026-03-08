@@ -1,5 +1,6 @@
 import { useState, useRef, useEffect } from 'react'
 import { consumeSSEStream } from '../utils'
+import { requestAiChat, requestAiChatStream } from '../services/ai'
 
 /**
  * AI对话组件
@@ -57,9 +58,6 @@ function AIChat() {
   const [isSidebarOpen, setIsSidebarOpen] = useState(false) // 移动端侧边栏状态
   const messagesEndRef = useRef(null)
 
-  // API配置 - 使用本地代理保护API Key
-  const API_ENDPOINT = '/api/ai-chat'
-
   // 自动滚动到底部
   const scrollToBottom = () => {
     messagesEndRef.current?.scrollIntoView({ behavior: 'smooth' })
@@ -104,18 +102,12 @@ function AIChat() {
    * 流式对话
    */
   const streamChat = async (chatMessages) => {
-    const response = await fetch(API_ENDPOINT, {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({
-        model: selectedModel,
-        messages: chatMessages.map(msg => ({ role: msg.role, content: msg.content })),
-        stream: true,
-        max_tokens: 4096
-      })
+    const response = await requestAiChatStream({
+      model: selectedModel,
+      messages: chatMessages.map(msg => ({ role: msg.role, content: msg.content })),
+      stream: true,
+      max_tokens: 4096
     })
-
-    if (!response.ok) {throw new Error(`API请求失败: ${response.status}`)}
 
     const assistantMessage = {
       role: 'assistant',
@@ -151,20 +143,12 @@ function AIChat() {
    * 非流式对话
    */
   const normalChat = async (chatMessages) => {
-    const response = await fetch(API_ENDPOINT, {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({
-        model: selectedModel,
-        messages: chatMessages.map(msg => ({ role: msg.role, content: msg.content })),
-        stream: false,
-        max_tokens: 4096
-      })
+    const data = await requestAiChat({
+      model: selectedModel,
+      messages: chatMessages.map(msg => ({ role: msg.role, content: msg.content })),
+      stream: false,
+      max_tokens: 4096
     })
-
-    if (!response.ok) {throw new Error(`API请求失败: ${response.status}`)}
-
-    const data = await response.json()
     const assistantMessage = {
       role: 'assistant',
       content: data.choices[0].message.content,

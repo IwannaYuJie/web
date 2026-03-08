@@ -1,4 +1,5 @@
 import { useState, useRef, useEffect } from 'react'
+import { generateArkImages } from '../services/images'
 
 /**
  * 图片生成页面组件
@@ -165,61 +166,14 @@ function ImageGenerator() {
 
       if (uploadedImage) {requestBody.image = uploadedImage}
 
-      const response = await fetch(API_ENDPOINT, {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify(requestBody)
+      const images = await generateArkImages(requestBody, {
+        endpoint: API_ENDPOINT,
+        onPartialImage: setGeneratedImages,
+        onUsage: setUsageInfo,
       })
 
-      if (!response.ok) {
-        const errorData = await response.json()
-        throw new Error(errorData.error?.message || '图片生成失败')
-      }
-
-      if (requestBody.stream) {
-        const reader = response.body.getReader()
-        const decoder = new TextDecoder()
-        let buffer = ''
-        const allImages = []
-
-        let reading = true
-        while (reading) {
-          const { done, value } = await reader.read()
-          if (done) {
-            reading = false
-            break
-          }
-          buffer += decoder.decode(value, { stream: true })
-          const lines = buffer.split('\n')
-          buffer = lines.pop() || ''
-
-          for (const line of lines) {
-            if (line.startsWith('data: ')) {
-              const jsonStr = line.slice(6).trim()
-              if (jsonStr === '[DONE]') {continue}
-              try {
-                const data = JSON.parse(jsonStr)
-                if (data.type === 'image_generation.partial_succeeded' && data.url) {
-                  allImages.push({ url: data.url, size: data.size, image_index: data.image_index })
-                  setGeneratedImages(allImages.map((img, index) => ({ url: img.url, size: img.size, index: index + 1 })))
-                }
-                if (data.type === 'image_generation.completed') {setUsageInfo(data.usage)}
-              } catch (e) { console.warn(e) }
-            }
-          }
-        }
-        if (allImages.length === 0) {throw new Error('未能生成图片')}
-        saveToHistory(allImages.map((img, index) => ({ url: img.url, size: img.size, index: index + 1 })), finalPrompt)
-      } else {
-        const data = await response.json()
-        if (data.data && data.data.length > 0) {
-          const images = data.data.map((img, index) => ({ url: img.url, size: img.size, index: index + 1 }))
-          setGeneratedImages(images)
-          saveToHistory(images, finalPrompt)
-        } else {
-          throw new Error('未能生成图片')
-        }
-      }
+      setGeneratedImages(images)
+      saveToHistory(images, finalPrompt)
     } catch (err) {
       let errorMessage = err.message
       if (err.message.includes('524') || err.message.includes('timeout')) {

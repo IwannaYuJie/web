@@ -1,4 +1,5 @@
 import { useState, useRef, useEffect } from 'react'
+import { requestAiChat } from '../services/ai'
 import './YujieAIGame.css'
 
 /**
@@ -184,33 +185,21 @@ function YujieAIGame() {
 
     try {
       // 调用七牛云AI API（gemini-2.5-flash）
-      const response = await fetch('/api/ai-chat', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json'
-        },
-        body: JSON.stringify({
-          model: 'gemini-2.5-flash',
-          messages: [
-            {
-              role: 'system',
-              content: buildSystemPrompt()
-            },
-            {
-              role: 'user',
-              content: userMessage.content
-            }
-          ],
-          temperature: 0.8,
-          max_tokens: 500
-        })
+      const data = await requestAiChat({
+        model: 'gemini-2.5-flash',
+        messages: [
+          {
+            role: 'system',
+            content: buildSystemPrompt()
+          },
+          {
+            role: 'user',
+            content: userMessage.content
+          }
+        ],
+        temperature: 0.8,
+        max_tokens: 500
       })
-
-      if (!response.ok) {
-        throw new Error(`API请求失败: ${response.status}`)
-      }
-
-      const data = await response.json()
       const aiReply = data.choices[0].message.content
 
       // 解析AI返回的JSON
