@@ -207,7 +207,9 @@ export function useArticle(id) {
   // 获取文章详情
   useEffect(() => {
     const fetchArticle = async () => {
-      if (!id) return
+      if (!id) {
+        return
+      }
 
       setLoading(true)
       setError(null)

@@ -45,7 +45,9 @@ function ArticleManager() {
     e.preventDefault()
     const inputKey = e.target.elements.key.value
 
-    if (!inputKey) {return}
+    if (!inputKey) {
+      return
+    }
 
     try {
       // 验证密码是否正确
@@ -209,7 +211,9 @@ function ArticleManager() {
    * 过滤文章列表
    */
   const filteredArticles = articles.filter(article => {
-    if (!searchQuery.trim()) return true
+    if (!searchQuery.trim()) {
+      return true
+    }
     const query = searchQuery.toLowerCase()
     return (
       article.title?.toLowerCase().includes(query) ||
@@ -517,7 +521,7 @@ function ArticleManager() {
                     type="text"
                     value={tagInput}
                     onChange={(e) => setTagInput(e.target.value)}
-                    onKeyPress={(e) => {
+                    onKeyDown={(e) => {
                       if (e.key === 'Enter') {
                         e.preventDefault()
                         handleAddTag()

@@ -2,6 +2,7 @@ import { useState, useEffect } from 'react'
 import { useParams, Link, useNavigate } from 'react-router-dom'
 import MarkdownRenderer from '../components/MarkdownRenderer'
 import { useArticle } from '../hooks/useArticles'
+import { extractMarkdownToc } from '../utils/markdownUtils'
 
 /**
  * 文章详情页组件
@@ -30,33 +31,7 @@ function ArticleDetail() {
     return () => window.removeEventListener('scroll', handleScroll)
   }, [])
 
-  // 提取文章目录
-  const extractToc = (content) => {
-    if (!content) return []
-    const headings = []
-    const lines = content.split('\n')
-
-    lines.forEach((line, index) => {
-      const trimmed = line.trim()
-      if (trimmed.startsWith('## ')) {
-        headings.push({
-          level: 2,
-          text: trimmed.replace(/^##\s*/, ''),
-          id: `heading-${index}`
-        })
-      } else if (trimmed.startsWith('### ')) {
-        headings.push({
-          level: 3,
-          text: trimmed.replace(/^###\s*/, ''),
-          id: `heading-${index}`
-        })
-      }
-    })
-
-    return headings
-  }
-
-  const toc = article ? extractToc(article.content) : []
+  const toc = article ? extractMarkdownToc(article.content) : []
 
   if (loading) {
     return (

@@ -63,8 +63,7 @@ function ImageGenerator() {
     { id: 'city', category: '🏙️ 城市建筑', name: '未来都市', prompt: '未来科技城市，高楼大厦，飞行汽车，霓虹灯光，赛博朋克风格，夜景，科幻感' },
   ]
 
-  const isDevelopment = import.meta.env.DEV
-  const API_ENDPOINT = isDevelopment ? '/api/v3/images/generations' : '/api/generate-image'
+  const API_ENDPOINT = '/api/generate-image'
 
   const handleImageUpload = (e) => {
     const file = e.target.files[0]

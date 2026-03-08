@@ -29,7 +29,9 @@ function Home() {
 
   // 动态生成文章分类 - 只显示有文章的分类
   const categories = useMemo(() => {
-    if (!articles.length) return ['全部']
+    if (!articles.length) {
+      return ['全部']
+    }
     const categorySet = new Set()
     articles.forEach(article => {
       if (article.category) {
@@ -40,8 +42,10 @@ function Home() {
   }, [articles])
 
   // 动态生成文章标签 - 只显示有文章使用的标签
-  const availableTags = useMemo(() => {
-    if (!articles.length) return []
+  const _availableTags = useMemo(() => {
+    if (!articles.length) {
+      return []
+    }
     const tagSet = new Set()
     articles.forEach(article => {
       if (article.tags && Array.isArray(article.tags)) {
@@ -305,7 +309,7 @@ function Home() {
             {(searchQuery || selectedCategory !== '全部') && (
               <div className="text-sm text-text-secondary pt-2 border-t border-border-color/50">
                 找到 <span className="font-bold text-primary">{filteredArticles.length}</span> 篇文章
-                {searchQuery && <span className="ml-2">· 搜索: "{searchQuery}"</span>}
+                {searchQuery && <span className="ml-2">· 搜索: &quot;{searchQuery}&quot;</span>}
                 {selectedCategory !== '全部' && <span className="ml-2">· 分类: {selectedCategory}</span>}
               </div>
             )}

@@ -10,7 +10,9 @@ function Pagination({
   totalCount = 0,
   className = ''
 }) {
-  if (totalPages <= 1) return null
+  if (totalPages <= 1) {
+    return null
+  }
 
   // 生成页码数组
   const getPageNumbers = () => {
@@ -18,7 +20,7 @@ function Pagination({
     const showPages = 5 // 显示的页码数量
 
     let start = Math.max(1, currentPage - Math.floor(showPages / 2))
-    let end = Math.min(totalPages, start + showPages - 1)
+    const end = Math.min(totalPages, start + showPages - 1)
 
     // 调整 start 如果 end 到达上限
     if (end - start + 1 < showPages) {
@@ -28,7 +30,9 @@ function Pagination({
     // 添加第一页
     if (start > 1) {
       pages.push(1)
-      if (start > 2) pages.push('...')
+      if (start > 2) {
+        pages.push('...')
+      }
     }
 
     // 添加中间页码
@@ -38,7 +42,9 @@ function Pagination({
 
     // 添加最后一页
     if (end < totalPages) {
-      if (end < totalPages - 1) pages.push('...')
+      if (end < totalPages - 1) {
+        pages.push('...')
+      }
       pages.push(totalPages)
     }
 

@@ -1,35 +1,48 @@
-// React 17+ JSX 自动导入
+import { Suspense, lazy } from 'react'
 import { BrowserRouter as Router, Routes, Route } from 'react-router-dom'
 import Layout from './components/Layout'
-import Home from './pages/Home'
-import ArticleDetail from './pages/ArticleDetail'
-import ImageGenerator from './pages/ImageGenerator'
-import AIChat from './pages/AIChat'
-import ArticleManager from './pages/ArticleManager'
-import GameHub from './pages/GameHub'
-import SeedreamStudio from './pages/SeedreamStudio'
-import Toolbox from './pages/Toolbox'
-import SpriteSheetToGif from './pages/tools/SpriteSheetToGif'
+
+const Home = lazy(() => import('./pages/Home'))
+const ArticleDetail = lazy(() => import('./pages/ArticleDetail'))
+const ImageGenerator = lazy(() => import('./pages/ImageGenerator'))
+const AIChat = lazy(() => import('./pages/AIChat'))
+const ArticleManager = lazy(() => import('./pages/ArticleManager'))
+const GameHub = lazy(() => import('./pages/GameHub'))
+const SeedreamStudio = lazy(() => import('./pages/SeedreamStudio'))
+const Toolbox = lazy(() => import('./pages/Toolbox'))
+const SpriteSheetToGif = lazy(() => import('./pages/tools/SpriteSheetToGif'))
+
+function PageLoader() {
+  return (
+    <div className="container flex-center min-h-[60vh]">
+      <div className="text-center animate-bounce">
+        <div className="text-6xl mb-4">🐱</div>
+        <h2 className="text-xl font-bold text-primary">页面加载中...</h2>
+      </div>
+    </div>
+  )
+}
 
 function App() {
   return (
     <Router future={{ v7_startTransition: true, v7_relativeSplatPath: true }}>
       <Layout>
-        <Routes>
-          <Route path="/" element={<Home />} />
-          <Route path="/article/:id" element={<ArticleDetail />} />
-          <Route path="/image-generator" element={<ImageGenerator />} />
-          <Route path="/secret-chat" element={<AIChat />} />
-          <Route path="/admin/articles" element={<ArticleManager />} />
-          <Route path="/secret-games" element={<GameHub />} />
-          <Route path="/secret-seedream" element={<SeedreamStudio />} />
-          <Route path="/toolbox" element={<Toolbox />} />
-          <Route path="/toolbox/sprite-sheet-to-gif" element={<SpriteSheetToGif />} />
-        </Routes>
+        <Suspense fallback={<PageLoader />}>
+          <Routes>
+            <Route path="/" element={<Home />} />
+            <Route path="/article/:id" element={<ArticleDetail />} />
+            <Route path="/image-generator" element={<ImageGenerator />} />
+            <Route path="/secret-chat" element={<AIChat />} />
+            <Route path="/admin/articles" element={<ArticleManager />} />
+            <Route path="/secret-games" element={<GameHub />} />
+            <Route path="/secret-seedream" element={<SeedreamStudio />} />
+            <Route path="/toolbox" element={<Toolbox />} />
+            <Route path="/toolbox/sprite-sheet-to-gif" element={<SpriteSheetToGif />} />
+          </Routes>
+        </Suspense>
       </Layout>
     </Router>
   )
 }
 
 export default App
-
