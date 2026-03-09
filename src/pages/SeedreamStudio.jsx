@@ -11,6 +11,7 @@ import {
   sendEmailNotification,
   validateCustomImageSize,
 } from '../utils'
+import { buildFalGenerationRequest } from '../services/fal'
 import { ApiKeyPanel, ApiSwitchTabs, CoserPlayground, ImageResults, ModelSelector } from '../components/seedream'
 import './SeedreamStudio.css'
 
@@ -328,154 +329,27 @@ function SeedreamStudio() {
 
     try {
       fal.config({ credentials: apiKey.trim() })
-
-      let inputPayload = {}
-      let modelId = ''
-
-      if (modelType === 'v4' || modelType === 'v4.5') {
-        inputPayload = {
-          prompt: prompt.trim(),
-          image_size: imageSizeInput,
-          num_images: Number.parseInt(String(numImages), 10) || 1,
-          sync_mode: syncMode,
-          enable_safety_checker: safetyChecker
-        }
-
-        if (seed.trim()) {
-          const parsedSeed = Number.parseInt(seed.trim(), 10)
-          if (!Number.isNaN(parsedSeed)) {
-            inputPayload.seed = parsedSeed
-          }
-        }
-
-        // v4 与 v4.5 统一使用相同的入参模板，避免旧版增强参数造成兼容问题
-        const baseModelId = modelType === 'v4'
-          ? 'fal-ai/bytedance/seedream/v4'
-          : 'fal-ai/bytedance/seedream/v4.5'
-        modelId = mode === 'edit'
-          ? `${baseModelId}/edit`
-          : `${baseModelId}/text-to-image`
-
-        if (mode === 'edit') {
-          inputPayload.control_scale = controlScaleNumber
-
-          if (imageInputMethod === 'upload') {
-            try {
-              console.log('上传基础图像到 Fal 存储')
-              setError('')
-              const uploadedUrl = await fal.storage.upload(uploadedImage)
-              inputPayload.image_urls = [uploadedUrl]
-            } catch (uploadError) {
-              console.error('上传基础图像失败:', uploadError)
-              setError(uploadError?.message || '😿 上传基础图像失败，请稍后再试')
-              setLoading(false)
-              return
-            }
-          } else {
-            inputPayload.image_urls = presetUrlList
-          }
-        }
-      } else if (modelType === 'z-image-turbo') {
-        // Z-Image Turbo 模型配置
-        const isZImageEdit = mode === 'edit'
-        modelId = isZImageEdit
-          ? 'fal-ai/z-image/turbo/image-to-image'
-          : 'fal-ai/z-image/turbo'
-
-        inputPayload = {
-          prompt: prompt.trim(),
-          image_size: imageSizeInput || (isZImageEdit ? 'auto' : 'landscape_4_3'),
-          num_inference_steps: numInferenceSteps,
-          num_images: Number.parseInt(String(numImages), 10) || 1,
-          enable_safety_checker: safetyChecker,
-          enable_prompt_expansion: enablePromptExpansion,
-          output_format: outputFormat,
-          acceleration: acceleration,
-          sync_mode: syncMode
-        }
-
-        if (seed.trim()) {
-          const parsedSeed = Number.parseInt(seed.trim(), 10)
-          if (!Number.isNaN(parsedSeed)) {
-            inputPayload.seed = parsedSeed
-          }
-        }
-
-        // 图生图模式需要上传图像
-        if (isZImageEdit) {
-          inputPayload.strength = zImageStrength
-
-          if (imageInputMethod === 'upload') {
-            if (!uploadedImage) {
-              setError('😿 图生图模式需要先上传一张基础图像')
-              setLoading(false)
-              return
-            }
-            try {
-              console.log('上传基础图像到 Fal 存储 (Z-Image Turbo)')
-              setError('')
-              const uploadedUrl = await fal.storage.upload(uploadedImage)
-              inputPayload.image_url = uploadedUrl
-            } catch (uploadError) {
-              console.error('上传基础图像失败:', uploadError)
-              setError(uploadError?.message || '😿 上传基础图像失败，请稍后再试')
-              setLoading(false)
-              return
-            }
-          } else {
-            if (presetUrlList.length === 0) {
-              setError('😿 请提供至少一个有效的图像 URL')
-              setLoading(false)
-              return
-            }
-            inputPayload.image_url = presetUrlList[0]
-          }
-        }
-      } else {
-        // 新模型调用逻辑
-        const isGeminiEditMode = mode === 'edit'
-        // Gemini 3 Pro 的改图需要调用 /edit 端点，否则上传的 image_urls 会被忽略
-        modelId = isGeminiEditMode
-          ? 'fal-ai/gemini-3-pro-image-preview/edit'
-          : 'fal-ai/gemini-3-pro-image-preview'
-
-        inputPayload = {
-          prompt: prompt.trim(),
-          num_images: Number.parseInt(String(numImages), 10) || 1,
-          aspect_ratio: aspectRatio,
-          output_format: outputFormat,
-          sync_mode: syncMode,
-          resolution: resolution
-        }
-
-        if (isGeminiEditMode) {
-          if (imageInputMethod === 'upload') {
-            if (!uploadedImage) {
-              setError('😿 改图模式需要先上传一张基础图像')
-              setLoading(false)
-              return
-            }
-            try {
-              console.log('上传基础图像到 Fal 存储')
-              setError('')
-              const uploadedUrl = await fal.storage.upload(uploadedImage)
-              inputPayload.image_urls = [uploadedUrl]
-            } catch (uploadError) {
-              console.error('上传基础图像失败:', uploadError)
-              setError(uploadError?.message || '😿 上传基础图像失败，请稍后再试')
-              setLoading(false)
-              return
-            }
-          } else {
-            if (presetUrlList.length === 0) {
-              setError('😿 请提供至少一个有效的图像 URL')
-              setLoading(false)
-              return
-            }
-            inputPayload.image_urls = presetUrlList
-          }
-        }
-      }
+      const { modelId, inputPayload } = await buildFalGenerationRequest({
+        modelType,
+        mode,
+        prompt,
+        imageSizeInput,
+        numImages,
+        syncMode,
+        safetyChecker,
+        seed,
+        controlScaleNumber,
+        imageInputMethod,
+        uploadedImage,
+        presetUrlList,
+        numInferenceSteps,
+        enablePromptExpansion,
+        outputFormat,
+        acceleration,
+        zImageStrength,
+        aspectRatio,
+        resolution,
+      })
 
       console.log(`[${modelType}] 输入参数:`, inputPayload)
 
