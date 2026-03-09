@@ -2,7 +2,15 @@
  * Cloudflare Functions 共享邮件工具
  */
 
-const NOTIFY_EMAIL = 'meicuowoniubi@gmail.com'
+const DEFAULT_NOTIFY_EMAIL = 'meicuowoniubi@gmail.com'
+
+function getNotifyEmails(env) {
+  const configured = env.NOTIFY_EMAILS || env.NOTIFY_EMAIL || DEFAULT_NOTIFY_EMAIL
+  return String(configured)
+    .split(',')
+    .map((item) => item.trim())
+    .filter(Boolean)
+}
 
 export async function sendSuccessEmail(env, { images, prompt, source }) {
   const resendApiKey = env.RESEND_API_KEY
@@ -174,7 +182,7 @@ async function sendEmailRequest(resendApiKey, { subject, html }) {
     },
     body: JSON.stringify({
       from: 'Seedream AI <onboarding@resend.dev>',
-      to: [NOTIFY_EMAIL],
+      to: getNotifyEmails(env),
       subject,
       html,
     }),

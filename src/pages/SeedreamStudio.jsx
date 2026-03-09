@@ -1,7 +1,16 @@
 import { useEffect, useMemo, useRef, useState } from 'react'
 import { fal } from '@fal-ai/client'
 import { useApiKey, useFalGenerator, usePromptGenerator, useQiniuGenerator, useImageUpload } from '../hooks'
-import { callQiniuTextToImage, fileToDataUrl, generateRandomSeed, normalizeImages, sendEmailNotification } from '../utils'
+import {
+  buildQiniuImageConfig,
+  callQiniuTextToImage,
+  fileToDataUrl,
+  generateRandomSeed,
+  normalizeImages,
+  parseImageUrlsText,
+  sendEmailNotification,
+  validateCustomImageSize,
+} from '../utils'
 import { ApiKeyPanel, ApiSwitchTabs, CoserPlayground, ImageResults, ModelSelector } from '../components/seedream'
 import './SeedreamStudio.css'
 
@@ -276,18 +285,6 @@ function SeedreamStudio() {
     setQiniuMaskFileName('')
   }
 
-  // 组装七牛 image_config，仅在用户填写时返回对象
-  const buildQiniuImageConfig = () => {
-    const config = {}
-    if (qiniuAspectRatio.trim()) {
-      config.aspect_ratio = qiniuAspectRatio.trim()
-    }
-    if (qiniuImageSize.trim()) {
-      config.image_size = qiniuImageSize.trim()
-    }
-    return Object.keys(config).length > 0 ? config : null
-  }
-
   /**
    * 调用 Fal.ai Seedream v4 文生图能力
    */
@@ -303,12 +300,7 @@ function SeedreamStudio() {
     }
 
     if (sizePreset === 'custom') {
-      const widthValue = Number.parseInt(customWidth, 10)
-      const heightValue = Number.parseInt(customHeight, 10)
-      const sizeValid = [widthValue, heightValue].every(
-        (value) => Number.isInteger(value) && value >= 1024 && value <= 4096
-      )
-      if (!sizeValid) {
+      if (!validateCustomImageSize(customWidth, customHeight)) {
         setError('😿 自定义尺寸需在 1024~4096 像素之间')
         return
       }
@@ -321,10 +313,7 @@ function SeedreamStudio() {
         return
       }
       if (imageInputMethod === 'urls') {
-        presetUrlList = imageUrlsText
-          .split('\n')
-          .map((raw) => raw.trim())
-          .filter(Boolean)
+        presetUrlList = parseImageUrlsText(imageUrlsText)
         if (presetUrlList.length === 0) {
           setError('😿 请提供至少一个有效的图像 URL')
           return
@@ -573,7 +562,7 @@ function SeedreamStudio() {
       n: sanitizedCount
     }
 
-    const imageConfig = buildQiniuImageConfig()
+    const imageConfig = buildQiniuImageConfig(qiniuAspectRatio, qiniuImageSize)
     if (imageConfig) {
       payload.image_config = imageConfig
     }
@@ -638,7 +627,7 @@ function SeedreamStudio() {
     const maskCandidate = qiniuMaskUpload || qiniuMaskText.trim()
     if (maskCandidate) {payload.mask = maskCandidate}
 
-    const imageConfig = buildQiniuImageConfig()
+    const imageConfig = buildQiniuImageConfig(qiniuAspectRatio, qiniuImageSize)
     if (imageConfig) {payload.image_config = imageConfig}
     if (qiniuQuality) {payload.quality = qiniuQuality}
     if (qiniuStyle) {payload.style = qiniuStyle}
@@ -723,7 +712,7 @@ function SeedreamStudio() {
         n: 1,
         style: 'vivid',
         temperature: 0.8,
-        image_config: buildQiniuImageConfig() || { image_size: '2K' }
+        image_config: buildQiniuImageConfig(qiniuAspectRatio, qiniuImageSize) || { image_size: '2K' }
       }, qiniuKeyChoice)
         .then((data) => {
           const firstImage = normalizeImages(data?.data)[0]

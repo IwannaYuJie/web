@@ -1,27 +1,11 @@
-async function parseJsonResponse(response, fallbackMessage) {
-  let data = null
-
-  try {
-    data = await response.json()
-  } catch {
-    data = null
-  }
-
-  if (!response.ok) {
-    throw new Error(data?.error?.message || data?.error || data?.message || fallbackMessage)
-  }
-
-  return data
-}
+import { extractErrorMessage, requestJson } from './http'
 
 export async function requestAiChat(payload) {
-  const response = await fetch('/api/ai-chat', {
+  return requestJson('/api/ai-chat', {
     method: 'POST',
     headers: { 'Content-Type': 'application/json' },
     body: JSON.stringify(payload),
-  })
-
-  return parseJsonResponse(response, `API请求失败: ${response.status}`)
+  }, 'AI 对话请求失败')
 }
 
 export async function requestAiChatStream(payload) {
@@ -32,14 +16,8 @@ export async function requestAiChatStream(payload) {
   })
 
   if (!response.ok) {
-    let message = `API请求失败: ${response.status}`
-    try {
-      const data = await response.json()
-      message = data?.error?.message || data?.error || data?.message || message
-    } catch {
-      // ignore
-    }
-    throw new Error(message)
+    const payload = await response.json().catch(() => null)
+    throw new Error(extractErrorMessage(payload, `API请求失败: ${response.status}`))
   }
 
   return response

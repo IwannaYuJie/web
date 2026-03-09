@@ -1,7 +1,5 @@
-/**
- * API 请求工具函数
- * 统一处理 API 调用、错误处理等
- */
+import { requestJson } from '../services/http'
+import { requestOptimizedPrompt, requestRandomPrompt } from '../services/prompts'
 
 /**
  * 发送邮件通知
@@ -13,7 +11,7 @@
  */
 export const sendEmailNotification = async (success, images, error, promptText, source) => {
   try {
-    await fetch('/api/notify-email', {
+    await requestJson('/api/notify-email', {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({
@@ -23,7 +21,7 @@ export const sendEmailNotification = async (success, images, error, promptText, 
         prompt: promptText,
         source
       })
-    })
+    }, '发送邮件通知失败')
     console.log('邮件通知已发送')
   } catch (emailError) {
     console.error('发送邮件通知失败:', emailError)
@@ -36,24 +34,7 @@ export const sendEmailNotification = async (success, images, error, promptText, 
  * @returns {Promise<string>} - 生成的提示词
  */
 export const generateRandomPrompt = async (userInput = '') => {
-  const response = await fetch('/api/coser-random', {
-    method: 'POST',
-    headers: { 'Content-Type': 'application/json' },
-    body: JSON.stringify({ userInput })
-  })
-
-  if (!response.ok) {
-    throw new Error('提示词生成服务响应异常')
-  }
-
-  const data = await response.json()
-  const prompt = data?.prompt
-
-  if (!prompt) {
-    throw new Error('未能获取到有效的提示词')
-  }
-
-  return prompt
+  return requestRandomPrompt(userInput)
 }
 
 /**
@@ -62,28 +43,7 @@ export const generateRandomPrompt = async (userInput = '') => {
  * @returns {Promise<string>} - 优化后的提示词
  */
 export const optimizePrompt = async (userInput) => {
-  if (!userInput.trim()) {
-    throw new Error('先写点想法再让我优化吧')
-  }
-
-  const response = await fetch('/api/coser-optimize', {
-    method: 'POST',
-    headers: { 'Content-Type': 'application/json' },
-    body: JSON.stringify({ userInput: userInput.trim() })
-  })
-
-  if (!response.ok) {
-    throw new Error('提示词优化服务响应异常')
-  }
-
-  const data = await response.json()
-  const prompt = data?.prompt
-
-  if (!prompt) {
-    throw new Error('未能获取到优化后的提示词')
-  }
-
-  return prompt
+  return requestOptimizedPrompt(userInput)
 }
 
 /**
@@ -94,7 +54,7 @@ export const optimizePrompt = async (userInput) => {
  * @returns {Promise<Object>} - 返回数据
  */
 export const callQiniuTextToImage = async (payload, keyChoice = 'auto', signal) => {
-  const response = await fetch('/api/qiniu-images', {
+  return requestJson('/api/qiniu-images', {
     method: 'POST',
     headers: {
       'Content-Type': 'application/json',
@@ -102,16 +62,7 @@ export const callQiniuTextToImage = async (payload, keyChoice = 'auto', signal) 
     },
     body: JSON.stringify(payload),
     signal
-  })
-
-  const data = await response.json()
-
-  if (!response.ok) {
-    const errorMsg = data?.error?.message || data?.message || data?.error || '七牛文生图调用失败'
-    throw new Error(errorMsg)
-  }
-
-  return data
+  }, '七牛文生图调用失败')
 }
 
 /**
@@ -122,7 +73,7 @@ export const callQiniuTextToImage = async (payload, keyChoice = 'auto', signal) 
  * @returns {Promise<Object>} - 返回数据
  */
 export const callQiniuImageToImage = async (payload, keyChoice = 'auto', signal) => {
-  const response = await fetch('/api/qiniu-image-edits', {
+  return requestJson('/api/qiniu-image-edits', {
     method: 'POST',
     headers: {
       'Content-Type': 'application/json',
@@ -130,14 +81,5 @@ export const callQiniuImageToImage = async (payload, keyChoice = 'auto', signal)
     },
     body: JSON.stringify(payload),
     signal
-  })
-
-  const data = await response.json()
-
-  if (!response.ok) {
-    const errorMsg = data?.error?.message || data?.message || data?.error || '七牛图生图调用失败'
-    throw new Error(errorMsg)
-  }
-
-  return data
+  }, '七牛图生图调用失败')
 }

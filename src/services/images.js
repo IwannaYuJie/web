@@ -1,4 +1,5 @@
 import { consumeSSEStream } from '../utils'
+import { extractErrorMessage } from './http'
 
 function normalizeArkImages(images = []) {
   return images.map((img, index) => ({ url: img.url, size: img.size, index: index + 1 }))
@@ -12,14 +13,8 @@ export async function generateArkImages(requestBody, { endpoint = '/api/generate
   })
 
   if (!response.ok) {
-    let message = '图片生成失败'
-    try {
-      const data = await response.json()
-      message = data?.error?.message || data?.error || data?.message || message
-    } catch {
-      // ignore
-    }
-    throw new Error(message)
+    const payload = await response.json().catch(() => null)
+    throw new Error(extractErrorMessage(payload, '图片生成失败'))
   }
 
   if (requestBody.stream) {

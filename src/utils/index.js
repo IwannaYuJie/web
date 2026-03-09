@@ -5,3 +5,4 @@
 export * from './imageUtils'
 export * from './apiUtils'
 export * from './streamUtils'
+export * from './seedreamUtils'

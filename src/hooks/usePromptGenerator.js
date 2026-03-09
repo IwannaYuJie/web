@@ -1,5 +1,5 @@
 import { useState, useCallback } from 'react'
-import { generateRandomPrompt as apiGenerateRandomPrompt, optimizePrompt as apiOptimizePrompt } from '../utils'
+import { requestOptimizedPrompt, requestRandomPrompt } from '../services/prompts'
 
 /**
  * 提示词生成和优化 Hook
@@ -12,7 +12,7 @@ export function usePromptGenerator() {
   const generateRandomPrompt = useCallback(async (currentInput = '') => {
     setRandomLoading(true)
     try {
-      const prompt = await apiGenerateRandomPrompt(currentInput)
+      const prompt = await requestRandomPrompt(currentInput)
       return prompt
     } catch (err) {
       console.error('随机提示词生成失败:', err)
@@ -30,7 +30,7 @@ export function usePromptGenerator() {
 
     setOptimizeLoading(true)
     try {
-      const prompt = await apiOptimizePrompt(input)
+      const prompt = await requestOptimizedPrompt(input)
       return prompt
     } catch (err) {
       console.error('提示词优化失败:', err)

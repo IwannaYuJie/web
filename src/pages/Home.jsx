@@ -2,10 +2,8 @@ import { useState, useEffect, useMemo, useCallback } from 'react'
 import { Link } from 'react-router-dom'
 import Pagination from '../components/Pagination'
 import { fetchArticlesList } from '../services/articles'
-
-// 橘猫心情数组 - 移到组件外部避免重复创建
-const CAT_MOODS = ['😺', '😸', '😹', '😻', '😼', '😽', '🙀', '😿', '😾']
-const PAGE_SIZE = 6
+import { CAT_MOODS, CAT_QUOTES, HOME_PAGE_SIZE, WEB_TEMPLATES } from '../constants/home'
+import { useBackToTop, useGoogleCSE, useIntervalValue } from '../hooks'
 
 /**
  * 首页组件
@@ -19,14 +17,15 @@ function Home() {
 
   const [quote, setQuote] = useState(null)
   const [quoteLoading, setQuoteLoading] = useState(false)
-  const [visitorCount, setVisitorCount] = useState(12345)
-  const [currentTime, setCurrentTime] = useState(new Date())
+  const [visitorCount] = useIntervalValue(12345, (prev) => prev + Math.floor(Math.random() * 3), 5000)
+  const [currentTime] = useIntervalValue(new Date(), () => new Date(), 1000)
   const [selectedCategory, setSelectedCategory] = useState('全部')
-  const [showBackToTop, setShowBackToTop] = useState(false)
+  const showBackToTop = useBackToTop(400)
   const [searchQuery, setSearchQuery] = useState('')
   const [currentPage, setCurrentPage] = useState(1)
 
-  const [catMood, setCatMood] = useState(CAT_MOODS[0])
+  const [catMood] = useIntervalValue(CAT_MOODS[0], () => CAT_MOODS[Math.floor(Math.random() * CAT_MOODS.length)], 3000)
+  useGoogleCSE()
 
   // 动态生成文章分类 - 只显示有文章的分类
   const categories = useMemo(() => {
@@ -56,23 +55,6 @@ function Home() {
     return Array.from(tagSet).sort()
   }, [articles])
 
-  // 编程智慧语录
-  const catQuotes = [
-    { text: '代码如诗，简洁优雅才是最高境界', author: 'Martin Fowler' },
-    { text: '过早的优化是万恶之源', author: 'Donald Knuth' },
-    { text: '任何傻瓜都能写出计算机能理解的代码，但只有好的程序员才能写出人类能理解的代码', author: 'Kent Beck' },
-    { text: '简单是可靠的先决条件', author: 'Edsger W. Dijkstra' },
-    { text: '完成比完美更重要', author: 'Facebook工程师文化' }
-  ]
-
-  // 网页模板数据
-  const webTemplates = [
-    { id: 1, title: '极简博客', desc: '专注于阅读体验的纯净博客模板', icon: '📝', link: '#' },
-    { id: 2, title: '创意作品集', desc: '适合设计师的视觉系展示模板', icon: '🎨', link: '#' },
-    { id: 3, title: '文档中心', desc: '清晰的文档与知识库管理模板', icon: '📚', link: '#' },
-    { id: 4, title: '营销落地页', desc: '高转化率的产品推广落地页', icon: '🚀', link: '#' }
-  ]
-
   const fetchArticles = useCallback(async () => {
     setArticlesLoading(true)
     setArticlesError(null)
@@ -89,36 +71,7 @@ function Home() {
   // 初始化数据
   useEffect(() => {
     fetchArticles()
-    const timer = setInterval(() => setCurrentTime(new Date()), 1000)
-    const moodTimer = setInterval(() => setCatMood(CAT_MOODS[Math.floor(Math.random() * CAT_MOODS.length)]), 3000)
-    const countTimer = setInterval(() => setVisitorCount(prev => prev + Math.floor(Math.random() * 3)), 5000)
-
-    const handleScroll = () => setShowBackToTop(window.scrollY > 400)
-    window.addEventListener('scroll', handleScroll)
-
-    const initGCSE = () => {
-      if (window.google && window.google.search && window.google.search.cse && window.google.search.cse.element) {
-        try {
-          window.google.search.cse.element.go()
-        } catch (e) {
-          console.warn('GCSE init error:', e)
-        }
-      }
-    }
-
-    const gcseTimer = setTimeout(initGCSE, 100)
-    const gcseInterval = setInterval(initGCSE, 1000)
-    const gcseStopTimer = setTimeout(() => clearInterval(gcseInterval), 5000)
-
-    return () => {
-      clearInterval(timer)
-      clearInterval(moodTimer)
-      clearInterval(countTimer)
-      clearInterval(gcseInterval)
-      clearTimeout(gcseStopTimer)
-      clearTimeout(gcseTimer)
-      window.removeEventListener('scroll', handleScroll)
-    }
+    return undefined
   }, [fetchArticles])
 
   const fetchRandomQuote = async () => {
@@ -126,7 +79,7 @@ function Home() {
     // 50% 概率使用橘猫语录
     if (Math.random() > 0.5) {
       setTimeout(() => {
-        const catQuote = catQuotes[Math.floor(Math.random() * catQuotes.length)]
+        const catQuote = CAT_QUOTES[Math.floor(Math.random() * CAT_QUOTES.length)]
         setQuote({ content: catQuote.text, author: catQuote.author })
         setQuoteLoading(false)
       }, 500)
@@ -137,7 +90,7 @@ function Home() {
         const data = await response.json()
         setQuote(data)
       } catch {
-        const catQuote = catQuotes[Math.floor(Math.random() * catQuotes.length)]
+        const catQuote = CAT_QUOTES[Math.floor(Math.random() * CAT_QUOTES.length)]
         setQuote({ content: catQuote.text, author: catQuote.author })
       } finally {
         setQuoteLoading(false)
@@ -184,11 +137,11 @@ function Home() {
 
   // 分页后的文章
   const paginatedArticles = useMemo(() => {
-    const start = (currentPage - 1) * PAGE_SIZE
-    return filteredArticles.slice(start, start + PAGE_SIZE)
+    const start = (currentPage - 1) * HOME_PAGE_SIZE
+    return filteredArticles.slice(start, start + HOME_PAGE_SIZE)
   }, [filteredArticles, currentPage])
 
-  const totalPages = Math.ceil(filteredArticles.length / PAGE_SIZE)
+  const totalPages = Math.ceil(filteredArticles.length / HOME_PAGE_SIZE)
 
   // 重置分页
   useEffect(() => {
@@ -242,7 +195,7 @@ function Home() {
               <span>🎨</span> 精选网页模板
             </h2>
             <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-              {webTemplates.map(template => (
+              {WEB_TEMPLATES.map(template => (
                 <a
                   key={template.id}
                   href={template.link}
@@ -487,4 +440,3 @@ function Home() {
 }
 
 export default Home
-

@@ -1,3 +1,5 @@
+import { requestJson } from './http'
+
 const ADMIN_KEY_STORAGE_KEY = 'adminKey'
 
 function parseJsonSafely(value, fallback) {
@@ -8,30 +10,12 @@ function parseJsonSafely(value, fallback) {
   }
 }
 
-async function parseResponse(response, fallbackMessage) {
-  let data = null
-
-  try {
-    data = await response.json()
-  } catch {
-    data = null
-  }
-
-  if (!response.ok) {
-    throw new Error(data?.error || data?.message || fallbackMessage)
-  }
-
-  return data
-}
-
 export async function fetchArticlesList(signal) {
-  const response = await fetch('/api/articles', { signal })
-  return parseResponse(response, '获取文章列表失败')
+  return requestJson('/api/articles', { signal }, '获取文章列表失败')
 }
 
 export async function fetchArticleById(id, signal) {
-  const response = await fetch(`/api/articles?id=${id}`, { signal })
-  return parseResponse(response, '获取文章失败')
+  return requestJson(`/api/articles?id=${id}`, { signal }, '获取文章失败')
 }
 
 export async function verifyAdminKey(adminKey) {
@@ -51,20 +35,18 @@ export async function verifyAdminKey(adminKey) {
 }
 
 export async function createArticle(articleData, adminKey) {
-  const response = await fetch('/api/articles', {
+  return requestJson('/api/articles', {
     method: 'POST',
     headers: {
       'Content-Type': 'application/json',
       'X-Admin-Key': adminKey,
     },
     body: JSON.stringify(articleData),
-  })
-
-  return parseResponse(response, '创建文章失败')
+  }, '创建文章失败')
 }
 
 export async function updateArticle(id, articleData, adminKey) {
-  const response = await fetch(`/api/articles?id=${id}`, {
+  return requestJson(`/api/articles?id=${id}`, {
     method: 'POST',
     headers: {
       'Content-Type': 'application/json',
@@ -72,21 +54,17 @@ export async function updateArticle(id, articleData, adminKey) {
       'X-HTTP-Method-Override': 'PUT',
     },
     body: JSON.stringify(articleData),
-  })
-
-  return parseResponse(response, '更新文章失败')
+  }, '更新文章失败')
 }
 
 export async function deleteArticle(id, adminKey) {
-  const response = await fetch(`/api/articles?id=${id}`, {
+  return requestJson(`/api/articles?id=${id}`, {
     method: 'POST',
     headers: {
       'X-Admin-Key': adminKey,
       'X-HTTP-Method-Override': 'DELETE',
     },
-  })
-
-  return parseResponse(response, '删除文章失败')
+  }, '删除文章失败')
 }
 
 export function getStoredAdminKey() {
