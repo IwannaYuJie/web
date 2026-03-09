@@ -1,9 +1,13 @@
-import fetch from 'node-fetch'
+/**
+ * Vercel/Netlify Serverless 函数 - 七牛图生图 API 代理
+ * 用于在其他平台实现与 Cloudflare Functions 一致的行为
+ */
+import { callQiniuApi, resolveQiniuKeys, shapeQiniuErrorBody } from '../shared/server/qiniuProxy.js'
 
 const corsHeaders = {
   'Access-Control-Allow-Origin': '*',
   'Access-Control-Allow-Methods': 'POST, OPTIONS',
-  'Access-Control-Allow-Headers': 'Content-Type, Authorization'
+  'Access-Control-Allow-Headers': 'Content-Type, Authorization',
 }
 
 export default async function handler(req, res) {
@@ -18,12 +22,14 @@ export default async function handler(req, res) {
     return
   }
 
-  const keyChoice = (req.headers['x-qiniu-key'] || '').toString().toLowerCase() || 'auto'
-  const primaryKey = process.env.QINIU_AI_API_KEY
-  const secondaryKey = process.env.QINIU_API_KEY_2
-  const apiKey = keyChoice === 'secondary' ? secondaryKey : keyChoice === 'primary' ? primaryKey : (primaryKey || secondaryKey)
-  if (!apiKey) {
-    res.status(500).json({ error: '服务器配置错误', message: '未配置 QINIU_AI_API_KEY 环境变量' })
+  const { keyChoice, primaryKey, secondaryKey } = resolveQiniuKeys(
+    req.headers['x-qiniu-key'],
+    process.env.QINIU_AI_API_KEY,
+    process.env.QINIU_API_KEY_2 || process.env.QINIU_AI_API_KEY_2,
+  )
+
+  if (!primaryKey && !secondaryKey) {
+    res.status(500).json({ error: '服务器配置错误', message: '未配置 QINIU_AI_API_KEY / QINIU_API_KEY_2 环境变量' })
     return
   }
 
@@ -37,7 +43,7 @@ export default async function handler(req, res) {
 
   const finalPayload = {
     model: payload?.model?.trim() || 'gemini-3.0-pro-image-preview',
-    ...payload
+    ...payload,
   }
 
   if (!finalPayload.prompt) {
@@ -51,35 +57,18 @@ export default async function handler(req, res) {
   }
 
   try {
-    const upstreamResponse = await fetch('https://api.qnaigc.com/v1/images/edits', {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
-        Authorization: `Bearer ${apiKey}`
-      },
-      body: JSON.stringify(finalPayload)
-    })
+    const primaryResult = keyChoice === 'secondary'
+      ? { ok: false, shouldRetry: true }
+      : await callQiniuApi('https://api.qnaigc.com/v1/images/edits', finalPayload, primaryKey)
 
-    const text = await upstreamResponse.text()
-    const body = safeParseJson(text)
-    const errorMsg = body?.error?.message || body?.message || body?.error
+    const result = secondaryKey && ((!primaryResult.ok && primaryResult.shouldRetry) || keyChoice === 'secondary')
+      ? await callQiniuApi('https://api.qnaigc.com/v1/images/edits', finalPayload, secondaryKey)
+      : primaryResult
 
-    const shapedBody = upstreamResponse.ok
-      ? body
-      : { error: errorMsg || '七牛图生图调用失败', message: errorMsg || '七牛图生图调用失败', type: body?.error?.type || body?.type }
-
-    res.writeHead(upstreamResponse.status, { ...corsHeaders, 'Content-Type': 'application/json' })
-    res.end(JSON.stringify(shapedBody))
+    res.writeHead(result.response.status, { ...corsHeaders, 'Content-Type': 'application/json' })
+    res.end(JSON.stringify(result.response.ok ? result.body : shapeQiniuErrorBody(result.body, '七牛图生图调用失败')))
   } catch (error) {
     console.error('七牛图生图代理异常:', error)
     res.status(500).json({ error: '服务器内部错误', message: error.message })
-  }
-}
-
-function safeParseJson(text) {
-  try {
-    return JSON.parse(text)
-  } catch (error) {
-    return { raw: text, parseError: error.message }
   }
 }

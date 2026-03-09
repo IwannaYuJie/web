@@ -46,7 +46,11 @@ function readRequestBody(req) {
 
 // Vite 配置文件
 // https://vitejs.dev/config/
-export default defineConfig({
+export default defineConfig(({ mode }) => {
+  const env = loadEnv(mode, process.cwd(), '')
+  const devAdminKey = env.DEV_ADMIN_KEY || process.env.DEV_ADMIN_KEY || ''
+
+  return {
   plugins: [
     react(),
     // 自定义插件：模拟文章 API
@@ -77,7 +81,7 @@ export default defineConfig({
             }
 
             if (isAuthCheck && method === 'POST') {
-              if (req.headers['x-admin-key'] === '123456') {
+              if (devAdminKey && req.headers['x-admin-key'] === devAdminKey) {
                 res.statusCode = 200
                 res.end(JSON.stringify({ status: 'ok', message: '验证通过' }))
               } else {
@@ -89,7 +93,7 @@ export default defineConfig({
 
             if (['POST', 'PUT', 'DELETE'].includes(method)) {
               const adminKey = req.headers['x-admin-key']
-              if (adminKey !== '123456') {
+              if (!devAdminKey || adminKey !== devAdminKey) {
                 res.statusCode = 401
                 res.end(JSON.stringify({ error: '未授权的操作：密码错误' }))
                 return
@@ -315,4 +319,5 @@ export default defineConfig({
       legalComments: 'none', // 移除所有注释
     },
   },
+  }
 })

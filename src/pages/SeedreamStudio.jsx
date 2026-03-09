@@ -1,5 +1,8 @@
 import { useEffect, useMemo, useRef, useState } from 'react'
 import { fal } from '@fal-ai/client'
+import { useApiKey, useFalGenerator, usePromptGenerator, useQiniuGenerator, useImageUpload } from '../hooks'
+import { callQiniuTextToImage, fileToDataUrl, generateRandomSeed, normalizeImages, sendEmailNotification } from '../utils'
+import { ApiKeyPanel, ApiSwitchTabs, CoserPlayground, ImageResults, ModelSelector } from '../components/seedream'
 import './SeedreamStudio.css'
 
 /**
@@ -9,7 +12,33 @@ import './SeedreamStudio.css'
  */
 function SeedreamStudio() {
   const storageKey = 'seedream-fal-key'
-  const [apiKey, setApiKey] = useState('')
+  const { apiKey, setApiKey, saveMessage, saveKey: handleSaveKey, clearKey: handleClearKey } = useApiKey(storageKey)
+  const { generateRandomPrompt, optimizePrompt, randomLoading: randomPromptLoading, optimizeLoading: optimizePromptLoading } = usePromptGenerator()
+  const { quickGenerate } = useFalGenerator(apiKey)
+  const {
+    loading: qiniuLoading,
+    error: qiniuError,
+    setError: setQiniuError,
+    images: qiniuImages,
+    setImages: setQiniuImages,
+    usage: qiniuUsage,
+    cancelRequest: cancelQiniuRequest,
+    generateTextToImage,
+    generateImageToImage,
+  } = useQiniuGenerator()
+  const {
+    uploadedImage,
+    uploadedImagePreview,
+    inputRef: inputImageRef,
+    handleUpload: handleFalImageUpload,
+    removeUploadedImage: removeFalUploadedImage,
+  } = useImageUpload(false)
+  const {
+    uploadedImages: qiniuImageUploads,
+    handleUpload: handleQiniuImagesUpload,
+    removeUploadedImageAt: removeQiniuUploadAt,
+  } = useImageUpload(true)
+
   const [prompt, setPrompt] = useState('')
   const [sizePreset, setSizePreset] = useState('auto_4K')
   const [customWidth, setCustomWidth] = useState('1024')
@@ -22,11 +51,8 @@ function SeedreamStudio() {
   const [error, setError] = useState('')
   const [resultSeed, setResultSeed] = useState('')
   const [images, setImages] = useState([])
-  const [saveMessage, setSaveMessage] = useState('')
   const [mode, setMode] = useState('text')
   const [imageInputMethod, setImageInputMethod] = useState('upload')
-  const [uploadedImage, setUploadedImage] = useState(null)
-  const [uploadedImagePreview, setUploadedImagePreview] = useState('')
   const [imageUrlsText, setImageUrlsText] = useState('')
   const [controlScale, setControlScale] = useState(0.7)
   const [showApiKeyPanel, setShowApiKeyPanel] = useState(false)
@@ -61,12 +87,7 @@ function SeedreamStudio() {
   const [qiniuImageFidelity, setQiniuImageFidelity] = useState('0.5')
   const [qiniuHumanFidelity, setQiniuHumanFidelity] = useState('0.45')
   const [qiniuAspectRatio, setQiniuAspectRatio] = useState('')
-  const [qiniuLoading, setQiniuLoading] = useState(false)
-  const [qiniuError, setQiniuError] = useState('')
-  const [qiniuImages, setQiniuImages] = useState([])
-  const [qiniuUsage, setQiniuUsage] = useState(null)
   const [qiniuMode, setQiniuMode] = useState('text')
-  const [qiniuImageUploads, setQiniuImageUploads] = useState([])
   const [qiniuMaskText, setQiniuMaskText] = useState('')
   const [qiniuMaskUpload, setQiniuMaskUpload] = useState('')
   const [qiniuMaskFileName, setQiniuMaskFileName] = useState('')
@@ -90,134 +111,37 @@ function SeedreamStudio() {
   const [coserUserInput, setCoserUserInput] = useState('')  // 用户自定义输入
   const [coserFalLoading, setCoserFalLoading] = useState(false)  // Fal 单独加载状态
   const [coserQiniuLoading, setCoserQiniuLoading] = useState(false)  // 七牛单独加载状态
-  const [randomPromptLoading, setRandomPromptLoading] = useState(false) // 随机提示词加载状态
-  const [optimizePromptLoading, setOptimizePromptLoading] = useState(false) // 提示词优化加载状态
-
-  const inputImageRef = useRef(null)
-  const qiniuAbortControllerRef = useRef(null)
-
-  /**
-   * 生成随机提示词（用于 Fal 和 七牛 面板）
-   * @param {string} target - 'fal' | 'qiniu'
-   */
   const handleGenerateRandomPrompt = async (target) => {
-    setRandomPromptLoading(true)
-    // 清除之前的错误信息
-    if (target === 'fal') {setError('')}
-    else {setQiniuError('')}
-
-    // 获取当前输入框的内容作为基础
-    let currentInput = ''
-    if (target === 'fal') {
-      currentInput = prompt
-    } else if (target === 'qiniu') {
-      currentInput = qiniuPrompt
-    }
-
     try {
-      const response = await fetch('/api/coser-random', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ userInput: currentInput }) // 将当前输入作为用户需求传给 API
-      })
-
-      if (!response.ok) {
-        throw new Error('提示词生成服务响应异常')
-      }
-
-      const data = await response.json()
-      const generatedPrompt = data?.prompt
-
-      if (!generatedPrompt) {
-        throw new Error('未能获取到有效的提示词')
-      }
-
       if (target === 'fal') {
-        setPrompt(generatedPrompt)
-      } else if (target === 'qiniu') {
-        setQiniuPrompt(generatedPrompt)
-      }
-    } catch (err) {
-      console.error('随机提示词生成失败:', err)
-      const errorMsg = '😿 随机提示词生成失败，请稍后重试'
-      if (target === 'fal') {setError(errorMsg)}
-      else {setQiniuError(errorMsg)}
-    } finally {
-      setRandomPromptLoading(false)
-    }
-  }
-
-  /**
-   * 根据输入内容优化提示词（仅在已有输入时可用）
-   * @param {string} target - 'fal' | 'qiniu'
-   */
-  const handleOptimizePrompt = async (target) => {
-    const currentInput = target === 'fal' ? prompt : qiniuPrompt
-    const trimmedInput = currentInput.trim()
-
-    if (!trimmedInput) {
-      const emptyMessage = '😿 先写点想法再让我优化吧'
-      if (target === 'fal') {setError(emptyMessage)}
-      else {setQiniuError(emptyMessage)}
-      return
-    }
-
-    setOptimizePromptLoading(true)
-    if (target === 'fal') {setError('')}
-    else {setQiniuError('')}
-
-    try {
-      const response = await fetch('/api/coser-optimize', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ userInput: trimmedInput })
-      })
-
-      if (!response.ok) {
-        throw new Error('提示词优化服务响应异常')
-      }
-
-      const data = await response.json()
-      const optimizedPrompt = data?.prompt
-
-      if (!optimizedPrompt) {
-        throw new Error('未能获取到优化后的提示词')
-      }
-
-      if (target === 'fal') {
-        setPrompt(optimizedPrompt)
+        setError('')
+        setPrompt(await generateRandomPrompt(prompt))
       } else {
-        setQiniuPrompt(optimizedPrompt)
+        setQiniuError('')
+        setQiniuPrompt(await generateRandomPrompt(qiniuPrompt))
       }
     } catch (err) {
-      console.error('提示词优化失败:', err)
-      const errorMsg = '😿 提示词优化失败，请稍后重试'
+      const errorMsg = err?.message || '😿 随机提示词生成失败，请稍后重试'
       if (target === 'fal') {setError(errorMsg)}
       else {setQiniuError(errorMsg)}
-    } finally {
-      setOptimizePromptLoading(false)
     }
   }
 
-  /**
-   * 初始化时尝试读取已保存的 API Key
-   */
-  useEffect(() => {
+  const handleOptimizePrompt = async (target) => {
     try {
-      const stored = localStorage.getItem(storageKey)
-      if (stored) {
-        setApiKey(stored)
+      if (target === 'fal') {
+        setError('')
+        setPrompt(await optimizePrompt(prompt))
+      } else {
+        setQiniuError('')
+        setQiniuPrompt(await optimizePrompt(qiniuPrompt))
       }
-    } catch (storageError) {
-      console.error('读取本地 API Key 失败:', storageError)
+    } catch (err) {
+      const errorMsg = err?.message || '😿 提示词优化失败，请稍后重试'
+      if (target === 'fal') {setError(errorMsg)}
+      else {setQiniuError(errorMsg)}
     }
-  }, [])
-
-  useEffect(() => () => {
-    if (uploadedImagePreview) {
-      URL.revokeObjectURL(uploadedImagePreview)
-    }
-  }, [uploadedImagePreview])
+  }
 
   // 当切换模型时，重置和适配参数
   const prevModelTypeRef = useRef(modelType)
@@ -265,143 +189,8 @@ function SeedreamStudio() {
     return value
   }, [controlScale])
 
-  /**
-   * 将 Fal 返回的图片对象转换为组件可消费的统一格式
-   */
-  const normalizeImages = (imageList = []) => {
-    if (!Array.isArray(imageList)) {
-      console.warn('图片列表不是数组:', imageList)
-      return []
-    }
-
-    return imageList.map((item, index) => {
-      console.log(`处理图片 ${index + 1}:`, item)
-
-      // 优先使用 url 字段
-      if (item?.url) {
-        console.log(`图片 ${index + 1} 使用 URL 模式:`, item.url)
-        return {
-          src: item.url,
-          downloadName: item.file_name || `seedream_${index + 1}.png`
-        }
-      }
-
-      // 其次尝试 base64 格式
-      const base64 = item?.base64 || item?.b64_json || item?.content || ''
-      if (base64) {
-        console.log(`图片 ${index + 1} 使用 Base64 模式`)
-        return {
-          src: `data:image/png;base64,${base64}`,
-          downloadName: item?.file_name || `seedream_${index + 1}.png`
-        }
-      }
-
-      console.warn('无法识别的图片格式:', item)
-      return null
-    }).filter(Boolean)
-  }
-
-  /**
-   * 发送邮件通知（Fal.ai 生成结果）
-   * @param {boolean} success - 是否成功
-   * @param {Array} images - 图片数组（成功时）
-   * @param {string} error - 错误信息（失败时）
-   * @param {string} promptText - 生成用的 prompt
-   * @param {string} source - 来源标识 ('fal-text' | 'fal-edit')
-   */
-  const sendEmailNotification = async (success, images, error, promptText, source) => {
-    try {
-      await fetch('/api/notify-email', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({
-          success,
-          images: success ? images : undefined,
-          error: success ? undefined : error,
-          prompt: promptText,
-          source
-        })
-      })
-      console.log('邮件通知已发送')
-    } catch (emailError) {
-      console.error('发送邮件通知失败:', emailError)
-    }
-  }
-
-  /**
-   * 保存 API Key 到浏览器本地存储
-   */
-  const handleSaveKey = () => {
-    try {
-      if (!apiKey.trim()) {
-        setSaveMessage('😿 请先填写 Fal.ai API Key 再保存')
-        return
-      }
-      localStorage.setItem(storageKey, apiKey.trim())
-      setSaveMessage('😺 API Key 已安全保存到本地')
-    } catch (storageError) {
-      setSaveMessage('😿 保存失败，请检查浏览器权限')
-      console.error('保存 API Key 失败:', storageError)
-    }
-  }
-
-  /**
-   * 清除本地保存的 API Key
-   */
-  const handleClearKey = () => {
-    try {
-      localStorage.removeItem(storageKey)
-      setApiKey('')
-      setSaveMessage('🐾 已移除本地保存的 API Key')
-    } catch (storageError) {
-      setSaveMessage('😿 清除失败，请稍后再试')
-      console.error('移除 API Key 失败:', storageError)
-    }
-  }
-
-  /**
-   * 生成随机种子
-   */
   const handleRandomSeed = () => {
-    setSeed(String(Math.floor(Math.random() * 9999999999)))
-  }
-
-  /**
-   * 通用图片下载处理函数
-   * 支持 URL 和 Base64 两种格式
-   */
-  const handleImageDownload = async (imageSrc, fileName) => {
-    try {
-      // 如果是 Base64 或 Data URL，直接下载
-      if (imageSrc.startsWith('data:')) {
-        const link = document.createElement('a')
-        link.href = imageSrc
-        link.download = fileName
-        document.body.appendChild(link)
-        link.click()
-        document.body.removeChild(link)
-        return
-      }
-
-      // 如果是 URL，需要先 fetch 转为 Blob
-      const response = await fetch(imageSrc)
-      const blob = await response.blob()
-      const blobUrl = URL.createObjectURL(blob)
-
-      const link = document.createElement('a')
-      link.href = blobUrl
-      link.download = fileName
-      document.body.appendChild(link)
-      link.click()
-      document.body.removeChild(link)
-
-      // 清理 Blob URL
-      URL.revokeObjectURL(blobUrl)
-    } catch (err) {
-      console.error('下载图片失败:', err)
-      // 降级处理：在新标签页打开
-      window.open(imageSrc, '_blank')
-    }
+    setSeed(generateRandomSeed())
   }
 
   const handleApiSwitch = (nextApi) => {
@@ -426,7 +215,7 @@ function SeedreamStudio() {
     setImages([])
     setResultSeed('')
     if (nextMode === 'text') {
-      handleRemoveUploadedImage()
+      removeFalUploadedImage()
       setImageUrlsText('')
       setImageInputMethod('upload')
     }
@@ -436,82 +225,30 @@ function SeedreamStudio() {
     setImageInputMethod(method)
     setImageUrlsText('')
     if (method === 'urls') {
-      handleRemoveUploadedImage()
+      removeFalUploadedImage()
     }
   }
-
-  const handleImageUpload = (event) => {
-    const file = event.target.files?.[0]
-    if (!file) {
-      handleRemoveUploadedImage()
-      return
-    }
-    if (uploadedImagePreview) {
-      URL.revokeObjectURL(uploadedImagePreview)
-    }
-    setUploadedImage(file)
-    setUploadedImagePreview(URL.createObjectURL(file))
-  }
-
-  const handleRemoveUploadedImage = () => {
-    if (uploadedImagePreview) {
-      URL.revokeObjectURL(uploadedImagePreview)
-    }
-    setUploadedImage(null)
-    setUploadedImagePreview('')
-    if (inputImageRef.current) {
-      inputImageRef.current.value = ''
-    }
-  }
-
-  const fileToDataUrl = (file) => new Promise((resolve, reject) => {
-    const reader = new FileReader()
-    reader.onload = () => resolve(reader.result)
-    reader.onerror = reject
-    reader.readAsDataURL(file)
-  })
 
   const handleQiniuModeChange = (nextMode) => {
     if (nextMode === qiniuMode) {
       return
     }
-    if (qiniuAbortControllerRef.current) {
-      qiniuAbortControllerRef.current.abort()
-      qiniuAbortControllerRef.current = null
-    }
+    cancelQiniuRequest()
     setQiniuMode(nextMode)
     setQiniuError('')
     setQiniuImages([])
-    setQiniuUsage(null)
-    setQiniuLoading(false)
   }
 
   const handleQiniuImageUpload = async (event) => {
-    const files = Array.from(event.target.files || [])
-    if (files.length === 0) {
-      return
-    }
-    const currentTarget = event.target
     try {
-      const dataUrls = await Promise.all(files.map((file) => fileToDataUrl(file)))
-      const formatted = files.map((file, index) => ({
-        name: file.name,
-        size: file.size,
-        dataUrl: dataUrls[index]
-      }))
-      setQiniuImageUploads((prev) => [...prev, ...formatted])
+      await handleQiniuImagesUpload(event)
     } catch (uploadError) {
-      console.error('转换图像失败:', uploadError)
       setQiniuError(uploadError?.message || '😿 上传图像转换失败，请重试')
-    } finally {
-      if (currentTarget) {
-        currentTarget.value = ''
-      }
     }
   }
 
   const handleRemoveQiniuUpload = (indexToRemove) => {
-    setQiniuImageUploads((prev) => prev.filter((_, index) => index !== indexToRemove))
+    removeQiniuUploadAt(indexToRemove)
   }
 
   const handleQiniuMaskUpload = async (event) => {
@@ -841,107 +578,37 @@ function SeedreamStudio() {
       payload.image_config = imageConfig
     }
 
-    if (qiniuQuality) {
-      payload.quality = qiniuQuality
-    }
-
-    if (qiniuStyle) {
-      payload.style = qiniuStyle
-    }
+    if (qiniuQuality) {payload.quality = qiniuQuality}
+    if (qiniuStyle) {payload.style = qiniuStyle}
 
     const temperatureValue = Number.parseFloat(qiniuTemperature)
-    if (!Number.isNaN(temperatureValue)) {
-      payload.temperature = temperatureValue
-    }
+    if (!Number.isNaN(temperatureValue)) {payload.temperature = temperatureValue}
 
     const topPValue = Number.parseFloat(qiniuTopP)
-    if (!Number.isNaN(topPValue)) {
-      payload.top_p = topPValue
-    }
+    if (!Number.isNaN(topPValue)) {payload.top_p = topPValue}
 
     const topKValue = Number.parseInt(qiniuTopK, 10)
-    if (!Number.isNaN(topKValue)) {
-      payload.top_k = topKValue
-    }
+    if (!Number.isNaN(topKValue)) {payload.top_k = topKValue}
 
     const negative = qiniuNegativePrompt.trim()
-    if (negative) {
-      payload.negative_prompt = negative
-    }
+    if (negative) {payload.negative_prompt = negative}
 
     const imageUrl = qiniuImageUrl.trim()
-    if (imageUrl) {
-      payload.image = imageUrl
-    }
+    if (imageUrl) {payload.image = imageUrl}
 
     const reference = qiniuImageReference.trim()
     if (reference) {
-      try {
-        payload.image_reference = JSON.parse(reference)
-      } catch (parseError) {
-        payload.image_reference = reference
-      }
+      try { payload.image_reference = JSON.parse(reference) }
+      catch { payload.image_reference = reference }
     }
 
     const fidelityValue = Number.parseFloat(qiniuImageFidelity)
-    if (!Number.isNaN(fidelityValue)) {
-      payload.image_fidelity = fidelityValue
-    }
+    if (!Number.isNaN(fidelityValue)) {payload.image_fidelity = fidelityValue}
 
     const humanValue = Number.parseFloat(qiniuHumanFidelity)
-    if (!Number.isNaN(humanValue)) {
-      payload.human_fidelity = humanValue
-    }
+    if (!Number.isNaN(humanValue)) {payload.human_fidelity = humanValue}
 
-    // image_config 中已有比例与分辨率控制，避免旧字段重复
-
-    setQiniuLoading(true)
-    setQiniuError('')
-    setQiniuImages([])
-    setQiniuUsage(null)
-
-    const controller = new AbortController()
-    if (qiniuAbortControllerRef.current) {
-      qiniuAbortControllerRef.current.abort()
-    }
-    qiniuAbortControllerRef.current = controller
-
-    try {
-      const response = await fetch('/api/qiniu-images', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-          'X-Qiniu-Key': qiniuKeyChoice
-        },
-        body: JSON.stringify(payload),
-        signal: controller.signal
-      })
-
-      const data = await response.json()
-
-      if (!response.ok) {
-        const errorMsg = data?.error?.message || data?.message || data?.error || '七牛文生图调用失败'
-        throw new Error(errorMsg)
-      }
-
-      const normalized = normalizeImages(data?.data)
-      if (normalized.length === 0) {
-        throw new Error('生成成功但未返回图片数据')
-      }
-
-      setQiniuImages(normalized)
-      setQiniuUsage(data?.usage || null)
-    } catch (generationError) {
-      if (generationError.name === 'AbortError') {
-        setQiniuError('已取消本次七牛请求')
-        return
-      }
-      console.error('调用七牛文生图失败:', generationError)
-      setQiniuError(generationError?.message || '七牛文生图调用失败')
-    } finally {
-      setQiniuLoading(false)
-      qiniuAbortControllerRef.current = null
-    }
+    await generateTextToImage(payload, qiniuKeyChoice)
   }
 
   const handleQiniuEditGenerate = async () => {
@@ -956,7 +623,6 @@ function SeedreamStudio() {
     }
 
     const imageList = qiniuImageUploads.map((item) => item.dataUrl).filter(Boolean)
-
     if (imageList.length === 0) {
       setQiniuError('😿 请至少上传一张待编辑的图像')
       return
@@ -970,147 +636,46 @@ function SeedreamStudio() {
     }
 
     const maskCandidate = qiniuMaskUpload || qiniuMaskText.trim()
-    if (maskCandidate) {
-      payload.mask = maskCandidate
-    }
+    if (maskCandidate) {payload.mask = maskCandidate}
 
     const imageConfig = buildQiniuImageConfig()
-    if (imageConfig) {
-      payload.image_config = imageConfig
-    }
-
-    if (qiniuQuality) {
-      payload.quality = qiniuQuality
-    }
-
-    if (qiniuStyle) {
-      payload.style = qiniuStyle
-    }
-
-    if (qiniuBackground) {
-      payload.background = qiniuBackground
-    }
-
-    if (qiniuInputFidelity) {
-      payload.input_fidelity = qiniuInputFidelity
-    }
-
-    if (qiniuOutputFormatSetting) {
-      payload.output_format = qiniuOutputFormatSetting
-    }
+    if (imageConfig) {payload.image_config = imageConfig}
+    if (qiniuQuality) {payload.quality = qiniuQuality}
+    if (qiniuStyle) {payload.style = qiniuStyle}
+    if (qiniuBackground) {payload.background = qiniuBackground}
+    if (qiniuInputFidelity) {payload.input_fidelity = qiniuInputFidelity}
+    if (qiniuOutputFormatSetting) {payload.output_format = qiniuOutputFormatSetting}
 
     const compressionValue = Number.parseInt(qiniuOutputCompression, 10)
-    if (!Number.isNaN(compressionValue)) {
-      payload.output_compression = compressionValue
-    }
+    if (!Number.isNaN(compressionValue)) {payload.output_compression = compressionValue}
+    if (qiniuResponseFormat) {payload.response_format = qiniuResponseFormat}
+    if (qiniuStream) {payload.stream = true}
 
-    if (qiniuResponseFormat) {
-      payload.response_format = qiniuResponseFormat
-    }
-
-    if (qiniuStream) {
-      payload.stream = true
-    }
-
-    if (qiniuTopP) {
-      const topPValue = Number.parseFloat(qiniuTopP)
-      if (!Number.isNaN(topPValue)) {
-        payload.top_p = topPValue
-      }
-    }
-
-    if (qiniuTopK) {
-      const topKValue = Number.parseInt(qiniuTopK, 10)
-      if (!Number.isNaN(topKValue)) {
-        payload.top_k = topKValue
-      }
-    }
-
-    if (qiniuTemperature) {
-      const tempValue = Number.parseFloat(qiniuTemperature)
-      if (!Number.isNaN(tempValue)) {
-        payload.temperature = tempValue
-      }
-    }
+    const topPValue = Number.parseFloat(qiniuTopP)
+    if (!Number.isNaN(topPValue)) {payload.top_p = topPValue}
+    const topKValue = Number.parseInt(qiniuTopK, 10)
+    if (!Number.isNaN(topKValue)) {payload.top_k = topKValue}
+    const tempValue = Number.parseFloat(qiniuTemperature)
+    if (!Number.isNaN(tempValue)) {payload.temperature = tempValue}
 
     const negative = qiniuNegativePrompt.trim()
-    if (negative) {
-      payload.negative_prompt = negative
-    }
+    if (negative) {payload.negative_prompt = negative}
 
     const reference = qiniuImageReference.trim()
     if (reference) {
-      try {
-        payload.image_reference = JSON.parse(reference)
-      } catch (parseError) {
-        payload.image_reference = reference
-      }
+      try { payload.image_reference = JSON.parse(reference) }
+      catch { payload.image_reference = reference }
     }
 
     const imageUrl = qiniuImageUrl.trim()
-    if (imageUrl) {
-      payload.image_url = imageUrl
-    }
+    if (imageUrl) {payload.image_url = imageUrl}
 
     const fidelityValue = Number.parseFloat(qiniuImageFidelity)
-    if (!Number.isNaN(fidelityValue)) {
-      payload.image_fidelity = fidelityValue
-    }
-
+    if (!Number.isNaN(fidelityValue)) {payload.image_fidelity = fidelityValue}
     const humanValue = Number.parseFloat(qiniuHumanFidelity)
-    if (!Number.isNaN(humanValue)) {
-      payload.human_fidelity = humanValue
-    }
+    if (!Number.isNaN(humanValue)) {payload.human_fidelity = humanValue}
 
-    // aspect_ratio 统一由 image_config 管控
-
-    setQiniuLoading(true)
-    setQiniuError('')
-    setQiniuImages([])
-    setQiniuUsage(null)
-
-    const controller = new AbortController()
-    if (qiniuAbortControllerRef.current) {
-      qiniuAbortControllerRef.current.abort()
-    }
-    qiniuAbortControllerRef.current = controller
-
-    try {
-      const response = await fetch('/api/qiniu-image-edits', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-          'X-Qiniu-Key': qiniuKeyChoice
-        },
-        body: JSON.stringify(payload),
-        signal: controller.signal
-      })
-
-      const data = await response.json()
-
-      if (!response.ok) {
-        const errorMsg = data?.error?.message || data?.message || data?.error || '七牛图生图调用失败'
-        throw new Error(errorMsg)
-      }
-
-      const normalized = normalizeImages(data?.data)
-      if (normalized.length === 0) {
-        throw new Error('生成成功但未返回图片数据')
-      }
-
-      setQiniuImages(normalized)
-      setQiniuUsage(data?.usage || null)
-    } catch (generationError) {
-      if (generationError.name === 'AbortError') {
-        setQiniuError('已取消本次七牛请求')
-        return
-      }
-      console.error('调用七牛图生图失败:', generationError)
-      setQiniuError(generationError?.message || '七牛图生图调用失败')
-    } finally {
-      setQiniuLoading(false)
-      qiniuAbortControllerRef.current = null
-    }
+    await generateImageToImage(payload, qiniuKeyChoice)
   }
 
   const handleQiniuGenerate = () => {
@@ -1120,23 +685,7 @@ function SeedreamStudio() {
     return handleQiniuTextGenerate()
   }
 
-  const cancelQiniuRequest = () => {
-    if (qiniuAbortControllerRef.current) {
-      qiniuAbortControllerRef.current.abort()
-      qiniuAbortControllerRef.current = null
-    }
-    setQiniuLoading(false)
-    setQiniuError('已取消本次七牛请求')
-    setQiniuUsage(null)
-  }
-
-  /**
-   * 随机 Coser 写真一键生成
-   * 1. 调用文本 API 生成随机提示词
-   * 2. 同时调用 Fal Seedream v4 和七牛 Gemini 生图（即时展示）
-   */
   const handleCoserGenerate = async () => {
-    // 检查 Fal API Key
     if (!apiKey.trim()) {
       setCoserError('😿 请先在上方 Fal.ai 面板填写 API Key 才能使用双引擎生成')
       return
@@ -1152,57 +701,45 @@ function SeedreamStudio() {
     setCoserStep('正在生成随机角色提示词...')
 
     try {
-      // Step 1: 调用文本 API 生成随机提示词
       setCoserPromptLoading(true)
-      const promptResponse = await fetch('/api/coser-random', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ userInput: coserUserInput.trim() })
-      })
-
-      if (!promptResponse.ok) {
-        const errorData = await promptResponse.json().catch(() => ({}))
-        throw new Error(errorData?.message || errorData?.error || '提示词生成失败')
-      }
-
-      const promptData = await promptResponse.json()
-      const generatedPrompt = promptData?.prompt
-
-      if (!generatedPrompt) {
-        throw new Error('未能生成有效的提示词')
-      }
-
+      const generatedPrompt = await generateRandomPrompt(coserUserInput.trim())
       setCoserPrompt(generatedPrompt)
       setCoserPromptLoading(false)
       setCoserStep('提示词已生成，正在调用双引擎生图...')
 
-      // Step 2: 并行调用两个生图 API，即时展示结果
-      // Fal 生图（独立处理，使用 auto_4K）
-      generateFalImage(generatedPrompt)
+      quickGenerate(generatedPrompt, 'auto_4K')
         .then((result) => {
-          setCoserFalImage(result)
+          setCoserFalImage({ ...result, downloadName: 'coser_fal.png' })
           setCoserFalLoading(false)
         })
-        .catch((error) => {
-          console.error('Fal 生图失败:', error)
+        .catch((generationError) => {
+          console.error('Fal 生图失败:', generationError)
           setCoserFalLoading(false)
         })
 
-      // 七牛生图（独立处理，使用默认设置）
-      generateQiniuCoserImage(generatedPrompt)
-        .then((result) => {
-          setCoserQiniuImage(result)
+      callQiniuTextToImage({
+        model: 'gemini-3.0-pro-image-preview',
+        prompt: generatedPrompt,
+        n: 1,
+        style: 'vivid',
+        temperature: 0.8,
+        image_config: buildQiniuImageConfig() || { image_size: '2K' }
+      }, qiniuKeyChoice)
+        .then((data) => {
+          const firstImage = normalizeImages(data?.data)[0]
+          if (!firstImage) {
+            throw new Error('七牛未返回图像')
+          }
+          setCoserQiniuImage({ ...firstImage, downloadName: 'coser_qiniu.png' })
           setCoserQiniuLoading(false)
         })
-        .catch((error) => {
-          console.error('七牛生图失败:', error)
+        .catch((generationError) => {
+          console.error('七牛生图失败:', generationError)
           setCoserQiniuLoading(false)
         })
 
-      // 提示词生成完成后，主 loading 状态改为等待图片
       setCoserStep('双引擎生图中，先完成的会先显示...')
       setCoserLoading(false)
-
     } catch (generationError) {
       console.error('随机 Coser 生成失败:', generationError)
       setCoserError(generationError?.message || '生成失败，请稍后重试')
@@ -1211,104 +748,6 @@ function SeedreamStudio() {
       setCoserFalLoading(false)
       setCoserQiniuLoading(false)
       setCoserPromptLoading(false)
-    }
-  }
-
-  /**
-   * 使用 Fal Seedream v4 生成图片
-   * @param {string} promptText - 提示词
-   */
-  const generateFalImage = async (promptText) => {
-    try {
-      fal.config({ credentials: apiKey.trim() })
-
-      // 随机 Coser 也保持与 v4.5 相同的字段，防止旧参数触发接口校验
-      const inputPayload = {
-        prompt: promptText,
-        image_size: 'auto_4K',
-        num_images: 1,
-        sync_mode: false,
-        enable_safety_checker: false
-      }
-
-      const result = await fal.subscribe('fal-ai/bytedance/seedream/v4/text-to-image', {
-        input: inputPayload,
-        logs: true
-      })
-
-      const resultData = result.data || result
-      const imageList = resultData.images
-
-      if (!imageList || !Array.isArray(imageList) || imageList.length === 0) {
-        throw new Error('Fal 未返回图像')
-      }
-
-      const firstImage = imageList[0]
-      if (firstImage?.url) {
-        return { src: firstImage.url, downloadName: 'coser_fal.png' }
-      }
-
-      const base64 = firstImage?.base64 || firstImage?.b64_json || firstImage?.content
-      if (base64) {
-        return { src: `data:image/png;base64,${base64}`, downloadName: 'coser_fal.png' }
-      }
-
-      throw new Error('Fal 图片格式无法识别')
-    } catch (error) {
-      console.error('Fal 生图异常:', error)
-      throw error
-    }
-  }
-
-  /**
-   * 使用七牛 Gemini 3.0 Pro Image Preview 生成图片
-   * @param {string} promptText - 提示词
-   */
-  const generateQiniuCoserImage = async (promptText) => {
-    try {
-      const payload = {
-        model: 'gemini-3.0-pro-image-preview',
-        prompt: promptText,
-        n: 1,
-        style: 'vivid',
-        temperature: 0.8
-      }
-
-      const imageConfig = buildQiniuImageConfig()
-      payload.image_config = imageConfig || { image_size: '2K' }
-
-      const response = await fetch('/api/qiniu-images', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json', 'X-Qiniu-Key': qiniuKeyChoice },
-        body: JSON.stringify(payload)
-      })
-
-      const data = await response.json()
-
-      if (!response.ok) {
-        const errorMsg = data?.error?.message || data?.message || data?.error || '七牛生图调用失败'
-        throw new Error(errorMsg)
-      }
-
-      const imageList = data?.data
-      if (!imageList || !Array.isArray(imageList) || imageList.length === 0) {
-        throw new Error('七牛未返回图像')
-      }
-
-      const firstImage = imageList[0]
-      if (firstImage?.url) {
-        return { src: firstImage.url, downloadName: 'coser_qiniu.png' }
-      }
-
-      const base64 = firstImage?.base64 || firstImage?.b64_json || firstImage?.content
-      if (base64) {
-        return { src: `data:image/png;base64,${base64}`, downloadName: 'coser_qiniu.png' }
-      }
-
-      throw new Error('七牛图片格式无法识别')
-    } catch (error) {
-      console.error('七牛生图异常:', error)
-      throw error
     }
   }
 
@@ -1322,84 +761,22 @@ function SeedreamStudio() {
           <p>喵~ 自由切换 Fal.ai Seedream v4 与七牛 Gemini-3.0-Pro Image Preview，玩转橘猫灵感 ✨</p>
         </header>
 
-        <div className="api-switch" role="tablist" aria-label="图像生成 API 切换">
-          <button
-            type="button"
-            className={`api-switch-button${activeApi === 'fal' ? ' active' : ''}`}
-            onClick={() => handleApiSwitch('fal')}
-          >
-            🧠 Fal.ai Seedream
-          </button>
-          <button
-            type="button"
-            className={`api-switch-button${activeApi === 'qiniu' ? ' active' : ''}`}
-            onClick={() => handleApiSwitch('qiniu')}
-          >
-            🐧 七牛 Gemini
-          </button>
-          <button
-            type="button"
-            className={`api-switch-button coser-button${activeApi === 'playground' ? ' active' : ''}`}
-            onClick={() => handleApiSwitch('playground')}
-          >
-            🎮 更多玩法
-          </button>
-        </div>
+        <ApiSwitchTabs activeApi={activeApi} onSwitch={handleApiSwitch} />
 
         {activeApi === 'fal' ? (
           <div className="seedream-layout">
             <section className="seedream-panel" aria-label="生成设置面板">
-            <div className="panel-card collapsible">
-              <button
-                type="button"
-                className="collapse-header"
-                onClick={() => setShowApiKeyPanel(!showApiKeyPanel)}
-              >
-                <h2>🔑 Fal.ai API Key</h2>
-                <span className="collapse-icon">{showApiKeyPanel ? '▼' : '▶'}</span>
-              </button>
-              {showApiKeyPanel && (
-                <div className="collapse-content">
-                  <p className="panel-tip">API Key 仅保存在本地浏览器，请放心使用</p>
-                  <div className="field-group">
-                    <label htmlFor="fal-api-key">FAL_KEY</label>
-                    <input
-                      id="fal-api-key"
-                      type="text"
-                      placeholder="输入 Fal.ai API Key"
-                      value={apiKey}
-                      onChange={(event) => setApiKey(event.target.value)}
-                    />
-                  </div>
-                  <div className="panel-actions">
-                    <button type="button" className="primary" onClick={handleSaveKey}>
-                      🐾 保存到本地
-                    </button>
-                    <button type="button" className="ghost" onClick={handleClearKey}>
-                      🧼 清除保存
-                    </button>
-                  </div>
-                  {saveMessage && <p className="panel-message">{saveMessage}</p>}
-                </div>
-              )}
-            </div>
+            <ApiKeyPanel
+              apiKey={apiKey}
+              setApiKey={setApiKey}
+              saveMessage={saveMessage}
+              onSave={handleSaveKey}
+              onClear={handleClearKey}
+              isOpen={showApiKeyPanel}
+              onToggle={() => setShowApiKeyPanel(!showApiKeyPanel)}
+            />
 
-            <div className="panel-card">
-              <h2>🤖 模型选择</h2>
-              <div className="field-group">
-                <label htmlFor="model-select">选择模型</label>
-                <select
-                  id="model-select"
-                  value={modelType}
-                  onChange={(e) => setModelType(e.target.value)}
-                >
-                  <option value="v4">Seedream v4 (经典)</option>
-                  <option value="v4.5">Seedream v4.5 (最新)</option>
-                  <option value="new">Gemini 3 Pro (新版)</option>
-                  <option value="z-image-turbo">Z-Image Turbo (6B 超快速)</option>
-                </select>
-              </div>
-            </div>
+            <ModelSelector modelType={modelType} setModelType={setModelType} />
 
             <div className="panel-card">
               <h2>📝 提示词</h2>
@@ -1497,13 +874,13 @@ function SeedreamStudio() {
                         ref={inputImageRef}
                         type="file"
                         accept="image/*"
-                        onChange={handleImageUpload}
+                        onChange={handleFalImageUpload}
                       />
                     </label>
                     {uploadedImage && (
                       <div className="upload-preview">
                         <img src={uploadedImagePreview} alt="待编辑的基础图像预览" />
-                        <button type="button" className="remove-button" onClick={handleRemoveUploadedImage}>
+                        <button type="button" className="remove-button" onClick={removeFalUploadedImage}>
                           移除图像
                         </button>
                       </div>
@@ -1811,47 +1188,13 @@ function SeedreamStudio() {
               className={`seedream-output ${!loading && images.length === 0 ? 'mobile-hidden' : ''}`}
               aria-label="生成结果区域"
             >
-              <div className="output-card">
-                <h2>🎨 生成结果</h2>
-
-                {!loading && !error && images.length === 0 && (
-                  <div className="output-placeholder">
-                    <p>喵~ 还没有生成记录，输入提示词后点击“生成图像”试试吧</p>
-                  </div>
-                )}
-
-                {loading && (
-                  <div className="output-placeholder">
-                    <p>正在调用 Seedream v4，小猫仔细绘画中...</p>
-                  </div>
-                )}
-
-                {resultSeed && (
-                  <div className="seed-info">
-                    <span>生成种子：</span>
-                    <strong>{resultSeed}</strong>
-                  </div>
-                )}
-
-                {images.length > 0 && (
-                  <div className="image-grid">
-                    {images.map((image, index) => (
-                      <figure key={image.src} className="seedream-image-card">
-                        <img src={image.src} alt={`Seedream 生成图像 ${index + 1}`} loading="lazy" />
-                        <figcaption>
-                          <button
-                            type="button"
-                            className="download-link"
-                            onClick={() => handleImageDownload(image.src, image.downloadName)}
-                          >
-                            ⬇️ 下载第 {index + 1} 张
-                          </button>
-                        </figcaption>
-                      </figure>
-                    ))}
-                  </div>
-                )}
-              </div>
+              <ImageResults
+                images={images}
+                loading={loading}
+                error={error}
+                resultSeed={resultSeed}
+                emptyText="喵~ 还没有生成记录，输入提示词后点击“生成图像”试试吧"
+              />
             </section>
           </div>
         ) : activeApi === 'qiniu' ? (
@@ -2399,149 +1742,21 @@ function SeedreamStudio() {
                   </button>
                   <h2>随机 Coser 生成</h2>
                 </div>
-                <div className="seedream-layout coser-mode">
-            <section className="seedream-panel coser-panel" aria-label="随机 Coser 生成设置">
-              {/* 用户自定义输入 */}
-              <div className="panel-card">
-                <h2>💭 自定义需求（可选）</h2>
-                <div className="field-group">
-                  <div className="field-label-row">
-                    <label htmlFor="coser-user-input">输入你想要的元素</label>
-                    <button
-                      type="button"
-                      className="clear-button"
-                      onClick={() => setCoserUserInput('')}
-                      disabled={!coserUserInput}
-                    >
-                      清空
-                    </button>
-                  </div>
-                  <textarea
-                    id="coser-user-input"
-                    rows={3}
-                    placeholder="例如：穿和服、在樱花树下、甜美笑容、蓝色长发..."
-                    value={coserUserInput}
-                    onChange={(event) => setCoserUserInput(event.target.value)}
-                  />
-                  <p className="panel-tip">留空则完全随机，填写后 AI 会在你的需求基础上生成提示词</p>
-                </div>
-              </div>
-
-              {/* Fal API Key 提示 */}
-              {!apiKey.trim() && (
-                <div className="panel-card warning-card">
-                  <p>⚠️ 请先切换到「Fal.ai Seedream」面板填写 API Key，才能使用双引擎生成功能</p>
-                </div>
-              )}
-
-              <button
-                type="button"
-                className="generate-button coser-generate-button"
-                onClick={handleCoserGenerate}
-                disabled={coserLoading || coserPromptLoading}
-              >
-                {coserLoading || coserPromptLoading ? (
-                  <>
-                    <span>{coserStep || '生成中...'}</span>
-                    <span className="seedream-loader" aria-hidden="true" />
-                  </>
-                ) : (
-                  '🎀 一键生成随机 Coser'
-                )}
-              </button>
-
-              {coserError && <p className="error-banner" role="alert">{coserError}</p>}
-
-              {/* 生成的提示词展示 */}
-              {coserPrompt && (
-                <div className="panel-card coser-prompt-card">
-                  <h2>📝 生成的提示词</h2>
-                  <div className="coser-prompt-content">
-                    <p>{coserPrompt}</p>
-                  </div>
-                </div>
-              )}
-            </section>
-
-            <section
-              className={`seedream-output coser-output ${!coserLoading && !coserPromptLoading && !coserFalImage && !coserQiniuImage && !coserFalLoading && !coserQiniuLoading ? 'mobile-hidden' : ''}`}
-              aria-label="随机 Coser 生成结果"
-            >
-              <div className="output-card">
-                <h2>🎨 双引擎生成结果</h2>
-
-                {!coserLoading && !coserPromptLoading && !coserFalImage && !coserQiniuImage && !coserFalLoading && !coserQiniuLoading && (
-                  <div className="output-placeholder">
-                    <p>点击「一键生成随机 Coser」开始体验双引擎对比生成~</p>
-                  </div>
-                )}
-
-                {(coserFalImage || coserQiniuImage || coserFalLoading || coserQiniuLoading) && (
-                  <div className="coser-image-compare">
-                    {/* Fal 生成结果 */}
-                    <div className="coser-image-column">
-                      <h3 className="engine-label fal-label">🧠 Fal Seedream v4</h3>
-                      {coserFalImage ? (
-                        <figure className="seedream-image-card">
-                          <img src={coserFalImage.src} alt="Fal Seedream 生成的 Coser 写真" loading="lazy" />
-                          <figcaption>
-                            <button
-                              type="button"
-                              className="download-link"
-                              onClick={() => handleImageDownload(coserFalImage.src, coserFalImage.downloadName)}
-                            >
-                              ⬇️ 下载 Fal 图片
-                            </button>
-                          </figcaption>
-                        </figure>
-                      ) : (
-                        <div className="coser-image-placeholder">
-                          {coserFalLoading ? (
-                            <>
-                              <span className="seedream-loader" aria-hidden="true" />
-                              <p>Fal 生成中...</p>
-                            </>
-                          ) : (
-                            <p>生成失败</p>
-                          )}
-                        </div>
-                      )}
-                    </div>
-
-                    {/* 七牛生成结果 */}
-                    <div className="coser-image-column">
-                      <h3 className="engine-label qiniu-label">🐧 七牛 Gemini</h3>
-                      {coserQiniuImage ? (
-                        <figure className="seedream-image-card">
-                          <img src={coserQiniuImage.src} alt="七牛 Gemini 生成的 Coser 写真" loading="lazy" />
-                          <figcaption>
-                            <button
-                              type="button"
-                              className="download-link"
-                              onClick={() => handleImageDownload(coserQiniuImage.src, coserQiniuImage.downloadName)}
-                            >
-                              ⬇️ 下载七牛图片
-                            </button>
-                          </figcaption>
-                        </figure>
-                      ) : (
-                        <div className="coser-image-placeholder">
-                          {coserQiniuLoading ? (
-                            <>
-                              <span className="seedream-loader" aria-hidden="true" />
-                              <p>七牛生成中...</p>
-                            </>
-                          ) : (
-                            <p>生成失败</p>
-                          )}
-                        </div>
-                      )}
-                    </div>
-                  </div>
-                )}
-              </div>
-            </section>
-                </div>
+                <CoserPlayground
+                  userInput={coserUserInput}
+                  setUserInput={setCoserUserInput}
+                  apiKey={apiKey}
+                  loading={coserLoading}
+                  promptLoading={coserPromptLoading}
+                  falLoading={coserFalLoading}
+                  qiniuLoading={coserQiniuLoading}
+                  error={coserError}
+                  step={coserStep}
+                  prompt={coserPrompt}
+                  falImage={coserFalImage}
+                  qiniuImage={coserQiniuImage}
+                  onGenerate={handleCoserGenerate}
+                />
               </div>
             )}
           </div>
