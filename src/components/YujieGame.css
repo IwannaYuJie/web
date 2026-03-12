@@ -4,9 +4,19 @@
  */
 
 .yujie-game-container {
+  --yujie-shell-bg: linear-gradient(180deg, #fff8f0 0%, #ffe6cc 52%, #ffd3a4 100%);
+  --yujie-accent: linear-gradient(135deg, #FFB366 0%, #FF9F45 52%, #FF8C1A 100%);
+  --yujie-surface: rgba(255, 255, 255, 0.95);
+  --yujie-ink: #5C4033;
+  --yujie-muted: #8B6F47;
+  --yujie-shadow: 0 20px 60px rgba(255, 159, 69, 0.18);
+  --yujie-shadow-strong: 0 14px 36px rgba(255, 159, 69, 0.28);
   width: 100vw;
   height: 100vh;
-  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  background:
+    radial-gradient(circle at top left, rgba(255, 191, 102, 0.16), transparent 32%),
+    radial-gradient(circle at bottom right, rgba(255, 159, 69, 0.18), transparent 26%),
+    var(--yujie-shell-bg);
   font-family: 'Microsoft YaHei', 'PingFang SC', sans-serif;
   position: fixed;
   top: 0;
@@ -25,7 +35,9 @@
   width: 100%;
   height: 100%;
   padding: 20px;
-  background: url('/images/bg_start_pattern.png') repeat;
+  background:
+    linear-gradient(135deg, rgba(255, 248, 240, 0.92), rgba(255, 230, 204, 0.82)),
+    url('/images/bg_start_pattern.png') repeat;
   animation: bgFloat 20s ease-in-out infinite;
   overflow-y: auto;
 }
@@ -36,13 +48,14 @@
 }
 
 .start-screen-content {
-  background: rgba(255, 255, 255, 0.95);
+  background: var(--yujie-surface);
   border-radius: 30px;
   padding: 50px;
   max-width: 800px;
-  box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
+  box-shadow: var(--yujie-shadow);
   text-align: center;
   animation: slideIn 0.8s ease-out;
+  border: 1px solid rgba(255, 212, 163, 0.8);
 }
 
 @keyframes slideIn {
@@ -88,8 +101,8 @@
   margin: 30px 0;
   border-radius: 20px;
   overflow: hidden;
-  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
-  background: linear-gradient(135deg, #ffeaa7 0%, #fdcb6e 100%);
+  box-shadow: 0 10px 30px rgba(255, 159, 69, 0.18);
+  background: linear-gradient(135deg, #fff0db 0%, #ffd5a8 100%);
   display: flex;
   align-items: center;
   justify-content: center;
@@ -107,7 +120,7 @@
 .game-description {
   font-size: 20px;
   line-height: 1.8;
-  color: #555;
+  color: var(--yujie-muted);
   margin: 30px 0;
 }
 
@@ -140,7 +153,7 @@
 }
 
 .start-button {
-  background: linear-gradient(135deg, #FFB366 0%, #FF9F45 50%, #FF8C1A 100%);
+  background: var(--yujie-accent);
   color: white;
   border: none;
   padding: 20px 60px;
@@ -151,13 +164,13 @@
   display: inline-flex;
   align-items: center;
   gap: 15px;
-  box-shadow: 0 10px 30px rgba(255, 159, 69, 0.4);
+  box-shadow: var(--yujie-shadow-strong);
   transition: all 0.3s ease;
 }
 
 .start-button:hover {
   transform: translateY(-3px);
-  box-shadow: 0 15px 40px rgba(255, 159, 69, 0.6);
+  box-shadow: 0 16px 40px rgba(255, 159, 69, 0.34);
 }
 
 .start-button:active {
@@ -180,14 +193,14 @@
   top: 0;
   left: 0;
   right: 0;
-  background: rgba(0, 0, 0, 0.8);
+  background: rgba(92, 64, 51, 0.86);
   backdrop-filter: blur(10px);
   padding: 15px 30px;
   display: flex;
   justify-content: space-around;
   align-items: center;
   z-index: 100;
-  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.3);
+  box-shadow: 0 8px 20px rgba(92, 64, 51, 0.16);
 }
 
 .status-item {
@@ -224,8 +237,8 @@
 }
 
 .status-fill.alert {
-  background: linear-gradient(90deg, #feca57 0%, #ff9ff3 100%);
-  box-shadow: 0 0 10px rgba(254, 202, 87, 0.5);
+  background: linear-gradient(90deg, #feca57 0%, #ff9f45 100%);
+  box-shadow: 0 0 10px rgba(255, 159, 69, 0.4);
 }
 
 .game-main-area {
@@ -245,7 +258,7 @@
   background-size: cover;
   background-position: center;
   background-repeat: no-repeat;
-  background-color: #2c3e50;
+  background-color: #6d5037;
 }
 
 /* 场景背景占位符已移除 */
@@ -263,7 +276,7 @@
   position: absolute;
   top: 100px;
   left: 30px;
-  background: rgba(0, 0, 0, 0.7);
+  background: rgba(92, 64, 51, 0.82);
   color: white;
   padding: 10px 20px;
   border-radius: 10px;
@@ -312,7 +325,7 @@
   top: 120px;
   left: 50%;
   transform: translateX(-50%);
-  background: rgba(0, 0, 0, 0.7);
+  background: rgba(92, 64, 51, 0.82);
   color: white;
   padding: 20px 40px;
   border-radius: 15px;
@@ -341,10 +354,11 @@
   transform: translateX(-50%);
   width: 90%;
   max-width: 1200px;
-  background: rgba(255, 255, 255, 0.95);
+  background: var(--yujie-surface);
   border-radius: 20px;
   padding: 25px;
-  box-shadow: 0 10px 40px rgba(0, 0, 0, 0.3);
+  box-shadow: 0 18px 40px rgba(92, 64, 51, 0.18);
+  border: 1px solid rgba(255, 212, 163, 0.8);
   z-index: 50;
   animation: dialogueFadeIn 0.3s ease-out;
 }
@@ -393,9 +407,9 @@
 .dialogue-text {
   font-size: 20px;
   line-height: 1.8;
-  color: #333;
+  color: var(--yujie-ink);
   padding: 15px;
-  background: rgba(255, 255, 255, 0.5);
+  background: rgba(255, 248, 240, 0.78);
   border-radius: 10px;
   min-height: 80px;
 }
@@ -403,7 +417,7 @@
 .dialogue-continue {
   text-align: center;
   margin-top: 15px;
-  color: #333;
+  color: var(--yujie-ink);
   font-size: 16px;
   cursor: pointer;
   display: flex;
@@ -433,14 +447,14 @@
 .choices-title {
   font-size: 18px;
   font-weight: bold;
-  color: #555;
+  color: var(--yujie-muted);
   margin-bottom: 15px;
   text-align: center;
 }
 
 .choice-button {
   width: 100%;
-  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  background: var(--yujie-accent);
   color: white;
   border: none;
   padding: 20px;
@@ -473,7 +487,7 @@
 
 .choice-button:hover {
   transform: translateX(10px);
-  box-shadow: 0 5px 20px rgba(102, 126, 234, 0.4);
+  box-shadow: var(--yujie-shadow-strong);
 }
 
 .choice-number {
@@ -521,18 +535,22 @@
   width: 100%;
   height: 100%;
   padding: 20px;
-  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  background:
+    radial-gradient(circle at top left, rgba(255, 191, 102, 0.14), transparent 36%),
+    radial-gradient(circle at bottom right, rgba(255, 159, 69, 0.16), transparent 30%),
+    var(--yujie-shell-bg);
   overflow-y: auto;
 }
 
 .ending-content {
-  background: rgba(255, 255, 255, 0.95);
+  background: var(--yujie-surface);
   border-radius: 30px;
   padding: 50px;
   max-width: 900px;
-  box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
+  box-shadow: var(--yujie-shadow);
   text-align: center;
   animation: slideIn 0.8s ease-out;
+  border: 1px solid rgba(255, 212, 163, 0.8);
 }
 
 .ending-title {
@@ -549,8 +567,8 @@
   margin: 30px 0;
   border-radius: 20px;
   overflow: hidden;
-  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
-  background: linear-gradient(135deg, #ffeaa7 0%, #fdcb6e 100%);
+  box-shadow: 0 10px 30px rgba(255, 159, 69, 0.18);
+  background: linear-gradient(135deg, #fff0db 0%, #ffd5a8 100%);
   display: flex;
   align-items: center;
   justify-content: center;
@@ -567,13 +585,13 @@
 
 .ending-description {
   font-size: 20px;
-  color: #333;
+  color: var(--yujie-ink);
   margin: 20px 0;
   font-weight: bold;
 }
 
 .ending-text {
-  background: rgba(255, 255, 255, 0.5);
+  background: rgba(255, 248, 240, 0.78);
   padding: 30px;
   border-radius: 15px;
   margin: 30px 0;
@@ -582,7 +600,7 @@
 .ending-text p {
   font-size: 18px;
   line-height: 2;
-  color: #333;
+  color: var(--yujie-ink);
 }
 
 .ending-stats {
@@ -614,7 +632,7 @@
 }
 
 .restart-button {
-  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  background: var(--yujie-accent);
   color: white;
   border: none;
   padding: 20px 60px;
@@ -625,14 +643,37 @@
   display: inline-flex;
   align-items: center;
   gap: 15px;
-  box-shadow: 0 10px 30px rgba(102, 126, 234, 0.4);
+  box-shadow: var(--yujie-shadow-strong);
   transition: all 0.3s ease;
   margin-top: 20px;
 }
 
 .restart-button:hover {
   transform: translateY(-3px);
-  box-shadow: 0 15px 40px rgba(102, 126, 234, 0.6);
+  box-shadow: 0 16px 40px rgba(255, 159, 69, 0.34);
+}
+
+.game-exit-button {
+  position: fixed;
+  top: 20px;
+  left: 20px;
+  z-index: 10001;
+  border: 1px solid rgba(255, 212, 163, 0.84);
+  background: rgba(255, 255, 255, 0.88);
+  color: var(--yujie-ink);
+  border-radius: 999px;
+  padding: 0.8rem 1.05rem;
+  font-size: 0.95rem;
+  font-weight: 700;
+  cursor: pointer;
+  box-shadow: 0 12px 28px rgba(92, 64, 51, 0.16);
+  transition: transform 0.2s ease, background 0.2s ease, border-color 0.2s ease;
+}
+
+.game-exit-button:hover {
+  transform: translateY(-2px);
+  background: #fff;
+  border-color: rgba(255, 159, 69, 0.9);
 }
 
 /* ==================== 游戏菜单 ==================== */
@@ -646,7 +687,7 @@
 }
 
 .menu-button {
-  background: rgba(0, 0, 0, 0.7);
+  background: rgba(92, 64, 51, 0.8);
   color: white;
   border: none;
   padding: 15px 25px;
@@ -660,7 +701,7 @@
 }
 
 .menu-button:hover {
-  background: rgba(0, 0, 0, 0.9);
+  background: rgba(92, 64, 51, 0.94);
   transform: translateY(-3px);
 }
 

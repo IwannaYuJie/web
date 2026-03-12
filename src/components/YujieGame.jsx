@@ -9,7 +9,7 @@ import gameEvents from '../data/yujieGameEvents'
  * 这是一个基于状态机的Galgame引擎
  * 包含：剧情播放、选项分支、好感度系统、结局判定
  */
-const YujieGame = () => {
+const YujieGame = ({ onExit }) => {
   // ==================== 状态定义 ====================
 
   // 游戏阶段: 'start' | 'playing' | 'ending'
@@ -142,10 +142,17 @@ const YujieGame = () => {
 
   // ==================== 渲染组件 ====================
 
+  const exitButton = onExit ? (
+    <button type="button" className="game-exit-button" onClick={onExit}>
+      ← 返回游戏列表
+    </button>
+  ) : null
+
   // 1. 开始界面
   if (gamePhase === 'start') {
     return (
       <div className="yujie-game-container">
+        {exitButton}
         <div className="game-start-screen">
           <div className="start-screen-content">
             <h1 className="game-title">
@@ -179,11 +186,12 @@ const YujieGame = () => {
     const ending = gameData.endings[endingId] || gameData.endings.normalEnding
     return (
       <div className="yujie-game-container">
+        {exitButton}
         <div className="game-ending-screen">
           <div className="ending-content">
             <h2 className="ending-title">{ending.name}</h2>
             <div className="ending-image">
-              <div style={{width: '100%', height: '100%', background: '#667eea', display: 'flex', alignItems: 'center', justifyContent: 'center', color: 'white'}}>
+              <div style={{width: '100%', height: '100%', background: '#FFB366', display: 'flex', alignItems: 'center', justifyContent: 'center', color: 'white'}}>
                 ENDING CG
               </div>
             </div>
@@ -223,6 +231,7 @@ const YujieGame = () => {
 
   return (
     <div className="yujie-game-container">
+      {exitButton}
       {/* 顶部状态栏 */}
       <div className="game-status-bar">
         <div className="status-item">

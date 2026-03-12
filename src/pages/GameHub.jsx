@@ -1,4 +1,5 @@
 import { Suspense, lazy, useMemo, useState } from 'react'
+import { Link } from 'react-router-dom'
 import './GameHub.css'
 
 const GAME_COMPONENTS = {
@@ -81,151 +82,223 @@ const GAMES = [
 
 function GameLoader() {
   return (
-    <div className="glass p-12 rounded-2xl text-center">
-      <div className="text-5xl mb-4">🎮</div>
+    <div className="game-loader glass">
+      <div className="loader-icon">🎮</div>
       <p>游戏加载中...</p>
     </div>
   )
 }
 
-/**
- * 游戏集合页面 🎮
- * 展示所有可用的小游戏入口
- * 
- * 功能说明:
- * - 展示多个小游戏的入口
- * - 每个游戏以卡片形式展示
- * - 点击卡片可以进入对应的游戏
- * - 支持后续添加更多游戏
- */
 function GameHub() {
-  // 当前选中的游戏
   const [selectedGameId, setSelectedGameId] = useState(null)
+  const activeGames = useMemo(() => GAMES.filter((game) => game.status === 'active'), [])
+  const spotlightGames = useMemo(() => activeGames.slice(0, 4), [activeGames])
   const selectedGame = useMemo(
     () => GAMES.find((game) => game.id === selectedGameId) || null,
     [selectedGameId],
   )
   const ActiveGame = selectedGame ? GAME_COMPONENTS[selectedGame.id] : null
 
-  /**
-   * 处理游戏卡片点击
-   * @param {Object} game - 游戏对象
-   */
   const handleGameClick = (game) => {
     if (game.status === 'coming-soon') {
-      // 如果是即将上线的游戏,显示提示
       alert('🎮 这个游戏正在开发中,敬请期待!')
       return
     }
-    // 后续可以在这里添加游戏启动逻辑
+
     setSelectedGameId(game.id)
   }
 
-  /**
-   * 返回游戏列表
-   */
   const handleBackToList = () => {
     setSelectedGameId(null)
   }
 
   return (
     <div className="game-hub-container">
-      {/* 页面头部 */}
-      <header className="game-hub-header">
-        <div className="header-content">
-          <h1 className="hub-title">
-            <span className="title-icon">🎮</span>
-            游戏中心
-            <span className="title-icon">🎮</span>
-          </h1>
-          <p className="hub-subtitle">🎉 来玩点好玩的小游戏吧!</p>
+      <div className="game-hub-ambient game-hub-ambient-one"></div>
+      <div className="game-hub-ambient game-hub-ambient-two"></div>
 
-        </div>
-      </header>
-
-      {/* 主内容区域 */}
-      <main className="game-hub-main">
-        {!selectedGame ? (
-          // 游戏列表视图
-          <div className="games-grid">
-            <div className="grid-header">
-              <h2>🎯 选择你想玩的游戏</h2>
-              <p className="game-count">当前共有 <strong>{GAMES.length}</strong> 个游戏位</p>
+      <div className="container game-hub-shell">
+        <header className="game-hub-hero glass">
+          <div className="hero-copy">
+            <div className="hero-meta-row">
+              <span className="hero-badge">😺 橘猫游乐场</span>
+              <Link to="/" className="hero-home-link">← 返回首页</Link>
             </div>
 
-            <div className="game-cards">
-              {GAMES.map((game) => (
-                <div
-                  key={game.id}
-                  className={`game-card ${game.status === 'coming-soon' ? 'coming-soon' : ''}`}
-                  onClick={() => handleGameClick(game)}
-                  style={{ '--card-color': game.color }}
-                >
-                  <div className="card-inner">
-                    <div className="card-icon">{game.icon}</div>
-                    <h3 className="card-title">{game.name}</h3>
-                    <p className="card-description">{game.description}</p>
-                    
-                    {game.status === 'coming-soon' ? (
-                      <div className="card-status">
-                        <span className="status-badge">即将上线</span>
-                      </div>
-                    ) : (
-                      <div className="card-action">
-                        <button className="play-button">
-                          <span>开始游戏</span>
-                          <span className="button-icon">▶️</span>
-                        </button>
-                      </div>
-                    )}
-                  </div>
+            <h1 className="hub-title">小游戏中心</h1>
+            <p className="hub-subtitle">
+              把站内小游戏收进和首页一致的暖橙视觉里，想放松时随手开一局，切换起来也还是同一个站点。
+            </p>
 
-                  {/* 卡片装饰效果 */}
-                  <div className="card-shine"></div>
+            <div className="hero-actions">
+              <a href="#game-library" className="btn btn-primary">开始挑选</a>
+              {selectedGame ? (
+                <button type="button" className="btn btn-secondary" onClick={handleBackToList}>
+                  返回列表
+                </button>
+              ) : (
+                <span className="hero-inline-note">当前开放 {activeGames.length} 款可直接游玩的小游戏</span>
+              )}
+            </div>
+
+            <div className="hero-pills">
+              <span className="hero-pill">暖橙配色</span>
+              <span className="hero-pill">玻璃卡片</span>
+              <span className="hero-pill">即点即玩</span>
+            </div>
+          </div>
+
+          <div className="hero-visual">
+            <div className="hero-avatar-frame">
+              <img src="/images/cat-avatar.png" alt="橘猫头像" className="hero-avatar" />
+            </div>
+
+            <div className="hero-orbits">
+              {spotlightGames.map((game, index) => (
+                <div key={game.id} className={`hero-orbit-chip hero-orbit-chip-${index + 1}`}>
+                  <span className="orbit-icon">{game.icon}</span>
+                  <span className="orbit-label">{game.name}</span>
                 </div>
               ))}
             </div>
-
-            {/* 添加游戏提示卡片 */}
-            <div className="add-game-hint">
-              <div className="hint-icon">💡</div>
-              <h3>想添加新游戏?</h3>
-              <p>在 <code>GameHub.jsx</code> 的 <code>GAMES</code> 数组中添加新游戏配置即可!</p>
-              <div className="hint-example">
-                <pre>{`{
-  id: 'my-game',
-  name: '我的游戏',
-  icon: '🎯',
-  description: '游戏描述',
-  status: 'active',
-  color: '#FF6B6B'
-}`}</pre>
-              </div>
-            </div>
           </div>
-        ) : (
-          // 游戏详情/游戏界面视图
-            <div className="game-detail">
-              <button className="back-button" onClick={handleBackToList}>
-                <span>← 返回游戏列表</span>
-              </button>
+        </header>
+
+        <section className="hub-overview">
+          <article className="overview-card glass">
+            <span className="overview-label">开放游戏</span>
+            <strong>{activeGames.length}</strong>
+            <p>全部都能从当前页面直接进入，不额外跳转。</p>
+          </article>
+
+          <article className="overview-card glass">
+            <span className="overview-label">视觉节奏</span>
+            <strong>暖橙 + 米白</strong>
+            <p>延续首页的奶油橙、柔和阴影和磨砂卡片层次。</p>
+          </article>
+
+          <article className="overview-card glass">
+            <span className="overview-label">游玩体验</span>
+            <strong>轻量切换</strong>
+            <p>先挑游戏，再进入详情区，页面观感前后统一。</p>
+          </article>
+        </section>
+
+        <main className="game-hub-main" id="game-library">
+          {!selectedGame ? (
+            <>
+              <div className="grid-header">
+                <div>
+                  <span className="section-kicker">精选小游戏</span>
+                  <h2>选一款，马上开玩</h2>
+                </div>
+                <p className="game-count">
+                  当前开放 <strong>{activeGames.length}</strong> 款小游戏，更多内容会继续补充。
+                </p>
+              </div>
+
+              <div className="game-library-layout">
+                <div className="game-cards">
+                  {GAMES.map((game) => (
+                    <button
+                      type="button"
+                      key={game.id}
+                      className={`game-card ${game.status === 'coming-soon' ? 'coming-soon' : ''}`}
+                      onClick={() => handleGameClick(game)}
+                      style={{ '--card-color': game.color }}
+                    >
+                      <div className="card-accent" aria-hidden="true"></div>
+                      <div className="card-header">
+                        <span className="card-badge">
+                          {game.status === 'coming-soon' ? '即将上线' : '即点即玩'}
+                        </span>
+                        <span className="card-dot" aria-hidden="true"></span>
+                      </div>
+
+                      <div className="card-icon-shell">
+                        <span className="card-icon">{game.icon}</span>
+                      </div>
+
+                      <h3 className="card-title">{game.name}</h3>
+                      <p className="card-description">{game.description}</p>
+
+                      <div className="card-footer">
+                        <span className="card-note">
+                          {game.status === 'coming-soon' ? '正在整理中' : '进入游戏'}
+                        </span>
+                        <span className="card-arrow" aria-hidden="true">→</span>
+                      </div>
+
+                      <div className="card-shine" aria-hidden="true"></div>
+                    </button>
+                  ))}
+                </div>
+
+                <aside className="games-aside">
+                  <section className="aside-card glass">
+                    <span className="aside-kicker">游玩小贴士</span>
+                    <h3>更像首页，也更适合久看</h3>
+                    <ul className="aside-list">
+                      <li>统一使用暖橙、米白和浅棕，弱化原来偏炫酷页游的跳色感。</li>
+                      <li>卡片和详情区沿用首页的玻璃拟态与柔和阴影。</li>
+                      <li>进入游戏前先给简短说明，切换时不会突然像换了一个站。</li>
+                    </ul>
+                  </section>
+
+                  <section className="aside-card glass">
+                    <span className="aside-kicker">推荐开局</span>
+                    <div className="aside-picks">
+                      {spotlightGames.map((game) => (
+                        <button
+                          type="button"
+                          key={`pick-${game.id}`}
+                          className="pick-item"
+                          onClick={() => handleGameClick(game)}
+                        >
+                          <span className="pick-icon">{game.icon}</span>
+                          <span className="pick-text">{game.name}</span>
+                        </button>
+                      ))}
+                    </div>
+                  </section>
+                </aside>
+              </div>
+            </>
+          ) : (
+            <section className="game-detail">
+              <div className="game-detail-intro glass">
+                <button type="button" className="back-button" onClick={handleBackToList}>
+                  ← 返回游戏列表
+                </button>
+
+                <div className="detail-copy">
+                  <span className="detail-kicker">当前游戏</span>
+                  <h2>{selectedGame.icon} {selectedGame.name}</h2>
+                  <p>{selectedGame.description}</p>
+                </div>
+
+                <div className="detail-badges">
+                  <span className="detail-badge">暖橙主题壳层</span>
+                  <span className="detail-badge">即点即玩</span>
+                </div>
+              </div>
 
               <div className="game-container">
-                {/* 根据游戏ID加载对应的游戏组件 */}
                 {ActiveGame ? (
                   <Suspense fallback={<GameLoader />}>
-                    <ActiveGame />
+                    <ActiveGame onExit={handleBackToList} />
                   </Suspense>
                 ) : (
-                  <>
-                    <h2>{selectedGame.icon} {selectedGame.name}</h2>
-                    <p>游戏内容区域 - 在这里加载具体的游戏组件</p>
-                  </>
+                  <div className="game-loader glass">
+                    <div className="loader-icon">{selectedGame.icon}</div>
+                    <p>{selectedGame.name} 正在准备中...</p>
+                  </div>
                 )}
               </div>
-            </div>
-        )}
-      </main>
+            </section>
+          )}
+        </main>
+      </div>
     </div>
   )
 }
