@@ -4,6 +4,52 @@
 
  ---
 
+## [2026-03-12] - ⚡ 前端加载与文章链路优化
+
+### 🔧 优化改进
+- `src/pages/GameHub.jsx`：游戏中心改为按需懒加载，各小游戏拆成独立 chunk，避免进入 `/games` 时一次性下载全部游戏代码。
+- `src/hooks/useGoogleCSE.js` & `index.html`：Google CSE 改为首页按需注入，不再全站常驻加载第三方搜索脚本。
+- `src/hooks/useIntervalValue.js`、`src/components/home/HomeHero.jsx`、`src/components/home/HomeQuoteCard.jsx`、`src/components/home/HomeStatsCard.jsx`、`src/pages/Home.jsx`：将首页定时刷新与引用数据拆到独立组件，减少首页整页重渲染范围。
+- `src/hooks/useArticles.js`、`src/pages/Home.jsx`、`src/pages/ArticleManager.jsx`：统一文章列表获取、加载态与错误态，收敛首页和后台重复的数据流逻辑。
+- `src/components/article-manager/ArticleEditor.jsx`、`src/components/article-manager/ArticleListPanel.jsx`、`src/pages/ArticleManager.jsx`：拆分文章管理页编辑区与列表区，后台预览区改为按需加载 Markdown 组件。
+- `src/pages/ArticleDetail.jsx` & `src/components/MarkdownRenderer.jsx`：目录提取只计算一次，文章正文改为懒加载；同时移除 `rehype-sanitize`，改为直接忽略 Markdown 中的原生 HTML，减少无效依赖。
+- `vite.config.js`：新增更保守的 vendor 分块策略，抽离 `react`、`react-router` 与 `gif.js` 等稳定公共依赖，缩小主入口业务包体。
+
+### 🐞 修复
+- `src/components/Minesweeper.jsx`：修复开始新游戏后偶现空棋盘、无格子可点的问题。
+- `src/components/SnakeGame.jsx`、`src/components/TetrisGame.jsx`、`src/components/Minesweeper.jsx`、`src/components/Game2048.jsx`：修正一批 Hook 依赖与闭包相关 lint 告警，避免状态过期和行为不稳定。
+
+### 🎯 结果
+- `/games` 路由从单块加载改为按需分发，首屏不再携带所有小游戏资源。
+- 主入口 `index` 构建产物由约 `169.15 kB` 降至约 `6.35 kB`，公共依赖转为独立缓存。
+- 文章详情页外壳可以先于 Markdown 正文渲染，后台编辑页也不再默认加载预览依赖。
+- `npm run lint`、`npm test`、`npm run build` 均通过。
+
+### 📌 影响范围
+- `src/pages/GameHub.jsx`
+- `src/hooks/useGoogleCSE.js`
+- `index.html`
+- `src/hooks/useIntervalValue.js`
+- `src/components/home/HomeHero.jsx`
+- `src/components/home/HomeQuoteCard.jsx`
+- `src/components/home/HomeStatsCard.jsx`
+- `src/pages/Home.jsx`
+- `src/hooks/useArticles.js`
+- `src/pages/ArticleManager.jsx`
+- `src/components/article-manager/ArticleEditor.jsx`
+- `src/components/article-manager/ArticleListPanel.jsx`
+- `src/pages/ArticleDetail.jsx`
+- `src/components/MarkdownRenderer.jsx`
+- `src/components/Minesweeper.jsx`
+- `src/components/SnakeGame.jsx`
+- `src/components/TetrisGame.jsx`
+- `src/components/Game2048.jsx`
+- `vite.config.js`
+- `package.json`
+- `package-lock.json`
+
+---
+
 ## [2025-12-11] - 🐧 七牛文生图 image_config 切换
 
 ### ✂️ 调整
