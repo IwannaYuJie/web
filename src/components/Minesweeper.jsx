@@ -11,13 +11,15 @@ const ROWS = 9
 const COLS = 9
 const MINES = 10
 
+const createEmptyBoard = () => Array.from({ length: ROWS }, () =>
+  Array.from({ length: COLS }, () => ({
+    mine: false, revealed: false, flagged: false, num: 0,
+  }))
+)
+
 /** 创建棋盘 */
 const createBoard = (firstR, firstC) => {
-  const board = Array.from({ length: ROWS }, () =>
-    Array.from({ length: COLS }, () => ({
-      mine: false, revealed: false, flagged: false, num: 0,
-    }))
-  )
+  const board = createEmptyBoard()
   // 布雷（避开第一次点击位置）
   let placed = 0
   while (placed < MINES) {
@@ -54,7 +56,7 @@ const Minesweeper = () => {
 
   /** 开始游戏 */
   const startGame = useCallback(() => {
-    setBoard([])
+    setBoard(createEmptyBoard())
     setFlagMode(false)
     setMinesLeft(MINES)
     setFirstClick(true)
@@ -86,11 +88,31 @@ const Minesweeper = () => {
     return true
   }, [])
 
+  /** 切换旗子 */
+  const toggleFlag = useCallback((r, c) => {
+    if (phase !== 'playing') { return }
+    let brd
+    if (firstClick) {
+      brd = createBoard(r, c)
+      setFirstClick(false)
+    } else {
+      brd = board.map(row => row.map(cell => ({ ...cell })))
+    }
+    const cell = brd[r][c]
+    if (cell.revealed) { return }
+    cell.flagged = !cell.flagged
+    setBoard(brd)
+    setMinesLeft(prev => cell.flagged ? prev - 1 : prev + 1)
+  }, [phase, firstClick, board])
+
   /** 处理点击 */
   const handleClick = useCallback((r, c) => {
     if (phase !== 'playing') { return }
     // 插旗模式
-    if (flagMode) { toggleFlag(r, c); return }
+    if (flagMode) {
+      toggleFlag(r, c)
+      return
+    }
     let brd
     if (firstClick) {
       // 首次点击才生成棋盘
@@ -111,24 +133,7 @@ const Minesweeper = () => {
     reveal(brd, r, c)
     setBoard(brd)
     if (checkWin(brd)) { setPhase('won') }
-  }, [phase, flagMode, firstClick, board, reveal, checkWin])
-
-  /** 切换旗子 */
-  const toggleFlag = useCallback((r, c) => {
-    if (phase !== 'playing') { return }
-    let brd
-    if (firstClick) {
-      brd = createBoard(r, c)
-      setFirstClick(false)
-    } else {
-      brd = board.map(row => row.map(cell => ({ ...cell })))
-    }
-    const cell = brd[r][c]
-    if (cell.revealed) { return }
-    cell.flagged = !cell.flagged
-    setBoard(brd)
-    setMinesLeft(prev => cell.flagged ? prev - 1 : prev + 1)
-  }, [phase, firstClick, board])
+  }, [phase, flagMode, firstClick, board, toggleFlag, reveal, checkWin])
 
   // ==================== 渲染：开始界面 ====================
   if (phase === 'start') {

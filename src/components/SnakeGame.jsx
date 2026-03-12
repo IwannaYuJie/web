@@ -74,7 +74,9 @@ const SnakeGame = () => {
   // ==================== 开始游戏 ====================
   const startGame = useCallback(() => {
     // 清除之前的定时器
-    if (timerRef.current) clearInterval(timerRef.current)
+    if (timerRef.current) {
+      clearInterval(timerRef.current)
+    }
     // 初始化蛇身（3节，向右）
     const initSnake = [
       { x: 12, y: 10 },
@@ -99,8 +101,21 @@ const SnakeGame = () => {
   }, [])
 
   // ==================== 游戏主循环 ====================
+  const finishGame = useCallback(() => {
+    if (timerRef.current) {
+      clearInterval(timerRef.current)
+    }
+    const finalScore = scoreRef.current
+    const best = Math.max(finalScore, parseInt(localStorage.getItem('snake_best') || '0', 10))
+    localStorage.setItem('snake_best', String(best))
+    setBestScore(best)
+    setPhase('over')
+  }, [])
+
   const gameLoop = useCallback(() => {
-    if (pausedRef.current) return
+    if (pausedRef.current) {
+      return
+    }
 
     const curSnake = [...snakeRef.current]
     const head = curSnake[0]
@@ -112,24 +127,13 @@ const SnakeGame = () => {
     // 碰撞检测 —— 撞墙
     if (newHead.x < 0 || newHead.x >= BOARD_WIDTH ||
         newHead.y < 0 || newHead.y >= BOARD_HEIGHT) {
-      // 游戏结束
-      if (timerRef.current) clearInterval(timerRef.current)
-      const finalScore = scoreRef.current
-      const best = Math.max(finalScore, parseInt(localStorage.getItem('snake_best') || '0', 10))
-      localStorage.setItem('snake_best', String(best))
-      setBestScore(best)
-      setPhase('over')
+      finishGame()
       return
     }
 
     // 碰撞检测 —— 撞自己（排除尾巴，因为尾巴会移走）
     if (curSnake.some((seg, i) => i !== curSnake.length - 1 && seg.x === newHead.x && seg.y === newHead.y)) {
-      if (timerRef.current) clearInterval(timerRef.current)
-      const finalScore = scoreRef.current
-      const best = Math.max(finalScore, parseInt(localStorage.getItem('snake_best') || '0', 10))
-      localStorage.setItem('snake_best', String(best))
-      setBestScore(best)
-      setPhase('over')
+      finishGame()
       return
     }
 
@@ -157,12 +161,14 @@ const SnakeGame = () => {
 
     setSnake(curSnake)
     snakeRef.current = curSnake
-  }, [])
+  }, [finishGame])
 
   // ==================== Canvas 绘制 ====================
   const draw = useCallback(() => {
     const canvas = canvasRef.current
-    if (!canvas) return
+    if (!canvas) {
+      return
+    }
     const ctx = canvas.getContext('2d')
     const w = canvas.width
     const h = canvas.height
@@ -212,7 +218,6 @@ const SnakeGame = () => {
     const curSnake = snakeRef.current
     curSnake.forEach((seg, i) => {
       const isHead = i === 0
-      const radius = CELL_SIZE / 2 - 1
       const cx = seg.x * CELL_SIZE + CELL_SIZE / 2
       const cy = seg.y * CELL_SIZE + CELL_SIZE / 2
 
@@ -271,7 +276,9 @@ const SnakeGame = () => {
   const changeDir = useCallback((newDir) => {
     const cur = dirRef.current
     // 禁止180度掉头
-    if (cur.x + newDir.x === 0 && cur.y + newDir.y === 0) return
+    if (cur.x + newDir.x === 0 && cur.y + newDir.y === 0) {
+      return
+    }
     setDirection(newDir)
     dirRef.current = newDir
   }, [])
@@ -279,19 +286,40 @@ const SnakeGame = () => {
   // ==================== 键盘事件 ====================
   useEffect(() => {
     const handleKey = (e) => {
-      if (phase !== 'playing') return
+      if (phase !== 'playing') {
+        return
+      }
       switch (e.key) {
-        case 'ArrowUp': case 'w': case 'W':
-          e.preventDefault(); changeDir(DIR.UP); break
-        case 'ArrowDown': case 's': case 'S':
-          e.preventDefault(); changeDir(DIR.DOWN); break
-        case 'ArrowLeft': case 'a': case 'A':
-          e.preventDefault(); changeDir(DIR.LEFT); break
-        case 'ArrowRight': case 'd': case 'D':
-          e.preventDefault(); changeDir(DIR.RIGHT); break
+        case 'ArrowUp':
+        case 'w':
+        case 'W':
+          e.preventDefault()
+          changeDir(DIR.UP)
+          break
+        case 'ArrowDown':
+        case 's':
+        case 'S':
+          e.preventDefault()
+          changeDir(DIR.DOWN)
+          break
+        case 'ArrowLeft':
+        case 'a':
+        case 'A':
+          e.preventDefault()
+          changeDir(DIR.LEFT)
+          break
+        case 'ArrowRight':
+        case 'd':
+        case 'D':
+          e.preventDefault()
+          changeDir(DIR.RIGHT)
+          break
         case ' ':
-          e.preventDefault(); togglePause(); break
-        default: break
+          e.preventDefault()
+          togglePause()
+          break
+        default:
+          break
       }
     }
     window.addEventListener('keydown', handleKey)
@@ -300,16 +328,24 @@ const SnakeGame = () => {
 
   // ==================== 游戏主定时器 ====================
   useEffect(() => {
-    if (phase !== 'playing') return
+    if (phase !== 'playing') {
+      return
+    }
     // 每次 speed 变化时重建定时器
-    if (timerRef.current) clearInterval(timerRef.current)
+    if (timerRef.current) {
+      clearInterval(timerRef.current)
+    }
     timerRef.current = setInterval(() => {
       gameLoop()
       draw()
     }, speed)
     // 首次立即绘制
     draw()
-    return () => { if (timerRef.current) clearInterval(timerRef.current) }
+    return () => {
+      if (timerRef.current) {
+        clearInterval(timerRef.current)
+      }
+    }
   }, [phase, speed, gameLoop, draw])
 
   // ==================== 渲染：开始界面 ====================

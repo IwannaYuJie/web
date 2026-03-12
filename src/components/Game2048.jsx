@@ -29,7 +29,7 @@ const addRandom = (grid) => {
 
 /** 向左滑动一行（核心合并逻辑） */
 const slideRow = (row) => {
-  let arr = row.filter(v => v !== 0) // 去零
+  const arr = row.filter(v => v !== 0) // 去零
   let score = 0
   // 相邻合并
   for (let i = 0; i < arr.length - 1; i++) {

@@ -1,13 +1,92 @@
-import { useState } from 'react'
-import YujieGame from '../components/YujieGame'
-import YujieAIGame from '../components/YujieAIGame'
-import SnakeGame from '../components/SnakeGame'
-import TetrisGame from '../components/TetrisGame'
-import Game2048 from '../components/Game2048'
-import Minesweeper from '../components/Minesweeper'
-import MemoryCard from '../components/MemoryCard'
-import Breakout from '../components/Breakout'
+import { Suspense, lazy, useMemo, useState } from 'react'
 import './GameHub.css'
+
+const GAME_COMPONENTS = {
+  'yujie-game': lazy(() => import('../components/YujieGame')),
+  'yujie-ai-game': lazy(() => import('../components/YujieAIGame')),
+  'snake-game': lazy(() => import('../components/SnakeGame')),
+  'tetris-game': lazy(() => import('../components/TetrisGame')),
+  'game-2048': lazy(() => import('../components/Game2048')),
+  minesweeper: lazy(() => import('../components/Minesweeper')),
+  'memory-card': lazy(() => import('../components/MemoryCard')),
+  breakout: lazy(() => import('../components/Breakout')),
+}
+
+const GAMES = [
+  {
+    id: 'yujie-game',
+    name: '雨姐的心动时刻',
+    icon: '💕',
+    description: '东北风情恋爱模拟游戏，体验与雨姐的浪漫故事！',
+    status: 'active',
+    color: '#FF9F45',
+  },
+  {
+    id: 'yujie-ai-game',
+    name: 'AI攻略：东北雨姐',
+    icon: '🤖💕',
+    description: '扮演从外国归来的黑人小哥，用AI对话攻略雨姐的心！',
+    status: 'active',
+    color: '#FF8C1A',
+  },
+  {
+    id: 'snake-game',
+    name: '贪吃蛇',
+    icon: '🐍',
+    description: '经典贪吃蛇！控制小蛇吃掉食物不断成长，小心别撞墙哦～',
+    status: 'active',
+    color: '#6BCB77',
+  },
+  {
+    id: 'tetris-game',
+    name: '俄罗斯方块',
+    icon: '🧱',
+    description: '经典中的经典！消除整行方块获得分数，挑战你的最高记录！',
+    status: 'active',
+    color: '#4D96FF',
+  },
+  {
+    id: 'game-2048',
+    name: '2048',
+    icon: '🔢',
+    description: '滑动数字方块，合并相同数字，目标拼出2048！',
+    status: 'active',
+    color: '#FFD93D',
+  },
+  {
+    id: 'minesweeper',
+    name: '扫雷',
+    icon: '💣',
+    description: '经典Windows扫雷！9×9棋盘，找出所有地雷！',
+    status: 'active',
+    color: '#764ba2',
+  },
+  {
+    id: 'memory-card',
+    name: '记忆翻牌',
+    icon: '🃏',
+    description: '翻开卡片找到配对的emoji，挑战记忆力！',
+    status: 'active',
+    color: '#4ECDC4',
+  },
+  {
+    id: 'breakout',
+    name: '打砖块',
+    icon: '🏓',
+    description: '移动挡板反弹小球，击碎所有砖块通关！',
+    status: 'active',
+    color: '#FF6B6B',
+  },
+]
+
+function GameLoader() {
+  return (
+    <div className="glass p-12 rounded-2xl text-center">
+      <div className="text-5xl mb-4">🎮</div>
+      <p>游戏加载中...</p>
+    </div>
+  )
+}
 
 /**
  * 游戏集合页面 🎮
@@ -20,84 +99,13 @@ import './GameHub.css'
  * - 支持后续添加更多游戏
  */
 function GameHub() {
-  // 游戏列表状态 - 后续可以在这里添加新游戏
-  const [games] = useState([
-    {
-      id: 'yujie-game',
-      name: '雨姐的心动时刻',
-      icon: '💕',
-      description: '东北风情恋爱模拟游戏，体验与雨姐的浪漫故事！',
-      status: 'active',
-      color: '#FF9F45',
-      component: 'YujieGame'
-    },
-    {
-      id: 'yujie-ai-game',
-      name: 'AI攻略：东北雨姐',
-      icon: '🤖💕',
-      description: '扮演从外国归来的黑人小哥，用AI对话攻略雨姐的心！',
-      status: 'active',
-      color: '#FF8C1A',
-      component: 'YujieAIGame'
-    },
-    {
-      id: 'snake-game',
-      name: '贪吃蛇',
-      icon: '🐍',
-      description: '经典贪吃蛇！控制小蛇吃掉食物不断成长，小心别撞墙哦～',
-      status: 'active',
-      color: '#6BCB77',
-      component: 'SnakeGame'
-    },
-    {
-      id: 'tetris-game',
-      name: '俄罗斯方块',
-      icon: '🧱',
-      description: '经典中的经典！消除整行方块获得分数，挑战你的最高记录！',
-      status: 'active',
-      color: '#4D96FF',
-      component: 'TetrisGame'
-    },
-    {
-      id: 'game-2048',
-      name: '2048',
-      icon: '🔢',
-      description: '滑动数字方块，合并相同数字，目标拼出2048！',
-      status: 'active',
-      color: '#FFD93D',
-      component: 'Game2048'
-    },
-    {
-      id: 'minesweeper',
-      name: '扫雷',
-      icon: '💣',
-      description: '经典Windows扫雷！9×9棋盘，找出所有地雷！',
-      status: 'active',
-      color: '#764ba2',
-      component: 'Minesweeper'
-    },
-    {
-      id: 'memory-card',
-      name: '记忆翻牌',
-      icon: '🃏',
-      description: '翻开卡片找到配对的emoji，挑战记忆力！',
-      status: 'active',
-      color: '#4ECDC4',
-      component: 'MemoryCard'
-    },
-    {
-      id: 'breakout',
-      name: '打砖块',
-      icon: '🏓',
-      description: '移动挡板反弹小球，击碎所有砖块通关！',
-      status: 'active',
-      color: '#FF6B6B',
-      component: 'Breakout'
-    }
-  ])
-
   // 当前选中的游戏
-  const [selectedGame, setSelectedGame] = useState(null)
+  const [selectedGameId, setSelectedGameId] = useState(null)
+  const selectedGame = useMemo(
+    () => GAMES.find((game) => game.id === selectedGameId) || null,
+    [selectedGameId],
+  )
+  const ActiveGame = selectedGame ? GAME_COMPONENTS[selectedGame.id] : null
 
   /**
    * 处理游戏卡片点击
@@ -110,14 +118,14 @@ function GameHub() {
       return
     }
     // 后续可以在这里添加游戏启动逻辑
-    setSelectedGame(game)
+    setSelectedGameId(game.id)
   }
 
   /**
    * 返回游戏列表
    */
   const handleBackToList = () => {
-    setSelectedGame(null)
+    setSelectedGameId(null)
   }
 
   return (
@@ -142,11 +150,11 @@ function GameHub() {
           <div className="games-grid">
             <div className="grid-header">
               <h2>🎯 选择你想玩的游戏</h2>
-              <p className="game-count">当前共有 <strong>{games.length}</strong> 个游戏位</p>
+              <p className="game-count">当前共有 <strong>{GAMES.length}</strong> 个游戏位</p>
             </div>
 
             <div className="game-cards">
-              {games.map((game) => (
+              {GAMES.map((game) => (
                 <div
                   key={game.id}
                   className={`game-card ${game.status === 'coming-soon' ? 'coming-soon' : ''}`}
@@ -182,7 +190,7 @@ function GameHub() {
             <div className="add-game-hint">
               <div className="hint-icon">💡</div>
               <h3>想添加新游戏?</h3>
-              <p>在 <code>GameHub.jsx</code> 的 <code>games</code> 数组中添加新游戏配置即可!</p>
+              <p>在 <code>GameHub.jsx</code> 的 <code>GAMES</code> 数组中添加新游戏配置即可!</p>
               <div className="hint-example">
                 <pre>{`{
   id: 'my-game',
@@ -197,29 +205,25 @@ function GameHub() {
           </div>
         ) : (
           // 游戏详情/游戏界面视图
-          <div className="game-detail">
-            <button className="back-button" onClick={handleBackToList}>
-              <span>← 返回游戏列表</span>
-            </button>
-            
-            <div className="game-container">
-              {/* 根据游戏ID加载对应的游戏组件 */}
-              {selectedGame.id === 'yujie-game' && <YujieGame />}
-              {selectedGame.id === 'yujie-ai-game' && <YujieAIGame />}
-              {selectedGame.id === 'snake-game' && <SnakeGame />}
-              {selectedGame.id === 'tetris-game' && <TetrisGame />}
-              {selectedGame.id === 'game-2048' && <Game2048 />}
-              {selectedGame.id === 'minesweeper' && <Minesweeper />}
-              {selectedGame.id === 'memory-card' && <MemoryCard />}
-              {selectedGame.id === 'breakout' && <Breakout />}
-              {!['yujie-game', 'yujie-ai-game', 'snake-game', 'tetris-game', 'game-2048', 'minesweeper', 'memory-card', 'breakout'].includes(selectedGame.id) && (
-                <>
-                  <h2>{selectedGame.icon} {selectedGame.name}</h2>
-                  <p>游戏内容区域 - 在这里加载具体的游戏组件</p>
-                </>
-              )}
+            <div className="game-detail">
+              <button className="back-button" onClick={handleBackToList}>
+                <span>← 返回游戏列表</span>
+              </button>
+
+              <div className="game-container">
+                {/* 根据游戏ID加载对应的游戏组件 */}
+                {ActiveGame ? (
+                  <Suspense fallback={<GameLoader />}>
+                    <ActiveGame />
+                  </Suspense>
+                ) : (
+                  <>
+                    <h2>{selectedGame.icon} {selectedGame.name}</h2>
+                    <p>游戏内容区域 - 在这里加载具体的游戏组件</p>
+                  </>
+                )}
+              </div>
             </div>
-          </div>
         )}
       </main>
     </div>

@@ -1,19 +1,20 @@
-import { useState, useEffect, useMemo, useCallback } from 'react'
+import { useState, useEffect, useMemo } from 'react'
 import { Link } from 'react-router-dom'
 import Pagination from '../components/Pagination'
-import { fetchArticlesList } from '../services/articles'
 import { CAT_MOODS, CAT_QUOTES, HOME_PAGE_SIZE, WEB_TEMPLATES } from '../constants/home'
-import { useBackToTop, useGoogleCSE, useIntervalValue } from '../hooks'
+import { useArticlesData, useBackToTop, useGoogleCSE, useIntervalValue } from '../hooks'
 
 /**
  * 首页组件
  * 展示文章列表和随机名言功能
  */
 function Home() {
-  // 状态管理
-  const [articles, setArticles] = useState([])
-  const [articlesLoading, setArticlesLoading] = useState(true)
-  const [articlesError, setArticlesError] = useState(null)
+  const {
+    articles,
+    loading: articlesLoading,
+    error: articlesError,
+    fetchArticles,
+  } = useArticlesData()
 
   const [quote, setQuote] = useState(null)
   const [quoteLoading, setQuoteLoading] = useState(false)
@@ -40,39 +41,6 @@ function Home() {
     })
     return ['全部', ...Array.from(categorySet).sort()]
   }, [articles])
-
-  // 动态生成文章标签 - 只显示有文章使用的标签
-  const _availableTags = useMemo(() => {
-    if (!articles.length) {
-      return []
-    }
-    const tagSet = new Set()
-    articles.forEach(article => {
-      if (article.tags && Array.isArray(article.tags)) {
-        article.tags.forEach(tag => tagSet.add(tag))
-      }
-    })
-    return Array.from(tagSet).sort()
-  }, [articles])
-
-  const fetchArticles = useCallback(async () => {
-    setArticlesLoading(true)
-    setArticlesError(null)
-    try {
-      const data = await fetchArticlesList()
-      setArticles(data)
-    } catch (err) {
-      setArticlesError(err.message)
-    } finally {
-      setArticlesLoading(false)
-    }
-  }, [])
-
-  // 初始化数据
-  useEffect(() => {
-    fetchArticles()
-    return undefined
-  }, [fetchArticles])
 
   const fetchRandomQuote = async () => {
     setQuoteLoading(true)

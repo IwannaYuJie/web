@@ -1,20 +1,12 @@
-import { useState, useEffect } from 'react'
+import { Suspense, lazy, useEffect, useMemo, useState } from 'react'
 import { Link } from 'react-router-dom'
-import MarkdownRenderer from '../components/MarkdownRenderer'
-import { clearStoredAdminKey, createArticle, deleteArticle, fetchArticlesList, getStoredAdminKey, saveAdminKey, updateArticle, verifyAdminKey } from '../services/articles'
+import { clearStoredAdminKey, createArticle, deleteArticle, getStoredAdminKey, saveAdminKey, updateArticle, verifyAdminKey } from '../services/articles'
+import { useArticlesData } from '../hooks'
 
-/**
- * 文章管理页面
- * 提供文章的新增、编辑、删除功能
- */
-function ArticleManager() {
-  // 状态管理
-  const [articles, setArticles] = useState([])
-  const [loading, setLoading] = useState(true)
-  const [error, setError] = useState(null)
-  const [showForm, setShowForm] = useState(false)
-  const [editingArticle, setEditingArticle] = useState(null)
-  const [formData, setFormData] = useState({
+const MarkdownRenderer = lazy(() => import('../components/MarkdownRenderer'))
+
+function createInitialFormData() {
+  return {
     title: '',
     description: '',
     category: 'Java核心',
@@ -22,8 +14,24 @@ function ArticleManager() {
     date: new Date().toISOString().split('T')[0],
     content: '',
     tags: [],
-    author: '橘猫博主'
-  })
+    author: '橘猫博主',
+  }
+}
+
+/**
+ * 文章管理页面
+ * 提供文章的新增、编辑、删除功能
+ */
+function ArticleManager() {
+  const {
+    articles,
+    loading,
+    error,
+    fetchArticles,
+  } = useArticlesData()
+  const [showForm, setShowForm] = useState(false)
+  const [editingArticle, setEditingArticle] = useState(null)
+  const [formData, setFormData] = useState(createInitialFormData)
   const [submitting, setSubmitting] = useState(false)
   const [showPreview, setShowPreview] = useState(false)
   const [tagInput, setTagInput] = useState('')
@@ -97,29 +105,6 @@ function ArticleManager() {
     '中间件', '云原生', '架构设计', '搜索引擎', '持久层'
   ]
 
-  // 页面加载时获取文章列表
-  useEffect(() => {
-    fetchArticles()
-  }, [])
-
-  /**
-   * 获取文章列表
-   */
-  const fetchArticles = async () => {
-    setLoading(true)
-    setError(null)
-
-    try {
-      const data = await fetchArticlesList()
-      setArticles(data)
-    } catch (err) {
-      console.error('获取文章失败:', err)
-      setError(err.message)
-    } finally {
-      setLoading(false)
-    }
-  }
-
   /**
    * 处理表单输入变化
    */
@@ -136,16 +121,7 @@ function ArticleManager() {
    */
   const handleAddNew = () => {
     setEditingArticle(null)
-    setFormData({
-      title: '',
-      description: '',
-      category: 'Java核心',
-      readTime: '',
-      date: new Date().toISOString().split('T')[0],
-      content: '',
-      tags: [],
-      author: '橘猫博主'
-    })
+    setFormData(createInitialFormData())
     setTagInput('')
     setShowPreview(false)
     setShowForm(true)
@@ -198,17 +174,18 @@ function ArticleManager() {
   /**
    * 过滤文章列表
    */
-  const filteredArticles = articles.filter(article => {
+  const filteredArticles = useMemo(() => {
     if (!searchQuery.trim()) {
-      return true
+      return articles
     }
+
     const query = searchQuery.toLowerCase()
-    return (
+    return articles.filter(article => (
       article.title?.toLowerCase().includes(query) ||
       article.description?.toLowerCase().includes(query) ||
       article.category?.toLowerCase().includes(query)
-    )
-  })
+    ))
+  }, [articles, searchQuery])
 
   /**
    * 提交表单（新增或编辑）
@@ -531,7 +508,9 @@ function ArticleManager() {
                 </label>
                 {showPreview ? (
                   <div className="w-full p-4 rounded-xl border border-border-color bg-white min-h-[300px] max-h-[500px] overflow-y-auto">
-                    <MarkdownRenderer content={formData.content} />
+                    <Suspense fallback={<div className="text-center py-12 text-text-light">Markdown 预览加载中...</div>}>
+                      <MarkdownRenderer content={formData.content} />
+                    </Suspense>
                   </div>
                 ) : (
                   <textarea

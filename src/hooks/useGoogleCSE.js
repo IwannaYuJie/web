@@ -1,25 +1,64 @@
 import { useEffect } from 'react'
 
+const GOOGLE_CSE_ID = 'google-cse-script'
+const GOOGLE_CSE_SRC = 'https://cse.google.com/cse.js?cx=018dca262a2d949c4'
+
+let googleCsePromise = null
+
+function loadGoogleCSE() {
+  if (window.google?.search?.cse?.element) {
+    return Promise.resolve()
+  }
+
+  if (googleCsePromise) {
+    return googleCsePromise
+  }
+
+  googleCsePromise = new Promise((resolve, reject) => {
+    let script = document.getElementById(GOOGLE_CSE_ID)
+
+    const handleLoad = () => resolve()
+    const handleError = () => {
+      googleCsePromise = null
+      reject(new Error('Google CSE script load failed'))
+    }
+
+    if (!script) {
+      script = document.createElement('script')
+      script.id = GOOGLE_CSE_ID
+      script.async = true
+      script.src = GOOGLE_CSE_SRC
+      document.head.append(script)
+    }
+
+    script.addEventListener('load', handleLoad, { once: true })
+    script.addEventListener('error', handleError, { once: true })
+  })
+
+  return googleCsePromise
+}
+
 export function useGoogleCSE() {
   useEffect(() => {
-    const initGCSE = () => {
-      if (window.google?.search?.cse?.element) {
-        try {
+    let cancelled = false
+
+    const initGCSE = async () => {
+      try {
+        await loadGoogleCSE()
+        if (!cancelled && window.google?.search?.cse?.element) {
           window.google.search.cse.element.go()
-        } catch (error) {
+        }
+      } catch (error) {
+        if (!cancelled) {
           console.warn('GCSE init error:', error)
         }
       }
     }
 
-    const gcseTimer = window.setTimeout(initGCSE, 100)
-    const gcseInterval = window.setInterval(initGCSE, 1000)
-    const gcseStopTimer = window.setTimeout(() => window.clearInterval(gcseInterval), 5000)
+    initGCSE()
 
     return () => {
-      window.clearInterval(gcseInterval)
-      window.clearTimeout(gcseStopTimer)
-      window.clearTimeout(gcseTimer)
+      cancelled = true
     }
   }, [])
 }

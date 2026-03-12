@@ -147,19 +147,6 @@ const TetrisGame = () => {
     }
   }, [isValid])
 
-  /** 硬降（直接落到底） */
-  const hardDrop = useCallback(() => {
-    if (pausedRef.current) { return }
-    const p = pieceRef.current
-    if (!p) { return }
-    let dy = 0
-    while (isValid(p.cells, p.x, p.y + dy + 1, boardRef.current)) { dy++ }
-    const np = { ...p, y: p.y + dy }
-    setCurrentPiece(np); pieceRef.current = np
-    // 硬降后立即锁定（lockPiece 在下一批填充）
-    lockPiece(np)
-  }, [isValid])
-
   /** 锁定方块到棋盘 + 消行 + 生成新方块 */
   const lockPiece = useCallback((piece) => {
     const brd = boardRef.current.map(row => [...row])
@@ -206,6 +193,19 @@ const TetrisGame = () => {
     }
     setCurrentPiece(newPiece); pieceRef.current = newPiece
   }, [isValid, spawnPiece, nextShape])
+
+  /** 硬降（直接落到底） */
+  const hardDrop = useCallback(() => {
+    if (pausedRef.current) { return }
+    const p = pieceRef.current
+    if (!p) { return }
+    let dy = 0
+    while (isValid(p.cells, p.x, p.y + dy + 1, boardRef.current)) { dy++ }
+    const np = { ...p, y: p.y + dy }
+    setCurrentPiece(np); pieceRef.current = np
+    // 硬降后立即锁定
+    lockPiece(np)
+  }, [isValid, lockPiece])
 
   /** 暂停/继续 */
   const togglePause = useCallback(() => {

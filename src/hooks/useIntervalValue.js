@@ -1,7 +1,12 @@
-import { useEffect, useState } from 'react'
+import { useEffect, useRef, useState } from 'react'
 
 export function useIntervalValue(initialValue, createNextValue, delay) {
   const [value, setValue] = useState(initialValue)
+  const createNextValueRef = useRef(createNextValue)
+
+  useEffect(() => {
+    createNextValueRef.current = createNextValue
+  }, [createNextValue])
 
   useEffect(() => {
     if (!Number.isFinite(delay) || delay <= 0) {
@@ -9,11 +14,11 @@ export function useIntervalValue(initialValue, createNextValue, delay) {
     }
 
     const timer = window.setInterval(() => {
-      setValue((previousValue) => createNextValue(previousValue))
+      setValue((previousValue) => createNextValueRef.current(previousValue))
     }, delay)
 
     return () => window.clearInterval(timer)
-  }, [createNextValue, delay])
+  }, [delay])
 
   return [value, setValue]
 }

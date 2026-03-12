@@ -1,5 +1,58 @@
-import { useState, useEffect, useMemo, useCallback } from 'react'
+import { useState, useEffect, useMemo, useCallback, useRef } from 'react'
 import { fetchArticlesList, fetchArticleById, getLikedArticleIds, setLikedArticleIds } from '../services/articles'
+
+/**
+ * 文章列表数据 Hook
+ * 统一处理文章列表的获取、刷新和请求取消。
+ */
+export function useArticlesData() {
+  const [articles, setArticles] = useState([])
+  const [loading, setLoading] = useState(true)
+  const [error, setError] = useState(null)
+  const abortRef = useRef(null)
+
+  const fetchArticles = useCallback(async () => {
+    abortRef.current?.abort()
+    const controller = new AbortController()
+    abortRef.current = controller
+    setLoading(true)
+    setError(null)
+
+    try {
+      const data = await fetchArticlesList(controller.signal)
+      if (!controller.signal.aborted) {
+        setArticles(data)
+      }
+    } catch (err) {
+      if (err.name === 'AbortError') {
+        return
+      }
+      console.error('获取文章失败:', err)
+      if (!controller.signal.aborted) {
+        setError(err.message)
+      }
+    } finally {
+      if (!controller.signal.aborted && abortRef.current === controller) {
+        setLoading(false)
+      }
+    }
+  }, [])
+
+  useEffect(() => {
+    fetchArticles()
+
+    return () => {
+      abortRef.current?.abort()
+    }
+  }, [fetchArticles])
+
+  return {
+    articles,
+    loading,
+    error,
+    fetchArticles,
+  }
+}
 
 /**
  * 文章列表管理 Hook
@@ -7,11 +60,12 @@ import { fetchArticlesList, fetchArticleById, getLikedArticleIds, setLikedArticl
  */
 export function useArticles(options = {}) {
   const { pageSize = 10 } = options
-
-  // 基础状态
-  const [articles, setArticles] = useState([])
-  const [loading, setLoading] = useState(true)
-  const [error, setError] = useState(null)
+  const {
+    articles,
+    loading,
+    error,
+    fetchArticles,
+  } = useArticlesData()
 
   // 过滤和搜索状态
   const [searchQuery, setSearchQuery] = useState('')
@@ -22,27 +76,6 @@ export function useArticles(options = {}) {
 
   // 分页状态
   const [currentPage, setCurrentPage] = useState(1)
-
-  // 获取文章列表
-  const fetchArticles = useCallback(async () => {
-    setLoading(true)
-    setError(null)
-
-    try {
-      const data = await fetchArticlesList()
-      setArticles(data)
-    } catch (err) {
-      console.error('获取文章失败:', err)
-      setError(err.message)
-    } finally {
-      setLoading(false)
-    }
-  }, [])
-
-  // 初始加载
-  useEffect(() => {
-    fetchArticles()
-  }, [fetchArticles])
 
   // 提取所有分类
   const categories = useMemo(() => {
