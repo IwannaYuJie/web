@@ -1,0 +1,173 @@
+/**
+ * 记忆翻牌游戏样式 🃏
+ * 橘猫主题风格
+ */
+
+.memory-container {
+  width: 100%;
+  min-height: 100vh;
+  background: linear-gradient(135deg, #FFB366 0%, #FF9F45 50%, #FF8C1A 100%);
+  font-family: 'Microsoft YaHei', 'PingFang SC', sans-serif;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 20px;
+  position: relative;
+}
+
+.memory-panel {
+  background: rgba(255, 255, 255, 0.95);
+  border-radius: 24px;
+  padding: 48px;
+  max-width: 500px;
+  width: 100%;
+  box-shadow: 0 20px 60px rgba(0, 0, 0, 0.2);
+  text-align: center;
+  animation: memSlideIn 0.6s ease-out;
+  position: relative;
+  z-index: 1;
+}
+
+@keyframes memSlideIn {
+  from { opacity: 0; transform: translateY(30px) scale(0.95); }
+  to { opacity: 1; transform: translateY(0) scale(1); }
+}
+
+.memory-panel .game-icon { font-size: 64px; margin-bottom: 12px; }
+.memory-panel .game-title {
+  font-size: 36px; font-weight: 800; color: #FF9F45; margin-bottom: 12px;
+}
+.memory-panel .game-desc {
+  font-size: 15px; color: #666; line-height: 1.8; margin-bottom: 24px;
+}
+
+.memory-start-btn {
+  background: linear-gradient(135deg, #FFB366 0%, #FF9F45 50%, #FF8C1A 100%);
+  color: white; border: none; padding: 16px 48px; font-size: 20px;
+  font-weight: 700; border-radius: 50px; cursor: pointer;
+  display: inline-flex; align-items: center; gap: 12px;
+  box-shadow: 0 8px 25px rgba(255, 159, 69, 0.4); transition: all 0.3s ease;
+}
+.memory-start-btn:hover { transform: translateY(-3px); }
+
+/* 游戏主界面 */
+.memory-board {
+  background: rgba(255, 255, 255, 0.95);
+  border-radius: 24px;
+  padding: 24px;
+  box-shadow: 0 20px 60px rgba(0, 0, 0, 0.2);
+  animation: memSlideIn 0.4s ease-out;
+  position: relative;
+  z-index: 1;
+  max-width: 520px;
+  width: 100%;
+}
+
+.memory-status {
+  display: flex; justify-content: space-between; align-items: center;
+  margin-bottom: 16px; gap: 10px;
+}
+
+.memory-stat {
+  background: rgba(255, 159, 69, 0.1); padding: 8px 16px; border-radius: 12px;
+  font-weight: 600; color: #5C4033; font-size: 14px;
+  display: flex; align-items: center; gap: 6px;
+}
+.memory-stat .stat-value { color: #FF9F45; font-size: 20px; font-weight: 800; }
+
+/* 卡片网格 */
+.memory-grid {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 10px;
+}
+
+/* 卡片 */
+.memory-card {
+  aspect-ratio: 1;
+  border-radius: 12px;
+  cursor: pointer;
+  position: relative;
+  perspective: 800px;
+  user-select: none;
+  -webkit-user-select: none;
+}
+
+.memory-card-inner {
+  width: 100%;
+  height: 100%;
+  transition: transform 0.5s ease;
+  transform-style: preserve-3d;
+  position: relative;
+}
+
+.memory-card.flipped .memory-card-inner { transform: rotateY(180deg); }
+.memory-card.matched .memory-card-inner { transform: rotateY(180deg); }
+
+.memory-card-front, .memory-card-back {
+  position: absolute;
+  width: 100%;
+  height: 100%;
+  backface-visibility: hidden;
+  border-radius: 12px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 32px;
+}
+
+/* 卡背（未翻） */
+.memory-card-front {
+  background: linear-gradient(135deg, #FFB366, #FF9F45);
+  box-shadow: inset 0 -2px 0 rgba(0,0,0,0.1), 0 4px 10px rgba(255,159,69,0.2);
+  font-size: 24px;
+  color: rgba(255,255,255,0.6);
+}
+
+/* 卡面（翻开） */
+.memory-card-back {
+  background: #FFF8F0;
+  border: 2px solid #FFD4A3;
+  transform: rotateY(180deg);
+}
+
+.memory-card.matched .memory-card-back {
+  background: rgba(107, 203, 119, 0.15);
+  border-color: #6BCB77;
+}
+.memory-card.matched { pointer-events: none; }
+
+.memory-card:active:not(.matched):not(.flipped) {
+  transform: scale(0.95);
+}
+
+.memory-btn-group {
+  display: flex; gap: 10px; margin-top: 16px; justify-content: center;
+}
+
+.memory-btn-restart {
+  padding: 10px 20px; border: none; border-radius: 12px;
+  background: linear-gradient(135deg, #FFB366, #FF9F45); color: white;
+  font-size: 14px; font-weight: 600; cursor: pointer; transition: all 0.3s ease;
+  box-shadow: 0 4px 12px rgba(255, 159, 69, 0.3);
+}
+.memory-btn-restart:hover { transform: translateY(-2px); }
+
+/* 结局统计 */
+.memory-over-stats {
+  display: flex; gap: 12px; justify-content: center; margin-bottom: 24px;
+}
+.memory-over-stats .stat-card {
+  background: linear-gradient(135deg, #FFB366, #FF9F45);
+  color: white; padding: 14px 20px; border-radius: 14px; min-width: 100px;
+}
+.memory-over-stats .stat-card .stat-label { font-size: 12px; opacity: 0.9; }
+.memory-over-stats .stat-card .stat-num { font-size: 28px; font-weight: 800; }
+
+@media (max-width: 480px) {
+  .memory-grid { gap: 8px; }
+  .memory-card-front { font-size: 18px; }
+  .memory-card-back { font-size: 26px; }
+  .memory-panel { padding: 32px 20px; }
+}

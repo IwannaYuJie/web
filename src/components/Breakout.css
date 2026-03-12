@@ -1,0 +1,127 @@
+/**
+ * 打砖块游戏样式 🏓
+ * 橘猫主题风格
+ */
+
+.breakout-container {
+  width: 100%;
+  min-height: 100vh;
+  background: linear-gradient(135deg, #FFB366 0%, #FF9F45 50%, #FF8C1A 100%);
+  font-family: 'Microsoft YaHei', 'PingFang SC', sans-serif;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 20px;
+  position: relative;
+}
+
+.breakout-panel {
+  background: rgba(255, 255, 255, 0.95);
+  border-radius: 24px;
+  padding: 48px;
+  max-width: 500px;
+  width: 100%;
+  box-shadow: 0 20px 60px rgba(0, 0, 0, 0.2);
+  text-align: center;
+  animation: boSlideIn 0.6s ease-out;
+  position: relative;
+  z-index: 1;
+}
+
+@keyframes boSlideIn {
+  from { opacity: 0; transform: translateY(30px) scale(0.95); }
+  to { opacity: 1; transform: translateY(0) scale(1); }
+}
+
+.breakout-panel .game-icon { font-size: 64px; margin-bottom: 12px; }
+.breakout-panel .game-title {
+  font-size: 36px; font-weight: 800; color: #FF9F45; margin-bottom: 12px;
+}
+.breakout-panel .game-desc {
+  font-size: 15px; color: #666; line-height: 1.8; margin-bottom: 24px;
+}
+
+.breakout-start-btn {
+  background: linear-gradient(135deg, #FFB366 0%, #FF9F45 50%, #FF8C1A 100%);
+  color: white; border: none; padding: 16px 48px; font-size: 20px;
+  font-weight: 700; border-radius: 50px; cursor: pointer;
+  display: inline-flex; align-items: center; gap: 12px;
+  box-shadow: 0 8px 25px rgba(255, 159, 69, 0.4); transition: all 0.3s ease;
+}
+.breakout-start-btn:hover { transform: translateY(-3px); }
+
+/* 游戏主界面 */
+.breakout-game-board {
+  background: rgba(255, 255, 255, 0.95);
+  border-radius: 24px;
+  padding: 24px;
+  box-shadow: 0 20px 60px rgba(0, 0, 0, 0.2);
+  animation: boSlideIn 0.4s ease-out;
+  position: relative;
+  z-index: 1;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+.breakout-status {
+  display: flex; justify-content: space-between; width: 100%;
+  margin-bottom: 12px; gap: 10px;
+}
+
+.breakout-stat {
+  background: rgba(255, 159, 69, 0.1); padding: 8px 16px; border-radius: 12px;
+  font-weight: 600; color: #5C4033; font-size: 15px;
+  display: flex; align-items: center; gap: 6px; flex: 1; justify-content: center;
+}
+.breakout-stat .stat-value { color: #FF9F45; font-size: 20px; font-weight: 800; }
+
+.breakout-canvas-wrap {
+  border: 3px solid #FFD4A3;
+  border-radius: 12px;
+  overflow: hidden;
+  background: #FFF8F0;
+}
+.breakout-canvas-wrap canvas { display: block; }
+
+.breakout-btn-group {
+  display: flex; gap: 10px; margin-top: 16px; justify-content: center;
+}
+.breakout-btn {
+  padding: 10px 20px; border: none; border-radius: 12px;
+  font-size: 14px; font-weight: 600; cursor: pointer; transition: all 0.3s ease;
+}
+.breakout-btn-restart {
+  background: linear-gradient(135deg, #FFB366, #FF9F45); color: white;
+  box-shadow: 0 4px 12px rgba(255, 159, 69, 0.3);
+}
+.breakout-btn-restart:hover { transform: translateY(-2px); }
+
+.breakout-mobile-controls {
+  display: none; gap: 10px; margin-top: 16px; justify-content: center;
+}
+.breakout-mobile-btn {
+  width: 64px; height: 52px;
+  background: linear-gradient(135deg, #FFB366, #FF9F45);
+  color: white; border: none; border-radius: 14px;
+  font-size: 20px; cursor: pointer;
+  box-shadow: 0 4px 12px rgba(255, 159, 69, 0.3); transition: all 0.15s ease;
+}
+.breakout-mobile-btn:active { transform: scale(0.9); }
+
+/* 结局 */
+.breakout-over-scores {
+  display: flex; gap: 12px; justify-content: center; margin-bottom: 24px;
+}
+.breakout-over-scores .score-card {
+  background: linear-gradient(135deg, #FFB366, #FF9F45);
+  color: white; padding: 14px 20px; border-radius: 14px; min-width: 100px;
+}
+.breakout-over-scores .score-card .score-label { font-size: 12px; opacity: 0.9; }
+.breakout-over-scores .score-card .score-num { font-size: 28px; font-weight: 800; }
+
+@media (max-width: 768px) {
+  .breakout-panel { padding: 32px 24px; }
+  .breakout-mobile-controls { display: flex; }
+}

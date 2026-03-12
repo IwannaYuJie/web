@@ -1,0 +1,428 @@
+/**
+ * 贪吃蛇游戏样式 🐍
+ * 橘猫主题风格 - 温暖橙色系设计
+ */
+
+/* ==================== 游戏主容器 ==================== */
+.snake-game-container {
+  width: 100%;
+  min-height: 100vh;
+  background: linear-gradient(135deg, #FFB366 0%, #FF9F45 50%, #FF8C1A 100%);
+  font-family: 'Microsoft YaHei', 'PingFang SC', sans-serif;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 20px;
+  position: relative;
+}
+
+/* 动态背景粒子效果 */
+.snake-game-container::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background:
+    radial-gradient(circle at 15% 30%, rgba(255, 255, 255, 0.1) 0%, transparent 50%),
+    radial-gradient(circle at 85% 70%, rgba(255, 255, 255, 0.08) 0%, transparent 50%);
+  animation: snakeBgPulse 12s ease-in-out infinite;
+  pointer-events: none;
+}
+
+@keyframes snakeBgPulse {
+  0%, 100% { opacity: 1; }
+  50% { opacity: 0.5; }
+}
+
+/* ==================== 开始界面 ==================== */
+.snake-start-screen {
+  background: rgba(255, 255, 255, 0.95);
+  border-radius: 24px;
+  padding: 48px;
+  max-width: 500px;
+  width: 100%;
+  box-shadow: 0 20px 60px rgba(0, 0, 0, 0.2);
+  text-align: center;
+  animation: snakeSlideIn 0.6s ease-out;
+  position: relative;
+  z-index: 1;
+}
+
+@keyframes snakeSlideIn {
+  from { opacity: 0; transform: translateY(30px) scale(0.95); }
+  to { opacity: 1; transform: translateY(0) scale(1); }
+}
+
+.snake-start-screen .game-icon {
+  font-size: 72px;
+  margin-bottom: 16px;
+  animation: snakeIconBounce 2s ease-in-out infinite;
+}
+
+@keyframes snakeIconBounce {
+  0%, 100% { transform: translateY(0); }
+  50% { transform: translateY(-12px); }
+}
+
+.snake-start-screen .game-title {
+  font-size: 36px;
+  font-weight: 800;
+  color: #FF9F45;
+  margin-bottom: 12px;
+  text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.05);
+}
+
+.snake-start-screen .game-desc {
+  font-size: 16px;
+  color: #666;
+  line-height: 1.8;
+  margin-bottom: 24px;
+}
+
+/* 操作说明 */
+.snake-controls-info {
+  background: rgba(255, 159, 69, 0.08);
+  border-radius: 16px;
+  padding: 20px;
+  margin-bottom: 28px;
+  text-align: left;
+}
+
+.snake-controls-info h4 {
+  font-size: 15px;
+  color: #FF9F45;
+  margin-bottom: 12px;
+  text-align: center;
+}
+
+.snake-controls-info .control-row {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  margin-bottom: 8px;
+  font-size: 14px;
+  color: #555;
+}
+
+.snake-controls-info .control-key {
+  background: #FF9F45;
+  color: white;
+  padding: 3px 10px;
+  border-radius: 6px;
+  font-weight: 600;
+  font-size: 13px;
+  white-space: nowrap;
+}
+
+/* 开始按钮 */
+.snake-start-btn {
+  background: linear-gradient(135deg, #FFB366 0%, #FF9F45 50%, #FF8C1A 100%);
+  color: white;
+  border: none;
+  padding: 16px 48px;
+  font-size: 20px;
+  font-weight: 700;
+  border-radius: 50px;
+  cursor: pointer;
+  display: inline-flex;
+  align-items: center;
+  gap: 12px;
+  box-shadow: 0 8px 25px rgba(255, 159, 69, 0.4);
+  transition: all 0.3s ease;
+}
+
+.snake-start-btn:hover {
+  transform: translateY(-3px);
+  box-shadow: 0 12px 35px rgba(255, 159, 69, 0.6);
+}
+
+.snake-start-btn:active {
+  transform: translateY(0);
+}
+
+/* ==================== 游戏主界面 ==================== */
+.snake-game-board {
+  background: rgba(255, 255, 255, 0.95);
+  border-radius: 24px;
+  padding: 28px;
+  box-shadow: 0 20px 60px rgba(0, 0, 0, 0.2);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  animation: snakeSlideIn 0.4s ease-out;
+  position: relative;
+  z-index: 1;
+}
+
+/* 状态栏 */
+.snake-status-bar {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  width: 100%;
+  margin-bottom: 16px;
+  gap: 12px;
+  flex-wrap: wrap;
+}
+
+.snake-stat {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  background: rgba(255, 159, 69, 0.1);
+  padding: 8px 16px;
+  border-radius: 12px;
+  font-weight: 600;
+  color: #5C4033;
+  font-size: 15px;
+}
+
+.snake-stat .stat-icon {
+  font-size: 20px;
+}
+
+.snake-stat .stat-value {
+  color: #FF9F45;
+  font-size: 20px;
+  font-weight: 800;
+  min-width: 36px;
+  text-align: center;
+}
+
+/* Canvas 区域 */
+.snake-canvas-wrap {
+  border: 3px solid #FFD4A3;
+  border-radius: 16px;
+  overflow: hidden;
+  box-shadow: inset 0 2px 8px rgba(0, 0, 0, 0.06);
+  background: #FFF8F0;
+}
+
+.snake-canvas-wrap canvas {
+  display: block;
+}
+
+/* 暂停遮罩 */
+.snake-pause-overlay {
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: rgba(0, 0, 0, 0.5);
+  border-radius: 24px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 10;
+  backdrop-filter: blur(4px);
+}
+
+.snake-pause-text {
+  color: white;
+  font-size: 36px;
+  font-weight: 800;
+  text-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
+  animation: snakePausePulse 1.5s ease-in-out infinite;
+}
+
+@keyframes snakePausePulse {
+  0%, 100% { opacity: 1; transform: scale(1); }
+  50% { opacity: 0.7; transform: scale(1.05); }
+}
+
+/* 控制按钮组 */
+.snake-btn-group {
+  display: flex;
+  gap: 12px;
+  margin-top: 16px;
+  flex-wrap: wrap;
+  justify-content: center;
+}
+
+.snake-btn {
+  padding: 10px 24px;
+  border: none;
+  border-radius: 12px;
+  font-size: 15px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.snake-btn-pause {
+  background: rgba(255, 159, 69, 0.15);
+  color: #FF8C1A;
+}
+
+.snake-btn-pause:hover {
+  background: rgba(255, 159, 69, 0.25);
+  transform: translateY(-2px);
+}
+
+.snake-btn-restart {
+  background: linear-gradient(135deg, #FFB366, #FF9F45);
+  color: white;
+  box-shadow: 0 4px 12px rgba(255, 159, 69, 0.3);
+}
+
+.snake-btn-restart:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 6px 18px rgba(255, 159, 69, 0.4);
+}
+
+/* ==================== 移动端虚拟方向键 ==================== */
+.snake-dpad {
+  display: none;
+  margin-top: 20px;
+  position: relative;
+  width: 160px;
+  height: 160px;
+}
+
+.snake-dpad-btn {
+  position: absolute;
+  width: 52px;
+  height: 52px;
+  background: linear-gradient(135deg, #FFB366, #FF9F45);
+  color: white;
+  border: none;
+  border-radius: 14px;
+  font-size: 22px;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  box-shadow: 0 4px 12px rgba(255, 159, 69, 0.3);
+  transition: all 0.15s ease;
+  user-select: none;
+  -webkit-user-select: none;
+}
+
+.snake-dpad-btn:active {
+  transform: scale(0.9);
+  box-shadow: 0 2px 6px rgba(255, 159, 69, 0.2);
+}
+
+.snake-dpad-up { top: 0; left: 50%; transform: translateX(-50%); }
+.snake-dpad-down { bottom: 0; left: 50%; transform: translateX(-50%); }
+.snake-dpad-left { top: 50%; left: 0; transform: translateY(-50%); }
+.snake-dpad-right { top: 50%; right: 0; transform: translateY(-50%); }
+
+.snake-dpad-up:active { transform: translateX(-50%) scale(0.9); }
+.snake-dpad-down:active { transform: translateX(-50%) scale(0.9); }
+.snake-dpad-left:active { transform: translateY(-50%) scale(0.9); }
+.snake-dpad-right:active { transform: translateY(-50%) scale(0.9); }
+
+/* ==================== 结束界面 ==================== */
+.snake-game-over {
+  background: rgba(255, 255, 255, 0.95);
+  border-radius: 24px;
+  padding: 48px;
+  max-width: 420px;
+  width: 100%;
+  box-shadow: 0 20px 60px rgba(0, 0, 0, 0.2);
+  text-align: center;
+  animation: snakeSlideIn 0.6s ease-out;
+  position: relative;
+  z-index: 1;
+}
+
+.snake-game-over .over-icon {
+  font-size: 64px;
+  margin-bottom: 12px;
+}
+
+.snake-game-over .over-title {
+  font-size: 32px;
+  font-weight: 800;
+  color: #FF9F45;
+  margin-bottom: 24px;
+}
+
+.snake-game-over .over-scores {
+  display: flex;
+  gap: 16px;
+  justify-content: center;
+  margin-bottom: 28px;
+}
+
+.snake-game-over .score-card {
+  background: linear-gradient(135deg, #FFB366 0%, #FF9F45 100%);
+  color: white;
+  padding: 16px 24px;
+  border-radius: 16px;
+  min-width: 110px;
+}
+
+.snake-game-over .score-card .score-label {
+  font-size: 13px;
+  opacity: 0.9;
+  margin-bottom: 4px;
+}
+
+.snake-game-over .score-card .score-num {
+  font-size: 32px;
+  font-weight: 800;
+}
+
+.snake-game-over .score-card.best {
+  background: linear-gradient(135deg, #FF8C1A 0%, #FF6B00 100%);
+}
+
+/* ==================== 响应式设计 ==================== */
+@media (max-width: 768px) {
+  .snake-start-screen {
+    padding: 32px 24px;
+  }
+
+  .snake-start-screen .game-title {
+    font-size: 28px;
+  }
+
+  .snake-game-board {
+    padding: 16px;
+  }
+
+  .snake-status-bar {
+    justify-content: center;
+  }
+
+  .snake-stat {
+    padding: 6px 12px;
+    font-size: 13px;
+  }
+
+  /* 移动端显示虚拟方向键 */
+  .snake-dpad {
+    display: block;
+  }
+
+  .snake-game-over {
+    padding: 32px 24px;
+  }
+
+  .snake-game-over .over-title {
+    font-size: 26px;
+  }
+}
+
+@media (max-width: 480px) {
+  .snake-start-screen .game-icon {
+    font-size: 56px;
+  }
+
+  .snake-start-screen .game-title {
+    font-size: 24px;
+  }
+
+  .snake-controls-info {
+    padding: 14px;
+  }
+}

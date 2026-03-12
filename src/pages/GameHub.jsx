@@ -1,6 +1,12 @@
 import { useState } from 'react'
 import YujieGame from '../components/YujieGame'
 import YujieAIGame from '../components/YujieAIGame'
+import SnakeGame from '../components/SnakeGame'
+import TetrisGame from '../components/TetrisGame'
+import Game2048 from '../components/Game2048'
+import Minesweeper from '../components/Minesweeper'
+import MemoryCard from '../components/MemoryCard'
+import Breakout from '../components/Breakout'
 import './GameHub.css'
 
 /**
@@ -35,20 +41,58 @@ function GameHub() {
       component: 'YujieAIGame'
     },
     {
-      id: 'game-3',
-      name: '敬请期待',
-      icon: '🎲',
-      description: '更多精彩游戏即将上线...',
-      status: 'coming-soon',
-      color: '#FFB366'
+      id: 'snake-game',
+      name: '贪吃蛇',
+      icon: '🐍',
+      description: '经典贪吃蛇！控制小蛇吃掉食物不断成长，小心别撞墙哦～',
+      status: 'active',
+      color: '#6BCB77',
+      component: 'SnakeGame'
     },
     {
-      id: 'game-4',
-      name: '敬请期待',
-      icon: '🎪',
-      description: '更多精彩游戏即将上线...',
-      status: 'coming-soon',
-      color: '#FFC999'
+      id: 'tetris-game',
+      name: '俄罗斯方块',
+      icon: '🧱',
+      description: '经典中的经典！消除整行方块获得分数，挑战你的最高记录！',
+      status: 'active',
+      color: '#4D96FF',
+      component: 'TetrisGame'
+    },
+    {
+      id: 'game-2048',
+      name: '2048',
+      icon: '🔢',
+      description: '滑动数字方块，合并相同数字，目标拼出2048！',
+      status: 'active',
+      color: '#FFD93D',
+      component: 'Game2048'
+    },
+    {
+      id: 'minesweeper',
+      name: '扫雷',
+      icon: '💣',
+      description: '经典Windows扫雷！9×9棋盘，找出所有地雷！',
+      status: 'active',
+      color: '#764ba2',
+      component: 'Minesweeper'
+    },
+    {
+      id: 'memory-card',
+      name: '记忆翻牌',
+      icon: '🃏',
+      description: '翻开卡片找到配对的emoji，挑战记忆力！',
+      status: 'active',
+      color: '#4ECDC4',
+      component: 'MemoryCard'
+    },
+    {
+      id: 'breakout',
+      name: '打砖块',
+      icon: '🏓',
+      description: '移动挡板反弹小球，击碎所有砖块通关！',
+      status: 'active',
+      color: '#FF6B6B',
+      component: 'Breakout'
     }
   ])
 
@@ -162,7 +206,13 @@ function GameHub() {
               {/* 根据游戏ID加载对应的游戏组件 */}
               {selectedGame.id === 'yujie-game' && <YujieGame />}
               {selectedGame.id === 'yujie-ai-game' && <YujieAIGame />}
-              {selectedGame.id !== 'yujie-game' && selectedGame.id !== 'yujie-ai-game' && (
+              {selectedGame.id === 'snake-game' && <SnakeGame />}
+              {selectedGame.id === 'tetris-game' && <TetrisGame />}
+              {selectedGame.id === 'game-2048' && <Game2048 />}
+              {selectedGame.id === 'minesweeper' && <Minesweeper />}
+              {selectedGame.id === 'memory-card' && <MemoryCard />}
+              {selectedGame.id === 'breakout' && <Breakout />}
+              {!['yujie-game', 'yujie-ai-game', 'snake-game', 'tetris-game', 'game-2048', 'minesweeper', 'memory-card', 'breakout'].includes(selectedGame.id) && (
                 <>
                   <h2>{selectedGame.icon} {selectedGame.name}</h2>
                   <p>游戏内容区域 - 在这里加载具体的游戏组件</p>
