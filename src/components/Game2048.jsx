@@ -84,7 +84,7 @@ const Game2048 = () => {
     setPhase('playing')
   }, [])
 
-  /** 执行一次移动（方向: 0上 1右 2下 3左） */
+  /** 执行一次移动（方向: 0左 1下 2右 3上，对应旋转次数） */
   const move = useCallback((dir) => {
     let g = grid.map(r => [...r])
     // 将所有方向统一旋转成"向左"处理
@@ -122,10 +122,10 @@ const Game2048 = () => {
     if (phase !== 'playing') { return }
     const handleKey = (e) => {
       switch (e.key) {
-        case 'ArrowUp': e.preventDefault(); move(0); break
-        case 'ArrowRight': e.preventDefault(); move(1); break
-        case 'ArrowDown': e.preventDefault(); move(2); break
-        case 'ArrowLeft': e.preventDefault(); move(3); break
+        case 'ArrowUp': e.preventDefault(); move(3); break
+        case 'ArrowRight': e.preventDefault(); move(2); break
+        case 'ArrowDown': e.preventDefault(); move(1); break
+        case 'ArrowLeft': e.preventDefault(); move(0); break
         default: break
       }
     }
@@ -143,9 +143,9 @@ const Game2048 = () => {
       const dy = e.changedTouches[0].clientY - startY
       if (Math.abs(dx) < 30 && Math.abs(dy) < 30) { return }
       if (Math.abs(dx) > Math.abs(dy)) {
-        move(dx > 0 ? 1 : 3) // 右:1 左:3
+        move(dx > 0 ? 2 : 0) // 右:2 左:0
       } else {
-        move(dy > 0 ? 2 : 0) // 下:2 上:0
+        move(dy > 0 ? 1 : 3) // 下:1 上:3
       }
     }
     window.addEventListener('touchstart', onStart, { passive: true })
