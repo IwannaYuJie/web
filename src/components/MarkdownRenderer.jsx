@@ -1,15 +1,14 @@
 import { useMemo, useRef } from 'react'
 import ReactMarkdown from 'react-markdown'
 import remarkGfm from 'remark-gfm'
-import rehypeSanitize from 'rehype-sanitize'
 import { extractMarkdownToc } from '../utils/markdownUtils'
 
 /**
  * Markdown 渲染组件
- * 采用成熟解析器并进行 sanitize，避免 XSS 风险。
+ * 使用 GitHub Flavored Markdown，并直接忽略原生 HTML 节点。
  */
-function MarkdownRenderer({ content, className = '' }) {
-  const toc = useMemo(() => extractMarkdownToc(content), [content])
+function MarkdownRenderer({ content, className = '', toc: providedToc }) {
+  const toc = useMemo(() => providedToc || extractMarkdownToc(content), [content, providedToc])
   const headingIndexRef = useRef(0)
   headingIndexRef.current = 0
 
@@ -31,8 +30,8 @@ function MarkdownRenderer({ content, className = '' }) {
   return (
     <div className={`markdown-content ${className}`}>
       <ReactMarkdown
+        skipHtml
         remarkPlugins={[remarkGfm]}
-        rehypePlugins={[rehypeSanitize]}
         components={{
           h1({ children }) {
             return <h1 className="text-3xl font-extrabold mt-12 mb-6 text-gradient">{children}</h1>
