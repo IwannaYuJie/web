@@ -1,8 +1,9 @@
-import { useState, useEffect } from 'react'
+import { Suspense, lazy, useState, useEffect, useMemo } from 'react'
 import { useParams, Link, useNavigate } from 'react-router-dom'
-import MarkdownRenderer from '../components/MarkdownRenderer'
 import { useArticle } from '../hooks/useArticles'
 import { extractMarkdownToc } from '../utils/markdownUtils'
+
+const MarkdownRenderer = lazy(() => import('../components/MarkdownRenderer'))
 
 /**
  * 文章详情页组件
@@ -31,7 +32,9 @@ function ArticleDetail() {
     return () => window.removeEventListener('scroll', handleScroll)
   }, [])
 
-  const toc = article ? extractMarkdownToc(article.content) : []
+  const toc = useMemo(() => {
+    return article ? extractMarkdownToc(article.content) : []
+  }, [article])
 
   if (loading) {
     return (
@@ -194,7 +197,9 @@ function ArticleDetail() {
               )}
 
               <div className="prose prose-lg max-w-none">
-                <MarkdownRenderer content={article.content} />
+                <Suspense fallback={<div className="py-12 text-center text-text-light">文章内容加载中...</div>}>
+                  <MarkdownRenderer content={article.content} toc={toc} />
+                </Suspense>
               </div>
             </article>
 

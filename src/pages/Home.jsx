@@ -1,8 +1,11 @@
-import { useState, useEffect, useMemo } from 'react'
+import { useEffect, useMemo, useState } from 'react'
 import { Link } from 'react-router-dom'
 import Pagination from '../components/Pagination'
-import { CAT_MOODS, CAT_QUOTES, HOME_PAGE_SIZE, WEB_TEMPLATES } from '../constants/home'
-import { useArticlesData, useBackToTop, useGoogleCSE, useIntervalValue } from '../hooks'
+import HomeHero from '../components/home/HomeHero'
+import HomeQuoteCard from '../components/home/HomeQuoteCard'
+import HomeStatsCard from '../components/home/HomeStatsCard'
+import { HOME_PAGE_SIZE, WEB_TEMPLATES } from '../constants/home'
+import { useArticlesData, useBackToTop, useGoogleCSE } from '../hooks'
 
 /**
  * 首页组件
@@ -16,16 +19,11 @@ function Home() {
     fetchArticles,
   } = useArticlesData()
 
-  const [quote, setQuote] = useState(null)
-  const [quoteLoading, setQuoteLoading] = useState(false)
-  const [visitorCount] = useIntervalValue(12345, (prev) => prev + Math.floor(Math.random() * 3), 5000)
-  const [currentTime] = useIntervalValue(new Date(), () => new Date(), 1000)
   const [selectedCategory, setSelectedCategory] = useState('全部')
   const showBackToTop = useBackToTop(400)
   const [searchQuery, setSearchQuery] = useState('')
   const [currentPage, setCurrentPage] = useState(1)
 
-  const [catMood] = useIntervalValue(CAT_MOODS[0], () => CAT_MOODS[Math.floor(Math.random() * CAT_MOODS.length)], 3000)
   useGoogleCSE()
 
   // 动态生成文章分类 - 只显示有文章的分类
@@ -42,43 +40,8 @@ function Home() {
     return ['全部', ...Array.from(categorySet).sort()]
   }, [articles])
 
-  const fetchRandomQuote = async () => {
-    setQuoteLoading(true)
-    // 50% 概率使用橘猫语录
-    if (Math.random() > 0.5) {
-      setTimeout(() => {
-        const catQuote = CAT_QUOTES[Math.floor(Math.random() * CAT_QUOTES.length)]
-        setQuote({ content: catQuote.text, author: catQuote.author })
-        setQuoteLoading(false)
-      }, 500)
-    } else {
-      try {
-        const response = await fetch('https://api.quotable.io/random')
-        if (!response.ok) {throw new Error('Failed')}
-        const data = await response.json()
-        setQuote(data)
-      } catch {
-        const catQuote = CAT_QUOTES[Math.floor(Math.random() * CAT_QUOTES.length)]
-        setQuote({ content: catQuote.text, author: catQuote.author })
-      } finally {
-        setQuoteLoading(false)
-      }
-    }
-  }
-
   const scrollToTop = () => {
     window.scrollTo({ top: 0, behavior: 'smooth' })
-  }
-
-  const getGreeting = () => {
-    const hour = currentTime.getHours()
-    if (hour < 6) {return '🌙 夜深了，记得早点休息哦~'}
-    if (hour < 9) {return '🌅 早安！新的一天开始啦~'}
-    if (hour < 12) {return '☀️ 上午好！元气满满地工作吧~'}
-    if (hour < 14) {return '🍴 中午好！记得吃午饭哦~'}
-    if (hour < 18) {return '🌤️ 下午好！继续加油鸭~'}
-    if (hour < 22) {return '🌆 晚上好！今天辛苦啦~'}
-    return '🌃 夜深了，早点休息吧~'
   }
 
   const filteredArticles = useMemo(() => {
@@ -118,38 +81,7 @@ function Home() {
 
   return (
     <div className="container pb-12">
-      {/* Hero Section */}
-      <section className="glass rounded-[32px] p-8 md:p-12 mb-12 flex flex-col md:flex-row items-center justify-between gap-8 animate-fade-in relative overflow-hidden">
-        <div className="relative z-10 text-center md:text-left max-w-2xl">
-          <div className="inline-flex items-center gap-2 bg-white/50 px-4 py-1 rounded-full mb-4 text-primary font-bold text-sm backdrop-blur-sm">
-            <span>{catMood}</span>
-            <span>{getGreeting()}</span>
-          </div>
-          <h1 className="text-4xl md:text-5xl font-extrabold mb-4 text-gradient leading-tight">
-            橘猫的技术小窝
-          </h1>
-          <p className="text-lg text-text-secondary mb-8 leading-relaxed">
-            这里是 Java 技术分享的温馨角落，记录学习，分享感悟。
-            <br />让我们一起在代码的世界里，保持好奇，持续探索。
-          </p>
-          <div className="flex gap-4 justify-center md:justify-start">
-            <a href="#articles" className="btn btn-primary">
-              📚 开始阅读
-            </a>
-            <a href="https://github.com/IwannaYuJie" target="_blank" rel="noreferrer" className="btn btn-secondary">
-              💻 GitHub
-            </a>
-          </div>
-        </div>
-
-        <div className="relative z-10 animate-bounce">
-           <img src="/images/cat-avatar.png" alt="橘猫" className="w-48 h-48 md:w-64 md:h-64 rounded-full shadow-lg border-4 border-white/50 object-cover" />
-        </div>
-
-        {/* 装饰背景 */}
-        <div className="absolute top-0 right-0 w-64 h-64 bg-primary/10 rounded-full blur-3xl -translate-y-1/2 translate-x-1/2 pointer-events-none"></div>
-        <div className="absolute bottom-0 left-0 w-64 h-64 bg-secondary/10 rounded-full blur-3xl translate-y-1/2 -translate-x-1/2 pointer-events-none"></div>
-      </section>
+      <HomeHero />
 
       {/* Main Grid Layout */}
       <div className="grid grid-cols-1 lg:grid-cols-12 gap-8">
@@ -327,30 +259,7 @@ function Home() {
 
         {/* Right Sidebar - 4/12 */}
         <aside className="lg:col-span-4 space-y-8">
-           {/* Quote Card */}
-           <div className="glass p-6 rounded-2xl relative overflow-hidden">
-              <div className="absolute -right-4 -top-4 text-9xl text-primary/5 opacity-20 select-none">”</div>
-              <h2 className="text-lg font-bold mb-4 flex items-center gap-2">
-                <span>🐾</span> 每日智慧
-              </h2>
-              <div className="mb-6 min-h-[100px] flex flex-col justify-center">
-                {quote ? (
-                  <blockquote className="italic text-text-secondary">
-                    &ldquo;{quote.content}&rdquo;
-                    <footer className="text-right mt-2 text-sm font-bold not-italic text-primary">— {quote.author}</footer>
-                  </blockquote>
-                ) : (
-                  <div className="text-center text-text-light text-sm">点击下方按钮获取灵感...</div>
-                )}
-              </div>
-              <button
-                onClick={fetchRandomQuote}
-                disabled={quoteLoading}
-                className="w-full btn btn-secondary justify-center"
-              >
-                {quoteLoading ? '🤔 思考中...' : '🎲 获取灵感'}
-              </button>
-           </div>
+           <HomeQuoteCard />
 
            {/* Tools Card */}
            <div className="glass p-6 rounded-2xl">
@@ -376,22 +285,7 @@ function Home() {
               <p className="text-xs text-text-light mt-2 text-center">Powered by Google</p>
            </div>
 
-           {/* Stats Card */}
-           <div className="glass p-6 rounded-2xl">
-              <h2 className="text-lg font-bold mb-4 flex items-center gap-2">
-                 <span>📊</span> 站点统计
-              </h2>
-              <div className="space-y-3">
-                 <div className="flex justify-between items-center p-3 bg-white/50 rounded-xl">
-                    <span className="text-text-secondary">👥 总访问量</span>
-                    <span className="font-bold text-primary">{visitorCount.toLocaleString()}</span>
-                 </div>
-                 <div className="flex justify-between items-center p-3 bg-white/50 rounded-xl">
-                    <span className="text-text-secondary">📝 文章总数</span>
-                    <span className="font-bold text-primary">{articles.length}</span>
-                 </div>
-              </div>
-           </div>
+           <HomeStatsCard articleCount={articles.length} />
         </aside>
       </div>
 
