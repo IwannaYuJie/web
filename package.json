@@ -16,7 +16,6 @@
     "test": "vitest run"
   },
   "dependencies": {
-    "@fal-ai/client": "^1.7.2",
     "gif.js": "^0.2.0",
     "react": "^18.2.0",
     "react-dom": "^18.2.0",

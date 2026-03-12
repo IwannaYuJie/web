@@ -5,7 +5,7 @@ import './GameHub.css'
 
 /**
  * 游戏集合页面 🎮
- * 隐藏彩蛋页面 - 通过特定链接访问
+ * 展示所有可用的小游戏入口
  * 
  * 功能说明:
  * - 展示多个小游戏的入口
@@ -86,11 +86,8 @@ function GameHub() {
             游戏中心
             <span className="title-icon">🎮</span>
           </h1>
-          <p className="hub-subtitle">🎉 恭喜你发现了隐藏的游戏彩蛋!</p>
-          <div className="secret-badge">
-            <span className="badge-icon">🔐</span>
-            <span className="badge-text">隐藏页面</span>
-          </div>
+          <p className="hub-subtitle">🎉 来玩点好玩的小游戏吧!</p>
+
         </div>
       </header>
 

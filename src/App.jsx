@@ -4,11 +4,11 @@ import Layout from './components/Layout'
 
 const Home = lazy(() => import('./pages/Home'))
 const ArticleDetail = lazy(() => import('./pages/ArticleDetail'))
-const ImageGenerator = lazy(() => import('./pages/ImageGenerator'))
+
 const AIChat = lazy(() => import('./pages/AIChat'))
 const ArticleManager = lazy(() => import('./pages/ArticleManager'))
 const GameHub = lazy(() => import('./pages/GameHub'))
-const SeedreamStudio = lazy(() => import('./pages/SeedreamStudio'))
+
 const Toolbox = lazy(() => import('./pages/Toolbox'))
 const SpriteSheetToGif = lazy(() => import('./pages/tools/SpriteSheetToGif'))
 
@@ -31,11 +31,10 @@ function App() {
           <Routes>
             <Route path="/" element={<Home />} />
             <Route path="/article/:id" element={<ArticleDetail />} />
-            <Route path="/image-generator" element={<ImageGenerator />} />
+
             <Route path="/secret-chat" element={<AIChat />} />
             <Route path="/admin/articles" element={<ArticleManager />} />
-            <Route path="/secret-games" element={<GameHub />} />
-            <Route path="/secret-seedream" element={<SeedreamStudio />} />
+            <Route path="/games" element={<GameHub />} />
             <Route path="/toolbox" element={<Toolbox />} />
             <Route path="/toolbox/sprite-sheet-to-gif" element={<SpriteSheetToGif />} />
           </Routes>
