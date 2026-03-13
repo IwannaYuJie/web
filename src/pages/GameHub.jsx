@@ -164,25 +164,7 @@ function GameHub() {
           </div>
         </header>
 
-        <section className="hub-overview">
-          <article className="overview-card glass">
-            <span className="overview-label">开放游戏</span>
-            <strong>{activeGames.length}</strong>
-            <p>全部都能从当前页面直接进入，不额外跳转。</p>
-          </article>
 
-          <article className="overview-card glass">
-            <span className="overview-label">视觉节奏</span>
-            <strong>暖橙 + 米白</strong>
-            <p>延续首页的奶油橙、柔和阴影和磨砂卡片层次。</p>
-          </article>
-
-          <article className="overview-card glass">
-            <span className="overview-label">游玩体验</span>
-            <strong>轻量切换</strong>
-            <p>先挑游戏，再进入详情区，页面观感前后统一。</p>
-          </article>
-        </section>
 
         <main className="game-hub-main" id="game-library">
           {!selectedGame ? (
@@ -235,15 +217,7 @@ function GameHub() {
                 </div>
 
                 <aside className="games-aside">
-                  <section className="aside-card glass">
-                    <span className="aside-kicker">游玩小贴士</span>
-                    <h3>更像首页，也更适合久看</h3>
-                    <ul className="aside-list">
-                      <li>统一使用暖橙、米白和浅棕，弱化原来偏炫酷页游的跳色感。</li>
-                      <li>卡片和详情区沿用首页的玻璃拟态与柔和阴影。</li>
-                      <li>进入游戏前先给简短说明，切换时不会突然像换了一个站。</li>
-                    </ul>
-                  </section>
+
 
                   <section className="aside-card glass">
                     <span className="aside-kicker">推荐开局</span>
