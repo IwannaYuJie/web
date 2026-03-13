@@ -7,7 +7,7 @@
 .snake-game-container {
   width: 100%;
   min-height: 100vh;
-  background: linear-gradient(135deg, #FFB366 0%, #FF9F45 50%, #FF8C1A 100%);
+  background: var(--gradient-warm);
   font-family: 'Microsoft YaHei', 'PingFang SC', sans-serif;
   display: flex;
   flex-direction: column;
@@ -39,12 +39,12 @@
 
 /* ==================== 开始界面 ==================== */
 .snake-start-screen {
-  background: rgba(255, 255, 255, 0.95);
-  border-radius: 24px;
+  background: var(--surface-color);
+  border-radius: var(--radius-lg);
   padding: 48px;
   max-width: 500px;
   width: 100%;
-  box-shadow: 0 20px 60px rgba(0, 0, 0, 0.2);
+  box-shadow: var(--shadow-lg);
   text-align: center;
   animation: snakeSlideIn 0.6s ease-out;
   position: relative;
@@ -70,14 +70,14 @@
 .snake-start-screen .game-title {
   font-size: 36px;
   font-weight: 800;
-  color: #FF9F45;
+  color: var(--primary-color);
   margin-bottom: 12px;
   text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.05);
 }
 
 .snake-start-screen .game-desc {
   font-size: 16px;
-  color: #666;
+  color: var(--text-secondary);
   line-height: 1.8;
   margin-bottom: 24px;
 }
@@ -85,7 +85,7 @@
 /* 操作说明 */
 .snake-controls-info {
   background: rgba(255, 159, 69, 0.08);
-  border-radius: 16px;
+  border-radius: var(--radius-md);
   padding: 20px;
   margin-bottom: 28px;
   text-align: left;
@@ -93,7 +93,7 @@
 
 .snake-controls-info h4 {
   font-size: 15px;
-  color: #FF9F45;
+  color: var(--primary-color);
   margin-bottom: 12px;
   text-align: center;
 }
@@ -104,11 +104,11 @@
   gap: 10px;
   margin-bottom: 8px;
   font-size: 14px;
-  color: #555;
+  color: var(--text-color);
 }
 
 .snake-controls-info .control-key {
-  background: #FF9F45;
+  background: var(--primary-color);
   color: white;
   padding: 3px 10px;
   border-radius: 6px;
@@ -119,24 +119,24 @@
 
 /* 开始按钮 */
 .snake-start-btn {
-  background: linear-gradient(135deg, #FFB366 0%, #FF9F45 50%, #FF8C1A 100%);
+  background: var(--gradient-warm);
   color: white;
   border: none;
   padding: 16px 48px;
   font-size: 20px;
   font-weight: 700;
-  border-radius: 50px;
+  border-radius: var(--radius-full);
   cursor: pointer;
   display: inline-flex;
   align-items: center;
   gap: 12px;
-  box-shadow: 0 8px 25px rgba(255, 159, 69, 0.4);
-  transition: all 0.3s ease;
+  box-shadow: var(--shadow);
+  transition: var(--transition-base);
 }
 
 .snake-start-btn:hover {
   transform: translateY(-3px);
-  box-shadow: 0 12px 35px rgba(255, 159, 69, 0.6);
+  box-shadow: var(--shadow-lg);
 }
 
 .snake-start-btn:active {
@@ -145,10 +145,10 @@
 
 /* ==================== 游戏主界面 ==================== */
 .snake-game-board {
-  background: rgba(255, 255, 255, 0.95);
-  border-radius: 24px;
+  background: var(--surface-color);
+  border-radius: var(--radius-lg);
   padding: 28px;
-  box-shadow: 0 20px 60px rgba(0, 0, 0, 0.2);
+  box-shadow: var(--shadow-lg);
   display: flex;
   flex-direction: column;
   align-items: center;
@@ -174,9 +174,9 @@
   gap: 8px;
   background: rgba(255, 159, 69, 0.1);
   padding: 8px 16px;
-  border-radius: 12px;
+  border-radius: var(--radius-sm);
   font-weight: 600;
-  color: #5C4033;
+  color: var(--text-color);
   font-size: 15px;
 }
 
@@ -185,7 +185,7 @@
 }
 
 .snake-stat .stat-value {
-  color: #FF9F45;
+  color: var(--primary-color);
   font-size: 20px;
   font-weight: 800;
   min-width: 36px;
@@ -194,11 +194,11 @@
 
 /* Canvas 区域 */
 .snake-canvas-wrap {
-  border: 3px solid #FFD4A3;
-  border-radius: 16px;
+  border: 3px solid var(--border-color);
+  border-radius: var(--radius-md);
   overflow: hidden;
   box-shadow: inset 0 2px 8px rgba(0, 0, 0, 0.06);
-  background: #FFF8F0;
+  background: var(--bg-color);
 }
 
 .snake-canvas-wrap canvas {
@@ -213,7 +213,7 @@
   right: 0;
   bottom: 0;
   background: rgba(0, 0, 0, 0.5);
-  border-radius: 24px;
+  border-radius: var(--radius-lg);
   display: flex;
   align-items: center;
   justify-content: center;
@@ -246,11 +246,11 @@
 .snake-btn {
   padding: 10px 24px;
   border: none;
-  border-radius: 12px;
+  border-radius: var(--radius-sm);
   font-size: 15px;
   font-weight: 600;
   cursor: pointer;
-  transition: all 0.3s ease;
+  transition: var(--transition-base);
   display: inline-flex;
   align-items: center;
   gap: 6px;
@@ -258,7 +258,7 @@
 
 .snake-btn-pause {
   background: rgba(255, 159, 69, 0.15);
-  color: #FF8C1A;
+  color: var(--primary-hover);
 }
 
 .snake-btn-pause:hover {
@@ -267,14 +267,14 @@
 }
 
 .snake-btn-restart {
-  background: linear-gradient(135deg, #FFB366, #FF9F45);
+  background: var(--gradient-warm);
   color: white;
-  box-shadow: 0 4px 12px rgba(255, 159, 69, 0.3);
+  box-shadow: var(--shadow);
 }
 
 .snake-btn-restart:hover {
   transform: translateY(-2px);
-  box-shadow: 0 6px 18px rgba(255, 159, 69, 0.4);
+  box-shadow: var(--shadow-hover);
 }
 
 /* ==================== 移动端虚拟方向键 ==================== */
@@ -290,17 +290,17 @@
   position: absolute;
   width: 52px;
   height: 52px;
-  background: linear-gradient(135deg, #FFB366, #FF9F45);
+  background: var(--gradient-warm);
   color: white;
   border: none;
-  border-radius: 14px;
+  border-radius: var(--radius-sm);
   font-size: 22px;
   cursor: pointer;
   display: flex;
   align-items: center;
   justify-content: center;
-  box-shadow: 0 4px 12px rgba(255, 159, 69, 0.3);
-  transition: all 0.15s ease;
+  box-shadow: var(--shadow);
+  transition: var(--transition-fast);
   user-select: none;
   -webkit-user-select: none;
 }
@@ -322,12 +322,12 @@
 
 /* ==================== 结束界面 ==================== */
 .snake-game-over {
-  background: rgba(255, 255, 255, 0.95);
-  border-radius: 24px;
+  background: var(--surface-color);
+  border-radius: var(--radius-lg);
   padding: 48px;
   max-width: 420px;
   width: 100%;
-  box-shadow: 0 20px 60px rgba(0, 0, 0, 0.2);
+  box-shadow: var(--shadow-lg);
   text-align: center;
   animation: snakeSlideIn 0.6s ease-out;
   position: relative;
@@ -342,7 +342,7 @@
 .snake-game-over .over-title {
   font-size: 32px;
   font-weight: 800;
-  color: #FF9F45;
+  color: var(--primary-color);
   margin-bottom: 24px;
 }
 
@@ -357,7 +357,7 @@
   background: linear-gradient(135deg, #FFB366 0%, #FF9F45 100%);
   color: white;
   padding: 16px 24px;
-  border-radius: 16px;
+  border-radius: var(--radius-md);
   min-width: 110px;
 }
 

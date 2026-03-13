@@ -6,7 +6,7 @@
 .breakout-container {
   width: 100%;
   min-height: 100vh;
-  background: linear-gradient(135deg, #FFB366 0%, #FF9F45 50%, #FF8C1A 100%);
+  background: var(--gradient-warm);
   font-family: 'Microsoft YaHei', 'PingFang SC', sans-serif;
   display: flex;
   flex-direction: column;
@@ -17,12 +17,12 @@
 }
 
 .breakout-panel {
-  background: rgba(255, 255, 255, 0.95);
-  border-radius: 24px;
+  background: var(--surface-color);
+  border-radius: var(--radius-lg);
   padding: 48px;
   max-width: 500px;
   width: 100%;
-  box-shadow: 0 20px 60px rgba(0, 0, 0, 0.2);
+  box-shadow: var(--shadow-lg);
   text-align: center;
   animation: boSlideIn 0.6s ease-out;
   position: relative;
@@ -36,27 +36,27 @@
 
 .breakout-panel .game-icon { font-size: 64px; margin-bottom: 12px; }
 .breakout-panel .game-title {
-  font-size: 36px; font-weight: 800; color: #FF9F45; margin-bottom: 12px;
+  font-size: 36px; font-weight: 800; color: var(--primary-color); margin-bottom: 12px;
 }
 .breakout-panel .game-desc {
-  font-size: 15px; color: #666; line-height: 1.8; margin-bottom: 24px;
+  font-size: 15px; color: var(--text-secondary); line-height: 1.8; margin-bottom: 24px;
 }
 
 .breakout-start-btn {
-  background: linear-gradient(135deg, #FFB366 0%, #FF9F45 50%, #FF8C1A 100%);
+  background: var(--gradient-warm);
   color: white; border: none; padding: 16px 48px; font-size: 20px;
-  font-weight: 700; border-radius: 50px; cursor: pointer;
+  font-weight: 700; border-radius: var(--radius-full); cursor: pointer;
   display: inline-flex; align-items: center; gap: 12px;
-  box-shadow: 0 8px 25px rgba(255, 159, 69, 0.4); transition: all 0.3s ease;
+  box-shadow: var(--shadow); transition: var(--transition-base);
 }
-.breakout-start-btn:hover { transform: translateY(-3px); }
+.breakout-start-btn:hover { transform: translateY(-3px); box-shadow: var(--shadow-lg); }
 
 /* 游戏主界面 */
 .breakout-game-board {
-  background: rgba(255, 255, 255, 0.95);
-  border-radius: 24px;
+  background: var(--surface-color);
+  border-radius: var(--radius-lg);
   padding: 24px;
-  box-shadow: 0 20px 60px rgba(0, 0, 0, 0.2);
+  box-shadow: var(--shadow-lg);
   animation: boSlideIn 0.4s ease-out;
   position: relative;
   z-index: 1;
@@ -71,17 +71,17 @@
 }
 
 .breakout-stat {
-  background: rgba(255, 159, 69, 0.1); padding: 8px 16px; border-radius: 12px;
-  font-weight: 600; color: #5C4033; font-size: 15px;
+  background: rgba(255, 159, 69, 0.1); padding: 8px 16px; border-radius: var(--radius-sm);
+  font-weight: 600; color: var(--text-color); font-size: 15px;
   display: flex; align-items: center; gap: 6px; flex: 1; justify-content: center;
 }
-.breakout-stat .stat-value { color: #FF9F45; font-size: 20px; font-weight: 800; }
+.breakout-stat .stat-value { color: var(--primary-color); font-size: 20px; font-weight: 800; }
 
 .breakout-canvas-wrap {
-  border: 3px solid #FFD4A3;
-  border-radius: 12px;
+  border: 3px solid var(--border-color);
+  border-radius: var(--radius-sm);
   overflow: hidden;
-  background: #FFF8F0;
+  background: var(--bg-color);
 }
 .breakout-canvas-wrap canvas { display: block; }
 
@@ -89,24 +89,24 @@
   display: flex; gap: 10px; margin-top: 16px; justify-content: center;
 }
 .breakout-btn {
-  padding: 10px 20px; border: none; border-radius: 12px;
-  font-size: 14px; font-weight: 600; cursor: pointer; transition: all 0.3s ease;
+  padding: 10px 20px; border: none; border-radius: var(--radius-sm);
+  font-size: 14px; font-weight: 600; cursor: pointer; transition: var(--transition-base);
 }
 .breakout-btn-restart {
-  background: linear-gradient(135deg, #FFB366, #FF9F45); color: white;
-  box-shadow: 0 4px 12px rgba(255, 159, 69, 0.3);
+  background: var(--gradient-warm); color: white;
+  box-shadow: var(--shadow);
 }
-.breakout-btn-restart:hover { transform: translateY(-2px); }
+.breakout-btn-restart:hover { transform: translateY(-2px); box-shadow: var(--shadow-hover); }
 
 .breakout-mobile-controls {
   display: none; gap: 10px; margin-top: 16px; justify-content: center;
 }
 .breakout-mobile-btn {
   width: 64px; height: 52px;
-  background: linear-gradient(135deg, #FFB366, #FF9F45);
-  color: white; border: none; border-radius: 14px;
+  background: var(--gradient-warm);
+  color: white; border: none; border-radius: var(--radius-md);
   font-size: 20px; cursor: pointer;
-  box-shadow: 0 4px 12px rgba(255, 159, 69, 0.3); transition: all 0.15s ease;
+  box-shadow: var(--shadow); transition: var(--transition-fast);
 }
 .breakout-mobile-btn:active { transform: scale(0.9); }
 
@@ -115,8 +115,8 @@
   display: flex; gap: 12px; justify-content: center; margin-bottom: 24px;
 }
 .breakout-over-scores .score-card {
-  background: linear-gradient(135deg, #FFB366, #FF9F45);
-  color: white; padding: 14px 20px; border-radius: 14px; min-width: 100px;
+  background: var(--gradient-warm);
+  color: white; padding: 14px 20px; border-radius: var(--radius-md); min-width: 100px;
 }
 .breakout-over-scores .score-card .score-label { font-size: 12px; opacity: 0.9; }
 .breakout-over-scores .score-card .score-num { font-size: 28px; font-weight: 800; }

@@ -6,7 +6,7 @@
 .minesweeper-container {
   width: 100%;
   min-height: 100vh;
-  background: linear-gradient(135deg, #FFB366 0%, #FF9F45 50%, #FF8C1A 100%);
+  background: var(--gradient-warm);
   font-family: 'Microsoft YaHei', 'PingFang SC', sans-serif;
   display: flex;
   flex-direction: column;
@@ -17,12 +17,12 @@
 }
 
 .minesweeper-panel {
-  background: rgba(255, 255, 255, 0.95);
-  border-radius: 24px;
+  background: var(--surface-color);
+  border-radius: var(--radius-lg);
   padding: 48px;
   max-width: 500px;
   width: 100%;
-  box-shadow: 0 20px 60px rgba(0, 0, 0, 0.2);
+  box-shadow: var(--shadow-lg);
   text-align: center;
   animation: msSlideIn 0.6s ease-out;
   position: relative;
@@ -36,27 +36,27 @@
 
 .minesweeper-panel .game-icon { font-size: 64px; margin-bottom: 12px; }
 .minesweeper-panel .game-title {
-  font-size: 36px; font-weight: 800; color: #FF9F45; margin-bottom: 12px;
+  font-size: 36px; font-weight: 800; color: var(--primary-color); margin-bottom: 12px;
 }
 .minesweeper-panel .game-desc {
-  font-size: 15px; color: #666; line-height: 1.8; margin-bottom: 24px;
+  font-size: 15px; color: var(--text-secondary); line-height: 1.8; margin-bottom: 24px;
 }
 
 .minesweeper-start-btn {
-  background: linear-gradient(135deg, #FFB366 0%, #FF9F45 50%, #FF8C1A 100%);
+  background: var(--gradient-warm);
   color: white; border: none; padding: 16px 48px; font-size: 20px;
-  font-weight: 700; border-radius: 50px; cursor: pointer;
+  font-weight: 700; border-radius: var(--radius-full); cursor: pointer;
   display: inline-flex; align-items: center; gap: 12px;
-  box-shadow: 0 8px 25px rgba(255, 159, 69, 0.4); transition: all 0.3s ease;
+  box-shadow: var(--shadow); transition: var(--transition-base);
 }
-.minesweeper-start-btn:hover { transform: translateY(-3px); }
+.minesweeper-start-btn:hover { transform: translateY(-3px); box-shadow: var(--shadow-lg); }
 
 /* 游戏主界面 */
 .minesweeper-board {
-  background: rgba(255, 255, 255, 0.95);
-  border-radius: 24px;
+  background: var(--surface-color);
+  border-radius: var(--radius-lg);
   padding: 24px;
-  box-shadow: 0 20px 60px rgba(0, 0, 0, 0.2);
+  box-shadow: var(--shadow-lg);
   animation: msSlideIn 0.4s ease-out;
   position: relative;
   z-index: 1;
@@ -68,17 +68,17 @@
 }
 
 .minesweeper-stat {
-  background: rgba(255, 159, 69, 0.1); padding: 8px 16px; border-radius: 12px;
-  font-weight: 600; color: #5C4033; font-size: 15px;
+  background: rgba(255, 159, 69, 0.1); padding: 8px 16px; border-radius: var(--radius-sm);
+  font-weight: 600; color: var(--text-color); font-size: 15px;
   display: flex; align-items: center; gap: 6px;
 }
-.minesweeper-stat .stat-value { color: #FF9F45; font-size: 20px; font-weight: 800; }
+.minesweeper-stat .stat-value { color: var(--primary-color); font-size: 20px; font-weight: 800; }
 
 /* 网格 */
 .minesweeper-grid {
   display: inline-grid;
   gap: 2px;
-  background: #FFD4A3;
+  background: var(--border-color);
   border-radius: 8px;
   padding: 4px;
 }
@@ -94,7 +94,7 @@
 
 /* 未揭开 */
 .ms-cell.hidden {
-  background: linear-gradient(135deg, #FFB366, #FF9F45);
+  background: var(--gradient-warm);
   color: transparent;
   box-shadow: inset 0 -2px 0 rgba(0,0,0,0.1), inset 0 2px 0 rgba(255,255,255,0.2);
 }
@@ -102,7 +102,7 @@
 .ms-cell.hidden:active { transform: scale(0.95); }
 
 /* 已揭开 */
-.ms-cell.revealed { background: #FFF8F0; cursor: default; }
+.ms-cell.revealed { background: var(--bg-color); cursor: default; }
 
 /* 旗子 */
 .ms-cell.flagged { background: linear-gradient(135deg, #FF8C1A, #E67300); }
@@ -127,22 +127,22 @@
 }
 
 .minesweeper-btn {
-  padding: 10px 20px; border: none; border-radius: 12px;
-  font-size: 14px; font-weight: 600; cursor: pointer; transition: all 0.3s ease;
+  padding: 10px 20px; border: none; border-radius: var(--radius-sm);
+  font-size: 14px; font-weight: 600; cursor: pointer; transition: var(--transition-base);
 }
 .minesweeper-btn-restart {
-  background: linear-gradient(135deg, #FFB366, #FF9F45); color: white;
-  box-shadow: 0 4px 12px rgba(255, 159, 69, 0.3);
+  background: var(--gradient-warm); color: white;
+  box-shadow: var(--shadow);
 }
-.minesweeper-btn-restart:hover { transform: translateY(-2px); }
+.minesweeper-btn-restart:hover { transform: translateY(-2px); box-shadow: var(--shadow-hover); }
 
 .minesweeper-btn-flag {
-  background: rgba(255, 159, 69, 0.15); color: #FF8C1A;
+  background: rgba(255, 159, 69, 0.15); color: var(--primary-hover);
 }
-.minesweeper-btn-flag.active { background: #FF9F45; color: white; }
+.minesweeper-btn-flag.active { background: var(--primary-color); color: white; }
 
 /* 结局信息 */
-.minesweeper-result { font-size: 18px; color: #5C4033; margin-bottom: 20px; font-weight: 600; }
+.minesweeper-result { font-size: 18px; color: var(--text-color); margin-bottom: 20px; font-weight: 600; }
 
 @media (max-width: 768px) {
   .minesweeper-panel { padding: 32px 24px; }

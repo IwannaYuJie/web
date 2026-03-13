@@ -365,6 +365,7 @@ npm run preview
 - **次要文字**: `#8B6F47` - 浅棕色
 
 ### 变更记录
+- **2026-03-13**: 优化所有小游戏（Breakout、MemoryCard、Game2048、SnakeGame、TetrisGame、Minesweeper）的模块样式，移除原本的硬编码颜色并统一使用橘猫主题 CSS 变量（如 `var(--primary-color)` 等），统一按钮圆角和阴影特效，保证与应用首页风格高度一致
 - **2026-03-12**: 新增2048(`Game2048`)、扫雷(`Minesweeper`)、记忆翻牌(`MemoryCard`)、打砖块(`Breakout`)四个经典小游戏
 - **2026-03-12**: 新增贪吃蛇(`SnakeGame`)和俄罗斯方块(`TetrisGame`)经典小游戏组件，替换游戏中心原有的"敬请期待"占位卡片
 - **2026-03-12**: 删除 Seedream 实验室页面及相关组件/服务/工具函数；删除 AI 画板页面及相关服务；将游戏中心从隐藏页面(`/secret-games`)移至顶部导航(`/games`)；移除 `@fal-ai/client` 依赖
