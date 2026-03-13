@@ -154,14 +154,7 @@ function GameHub() {
               <img src="/images/cat-avatar.png" alt="橘猫头像" className="hero-avatar" />
             </div>
 
-            <div className="hero-orbits">
-              {spotlightGames.map((game, index) => (
-                <div key={game.id} className={`hero-orbit-chip hero-orbit-chip-${index + 1}`}>
-                  <span className="orbit-icon">{game.icon}</span>
-                  <span className="orbit-label">{game.name}</span>
-                </div>
-              ))}
-            </div>
+
           </div>
         </header>
 

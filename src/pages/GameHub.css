@@ -198,63 +198,6 @@
   border: 2px solid rgba(255, 255, 255, 0.7);
 }
 
-.hero-orbits {
-  position: absolute;
-  inset: 0;
-  pointer-events: none;
-}
-
-.hero-orbit-chip {
-  position: absolute;
-  display: inline-flex;
-  align-items: center;
-  gap: 0.6rem;
-  padding: 0.6rem 0.8rem 0.6rem 0.6rem;
-  border-radius: 999px;
-  background: rgba(255, 255, 255, 0.9);
-  border: 1px solid rgba(255, 212, 163, 0.85);
-  box-shadow: 0 12px 24px rgba(255, 159, 69, 0.15);
-  color: var(--text-color);
-  max-width: 220px;
-  backdrop-filter: blur(12px);
-  z-index: 3;
-  animation: float 6s ease-in-out infinite;
-}
-
-@keyframes float {
-  0%, 100% { transform: translateY(0); }
-  50% { transform: translateY(-10px); }
-}
-
-.orbit-icon {
-  flex-shrink: 0;
-  width: 2rem;
-  height: 2rem;
-  border-radius: 999px;
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-  background: rgba(255, 159, 69, 0.14);
-}
-
-.orbit-label {
-  font-size: 0.92rem;
-  font-weight: 700;
-  line-height: 1.2;
-}
-
-.hero-orbit-chip-1 {
-  top: 15%;
-  left: -15%;
-  animation-delay: 0s;
-}
-
-.hero-orbit-chip-2 {
-  bottom: 20%;
-  right: -10%;
-  animation-delay: -3s;
-}
-
 .hub-overview {
   display: grid;
   grid-template-columns: repeat(3, minmax(0, 1fr));
