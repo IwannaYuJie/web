@@ -92,7 +92,8 @@ function GameLoader() {
 function GameHub() {
   const [selectedGameId, setSelectedGameId] = useState(null)
   const activeGames = useMemo(() => GAMES.filter((game) => game.status === 'active'), [])
-  const spotlightGames = useMemo(() => activeGames.slice(0, 4), [activeGames])
+  // 只留两个精选标签以保持画面整洁
+  const spotlightGames = useMemo(() => activeGames.slice(0, 2), [activeGames])
   const selectedGame = useMemo(
     () => GAMES.find((game) => game.id === selectedGameId) || null,
     [selectedGameId],
