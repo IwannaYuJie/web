@@ -1,5 +1,5 @@
 import { Suspense, lazy, useMemo, useState } from 'react'
-import { Link } from 'react-router-dom'
+
 import './GameHub.css'
 
 const GAME_COMPONENTS = {
@@ -119,44 +119,7 @@ function GameHub() {
       <div className="game-hub-ambient game-hub-ambient-two"></div>
 
       <div className="container game-hub-shell">
-        <header className="game-hub-hero glass">
-          <div className="hero-copy">
-            <div className="hero-meta-row">
-              <span className="hero-badge">😺 橘猫游乐场</span>
-              <Link to="/" className="hero-home-link">← 返回首页</Link>
-            </div>
-
-            <h1 className="hub-title">小游戏中心</h1>
-            <p className="hub-subtitle">
-              把站内小游戏收进和首页一致的暖橙视觉里，想放松时随手开一局，切换起来也还是同一个站点。
-            </p>
-
-            <div className="hero-actions">
-              <a href="#game-library" className="btn btn-primary">开始挑选</a>
-              {selectedGame ? (
-                <button type="button" className="btn btn-secondary" onClick={handleBackToList}>
-                  返回列表
-                </button>
-              ) : (
-                <span className="hero-inline-note">当前开放 {activeGames.length} 款可直接游玩的小游戏</span>
-              )}
-            </div>
-
-            <div className="hero-pills">
-              <span className="hero-pill">暖橙配色</span>
-              <span className="hero-pill">玻璃卡片</span>
-              <span className="hero-pill">即点即玩</span>
-            </div>
-          </div>
-
-          <div className="hero-visual">
-            <div className="hero-avatar-frame">
-              <img src="/images/cat-avatar.png" alt="橘猫头像" className="hero-avatar" />
-            </div>
-
-
-          </div>
-        </header>
+        {/* 已经将包含小游戏中心标题、橘猫游乐场标签及背景插图的顶部 Hero 区域移除，以保持页面的精简美观 (ฅ'ω'ฅ) */}
 
 
 
