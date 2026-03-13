@@ -1,3 +1,5 @@
+import { seededArticles } from '../shared/content/articlesSeed.js'
+
 function parseRequestMeta(req) {
   const parsedUrl = new URL(req.url || '/', 'http://localhost')
   const pathname = parsedUrl.pathname
@@ -39,7 +41,7 @@ function setJsonCors(res, methods, headers) {
 }
 
 export function createMockApiPlugin(devAdminKey) {
-  let mockArticles = []
+  let mockArticles = seededArticles.map((article) => ({ ...article }))
 
   return {
     name: 'mock-articles-api',

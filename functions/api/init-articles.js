@@ -1,8 +1,7 @@
 import { articleCorsHeaders, ARTICLES_LIST_KEY, errorResponse, jsonResponse } from '../_shared/articles.js'
+import { seededArticles } from '../../shared/content/articlesSeed.js'
 
-// 默认文章数据
-// 注意：所有测试示例文章已清空，请通过文章管理页面添加实际文章内容
-const defaultArticles = []
+const defaultArticles = seededArticles
 
 /**
  * 主处理函数
