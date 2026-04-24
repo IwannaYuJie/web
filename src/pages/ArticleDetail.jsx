@@ -20,7 +20,10 @@ function ArticleDetail() {
 
   // 计算阅读进度
   useEffect(() => {
-    const handleScroll = () => {
+    let rafId = 0
+
+    const updateProgress = () => {
+      rafId = 0
       const windowHeight = window.innerHeight
       const documentHeight = document.documentElement.scrollHeight - windowHeight
       const scrollTop = window.scrollY
@@ -28,8 +31,23 @@ function ArticleDetail() {
       setReadProgress(progress)
     }
 
-    window.addEventListener('scroll', handleScroll)
-    return () => window.removeEventListener('scroll', handleScroll)
+    const handleScroll = () => {
+      if (!rafId) {
+        rafId = window.requestAnimationFrame(updateProgress)
+      }
+    }
+
+    handleScroll()
+    window.addEventListener('scroll', handleScroll, { passive: true })
+    window.addEventListener('resize', handleScroll)
+
+    return () => {
+      window.removeEventListener('scroll', handleScroll)
+      window.removeEventListener('resize', handleScroll)
+      if (rafId) {
+        window.cancelAnimationFrame(rafId)
+      }
+    }
   }, [])
 
   const toc = useMemo(() => {

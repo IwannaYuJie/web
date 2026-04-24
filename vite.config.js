@@ -3,15 +3,13 @@ import react from '@vitejs/plugin-react'
 import { createMockApiPlugin } from './dev/viteMocks'
 import { createProxyConfig } from './dev/viteProxy'
 
-// 读取环境变量（开发环境使用）
-// 注意：仅用于本地开发代理，生产环境使用 Cloudflare 环境变量
-const ARK_API_KEY_DEV = process.env.ARK_API_KEY || 'YOUR_ARK_API_KEY_HERE'
-const QINIU_AI_API_KEY_DEV = process.env.QINIU_AI_API_KEY || 'YOUR_QINIU_AI_API_KEY_HERE'
-
 // Vite 配置文件
 // https://vitejs.dev/config/
 export default defineConfig(({ mode }) => {
   const env = loadEnv(mode, process.cwd(), '')
+  // 仅用于本地开发代理，生产环境使用 Cloudflare/Vercel 环境变量。
+  const arkApiKey = env.ARK_API_KEY || 'YOUR_ARK_API_KEY_HERE'
+  const qiniuApiKey = env.QINIU_AI_API_KEY || 'YOUR_QINIU_AI_API_KEY_HERE'
   const devAdminKey = env.DEV_ADMIN_KEY || process.env.DEV_ADMIN_KEY || ''
 
   return {
@@ -24,8 +22,8 @@ export default defineConfig(({ mode }) => {
     server: {
       // 配置代理解决 CORS 跨域问题
       proxy: createProxyConfig({
-        arkApiKey: ARK_API_KEY_DEV,
-        qiniuApiKey: QINIU_AI_API_KEY_DEV,
+        arkApiKey,
+        qiniuApiKey,
       }),
     },
 
