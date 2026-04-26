@@ -349,6 +349,31 @@
   cursor: not-allowed;
 }
 
+.ds-field-actions {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  flex-wrap: wrap;
+}
+
+.ds-field-actions button {
+  border: none;
+  border-radius: 999px;
+  padding: 6px 10px;
+  background: rgba(255, 159, 69, 0.1);
+  color: var(--primary-color);
+  font: inherit;
+  font-size: 0.78rem;
+  font-weight: 800;
+  cursor: pointer;
+}
+
+.ds-field-actions span {
+  color: var(--text-light);
+  font-size: 0.76rem;
+  font-weight: 700;
+}
+
 /* Messages container */
 .ds-messages {
   min-height: 180px;

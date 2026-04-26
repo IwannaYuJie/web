@@ -21,8 +21,8 @@ const DEFAULT_OPTIONS = {
   thinking: false,
   reasoningEffort: 'high',
   systemPrompt: '',
-  temperature: 1,
-  topP: 1,
+  temperature: 0,
+  topP: 0,
   maxTokens: 4096,
   presencePenalty: 0,
   frequencyPenalty: 0,
@@ -47,6 +47,11 @@ function numberOr(value, fallback) {
   return Number.isFinite(parsed) ? parsed : fallback
 }
 
+function maybeNumberParam(value) {
+  const parsed = Number(value)
+  return Number.isFinite(parsed) && parsed !== 0 ? parsed : undefined
+}
+
 function ReasoningBlock({ text }) {
   const [open, setOpen] = useState(false)
   return (
@@ -62,7 +67,8 @@ function ReasoningBlock({ text }) {
 function DeepSeekChatPanel() {
   const [savedKey, setSavedKey] = useState(() => localStorage.getItem(STORAGE_KEY) || '')
   const [inputKey, setInputKey] = useState(() => localStorage.getItem(STORAGE_KEY) || '')
-  const [options, setOptions] = useState(loadOptions)
+  const [options, setOptions] = useState(() => loadOptions())
+  const [systemPromptDraft, setSystemPromptDraft] = useState(() => loadOptions().systemPrompt)
   const [settingsOpen, setSettingsOpen] = useState(false)
   const [activeSettingsTab, setActiveSettingsTab] = useState(OPTION_TABS[0].id)
   const [messages, setMessages] = useState([])
@@ -86,6 +92,16 @@ function DeepSeekChatPanel() {
 
   const resetOptions = () => {
     setOptions(DEFAULT_OPTIONS)
+    setSystemPromptDraft(DEFAULT_OPTIONS.systemPrompt)
+  }
+
+  const saveSystemPrompt = () => {
+    updateOption('systemPrompt', systemPromptDraft.trim())
+  }
+
+  const clearSystemPrompt = () => {
+    setSystemPromptDraft('')
+    updateOption('systemPrompt', '')
   }
 
   const saveKey = () => {
@@ -140,12 +156,18 @@ function DeepSeekChatPanel() {
         messages: requestMessages,
         stream: true,
         max_tokens: Math.min(64000, Math.max(1, Math.round(numberOr(options.maxTokens, 4096)))),
-        temperature: numberOr(options.temperature, 1),
-        top_p: numberOr(options.topP, 1),
-        presence_penalty: numberOr(options.presencePenalty, 0),
-        frequency_penalty: numberOr(options.frequencyPenalty, 0),
         response_format: { type: options.responseFormat },
         thinking: options.thinking ? { type: 'enabled' } : { type: 'disabled' },
+        ...(maybeNumberParam(options.temperature) !== undefined
+          ? { temperature: maybeNumberParam(options.temperature) }
+          : {}),
+        ...(maybeNumberParam(options.topP) !== undefined ? { top_p: maybeNumberParam(options.topP) } : {}),
+        ...(maybeNumberParam(options.presencePenalty) !== undefined
+          ? { presence_penalty: maybeNumberParam(options.presencePenalty) }
+          : {}),
+        ...(maybeNumberParam(options.frequencyPenalty) !== undefined
+          ? { frequency_penalty: maybeNumberParam(options.frequencyPenalty) }
+          : {}),
         ...(options.thinking ? { reasoning_effort: options.reasoningEffort } : {}),
         ...(options.includeUsage ? { stream_options: { include_usage: true } } : {}),
         ...(stop.length ? { stop: stop.length === 1 ? stop[0] : stop } : {}),
@@ -320,7 +342,7 @@ function DeepSeekChatPanel() {
         </button>
         <div className="ds-param-summary">
           <span>{options.thinking ? '深度思考' : '普通模式'}</span>
-          <span>temp {options.temperature}</span>
+          <span>temp {options.temperature || '默认'}</span>
           <span>max {options.maxTokens}</span>
         </div>
       </div>
@@ -388,13 +410,18 @@ function DeepSeekChatPanel() {
               </label>
 
               <label className="ds-field ds-field-wide">
-                <span>system prompt</span>
+                <span>system prompt（点保存后生效）</span>
                 <textarea
                   rows={3}
-                  value={options.systemPrompt}
-                  onChange={e => updateOption('systemPrompt', e.target.value)}
+                  value={systemPromptDraft}
+                  onChange={e => setSystemPromptDraft(e.target.value)}
                   placeholder="例如：你是一个简洁、准确的中文助手。"
                 />
+                <div className="ds-field-actions">
+                  <button type="button" onClick={saveSystemPrompt}>保存 system prompt</button>
+                  <button type="button" onClick={clearSystemPrompt}>清空</button>
+                  {options.systemPrompt && <span>已保存 {options.systemPrompt.length} 字</span>}
+                </div>
               </label>
             </div>
           )}
@@ -402,7 +429,7 @@ function DeepSeekChatPanel() {
           {activeSettingsTab === 'sampling' && (
             <div className="ds-settings-grid">
               <label className="ds-field">
-                <span>temperature: {options.temperature}</span>
+                <span>temperature: {options.temperature || '默认'}</span>
                 <input
                   type="range"
                   min="0"
@@ -414,7 +441,7 @@ function DeepSeekChatPanel() {
               </label>
 
               <label className="ds-field">
-                <span>top_p: {options.topP}</span>
+                <span>top_p: {options.topP || '默认'}</span>
                 <input
                   type="range"
                   min="0"
@@ -426,7 +453,7 @@ function DeepSeekChatPanel() {
               </label>
 
               <label className="ds-field">
-                <span>presence_penalty: {options.presencePenalty}</span>
+                <span>presence_penalty: {options.presencePenalty || '默认'}</span>
                 <input
                   type="range"
                   min="-2"
@@ -438,7 +465,7 @@ function DeepSeekChatPanel() {
               </label>
 
               <label className="ds-field">
-                <span>frequency_penalty: {options.frequencyPenalty}</span>
+                <span>frequency_penalty: {options.frequencyPenalty || '默认'}</span>
                 <input
                   type="range"
                   min="-2"
