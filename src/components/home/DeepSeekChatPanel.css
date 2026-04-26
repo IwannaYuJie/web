@@ -1,5 +1,56 @@
 /* ===== DeepSeek Chat Panel ===== */
 
+.deepseek-chat-page {
+  display: grid;
+  grid-template-columns: minmax(0, 0.78fr) minmax(0, 1.22fr);
+  gap: 28px;
+  align-items: start;
+  padding-top: 28px;
+}
+
+.deepseek-chat-page__intro {
+  position: sticky;
+  top: 96px;
+  padding: 28px 0;
+}
+
+.deepseek-chat-page__eyebrow {
+  display: inline-flex;
+  align-items: center;
+  padding: 6px 12px;
+  border-radius: 999px;
+  background: rgba(255, 159, 69, 0.12);
+  color: var(--primary-color);
+  font-size: 0.78rem;
+  font-weight: 800;
+}
+
+.deepseek-chat-page__intro h1 {
+  margin-top: 16px;
+  color: var(--text-color);
+  font-size: 2.8rem;
+  line-height: 1.12;
+  font-weight: 900;
+}
+
+.deepseek-chat-page__intro p {
+  margin-top: 16px;
+  max-width: 420px;
+  color: var(--text-secondary);
+  font-size: 1rem;
+  line-height: 1.8;
+}
+
+.deepseek-chat-page .ds-panel {
+  min-height: calc(100vh - 132px);
+}
+
+.deepseek-chat-page .ds-messages {
+  flex: 1;
+  max-height: none;
+  min-height: 360px;
+}
+
 .ds-panel {
   position: relative;
   overflow: hidden;
@@ -403,5 +454,25 @@
 
   .ds-key-row .btn {
     width: 100%;
+  }
+}
+
+@media (max-width: 900px) {
+  .deepseek-chat-page {
+    grid-template-columns: 1fr;
+    padding-top: 12px;
+  }
+
+  .deepseek-chat-page__intro {
+    position: static;
+    padding: 12px 0 0;
+  }
+
+  .deepseek-chat-page__intro h1 {
+    font-size: 2.1rem;
+  }
+
+  .deepseek-chat-page .ds-panel {
+    min-height: auto;
   }
 }

@@ -5,6 +5,7 @@ import './Navbar.css'
 // 导航链接配置 - 提取到组件外部
 const NAV_LINKS = [
   { path: '/', label: '🏠 首页' },
+  { path: '/deepseek-chat', label: '🤖 DeepSeek 对话' },
   { path: '/games', label: '🎮 游戏中心' },
   { path: '/toolbox', label: '🧰 工具箱' },
   { path: '/admin/articles', label: '📝 文章管理' },

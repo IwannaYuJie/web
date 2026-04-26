@@ -1,7 +1,6 @@
 import { useEffect, useMemo, useState } from 'react'
 import { Link } from 'react-router-dom'
 import Pagination from '../components/Pagination'
-import DeepSeekChatPanel from '../components/home/DeepSeekChatPanel'
 import HomeHero from '../components/home/HomeHero'
 import HomeQuoteCard from '../components/home/HomeQuoteCard'
 import HomeStatsCard from '../components/home/HomeStatsCard'
@@ -113,9 +112,6 @@ function Home() {
               ))}
             </div>
           </div>
-
-          {/* DeepSeek Chat */}
-          <DeepSeekChatPanel />
 
           {/* Search and Filter */}
           <div id="articles" className="glass p-4 rounded-2xl sticky top-[80px] z-30 shadow-sm space-y-4">
