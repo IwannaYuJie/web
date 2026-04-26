@@ -2,13 +2,50 @@ import { useCallback, useEffect, useRef, useState } from 'react'
 import './DeepSeekChatPanel.css'
 
 const STORAGE_KEY = 'deepseek_api_key'
+const OPTIONS_STORAGE_KEY = 'deepseek_chat_options'
 const API_URL = 'https://api.deepseek.com/chat/completions'
-const MAX_TOKENS = 4096
 
 const MODELS = [
   { id: 'deepseek-v4-flash', label: 'V4 Flash ⚡' },
   { id: 'deepseek-v4-pro', label: 'V4 Pro 🧠' },
 ]
+
+const OPTION_TABS = [
+  { id: 'model', label: '模型' },
+  { id: 'sampling', label: '采样' },
+  { id: 'output', label: '输出' },
+]
+
+const DEFAULT_OPTIONS = {
+  model: MODELS[0].id,
+  thinking: false,
+  reasoningEffort: 'high',
+  systemPrompt: '',
+  temperature: 1,
+  topP: 1,
+  maxTokens: 4096,
+  presencePenalty: 0,
+  frequencyPenalty: 0,
+  responseFormat: 'text',
+  stopSequences: '',
+  includeUsage: true,
+  logprobs: false,
+  topLogprobs: 0,
+}
+
+function loadOptions() {
+  try {
+    const stored = JSON.parse(localStorage.getItem(OPTIONS_STORAGE_KEY) || '{}')
+    return { ...DEFAULT_OPTIONS, ...stored }
+  } catch {
+    return DEFAULT_OPTIONS
+  }
+}
+
+function numberOr(value, fallback) {
+  const parsed = Number(value)
+  return Number.isFinite(parsed) ? parsed : fallback
+}
 
 function ReasoningBlock({ text }) {
   const [open, setOpen] = useState(false)
@@ -25,8 +62,9 @@ function ReasoningBlock({ text }) {
 function DeepSeekChatPanel() {
   const [savedKey, setSavedKey] = useState(() => localStorage.getItem(STORAGE_KEY) || '')
   const [inputKey, setInputKey] = useState(() => localStorage.getItem(STORAGE_KEY) || '')
-  const [model, setModel] = useState(MODELS[0].id)
-  const [thinking, setThinking] = useState(false)
+  const [options, setOptions] = useState(loadOptions)
+  const [settingsOpen, setSettingsOpen] = useState(false)
+  const [activeSettingsTab, setActiveSettingsTab] = useState(OPTION_TABS[0].id)
   const [messages, setMessages] = useState([])
   const [input, setInput] = useState('')
   const [loading, setLoading] = useState(false)
@@ -37,6 +75,18 @@ function DeepSeekChatPanel() {
   useEffect(() => {
     messagesEndRef.current?.scrollIntoView({ behavior: 'smooth' })
   }, [messages])
+
+  useEffect(() => {
+    localStorage.setItem(OPTIONS_STORAGE_KEY, JSON.stringify(options))
+  }, [options])
+
+  const updateOption = (key, value) => {
+    setOptions(prev => ({ ...prev, [key]: value }))
+  }
+
+  const resetOptions = () => {
+    setOptions(DEFAULT_OPTIONS)
+  }
 
   const saveKey = () => {
     const trimmed = inputKey.trim()
@@ -74,13 +124,39 @@ function DeepSeekChatPanel() {
     abortRef.current = new AbortController()
 
     try {
+      const stop = options.stopSequences
+        .split('\n')
+        .map(item => item.trim())
+        .filter(Boolean)
+        .slice(0, 16)
+      const requestMessages = history.map(m => ({ role: m.role, content: m.content }))
+
+      if (options.systemPrompt.trim()) {
+        requestMessages.unshift({ role: 'system', content: options.systemPrompt.trim() })
+      }
+
       const body = {
-        model,
-        messages: history.map(m => ({ role: m.role, content: m.content })),
+        model: options.model,
+        messages: requestMessages,
         stream: true,
-        max_tokens: MAX_TOKENS,
-        thinking: thinking ? { type: 'enabled' } : { type: 'disabled' },
-        ...(thinking ? { reasoning_effort: 'high' } : {}),
+        max_tokens: Math.min(64000, Math.max(1, Math.round(numberOr(options.maxTokens, 4096)))),
+        temperature: numberOr(options.temperature, 1),
+        top_p: numberOr(options.topP, 1),
+        presence_penalty: numberOr(options.presencePenalty, 0),
+        frequency_penalty: numberOr(options.frequencyPenalty, 0),
+        response_format: { type: options.responseFormat },
+        thinking: options.thinking ? { type: 'enabled' } : { type: 'disabled' },
+        ...(options.thinking ? { reasoning_effort: options.reasoningEffort } : {}),
+        ...(options.includeUsage ? { stream_options: { include_usage: true } } : {}),
+        ...(stop.length ? { stop: stop.length === 1 ? stop[0] : stop } : {}),
+        ...(options.logprobs
+          ? {
+            logprobs: true,
+            ...(numberOr(options.topLogprobs, 0) > 0
+              ? { top_logprobs: Math.min(20, Math.round(numberOr(options.topLogprobs, 0))) }
+              : {}),
+          }
+          : {}),
       }
 
       const res = await fetch(API_URL, {
@@ -163,7 +239,7 @@ function DeepSeekChatPanel() {
     } finally {
       setLoading(false)
     }
-  }, [input, loading, savedKey, messages, model, thinking])
+  }, [input, loading, savedKey, messages, options])
 
   const handleKeyDown = e => {
     if (e.key === 'Enter' && !e.shiftKey) {
@@ -184,6 +260,7 @@ function DeepSeekChatPanel() {
     messages.length > 0 &&
     messages[messages.length - 1]?.role === 'assistant' &&
     !messages[messages.length - 1]?.content
+  const selectedModel = MODELS.find(item => item.id === options.model)
 
   return (
     <div className="glass ds-panel p-6 rounded-2xl flex flex-col gap-4">
@@ -198,7 +275,7 @@ function DeepSeekChatPanel() {
         </div>
         <div className="ds-live-badge">
           <span></span>
-          流式输出
+          {selectedModel?.label}
         </div>
       </div>
 
@@ -232,27 +309,215 @@ function DeepSeekChatPanel() {
         )}
       </div>
 
-      {/* Settings */}
-      <div className="ds-settings-row">
-        <div className="ds-model-select-wrapper">
-          {MODELS.map(m => (
-            <button
-              key={m.id}
-              onClick={() => setModel(m.id)}
-              className={`ds-model-btn${model === m.id ? ' ds-model-active' : ''}`}
-            >
-              {m.label}
-            </button>
-          ))}
-        </div>
+      <div className="ds-toolbar">
         <button
-          onClick={() => setThinking(t => !t)}
-          className={`ds-thinking-toggle${thinking ? ' ds-thinking-on' : ''}`}
-          title="开启后请求包含 thinking 参数"
+          type="button"
+          onClick={() => setSettingsOpen(open => !open)}
+          className="ds-settings-trigger"
         >
-          💭 深度思考 {thinking ? '开' : '关'}
+          ⚙️ 参数设置
+          <span>{settingsOpen ? '▲' : '▼'}</span>
         </button>
+        <div className="ds-param-summary">
+          <span>{options.thinking ? '深度思考' : '普通模式'}</span>
+          <span>temp {options.temperature}</span>
+          <span>max {options.maxTokens}</span>
+        </div>
       </div>
+
+      {settingsOpen && (
+        <div className="ds-settings-popover">
+          <div className="ds-settings-head">
+            <div>
+              <strong>请求参数</strong>
+              <p>统一管理 DeepSeek Chat Completion 参数</p>
+            </div>
+            <div className="ds-settings-head-actions">
+              <button type="button" onClick={resetOptions}>恢复默认</button>
+              <button type="button" onClick={() => setSettingsOpen(false)}>关闭</button>
+            </div>
+          </div>
+
+          <div className="ds-settings-tabs">
+            {OPTION_TABS.map(tab => (
+              <button
+                key={tab.id}
+                type="button"
+                className={activeSettingsTab === tab.id ? 'active' : ''}
+                onClick={() => setActiveSettingsTab(tab.id)}
+              >
+                {tab.label}
+              </button>
+            ))}
+          </div>
+
+          {activeSettingsTab === 'model' && (
+            <div className="ds-settings-grid">
+              <label className="ds-field ds-field-wide">
+                <span>模型</span>
+                <select
+                  value={options.model}
+                  onChange={e => updateOption('model', e.target.value)}
+                >
+                  {MODELS.map(item => (
+                    <option key={item.id} value={item.id}>{item.label}</option>
+                  ))}
+                </select>
+              </label>
+
+              <label className="ds-check-field">
+                <input
+                  type="checkbox"
+                  checked={options.thinking}
+                  onChange={e => updateOption('thinking', e.target.checked)}
+                />
+                <span>启用 thinking</span>
+              </label>
+
+              <label className="ds-field">
+                <span>reasoning_effort</span>
+                <select
+                  value={options.reasoningEffort}
+                  onChange={e => updateOption('reasoningEffort', e.target.value)}
+                  disabled={!options.thinking}
+                >
+                  <option value="low">low</option>
+                  <option value="medium">medium</option>
+                  <option value="high">high</option>
+                </select>
+              </label>
+
+              <label className="ds-field ds-field-wide">
+                <span>system prompt</span>
+                <textarea
+                  rows={3}
+                  value={options.systemPrompt}
+                  onChange={e => updateOption('systemPrompt', e.target.value)}
+                  placeholder="例如：你是一个简洁、准确的中文助手。"
+                />
+              </label>
+            </div>
+          )}
+
+          {activeSettingsTab === 'sampling' && (
+            <div className="ds-settings-grid">
+              <label className="ds-field">
+                <span>temperature: {options.temperature}</span>
+                <input
+                  type="range"
+                  min="0"
+                  max="2"
+                  step="0.1"
+                  value={options.temperature}
+                  onChange={e => updateOption('temperature', Number(e.target.value))}
+                />
+              </label>
+
+              <label className="ds-field">
+                <span>top_p: {options.topP}</span>
+                <input
+                  type="range"
+                  min="0"
+                  max="1"
+                  step="0.05"
+                  value={options.topP}
+                  onChange={e => updateOption('topP', Number(e.target.value))}
+                />
+              </label>
+
+              <label className="ds-field">
+                <span>presence_penalty: {options.presencePenalty}</span>
+                <input
+                  type="range"
+                  min="-2"
+                  max="2"
+                  step="0.1"
+                  value={options.presencePenalty}
+                  onChange={e => updateOption('presencePenalty', Number(e.target.value))}
+                />
+              </label>
+
+              <label className="ds-field">
+                <span>frequency_penalty: {options.frequencyPenalty}</span>
+                <input
+                  type="range"
+                  min="-2"
+                  max="2"
+                  step="0.1"
+                  value={options.frequencyPenalty}
+                  onChange={e => updateOption('frequencyPenalty', Number(e.target.value))}
+                />
+              </label>
+            </div>
+          )}
+
+          {activeSettingsTab === 'output' && (
+            <div className="ds-settings-grid">
+              <label className="ds-field">
+                <span>max_tokens</span>
+                <input
+                  type="number"
+                  min="1"
+                  max="64000"
+                  value={options.maxTokens}
+                  onChange={e => updateOption('maxTokens', e.target.value)}
+                />
+              </label>
+
+              <label className="ds-field">
+                <span>response_format</span>
+                <select
+                  value={options.responseFormat}
+                  onChange={e => updateOption('responseFormat', e.target.value)}
+                >
+                  <option value="text">text</option>
+                  <option value="json_object">json_object</option>
+                </select>
+              </label>
+
+              <label className="ds-check-field">
+                <input
+                  type="checkbox"
+                  checked={options.includeUsage}
+                  onChange={e => updateOption('includeUsage', e.target.checked)}
+                />
+                <span>stream_options.include_usage</span>
+              </label>
+
+              <label className="ds-check-field">
+                <input
+                  type="checkbox"
+                  checked={options.logprobs}
+                  onChange={e => updateOption('logprobs', e.target.checked)}
+                />
+                <span>返回 logprobs</span>
+              </label>
+
+              <label className="ds-field">
+                <span>top_logprobs</span>
+                <input
+                  type="number"
+                  min="0"
+                  max="20"
+                  value={options.topLogprobs}
+                  onChange={e => updateOption('topLogprobs', e.target.value)}
+                  disabled={!options.logprobs}
+                />
+              </label>
+
+              <label className="ds-field ds-field-wide">
+                <span>stop（每行一个，最多 16 个）</span>
+                <textarea
+                  rows={3}
+                  value={options.stopSequences}
+                  onChange={e => updateOption('stopSequences', e.target.value)}
+                  placeholder="例如：\n###\n用户："
+                />
+              </label>
+            </div>
+          )}
+        </div>
+      )}
 
       {/* Messages */}
       <div className="ds-messages">
