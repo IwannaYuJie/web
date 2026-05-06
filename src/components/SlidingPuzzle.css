@@ -5,8 +5,8 @@
 
 .slide-container {
   width: 100%;
-  min-height: 100vh;
-  background: var(--gradient-warm);
+  min-height: 100%;
+  background: transparent;
   font-family: 'Microsoft YaHei', 'PingFang SC', sans-serif;
   display: flex;
   flex-direction: column;
