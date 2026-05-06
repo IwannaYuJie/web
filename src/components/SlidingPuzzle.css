@@ -1,0 +1,156 @@
+/**
+ * 数字华容道 🧩
+ * 橘猫主题
+ */
+
+.slide-container {
+  width: 100%;
+  min-height: 100vh;
+  background: var(--gradient-warm);
+  font-family: 'Microsoft YaHei', 'PingFang SC', sans-serif;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 20px;
+  position: relative;
+}
+
+.slide-panel {
+  background: var(--surface-color);
+  border-radius: var(--radius-lg);
+  padding: 48px;
+  max-width: 500px;
+  width: 100%;
+  box-shadow: var(--shadow-lg);
+  text-align: center;
+  animation: slideSlideIn 0.6s ease-out;
+  position: relative;
+  z-index: 1;
+}
+
+@keyframes slideSlideIn {
+  from { opacity: 0; transform: translateY(30px) scale(0.95); }
+  to { opacity: 1; transform: translateY(0) scale(1); }
+}
+
+.slide-panel .game-icon { font-size: 64px; margin-bottom: 12px; }
+.slide-panel .game-title {
+  font-size: 36px; font-weight: 800; color: var(--primary-color); margin-bottom: 12px;
+}
+.slide-panel .game-desc {
+  font-size: 15px; color: var(--text-secondary); line-height: 1.8; margin-bottom: 24px;
+}
+
+.slide-start-btn {
+  background: var(--gradient-warm);
+  color: white; border: none; padding: 16px 48px; font-size: 20px;
+  font-weight: 700; border-radius: var(--radius-full); cursor: pointer;
+  display: inline-flex; align-items: center; gap: 12px;
+  box-shadow: var(--shadow); transition: var(--transition-base);
+}
+.slide-start-btn:hover { transform: translateY(-3px); box-shadow: var(--shadow-lg); }
+
+.slide-best-line {
+  margin-top: 16px;
+  font-size: 13px;
+  color: var(--text-secondary);
+}
+
+.slide-board {
+  background: var(--surface-color);
+  border-radius: var(--radius-lg);
+  padding: 24px;
+  box-shadow: var(--shadow-lg);
+  animation: slideSlideIn 0.4s ease-out;
+  position: relative;
+  z-index: 1;
+  max-width: 480px;
+  width: 100%;
+}
+
+.slide-status {
+  display: flex; justify-content: space-between; align-items: center;
+  margin-bottom: 16px; gap: 10px;
+}
+
+.slide-stat {
+  background: rgba(255, 159, 69, 0.1); padding: 8px 16px; border-radius: var(--radius-sm);
+  font-weight: 600; color: var(--text-color); font-size: 14px;
+  display: flex; align-items: center; gap: 6px;
+}
+.slide-stat .stat-value { color: var(--primary-color); font-size: 20px; font-weight: 800; }
+
+.slide-grid {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 8px;
+  background: var(--bg-color);
+  padding: 8px;
+  border-radius: var(--radius-md);
+  border: 2px solid var(--border-color);
+}
+
+.slide-tile {
+  aspect-ratio: 1;
+  border: none;
+  border-radius: var(--radius-sm);
+  background: var(--gradient-warm);
+  color: white;
+  font-size: 32px;
+  font-weight: 800;
+  cursor: pointer;
+  transition: transform 0.15s ease, box-shadow 0.15s ease, filter 0.2s ease;
+  box-shadow: var(--shadow);
+  user-select: none;
+  -webkit-user-select: none;
+  font-family: inherit;
+}
+
+.slide-tile:hover:not(.empty):not(:disabled) {
+  transform: translateY(-2px);
+  box-shadow: var(--shadow-hover);
+}
+.slide-tile:active:not(.empty):not(:disabled) {
+  transform: scale(0.95);
+}
+
+.slide-tile.empty {
+  background: transparent;
+  box-shadow: none;
+  cursor: default;
+}
+
+.slide-tile.settled {
+  filter: brightness(1.05);
+  box-shadow: 0 4px 10px rgba(107, 203, 119, 0.35);
+  background: linear-gradient(135deg, #6BCB77, #4D96FF);
+}
+
+.slide-btn-group {
+  display: flex; gap: 10px; margin-top: 16px; justify-content: center;
+}
+
+.slide-btn-restart {
+  padding: 10px 20px; border: none; border-radius: var(--radius-sm);
+  background: var(--gradient-warm); color: white;
+  font-size: 14px; font-weight: 600; cursor: pointer; transition: var(--transition-base);
+  box-shadow: var(--shadow);
+}
+.slide-btn-restart:hover { transform: translateY(-2px); box-shadow: var(--shadow-hover); }
+
+.slide-over-stats {
+  display: flex; gap: 12px; justify-content: center; margin-bottom: 16px;
+}
+.slide-over-stats .stat-card {
+  background: var(--gradient-warm);
+  color: white; padding: 14px 20px; border-radius: var(--radius-md); min-width: 110px;
+}
+.slide-over-stats .stat-card .stat-label { font-size: 12px; opacity: 0.9; }
+.slide-over-stats .stat-card .stat-num { font-size: 26px; font-weight: 800; }
+
+@media (max-width: 480px) {
+  .slide-grid { gap: 6px; }
+  .slide-tile { font-size: 24px; }
+  .slide-panel { padding: 32px 20px; }
+}

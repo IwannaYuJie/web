@@ -9,6 +9,8 @@ const GAME_COMPONENTS = {
   minesweeper: lazy(() => import('../components/Minesweeper')),
   'memory-card': lazy(() => import('../components/MemoryCard')),
   breakout: lazy(() => import('../components/Breakout')),
+  'sliding-puzzle': lazy(() => import('../components/SlidingPuzzle')),
+  'whack-a-mole': lazy(() => import('../components/WhackAMole')),
 }
 
 const GAMES = [
@@ -59,6 +61,22 @@ const GAMES = [
     description: '移动挡板反弹小球，击碎所有砖块通关！',
     status: 'active',
     color: '#FF6B6B',
+  },
+  {
+    id: 'sliding-puzzle',
+    name: '数字华容道',
+    icon: '🧩',
+    description: '滑动数字方块，把 1-15 按顺序复原，挑战最少步数！',
+    status: 'active',
+    color: '#9B59B6',
+  },
+  {
+    id: 'whack-a-mole',
+    name: '打地鼠',
+    icon: '🔨',
+    description: '30 秒限时！抓住每只冒头的地鼠，但小心别敲到橘猫～',
+    status: 'active',
+    color: '#FF8C42',
   },
 ]
 
