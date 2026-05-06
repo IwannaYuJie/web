@@ -6,6 +6,7 @@ import HomeQuoteCard from '../components/home/HomeQuoteCard'
 import HomeStatsCard from '../components/home/HomeStatsCard'
 import { HOME_PAGE_SIZE, WEB_TEMPLATES } from '../constants/home'
 import { useArticlesData, useBackToTop, useGoogleCSE } from '../hooks'
+import { filterArticles, getArticleCategories, paginateArticles } from '../utils/articleFilters'
 
 /**
  * 首页组件
@@ -28,16 +29,7 @@ function Home() {
 
   // 动态生成文章分类 - 只显示有文章的分类
   const categories = useMemo(() => {
-    if (!articles.length) {
-      return ['全部']
-    }
-    const categorySet = new Set()
-    articles.forEach(article => {
-      if (article.category) {
-        categorySet.add(article.category)
-      }
-    })
-    return ['全部', ...Array.from(categorySet).sort()]
+    return getArticleCategories(articles)
   }, [articles])
 
   const scrollToTop = () => {
@@ -45,31 +37,12 @@ function Home() {
   }
 
   const filteredArticles = useMemo(() => {
-    let result = articles
-
-    // 搜索过滤
-    if (searchQuery.trim()) {
-      const query = searchQuery.toLowerCase().trim()
-      result = result.filter(article =>
-        article.title?.toLowerCase().includes(query) ||
-        article.description?.toLowerCase().includes(query) ||
-        article.category?.toLowerCase().includes(query) ||
-        (article.tags && article.tags.some(t => t.toLowerCase().includes(query)))
-      )
-    }
-
-    // 分类过滤
-    if (selectedCategory !== '全部') {
-      result = result.filter(a => a.category === selectedCategory)
-    }
-
-    return result
+    return filterArticles(articles, { searchQuery, selectedCategory })
   }, [articles, searchQuery, selectedCategory])
 
   // 分页后的文章
   const paginatedArticles = useMemo(() => {
-    const start = (currentPage - 1) * HOME_PAGE_SIZE
-    return filteredArticles.slice(start, start + HOME_PAGE_SIZE)
+    return paginateArticles(filteredArticles, currentPage, HOME_PAGE_SIZE)
   }, [filteredArticles, currentPage])
 
   const totalPages = Math.ceil(filteredArticles.length / HOME_PAGE_SIZE)

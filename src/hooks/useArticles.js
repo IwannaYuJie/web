@@ -1,5 +1,6 @@
 import { useState, useEffect, useMemo, useCallback, useRef } from 'react'
 import { fetchArticlesList, fetchArticleById, getLikedArticleIds, setLikedArticleIds } from '../services/articles'
+import { filterArticles, getArticleCategories, getArticleTags, paginateArticles, sortArticles } from '../utils/articleFilters'
 
 /**
  * 文章列表数据 Hook
@@ -79,77 +80,28 @@ export function useArticles(options = {}) {
 
   // 提取所有分类
   const categories = useMemo(() => {
-    const cats = new Set(articles.map(a => a.category).filter(Boolean))
-    return ['全部', ...Array.from(cats).sort()]
+    return getArticleCategories(articles)
   }, [articles])
 
   // 提取所有标签
   const allTags = useMemo(() => {
-    const tags = new Set()
-    articles.forEach(a => {
-      if (a.tags && Array.isArray(a.tags)) {
-        a.tags.forEach(t => tags.add(t))
-      }
-    })
-    return Array.from(tags).sort()
+    return getArticleTags(articles)
   }, [articles])
 
   // 过滤和排序后的文章
   const filteredArticles = useMemo(() => {
-    let result = [...articles]
-
-    // 搜索过滤
-    if (searchQuery.trim()) {
-      const query = searchQuery.toLowerCase().trim()
-      result = result.filter(article =>
-        article.title?.toLowerCase().includes(query) ||
-        article.description?.toLowerCase().includes(query) ||
-        article.content?.toLowerCase().includes(query) ||
-        article.category?.toLowerCase().includes(query) ||
-        (article.tags && article.tags.some(t => t.toLowerCase().includes(query)))
-      )
-    }
-
-    // 分类过滤
-    if (selectedCategory !== '全部') {
-      result = result.filter(a => a.category === selectedCategory)
-    }
-
-    // 标签过滤
-    if (selectedTags.length > 0) {
-      result = result.filter(a =>
-        a.tags && selectedTags.every(t => a.tags.includes(t))
-      )
-    }
-
-    // 排序
-    result.sort((a, b) => {
-      let comparison = 0
-
-      switch (sortBy) {
-        case 'date':
-          comparison = new Date(b.date) - new Date(a.date)
-          break
-        case 'readTime':
-          comparison = parseInt(b.readTime || 0) - parseInt(a.readTime || 0)
-          break
-        case 'title':
-          comparison = (a.title || '').localeCompare(b.title || '')
-          break
-        default:
-          comparison = new Date(b.date) - new Date(a.date)
-      }
-
-      return sortOrder === 'asc' ? -comparison : comparison
+    const filtered = filterArticles(articles, {
+      searchQuery,
+      selectedCategory,
+      selectedTags,
+      includeContent: true,
     })
-
-    return result
+    return sortArticles(filtered, sortBy, sortOrder)
   }, [articles, searchQuery, selectedCategory, selectedTags, sortBy, sortOrder])
 
   // 分页后的文章
   const paginatedArticles = useMemo(() => {
-    const start = (currentPage - 1) * pageSize
-    return filteredArticles.slice(start, start + pageSize)
+    return paginateArticles(filteredArticles, currentPage, pageSize)
   }, [filteredArticles, currentPage, pageSize])
 
   // 总页数

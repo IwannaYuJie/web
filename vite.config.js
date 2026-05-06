@@ -18,6 +18,11 @@ export default defineConfig(({ mode }) => {
       createMockApiPlugin(devAdminKey),
     ],
 
+    esbuild: {
+      drop: ['console', 'debugger'], // 移除 console.log 和 debugger
+      legalComments: 'none', // 移除所有注释
+    },
+
     // 开发服务器配置
     server: {
       // 配置代理解决 CORS 跨域问题
@@ -54,11 +59,6 @@ export default defineConfig(({ mode }) => {
             return undefined
           },
         },
-      },
-      // esbuild 配置
-      esbuildOptions: {
-        drop: ['console', 'debugger'], // 移除 console.log 和 debugger
-        legalComments: 'none', // 移除所有注释
       },
     },
   }

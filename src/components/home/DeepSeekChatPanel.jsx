@@ -138,6 +138,33 @@ function DeepSeekChatPanel() {
     setMessages(prev => [...prev, { role: 'assistant', content: '', reasoning: '' }])
 
     abortRef.current = new AbortController()
+    const assistantDraft = { content: '', reasoning: '' }
+    let assistantFrame = null
+    const flushAssistant = () => {
+      assistantFrame = null
+      setMessages(prev => {
+        const updated = [...prev]
+        if (updated[assistantIdx]?.role !== 'assistant') {
+          return prev
+        }
+        const msg = { ...updated[assistantIdx] }
+        msg.content = assistantDraft.content
+        msg.reasoning = assistantDraft.reasoning
+        updated[assistantIdx] = msg
+        return updated
+      })
+    }
+    const scheduleAssistantFlush = () => {
+      if (assistantFrame === null) {
+        assistantFrame = window.requestAnimationFrame(flushAssistant)
+      }
+    }
+    const cancelPendingAssistantFlush = () => {
+      if (assistantFrame !== null) {
+        window.cancelAnimationFrame(assistantFrame)
+        assistantFrame = null
+      }
+    }
 
     try {
       const stop = options.stopSequences
@@ -229,34 +256,40 @@ function DeepSeekChatPanel() {
             if (!delta) {
               continue
             }
-            setMessages(prev => {
-              const updated = [...prev]
-              const msg = { ...updated[assistantIdx] }
-              if (delta.content) {
-                msg.content += delta.content
-              }
-              if (delta.reasoning_content) {
-                msg.reasoning = (msg.reasoning || '') + delta.reasoning_content
-              }
-              updated[assistantIdx] = msg
-              return updated
-            })
+            if (delta.content) {
+              assistantDraft.content += delta.content
+            }
+            if (delta.reasoning_content) {
+              assistantDraft.reasoning += delta.reasoning_content
+            }
+            if (delta.content || delta.reasoning_content) {
+              scheduleAssistantFlush()
+            }
           } catch {
             // ignore malformed SSE chunks
           }
         }
       }
+      cancelPendingAssistantFlush()
+      flushAssistant()
     } catch (e) {
       if (e.name !== 'AbortError') {
+        cancelPendingAssistantFlush()
+        const hasPartialAssistant = Boolean(assistantDraft.content || assistantDraft.reasoning)
+        if (hasPartialAssistant) {
+          flushAssistant()
+        }
         setError(e.message || '请求失败，请检查 API Key 或网络连接')
         setMessages(prev => {
           const updated = [...prev]
           const last = updated[assistantIdx]
-          if (last?.role === 'assistant' && !last.content && !last.reasoning) {
+          if (!hasPartialAssistant && last?.role === 'assistant' && !last.content && !last.reasoning) {
             updated.splice(assistantIdx, 1)
           }
           return updated
         })
+      } else {
+        cancelPendingAssistantFlush()
       }
     } finally {
       setLoading(false)
