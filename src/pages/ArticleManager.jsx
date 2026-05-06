@@ -266,26 +266,33 @@ function ArticleManager() {
 
   if (!isAuthenticated) {
     return (
-      <div className="container pb-12 max-w-md mx-auto pt-20">
-        <div className="glass p-8 rounded-2xl shadow-xl text-center animate-fade-in">
-          <div className="text-5xl mb-6">🔒</div>
-          <h1 className="text-2xl font-bold mb-2 text-text-color">管理员验证</h1>
-          <p className="text-text-secondary mb-6">请输入管理员密码以管理文章</p>
-          <form onSubmit={handleLogin} className="space-y-4">
-            <input
-              type="password"
-              name="key"
-              placeholder="输入密码..."
-              className="w-full p-3 rounded-xl border border-border-color bg-white/50 focus:bg-white focus:border-primary outline-none transition-all text-center"
-              autoFocus
-            />
-            <button type="submit" className="btn btn-primary w-full">
-              验证身份
-            </button>
-          </form>
-          <div className="mt-6 text-xs text-text-light">
-            <Link to="/" className="hover:text-primary">← 返回首页</Link>
+      <div className="container pb-12 max-w-md mx-auto pt-16">
+        <div className="glass rounded-[32px] p-10 text-center animate-fade-in relative overflow-hidden">
+          <div className="relative z-10">
+            <div className="inline-flex items-center justify-center w-20 h-20 rounded-full bg-primary/10 text-4xl mb-5">
+              🔒
+            </div>
+            <h1 className="text-3xl font-extrabold mb-2 text-gradient">管理员验证</h1>
+            <p className="text-text-secondary mb-7">输入密码以进入文章管理后台</p>
+            <form onSubmit={handleLogin} className="space-y-4">
+              <input
+                type="password"
+                name="key"
+                placeholder="输入密码..."
+                className="w-full p-3 rounded-xl border border-border-color bg-white/70 focus:bg-white focus:border-primary outline-none transition-all text-center"
+                autoFocus
+              />
+              <button type="submit" className="btn btn-primary w-full">
+                ✨ 验证身份
+              </button>
+            </form>
+            <div className="mt-6 text-sm">
+              <Link to="/" className="text-text-light hover:text-primary transition-colors">← 返回首页</Link>
+            </div>
           </div>
+
+          <div className="absolute top-0 right-0 w-48 h-48 bg-primary/10 rounded-full blur-3xl -translate-y-1/2 translate-x-1/2 pointer-events-none"></div>
+          <div className="absolute bottom-0 left-0 w-48 h-48 bg-secondary/10 rounded-full blur-3xl translate-y-1/2 -translate-x-1/2 pointer-events-none"></div>
         </div>
       </div>
     )

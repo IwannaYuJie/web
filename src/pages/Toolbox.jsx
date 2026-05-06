@@ -1,67 +1,84 @@
-// React 17+ JSX 自动导入
-import { Link } from 'react-router-dom';
+import { Link } from 'react-router-dom'
+
+const TOOLS = [
+  {
+    id: 'sprite-sheet-to-gif',
+    title: '精灵图转 GIF',
+    description: '把精灵图（Sprite Sheet）按行列切分，再按指定 FPS 合成为 GIF 动画，浏览器内一键完成。',
+    icon: '🎞️',
+    path: '/toolbox/sprite-sheet-to-gif',
+    isNew: true,
+  },
+]
 
 function Toolbox() {
-  const tools = [
-    {
-      id: 'sprite-sheet-to-gif',
-      title: '🎞️ 精灵图转 GIF',
-      description: '将包含多个帧的精灵图(Sprite Sheet)分割并转换为 GIF 动图。支持自定义行列和帧率。',
-      icon: '🐱',
-      path: '/toolbox/sprite-sheet-to-gif',
-      isNew: true
-    },
-    // 未来可以在这里添加更多工具
-    // {
-    //   id: 'color-palette',
-    //   title: '🎨 配色提取器',
-    //   description: '从图片中提取主要配色方案。',
-    //   icon: '🎨',
-    //   path: '/toolbox/color-palette'
-    // }
-  ];
-
   return (
-    <div className="container fade-in">
-      <header className="page-header">
-        <h1>🧰 橘猫工具箱</h1>
-        <p>这里有一些实用的小工具，希望能帮到你喵！</p>
-      </header>
+    <div className="container pb-12 animate-fade-in">
+      <section className="glass rounded-[32px] p-8 md:p-12 mb-12 flex flex-col md:flex-row items-center justify-between gap-8 relative overflow-hidden">
+        <div className="relative z-10 text-center md:text-left max-w-2xl">
+          <div className="inline-flex items-center gap-2 bg-white/50 px-4 py-1 rounded-full mb-4 text-primary font-bold text-sm backdrop-blur-sm">
+            <span>🧰</span>
+            <span>橘猫工具箱</span>
+          </div>
+          <h1 className="text-4xl md:text-5xl font-extrabold mb-4 text-gradient leading-tight">
+            趁手的小工具
+          </h1>
+          <p className="text-lg text-text-secondary leading-relaxed">
+            一些写起来有点意思、用起来又能省时间的浏览器小工具。
+            <br />都跑在你的浏览器里，不上传任何东西。
+          </p>
+        </div>
 
-      <div className="tools-grid" style={{
-        display: 'grid',
-        gridTemplateColumns: 'repeat(auto-fill, minmax(300px, 1fr))',
-        gap: '2rem',
-        marginTop: '2rem'
-      }}>
-        {tools.map(tool => (
-          <Link to={tool.path} key={tool.id} style={{ textDecoration: 'none' }}>
-            <div className="card tool-card" style={{ height: '100%', position: 'relative' }}>
+        <div className="relative z-10 text-7xl md:text-8xl select-none" aria-hidden="true">
+          🐱
+        </div>
+
+        <div className="absolute top-0 right-0 w-64 h-64 bg-primary/10 rounded-full blur-3xl -translate-y-1/2 translate-x-1/2 pointer-events-none"></div>
+        <div className="absolute bottom-0 left-0 w-64 h-64 bg-secondary/10 rounded-full blur-3xl translate-y-1/2 -translate-x-1/2 pointer-events-none"></div>
+      </section>
+
+      <div className="glass p-6 rounded-2xl">
+        <h2 className="text-2xl font-bold mb-6 flex items-center gap-2 text-primary">
+          <span>✨</span> 全部工具
+          <span className="ml-auto text-sm font-medium text-text-secondary">
+            共 <strong className="text-primary">{TOOLS.length}</strong> 个工具
+          </span>
+        </h2>
+
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-5">
+          {TOOLS.map((tool) => (
+            <Link
+              to={tool.path}
+              key={tool.id}
+              className="group relative card card-hover block overflow-hidden"
+            >
               {tool.isNew && (
-                <span style={{
-                  position: 'absolute',
-                  top: '-10px',
-                  right: '-10px',
-                  background: 'var(--primary-color)',
-                  color: 'white',
-                  padding: '0.2rem 0.6rem',
-                  borderRadius: 'var(--radius-full)',
-                  fontSize: '0.8rem',
-                  fontWeight: 'bold',
-                  boxShadow: 'var(--shadow)'
-                }}>
-                  NEW!
+                <span className="absolute top-3 right-3 bg-gradient-to-r from-primary to-primary-hover text-white text-[11px] font-bold px-2.5 py-1 rounded-full shadow-sm">
+                  NEW
                 </span>
               )}
-              <div style={{ fontSize: '3rem', marginBottom: '1rem' }}>{tool.icon}</div>
-              <h3 style={{ color: 'var(--text-color)', marginBottom: '0.5rem' }}>{tool.title}</h3>
-              <p style={{ color: 'var(--text-secondary)', fontSize: '0.9rem' }}>{tool.description}</p>
-            </div>
-          </Link>
-        ))}
+
+              <div className="text-3xl bg-primary/10 w-14 h-14 rounded-xl flex items-center justify-center mb-4 group-hover:scale-110 group-hover:bg-primary/15 transition-transform">
+                {tool.icon}
+              </div>
+
+              <h3 className="font-bold text-lg mb-2 group-hover:text-primary transition-colors">
+                {tool.title}
+              </h3>
+              <p className="text-sm text-text-secondary leading-relaxed mb-4">
+                {tool.description}
+              </p>
+
+              <div className="text-sm text-primary font-bold flex items-center gap-1 group-hover:gap-2 transition-all">
+                <span>打开工具</span>
+                <span>→</span>
+              </div>
+            </Link>
+          ))}
+        </div>
       </div>
     </div>
-  );
+  )
 }
 
-export default Toolbox;
+export default Toolbox

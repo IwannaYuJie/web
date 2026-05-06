@@ -20,7 +20,7 @@ const GAMES = [
     icon: '🐍',
     description: '经典贪吃蛇！控制小蛇吃掉食物不断成长，小心别撞墙哦～',
     status: 'active',
-    color: '#6BCB77',
+    color: '#F5A85A',
   },
   {
     id: 'tetris-game',
@@ -28,7 +28,7 @@ const GAMES = [
     icon: '🧱',
     description: '经典中的经典！消除整行方块获得分数，挑战你的最高记录！',
     status: 'active',
-    color: '#4D96FF',
+    color: '#E07B4A',
   },
   {
     id: 'game-2048',
@@ -36,7 +36,7 @@ const GAMES = [
     icon: '🔢',
     description: '滑动数字方块，合并相同数字，目标拼出2048！',
     status: 'active',
-    color: '#FFD93D',
+    color: '#FFC857',
   },
   {
     id: 'minesweeper',
@@ -44,7 +44,7 @@ const GAMES = [
     icon: '💣',
     description: '经典Windows扫雷！9×9棋盘，找出所有地雷！',
     status: 'active',
-    color: '#764ba2',
+    color: '#C77860',
   },
   {
     id: 'memory-card',
@@ -52,7 +52,7 @@ const GAMES = [
     icon: '🃏',
     description: '翻开卡片找到配对的emoji，挑战记忆力！',
     status: 'active',
-    color: '#4ECDC4',
+    color: '#F4A261',
   },
   {
     id: 'breakout',
@@ -60,7 +60,7 @@ const GAMES = [
     icon: '🏓',
     description: '移动挡板反弹小球，击碎所有砖块通关！',
     status: 'active',
-    color: '#FF6B6B',
+    color: '#E76F51',
   },
   {
     id: 'sliding-puzzle',
@@ -68,7 +68,7 @@ const GAMES = [
     icon: '🧩',
     description: '滑动数字方块，把 1-15 按顺序复原，挑战最少步数！',
     status: 'active',
-    color: '#9B59B6',
+    color: '#D4A574',
   },
   {
     id: 'whack-a-mole',

@@ -4,45 +4,10 @@
   display: flex;
   flex-direction: column;
   gap: 18px;
-  padding-top: 28px;
-}
-
-.deepseek-chat-page__intro {
-  display: flex;
-  align-items: end;
-  justify-content: space-between;
-  gap: 24px;
-}
-
-.deepseek-chat-page__eyebrow {
-  display: inline-flex;
-  align-items: center;
-  padding: 6px 12px;
-  border-radius: 999px;
-  background: rgba(255, 159, 69, 0.12);
-  color: var(--primary-color);
-  font-size: 0.78rem;
-  font-weight: 800;
-}
-
-.deepseek-chat-page__intro h1 {
-  margin-top: 10px;
-  color: var(--text-color);
-  font-size: 2.25rem;
-  line-height: 1.12;
-  font-weight: 900;
-}
-
-.deepseek-chat-page__intro p {
-  max-width: 520px;
-  color: var(--text-secondary);
-  font-size: 0.95rem;
-  line-height: 1.7;
-  text-align: right;
 }
 
 .deepseek-chat-page .ds-panel {
-  min-height: calc(100vh - 132px);
+  min-height: 520px;
 }
 
 .deepseek-chat-page .ds-messages {
@@ -626,23 +591,6 @@
 }
 
 @media (max-width: 900px) {
-  .deepseek-chat-page {
-    padding-top: 12px;
-  }
-
-  .deepseek-chat-page__intro {
-    display: block;
-  }
-
-  .deepseek-chat-page__intro h1 {
-    font-size: 2.1rem;
-  }
-
-  .deepseek-chat-page__intro p {
-    margin-top: 10px;
-    text-align: left;
-  }
-
   .deepseek-chat-page .ds-panel {
     min-height: auto;
   }
