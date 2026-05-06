@@ -3,8 +3,6 @@ import { Suspense, lazy, useMemo, useState } from 'react'
 import './GameHub.css'
 
 const GAME_COMPONENTS = {
-  'yujie-game': lazy(() => import('../components/YujieGame')),
-  'yujie-ai-game': lazy(() => import('../components/YujieAIGame')),
   'snake-game': lazy(() => import('../components/SnakeGame')),
   'tetris-game': lazy(() => import('../components/TetrisGame')),
   'game-2048': lazy(() => import('../components/Game2048')),
@@ -14,22 +12,6 @@ const GAME_COMPONENTS = {
 }
 
 const GAMES = [
-  {
-    id: 'yujie-game',
-    name: '雨姐的心动时刻',
-    icon: '💕',
-    description: '东北风情恋爱模拟游戏，体验与雨姐的浪漫故事！',
-    status: 'active',
-    color: '#FF9F45',
-  },
-  {
-    id: 'yujie-ai-game',
-    name: 'AI攻略：东北雨姐',
-    icon: '🤖💕',
-    description: '扮演从外国归来的黑人小哥，用AI对话攻略雨姐的心！',
-    status: 'active',
-    color: '#FF8C1A',
-  },
   {
     id: 'snake-game',
     name: '贪吃蛇',
