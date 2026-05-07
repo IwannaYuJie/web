@@ -2,12 +2,59 @@ import { Link } from 'react-router-dom'
 
 const TOOLS = [
   {
+    id: 'json-formatter',
+    title: 'JSON 格式化',
+    description: '校验、美化、压缩 JSON。一眼看清结构，复制压缩版直接拿去用。',
+    icon: '🧾',
+    path: '/toolbox/json-formatter',
+    isNew: true,
+  },
+  {
+    id: 'timestamp',
+    title: '时间戳转换',
+    description: 'Unix 时间戳与日期时间互转，支持秒 / 毫秒，本地与 UTC 同时显示。',
+    icon: '⏱️',
+    path: '/toolbox/timestamp',
+    isNew: true,
+  },
+  {
+    id: 'base64',
+    title: 'Base64 编解码',
+    description: '文本与文件的 Base64 编解码，支持 URL-safe，文件不会上传。',
+    icon: '🔐',
+    path: '/toolbox/base64',
+    isNew: true,
+  },
+  {
+    id: 'color',
+    title: '颜色转换',
+    description: 'HEX、RGB、HSL 三种格式互转，附带取色板和常用预设。',
+    icon: '🎨',
+    path: '/toolbox/color',
+    isNew: true,
+  },
+  {
+    id: 'text-counter',
+    title: '文本统计',
+    description: '统计字符数、字节数、单词、中日韩字符、行数与预计阅读时长。',
+    icon: '🔤',
+    path: '/toolbox/text-counter',
+    isNew: true,
+  },
+  {
+    id: 'password',
+    title: '密码生成',
+    description: '基于 Web Crypto 的强随机密码生成，自定义长度和字符集。',
+    icon: '🔑',
+    path: '/toolbox/password',
+    isNew: true,
+  },
+  {
     id: 'sprite-sheet-to-gif',
     title: '精灵图转 GIF',
     description: '把精灵图（Sprite Sheet）按行列切分，再按指定 FPS 合成为 GIF 动画，浏览器内一键完成。',
     icon: '🎞️',
     path: '/toolbox/sprite-sheet-to-gif',
-    isNew: true,
   },
 ]
 

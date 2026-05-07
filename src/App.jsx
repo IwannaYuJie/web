@@ -12,6 +12,12 @@ const GameHub = lazy(() => import('./pages/GameHub'))
 
 const Toolbox = lazy(() => import('./pages/Toolbox'))
 const SpriteSheetToGif = lazy(() => import('./pages/tools/SpriteSheetToGif'))
+const JsonFormatter = lazy(() => import('./pages/tools/JsonFormatter'))
+const TimestampConverter = lazy(() => import('./pages/tools/TimestampConverter'))
+const Base64Tool = lazy(() => import('./pages/tools/Base64Tool'))
+const ColorConverter = lazy(() => import('./pages/tools/ColorConverter'))
+const TextCounter = lazy(() => import('./pages/tools/TextCounter'))
+const PasswordGenerator = lazy(() => import('./pages/tools/PasswordGenerator'))
 
 function PageLoader() {
   return (
@@ -39,6 +45,12 @@ function App() {
             <Route path="/games" element={<GameHub />} />
             <Route path="/toolbox" element={<Toolbox />} />
             <Route path="/toolbox/sprite-sheet-to-gif" element={<SpriteSheetToGif />} />
+            <Route path="/toolbox/json-formatter" element={<JsonFormatter />} />
+            <Route path="/toolbox/timestamp" element={<TimestampConverter />} />
+            <Route path="/toolbox/base64" element={<Base64Tool />} />
+            <Route path="/toolbox/color" element={<ColorConverter />} />
+            <Route path="/toolbox/text-counter" element={<TextCounter />} />
+            <Route path="/toolbox/password" element={<PasswordGenerator />} />
           </Routes>
         </Suspense>
       </Layout>
