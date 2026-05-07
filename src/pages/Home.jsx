@@ -4,7 +4,7 @@ import Pagination from '../components/Pagination'
 import HomeHero from '../components/home/HomeHero'
 import HomeQuoteCard from '../components/home/HomeQuoteCard'
 import HomeStatsCard from '../components/home/HomeStatsCard'
-import { HOME_PAGE_SIZE, WEB_TEMPLATES } from '../constants/home'
+import { HOME_PAGE_SIZE } from '../constants/home'
 import { useArticlesData, useBackToTop, useGoogleCSE } from '../hooks'
 import { filterArticles, getArticleCategories, paginateArticles } from '../utils/articleFilters'
 
@@ -61,30 +61,6 @@ function Home() {
 
         {/* Left Content (Articles) - 8/12 */}
         <div className="lg:col-span-8 space-y-8">
-
-          {/* Web Templates Module */}
-          <div className="glass p-6 rounded-2xl">
-            <h2 className="text-2xl font-bold mb-6 flex items-center gap-2 text-primary">
-              <span>🎨</span> 精选网页模板
-            </h2>
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-              {WEB_TEMPLATES.map(template => (
-                <a
-                  key={template.id}
-                  href={template.link}
-                  className="group p-4 rounded-xl bg-white/50 hover:bg-white transition-all border border-transparent hover:border-primary/30 hover:shadow-md flex items-start gap-4"
-                >
-                  <div className="text-3xl bg-primary/10 w-12 h-12 rounded-lg flex items-center justify-center group-hover:scale-110 transition-transform">
-                    {template.icon}
-                  </div>
-                  <div>
-                    <h3 className="font-bold text-lg mb-1 group-hover:text-primary transition-colors">{template.title}</h3>
-                    <p className="text-sm text-text-secondary leading-relaxed">{template.desc}</p>
-                  </div>
-                </a>
-              ))}
-            </div>
-          </div>
 
           {/* Search and Filter */}
           <div id="articles" className="glass p-4 rounded-2xl sticky top-[80px] z-30 shadow-sm space-y-4">
