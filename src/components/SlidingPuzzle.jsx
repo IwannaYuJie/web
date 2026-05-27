@@ -33,16 +33,26 @@ const getNeighbors = (idx) => {
   const r = Math.floor(idx / SIZE)
   const c = idx % SIZE
   const out = []
-  if (r > 0) out.push(idx - SIZE)
-  if (r < SIZE - 1) out.push(idx + SIZE)
-  if (c > 0) out.push(idx - 1)
-  if (c < SIZE - 1) out.push(idx + 1)
+  if (r > 0) {
+    out.push(idx - SIZE)
+  }
+  if (r < SIZE - 1) {
+    out.push(idx + SIZE)
+  }
+  if (c > 0) {
+    out.push(idx - 1)
+  }
+  if (c < SIZE - 1) {
+    out.push(idx + 1)
+  }
   return out
 }
 
 const isSolved = (board) => {
   for (let i = 0; i < TOTAL; i++) {
-    if (board[i] !== SOLVED[i]) return false
+    if (board[i] !== SOLVED[i]) {
+      return false
+    }
   }
   return true
 }
@@ -67,7 +77,9 @@ const SlidingPuzzle = () => {
   const timerRef = useRef(null)
 
   useEffect(() => {
-    if (phase !== 'playing') return undefined
+    if (phase !== 'playing') {
+      return undefined
+    }
     timerRef.current = setInterval(() => setSeconds((s) => s + 1), 1000)
     return () => clearInterval(timerRef.current)
   }, [phase])
@@ -81,9 +93,13 @@ const SlidingPuzzle = () => {
 
   const handleTileClick = useCallback(
     (idx) => {
-      if (phase !== 'playing') return
+      if (phase !== 'playing') {
+        return
+      }
       const emptyIdx = board.indexOf(0)
-      if (!getNeighbors(emptyIdx).includes(idx)) return
+      if (!getNeighbors(emptyIdx).includes(idx)) {
+        return
+      }
 
       const next = board.slice()
       next[emptyIdx] = next[idx]

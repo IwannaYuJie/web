@@ -38,9 +38,13 @@ const WhackAMole = () => {
     setHoles((prev) => {
       const empties = []
       prev.forEach((v, i) => {
-        if (!v) empties.push(i)
+        if (!v) {
+          empties.push(i)
+        }
       })
-      if (empties.length === 0) return prev
+      if (empties.length === 0) {
+        return prev
+      }
       const idx = empties[Math.floor(Math.random() * empties.length)]
       const kind = Math.random() < CAT_PROB ? 'cat' : 'mole'
       const next = prev.slice()
@@ -49,7 +53,9 @@ const WhackAMole = () => {
       expireRefs.current[idx] = setTimeout(() => {
         setHoles((cur) => {
           const c = cur.slice()
-          if (c[idx] && c[idx].id === next[idx].id) c[idx] = null
+          if (c[idx] && c[idx].id === next[idx].id) {
+            c[idx] = null
+          }
           return c
         })
         delete expireRefs.current[idx]
@@ -68,7 +74,9 @@ const WhackAMole = () => {
   }, [clearTimers])
 
   useEffect(() => {
-    if (phase !== 'playing') return undefined
+    if (phase !== 'playing') {
+      return undefined
+    }
     tickRef.current = setInterval(() => {
       setTimeLeft((t) => {
         if (t <= 1) {
@@ -103,9 +111,13 @@ const WhackAMole = () => {
 
   const handleHoleClick = useCallback(
     (idx) => {
-      if (phase !== 'playing') return
+      if (phase !== 'playing') {
+        return
+      }
       const target = holes[idx]
-      if (!target) return
+      if (!target) {
+        return
+      }
 
       if (expireRefs.current[idx]) {
         clearTimeout(expireRefs.current[idx])

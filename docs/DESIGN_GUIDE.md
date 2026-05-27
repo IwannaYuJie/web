@@ -16,9 +16,10 @@
 ## 🎨 设计理念
 
 ### 核心概念
-**橘猫主题 - 温暖、可爱、治愈**
+**橘猫主题 - 温暖、清爽、可长期阅读**
 
-- 🧡 **温暖感**：使用橙色系营造温馨舒适的氛围
+- 🧡 **温暖感**：保留橘猫橙作为品牌主色
+- 🌿 **清爽感**：使用青绿和蓝紫做辅助色，避免大面积单一奶油橘
 - 😊 **可爱风**：圆角设计、柔和阴影、趣味表情
 - 🐾 **橘猫元素**：融入猫咪相关的图标和装饰
 - 💫 **轻量化**：保持简洁，避免过度装饰
@@ -33,29 +34,29 @@
 
 ## 🎨 配色方案
 
-### 主色调 - 橘猫橙色系
+### 主色调 - 橘猫橙 + 清爽辅助色
 
 ```css
 /* 主要颜色 */
---primary-color: #FF9F45;        /* 橘猫主色 - 温暖的橙色 */
---primary-hover: #FF8C1A;        /* 悬停色 - 深橙色 */
---secondary-color: #FFB366;      /* 辅助色 - 浅橙色 */
---accent-color: #FFC999;         /* 强调色 - 奶油橙 */
+--primary-color: #F58235;        /* 橘猫主色 */
+--primary-hover: #D96A1D;        /* 悬停色 */
+--secondary-color: #4EA59A;      /* 辅助色 - 青绿 */
+--accent-color: #6C63D9;         /* 强调色 - 蓝紫 */
 ```
 
 **使用场景**：
 - `primary-color`：按钮、链接、标题强调
 - `primary-hover`：交互元素的悬停状态
-- `secondary-color`：次要按钮、标签
-- `accent-color`：高亮、提示信息
+- `secondary-color`：标签、数据辅助信息、悬停背景
+- `accent-color`：项目状态、特殊入口、高亮信息
 
 ### 背景色系
 
 ```css
 /* 背景颜色 */
---bg-color: #FFF8F0;             /* 背景色 - 温暖的米白色 */
---card-bg: #FFFAF5;              /* 卡片背景 - 奶白色 */
---card-hover: #FFF5E6;           /* 卡片悬停 - 浅奶油色 */
+--bg-color: #F3F6F2;             /* 背景色 - 浅灰绿 */
+--card-bg: #FFFFFF;              /* 卡片背景 - 白色 */
+--card-hover: #EFF8F6;           /* 卡片悬停 - 浅青绿 */
 ```
 
 **使用场景**：
@@ -67,8 +68,8 @@
 
 ```css
 /* 文字颜色 */
---text-color: #5C4033;           /* 文字色 - 深棕色 */
---text-secondary: #8B6F47;       /* 次要文字 - 浅棕色 */
+--text-color: #2F2A25;           /* 文字色 - 深中性色 */
+--text-secondary: #6F6258;       /* 次要文字 - 暖灰色 */
 ```
 
 **使用场景**：
@@ -79,15 +80,15 @@
 
 ```css
 /* 边框颜色 */
---border-color: #FFD4A3;         /* 边框色 - 浅橙色 */
+--border-color: #DCE5D8;         /* 边框色 - 浅灰绿 */
 ```
 
 ### 渐变色
 
 ```css
 /* 渐变效果 */
---gradient-warm: linear-gradient(135deg, #FFB366 0%, #FF9F45 50%, #FF8C1A 100%);
---gradient-soft: linear-gradient(135deg, #FFF8F0 0%, #FFE6CC 100%);
+--gradient-warm: linear-gradient(135deg, #F7A65B 0%, #F58235 54%, #D96A1D 100%);
+--gradient-soft: linear-gradient(135deg, #FFFFFF 0%, #EAF7F4 100%);
 ```
 
 **使用场景**：

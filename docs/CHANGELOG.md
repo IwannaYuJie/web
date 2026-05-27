@@ -4,6 +4,50 @@
 
  ---
 
+## [2026-05-25] - 🧭 个人博客完全体改造
+
+### ✨ 新特性
+- `src/pages/Archive.jsx`：新增文章归档页，支持年份分组、全文搜索、分类筛选、标签筛选和时间排序。
+- `src/pages/Tags.jsx`：新增标签与主题页，支持标签云、URL 标签筛选和分类地图。
+- `src/pages/About.jsx` & `src/data/blogProfile.js`：新增关于页与个人博客资料源，集中维护作者档案、近期主题、项目入口和站点时间线。
+- `src/pages/ArticleDetail.jsx`：文章详情页新增相关阅读和上一篇/下一篇导航，并将分享操作改为页面内状态提示。
+- `src/pages/Home.jsx` & `src/components/home/HomeHero.jsx`：首页升级为个人博客中枢，补齐站点统计、精选阅读、作者档案、分类地图、标签云和项目入口。
+
+### 🔧 优化改进
+- `src/components/Navbar.jsx` & `src/components/Footer.jsx`：导航重排为首页、归档、标签、关于、工具箱、游戏、管理，页脚同步补齐博客核心入口。
+- `src/utils/blogInsights.js`：新增博客统计、精选文章、年份归档、标签云、分类概览和相关阅读计算工具。
+- `src/index.css` & `docs/DESIGN_GUIDE.md`：调整主题色，保留橘猫橙，同时引入青绿/蓝紫辅助色，降低单一橘色和奶油色占比。
+- `index.html`：标题与描述改为个人博客定位。
+- `README.md`：重写为当前项目真实结构、路由、API、部署和维护规则。
+
+### 🐞 修复
+- `src/components/SlidingPuzzle.jsx`、`src/components/WhackAMole.jsx`、`src/pages/tools/TimestampConverter.jsx`：修正项目级 lint 规则警告，保证 `npm run lint` 可通过。
+
+### ✅ 验证
+- `npm run lint` 通过。
+- `npm test` 通过，新增 `test/blogInsights.test.js` 覆盖博客统计、归档、标签云和相关阅读。
+- `npm run typecheck` 通过。
+- `npm run build` 通过。
+- 使用本地浏览器检查 `/`、`/archive`、`/tags`、`/about`、`/article/1`，关键标题和内容块均渲染，未发现横向溢出或控制台错误。
+
+### 📌 影响范围
+- `src/App.jsx`
+- `src/components/Navbar.jsx`
+- `src/components/Footer.jsx`
+- `src/components/home/HomeHero.jsx`
+- `src/pages/Home.jsx`
+- `src/pages/Archive.jsx`
+- `src/pages/Tags.jsx`
+- `src/pages/About.jsx`
+- `src/pages/ArticleDetail.jsx`
+- `src/data/blogProfile.js`
+- `src/utils/blogInsights.js`
+- `src/index.css`
+- `index.html`
+- `README.md`
+- `docs/DESIGN_GUIDE.md`
+- `test/blogInsights.test.js`
+
 ## [2026-03-12] - ⚡ 前端加载与文章链路优化
 
 ### 🔧 优化改进

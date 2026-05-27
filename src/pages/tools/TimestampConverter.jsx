@@ -44,7 +44,7 @@ function TimestampConverter() {
       parseError = '不是合法的数字'
     }
   }
-  const parsedDate = parsedMs != null && !parseError ? new Date(parsedMs) : null
+  const parsedDate = parsedMs !== null && !parseError ? new Date(parsedMs) : null
 
   let dateMs = null
   let dateError = null
@@ -138,7 +138,7 @@ function TimestampConverter() {
 
           {dateError ? (
             <div className="text-red-600 text-sm">{dateError}</div>
-          ) : dateMs != null ? (
+          ) : dateMs !== null ? (
             <ResultRows rows={[
               ['秒', String(Math.floor(dateMs / 1000))],
               ['毫秒', String(dateMs)],

@@ -5,8 +5,10 @@ import HomeHero from '../components/home/HomeHero'
 import HomeQuoteCard from '../components/home/HomeQuoteCard'
 import HomeStatsCard from '../components/home/HomeStatsCard'
 import { HOME_PAGE_SIZE } from '../constants/home'
+import { blogProfile, blogProjects } from '../data/blogProfile'
 import { useArticlesData, useBackToTop, useGoogleCSE } from '../hooks'
-import { filterArticles, getArticleCategories, paginateArticles } from '../utils/articleFilters'
+import { filterArticles, getArticleCategories, paginateArticles, sortArticles } from '../utils/articleFilters'
+import { getBlogStats, getCategorySummaries, getFeaturedArticles, getTagCloud } from '../utils/blogInsights'
 
 /**
  * 首页组件
@@ -32,12 +34,17 @@ function Home() {
     return getArticleCategories(articles)
   }, [articles])
 
+  const stats = useMemo(() => getBlogStats(articles), [articles])
+  const featuredArticles = useMemo(() => getFeaturedArticles(articles, 3), [articles])
+  const tagCloud = useMemo(() => getTagCloud(articles).slice(0, 14), [articles])
+  const categorySummaries = useMemo(() => getCategorySummaries(articles), [articles])
+
   const scrollToTop = () => {
     window.scrollTo({ top: 0, behavior: 'smooth' })
   }
 
   const filteredArticles = useMemo(() => {
-    return filterArticles(articles, { searchQuery, selectedCategory })
+    return sortArticles(filterArticles(articles, { searchQuery, selectedCategory }), 'date', 'desc')
   }, [articles, searchQuery, selectedCategory])
 
   // 分页后的文章
@@ -54,7 +61,34 @@ function Home() {
 
   return (
     <div className="container pb-12">
-      <HomeHero />
+      <HomeHero stats={stats} featuredArticle={featuredArticles[0]} />
+
+      {featuredArticles.length > 1 && (
+        <section className="mb-10">
+          <div className="flex items-end justify-between gap-4 mb-4">
+            <div>
+              <h2 className="text-2xl font-extrabold text-text-color">精选阅读</h2>
+              <p className="text-text-secondary text-sm mt-1">从最近更新里挑几篇值得优先看的内容。</p>
+            </div>
+            <Link to="/archive" className="btn btn-ghost hidden sm:inline-flex">
+              全部归档 →
+            </Link>
+          </div>
+          <div className="grid gap-4 md:grid-cols-3">
+            {featuredArticles.map(article => (
+              <Link key={article.id} to={`/article/${article.id}`} className="card card-hover block">
+                <div className="flex flex-wrap gap-2 text-xs text-text-light mb-3">
+                  <span>{article.category}</span>
+                  <span>{article.date}</span>
+                  <span>{article.readTime} 分钟</span>
+                </div>
+                <h3 className="font-extrabold text-lg text-text-color leading-snug">{article.title}</h3>
+                <p className="text-sm text-text-secondary mt-3 line-clamp-3">{article.description}</p>
+              </Link>
+            ))}
+          </div>
+        </section>
+      )}
 
       {/* Main Grid Layout */}
       <div className="grid grid-cols-1 lg:grid-cols-12 gap-8">
@@ -146,7 +180,7 @@ function Home() {
                             </span>
                             <span className="text-text-light text-xs">📅 {article.date}</span>
                             {article.tags && article.tags.length > 0 && (
-                              <div className="flex gap-1">
+                              <div className="flex flex-wrap gap-1">
                                 {article.tags.slice(0, 2).map(tag => (
                                   <span key={tag} className="text-xs text-text-light">#{tag}</span>
                                 ))}
@@ -161,6 +195,7 @@ function Home() {
                           </p>
                           <div className="flex items-center gap-4 text-sm text-text-light">
                             <span>⏱️ {article.readTime} 分钟阅读</span>
+                            <span>✍️ {article.author || blogProfile.owner}</span>
                             <span className="group-hover:translate-x-1 transition-transform inline-block text-primary">阅读全文 →</span>
                           </div>
                         </div>
@@ -208,7 +243,82 @@ function Home() {
 
         {/* Right Sidebar - 4/12 */}
         <aside className="lg:col-span-4 space-y-8">
+           <div className="glass p-6 rounded-2xl">
+              <div className="flex items-center gap-4 mb-4">
+                <img
+                  src={blogProfile.avatar}
+                  alt={blogProfile.owner}
+                  className="w-16 h-16 rounded-full border-4 border-white shadow-md object-cover"
+                />
+                <div>
+                  <h2 className="text-lg font-extrabold text-text-color">{blogProfile.owner}</h2>
+                  <p className="text-xs text-text-secondary mt-1">{blogProfile.role}</p>
+                </div>
+              </div>
+              <p className="text-sm text-text-secondary leading-relaxed mb-4">{blogProfile.intro}</p>
+              <Link to="/about" className="btn btn-secondary w-full justify-center">
+                👋 查看关于页
+              </Link>
+           </div>
+
            <HomeQuoteCard />
+
+           <div className="glass p-6 rounded-2xl">
+              <div className="flex items-center justify-between gap-3 mb-4">
+                <h2 className="text-lg font-bold flex items-center gap-2">
+                  <span>🧭</span> 分类地图
+                </h2>
+                <Link to="/tags" className="text-sm font-bold text-primary">标签页</Link>
+              </div>
+              <div className="space-y-2">
+                {categorySummaries.slice(0, 6).map(item => (
+                  <button
+                    key={item.category}
+                    onClick={() => setSelectedCategory(item.category)}
+                    className="w-full flex items-center justify-between gap-3 rounded-xl bg-white/60 px-3 py-2 text-left hover:bg-card-hover transition-colors"
+                  >
+                    <span className="font-bold text-sm text-text-color">{item.category}</span>
+                    <span className="text-xs font-bold text-primary">{item.count}</span>
+                  </button>
+                ))}
+              </div>
+           </div>
+
+           {tagCloud.length > 0 && (
+             <div className="glass p-6 rounded-2xl">
+                <h2 className="text-lg font-bold mb-4 flex items-center gap-2">
+                  <span>#</span> 热门标签
+                </h2>
+                <div className="flex flex-wrap gap-2">
+                  {tagCloud.map(item => (
+                    <Link
+                      key={item.tag}
+                      to={`/tags?tag=${encodeURIComponent(item.tag)}`}
+                      className="rounded-full bg-white/70 px-3 py-1.5 text-sm font-bold text-text-secondary hover:text-primary"
+                    >
+                      #{item.tag} {item.count}
+                    </Link>
+                  ))}
+                </div>
+             </div>
+           )}
+
+           <div className="glass p-6 rounded-2xl">
+              <h2 className="text-lg font-bold mb-4 flex items-center gap-2">
+                <span>🧪</span> 项目入口
+              </h2>
+              <div className="space-y-3">
+                {blogProjects.map(project => (
+                  <Link key={project.title} to={project.href} className="block rounded-xl bg-white/60 p-3 hover:bg-card-hover transition-colors">
+                    <div className="flex items-center justify-between gap-3">
+                      <span className="font-bold text-sm text-text-color">{project.title}</span>
+                      <span className="text-xs text-primary font-bold">{project.status}</span>
+                    </div>
+                    <p className="text-xs text-text-secondary mt-1 line-clamp-2">{project.description}</p>
+                  </Link>
+                ))}
+              </div>
+           </div>
 
            {/* Tools Card */}
            <div className="glass p-6 rounded-2xl">

@@ -36,11 +36,17 @@ function Footer() {
         </div>
 
         <div className="footer-links">
-          <a href="https://github.com/IwannaYuJie" target="_blank" rel="noreferrer" className="footer-link">
-            GitHub
+          <a href="/archive" className="footer-link">
+            归档
+          </a>
+          <a href="/tags" className="footer-link">
+            标签
           </a>
           <a href="/about" className="footer-link">
             关于我
+          </a>
+          <a href="https://github.com/IwannaYuJie" target="_blank" rel="noreferrer" className="footer-link">
+            GitHub
           </a>
         </div>
 

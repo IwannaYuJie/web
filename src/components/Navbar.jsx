@@ -5,11 +5,21 @@ import './Navbar.css'
 // 导航链接配置 - 提取到组件外部
 const NAV_LINKS = [
   { path: '/', label: '🏠 首页' },
-  { path: '/deepseek-chat', label: '🤖 DeepSeek 对话' },
-  { path: '/games', label: '🎮 游戏中心' },
+  { path: '/archive', label: '🗂️ 归档' },
+  { path: '/tags', label: '# 标签' },
+  { path: '/about', label: '👋 关于' },
   { path: '/toolbox', label: '🧰 工具箱' },
-  { path: '/admin/articles', label: '📝 文章管理' },
+  { path: '/games', label: '🎮 游戏' },
+  { path: '/admin/articles', label: '✍️ 管理' },
 ]
+
+function isActiveLink(pathname, path) {
+  if (path === '/') {
+    return pathname === '/' || pathname.startsWith('/article/')
+  }
+
+  return pathname === path || pathname.startsWith(`${path}/`)
+}
 
 function Navbar() {
   const [isScrolled, setIsScrolled] = useState(false)
@@ -44,7 +54,7 @@ function Navbar() {
             <Link
               key={link.path}
               to={link.path}
-              className={`nav-link ${location.pathname === link.path ? 'active' : ''}`}
+              className={`nav-link ${isActiveLink(location.pathname, link.path) ? 'active' : ''}`}
             >
               {link.label}
             </Link>
@@ -67,7 +77,7 @@ function Navbar() {
               <Link
                 key={link.path}
                 to={link.path}
-                className={`nav-link ${location.pathname === link.path ? 'active' : ''}`}
+                className={`nav-link ${isActiveLink(location.pathname, link.path) ? 'active' : ''}`}
               >
                 {link.label}
               </Link>

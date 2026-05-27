@@ -4,6 +4,9 @@ import Layout from './components/Layout'
 
 const Home = lazy(() => import('./pages/Home'))
 const ArticleDetail = lazy(() => import('./pages/ArticleDetail'))
+const Archive = lazy(() => import('./pages/Archive'))
+const Tags = lazy(() => import('./pages/Tags'))
+const About = lazy(() => import('./pages/About'))
 
 const DeepSeekChat = lazy(() => import('./pages/DeepSeekChat'))
 const AIChat = lazy(() => import('./pages/AIChat'))
@@ -38,6 +41,9 @@ function App() {
           <Routes>
             <Route path="/" element={<Home />} />
             <Route path="/article/:id" element={<ArticleDetail />} />
+            <Route path="/archive" element={<Archive />} />
+            <Route path="/tags" element={<Tags />} />
+            <Route path="/about" element={<About />} />
 
             <Route path="/deepseek-chat" element={<DeepSeekChat />} />
             <Route path="/secret-chat" element={<AIChat />} />

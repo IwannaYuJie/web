@@ -595,3 +595,46 @@
     min-height: auto;
   }
 }
+
+/* ===== 深色模式适配 ===== */
+@media (prefers-color-scheme: dark) {
+  .ds-panel::before {
+    background:
+      linear-gradient(120deg, rgba(255, 126, 33, 0.08), transparent 36%),
+      linear-gradient(315deg, rgba(255, 126, 33, 0.06), transparent 42%) !important;
+  }
+  .ds-live-badge {
+    background: rgba(35, 24, 20, 0.6) !important;
+    border-color: var(--border-color) !important;
+  }
+  .ds-settings-trigger {
+    background: rgba(35, 24, 20, 0.72) !important;
+    border-color: rgba(255, 126, 33, 0.3) !important;
+  }
+  .ds-param-summary span {
+    background: rgba(35, 24, 20, 0.48) !important;
+    border-color: var(--border-color) !important;
+  }
+  .ds-settings-popover {
+    background: rgba(35, 24, 20, 0.92) !important;
+    border-color: rgba(255, 126, 33, 0.2) !important;
+  }
+  .ds-field, .ds-check-field {
+    background: rgba(22, 15, 13, 0.62) !important;
+    border-color: var(--border-color) !important;
+  }
+  .ds-bubble-assistant {
+    background: rgba(35, 24, 20, 0.85) !important;
+    border-color: var(--border-color) !important;
+  }
+  .ds-textarea {
+    background: rgba(35, 24, 20, 0.7) !important;
+    border-color: var(--border-color) !important;
+  }
+  .ds-textarea:focus {
+    background: var(--surface-color) !important;
+  }
+  .ds-messages {
+    background: rgba(22, 15, 13, 0.4) !important;
+  }
+}

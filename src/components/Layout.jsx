@@ -10,6 +10,11 @@ import './Layout.css'
 export default function Layout({ children }) {
   return (
     <div className="app-layout">
+      {/* 装饰性背景环境光斑 (Ambient Blobs) */}
+      <div className="ambient-blob ambient-blob-1" aria-hidden="true" />
+      <div className="ambient-blob ambient-blob-2" aria-hidden="true" />
+      <div className="ambient-blob ambient-blob-3" aria-hidden="true" />
+
       <Navbar />
       <main className="main-content">
         {children}

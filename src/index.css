@@ -11,80 +11,80 @@
 }
 
 :root {
-  /* 橘猫主题配色 - 温暖可爱的橙色系 */
-  --primary-color: #FF9F45;        /* 橘猫主色 - 温暖的橙色 */
-  --primary-hover: #FF8C1A;        /* 悬停色 - 深橙色 */
-  --secondary-color: #FFB366;      /* 辅助色 - 浅橙色 */
-  --accent-color: #FFC999;         /* 强调色 - 奶油橙 */
+  /* 橘猫温暖主题配色：珊瑚暖橘 + 薄荷雅绿 + 樱花粉 */
+  --primary-color: #FF7E21;        /* 元气暖橘 */
+  --primary-hover: #E56710;        /* 深橘悬停 */
+  --secondary-color: #36B3A0;      /* 辅助薄荷绿 */
+  --accent-color: #FF5B7F;         /* 强调樱花粉 */
 
-  --bg-color: #FFF8F0;             /* 背景色 - 温暖的米白色 */
-  --surface-color: #FFFFFF;        /* 表面色 - 纯白 */
-  --text-color: #5C4033;           /* 文字色 - 深棕色 */
-  --text-secondary: #8B6F47;       /* 次要文字 - 浅棕色 */
-  --text-light: #AB9070;           /* 淡色文字 */
+  --bg-color: #FCFBFA;             /* 燕麦温暖白，温润护眼 */
+  --surface-color: #FFFFFF;        /* 表面纯白 */
+  --text-color: #3C332D;           /* 深咖啡色，替代死板的纯黑 */
+  --text-secondary: #6B5E55;       /* 浓缩摩卡色 */
+  --text-light: #9E8E83;           /* 拿铁灰褐色 */
 
-  --border-color: #FFD4A3;         /* 边框色 - 浅橙色 */
-  --card-bg: #FFFAF5;              /* 卡片背景 - 奶白色 */
-  --card-hover: #FFF5E6;           /* 卡片悬停 - 浅奶油色 */
+  --border-color: #F1EBD9;         /* 燕麦奶油色边框 */
+  --card-bg: rgba(255, 255, 255, 0.65); /* 玻璃化轻卡片 */
+  --card-hover: rgba(255, 255, 255, 0.9); /* 高亮卡片 */
 
   /* 橘猫特色渐变 */
-  --gradient-warm: linear-gradient(135deg, #FFB366 0%, #FF9F45 50%, #FF8C1A 100%);
-  --gradient-soft: linear-gradient(135deg, #FFF8F0 0%, #FFE6CC 100%);
-  --gradient-glass: linear-gradient(135deg, rgba(255, 255, 255, 0.8), rgba(255, 255, 255, 0.4));
+  --gradient-warm: linear-gradient(135deg, #FFA95A 0%, #FF7E21 50%, #E56710 100%);
+  --gradient-soft: linear-gradient(135deg, #FFFFFF 0%, #FFF4EB 100%);
+  --gradient-glass: linear-gradient(135deg, rgba(255, 255, 255, 0.85) 0%, rgba(255, 255, 255, 0.5) 100%);
 
-  /* 阴影效果 - 柔和温暖 */
-  --shadow-sm: 0 2px 4px rgba(255, 159, 69, 0.1);
-  --shadow: 0 4px 12px rgba(255, 159, 69, 0.15);
-  --shadow-lg: 0 8px 24px rgba(255, 159, 69, 0.2);
-  --shadow-hover: 0 12px 32px rgba(255, 159, 69, 0.25);
+  /* 三层高级软投影 */
+  --shadow-sm: 0 4px 12px rgba(235, 120, 30, 0.04);
+  --shadow: 0 12px 30px -10px rgba(235, 120, 30, 0.09);
+  --shadow-lg: 0 22px 40px -12px rgba(235, 120, 30, 0.14);
+  --shadow-hover: 0 30px 50px -12px rgba(235, 120, 30, 0.22);
 
-  /* 圆角 - 可爱风格 */
+  /* 圆角 - 偏向圆润的可爱风格 */
   --radius-sm: 12px;
-  --radius-md: 16px;
-  --radius-lg: 24px;
+  --radius-md: 20px;
+  --radius-lg: 32px;
   --radius-full: 9999px;
 
   /* 动画时间 */
-  --transition-fast: 0.2s ease;
-  --transition-base: 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-  --transition-smooth: 0.5s cubic-bezier(0.4, 0, 0.2, 1);
+  --transition-fast: 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+  --transition-base: 0.35s cubic-bezier(0.34, 1.56, 0.64, 1); /* 果冻动效 */
+  --transition-smooth: 0.6s cubic-bezier(0.34, 1.56, 0.64, 1);
   
-  /* 字号层级规范 */
+  /* 字号层级 */
   --font-size-base: 16px;
-  --font-size-h1: 2.5rem;
-  --font-size-h2: 2rem;
-  --font-size-h3: 1.5rem;
+  --font-size-h1: 2.75rem;
+  --font-size-h2: 2.15rem;
+  --font-size-h3: 1.6rem;
   --font-size-small: 0.875rem;
 }
 
-/* 深色模式支持 - 橘猫夜间主题 */
+/* 深色模式支持 - 橘猫温咖夜间主题 */
 @media (prefers-color-scheme: dark) {
   :root {
-    --bg-color: #2D1F1A;
-    --surface-color: #3D2B20;
-    --text-color: #FFE6CC;
-    --text-secondary: #D4A574;
-    --text-light: #9C7A5B;
-    --border-color: #4D3A2E;
-    --card-bg: #3D2B20;
-    --card-hover: #4D3A2E;
-    --shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
-    --shadow-lg: 0 8px 24px rgba(0, 0, 0, 0.4);
-    --gradient-glass: linear-gradient(135deg, rgba(61, 43, 32, 0.8), rgba(61, 43, 32, 0.4));
+    --bg-color: #160F0D;             /* 深浓缩黑巧底 */
+    --surface-color: #231814;        /* 热可可表面色 */
+    --text-color: #F7EAE1;           /* 温暖燕麦粉白 */
+    --text-secondary: #CBB4A5;       /* 摩卡奶咖色 */
+    --text-light: #9B877A;           /* 灰拿铁 */
+    --border-color: #382823;         /* 暗咖啡边框 */
+    --card-bg: rgba(35, 24, 20, 0.65);
+    --card-hover: rgba(51, 36, 30, 0.85);
+    --shadow-sm: 0 4px 12px rgba(0, 0, 0, 0.15);
+    --shadow: 0 12px 30px -10px rgba(0, 0, 0, 0.35);
+    --shadow-lg: 0 22px 40px -12px rgba(0, 0, 0, 0.45);
+    --shadow-hover: 0 30px 50px -12px rgba(0, 0, 0, 0.55);
+    --gradient-glass: linear-gradient(135deg, rgba(35, 24, 20, 0.85) 0%, rgba(35, 24, 20, 0.5) 100%);
   }
 }
 
 body {
-  font-family: 'Noto Sans SC', 'PingFang SC', 'Microsoft YaHei', system-ui, -apple-system, sans-serif;
+  font-family: 'Quicksand', 'Noto Sans SC', 'PingFang SC', 'Microsoft YaHei', system-ui, -apple-system, sans-serif;
   background-color: var(--bg-color);
   color: var(--text-color);
-  line-height: 1.7;
+  line-height: 1.8;
   font-size: var(--font-size-base);
-  background-image: 
-    radial-gradient(circle at 20% 50%, rgba(255, 191, 102, 0.05) 0%, transparent 50%),
-    radial-gradient(circle at 80% 80%, rgba(255, 159, 69, 0.05) 0%, transparent 50%);
   background-attachment: fixed;
   overflow-x: hidden;
+  letter-spacing: -0.01em;
 }
 
 /* 滚动条美化 */
@@ -100,7 +100,7 @@ body {
 ::-webkit-scrollbar-thumb {
   background: var(--border-color);
   border-radius: var(--radius-full);
-  border: 2px solid var(--bg-color);
+  border: 3px solid var(--bg-color);
 }
 
 ::-webkit-scrollbar-thumb:hover {
@@ -126,20 +126,46 @@ a:hover {
   color: var(--primary-hover);
 }
 
+/* 全局表单元素美化 */
+input[type="text"], input[type="password"], textarea, select {
+  font-family: inherit;
+  transition: all var(--transition-fast);
+  border: 1.5px solid var(--border-color);
+  background: rgba(255, 255, 255, 0.8);
+  border-radius: 12px;
+  outline: none;
+}
+
+input[type="text"]:focus, input[type="password"]:focus, textarea:focus, select:focus {
+  border-color: var(--primary-color) !important;
+  background: #ffffff !important;
+  box-shadow: 0 0 0 4px rgba(255, 126, 33, 0.18) !important;
+}
+
+@media (prefers-color-scheme: dark) {
+  input[type="text"], input[type="password"], textarea, select {
+    background: rgba(35, 24, 20, 0.8);
+  }
+  input[type="text"]:focus, input[type="password"]:focus, textarea:focus, select:focus {
+    background: var(--surface-color) !important;
+    box-shadow: 0 0 0 4px rgba(255, 126, 33, 0.28) !important;
+  }
+}
+
 /* 按钮组件 */
 .btn {
   display: inline-flex;
   align-items: center;
   justify-content: center;
-  padding: 0.75rem 1.5rem;
+  padding: 0.8rem 1.6rem;
   border-radius: var(--radius-full);
-  font-weight: 600;
+  font-weight: 700;
   transition: var(--transition-base);
   cursor: pointer;
   border: none;
   outline: none;
   gap: 0.5rem;
-  font-size: 1rem;
+  font-size: 0.95rem;
 }
 
 .btn-primary {
@@ -149,8 +175,12 @@ a:hover {
 }
 
 .btn-primary:hover:not(:disabled) {
-  transform: translateY(-2px);
+  transform: translateY(-3px) scale(1.02);
   box-shadow: var(--shadow-lg);
+}
+
+.btn-primary:active:not(:disabled) {
+  transform: translateY(-1px) scale(0.98);
 }
 
 .btn-secondary {
@@ -162,7 +192,12 @@ a:hover {
 .btn-secondary:hover:not(:disabled) {
   border-color: var(--primary-color);
   background: var(--card-hover);
-  transform: translateY(-2px);
+  transform: translateY(-3px) scale(1.02);
+  box-shadow: var(--shadow-sm);
+}
+
+.btn-secondary:active:not(:disabled) {
+  transform: translateY(-1px) scale(0.98);
 }
 
 .btn-ghost {
@@ -171,14 +206,16 @@ a:hover {
 }
 
 .btn-ghost:hover {
-  background: rgba(255, 159, 69, 0.1);
+  background: rgba(255, 126, 33, 0.08);
   color: var(--primary-color);
+  transform: translateY(-1px);
 }
 
 .btn:disabled {
-  opacity: 0.6;
+  opacity: 0.5;
   cursor: not-allowed;
   transform: none !important;
+  box-shadow: none !important;
 }
 
 /* 卡片组件 */
@@ -186,51 +223,72 @@ a:hover {
   background: var(--card-bg);
   border-radius: var(--radius-md);
   border: 1px solid var(--border-color);
-  padding: 1.5rem;
+  padding: 1.75rem;
   transition: var(--transition-base);
+  backdrop-filter: blur(8px);
 }
 
 .card-hover:hover {
-  transform: translateY(-4px);
+  transform: translateY(-6px) scale(1.015);
   box-shadow: var(--shadow-lg);
-  border-color: var(--primary-color);
+  border-color: rgba(255, 126, 33, 0.4);
   background: var(--card-hover);
 }
 
 /* 玻璃拟态效果 */
 .glass {
-  background: rgba(255, 255, 255, 0.7);
-  backdrop-filter: blur(12px);
-  -webkit-backdrop-filter: blur(12px);
-  border: 1px solid rgba(255, 255, 255, 0.5);
+  background: rgba(255, 255, 255, 0.65);
+  backdrop-filter: blur(20px) saturate(180%);
+  -webkit-backdrop-filter: blur(20px) saturate(180%);
+  border: 1px solid rgba(255, 255, 255, 0.45);
+}
+
+@media (prefers-color-scheme: dark) {
+  .glass {
+    background: rgba(35, 24, 20, 0.65);
+    border: 1px solid rgba(255, 255, 255, 0.08);
+  }
+}
+
+/* 背景模糊光圈动效 */
+@keyframes blob-float {
+  0%, 100% {
+    transform: translate(0, 0) scale(1) rotate(0deg);
+  }
+  33% {
+    transform: translate(40px, -60px) scale(1.15) rotate(120deg);
+  }
+  66% {
+    transform: translate(-30px, 30px) scale(0.9) rotate(240deg);
+  }
 }
 
 /* 动画 */
 @keyframes fadeIn {
-  from { opacity: 0; }
-  to { opacity: 1; }
+  from { opacity: 0; transform: translateY(10px); }
+  to { opacity: 1; transform: translateY(0); }
 }
 
 @keyframes slideUp {
-  from { opacity: 0; transform: translateY(20px); }
+  from { opacity: 0; transform: translateY(24px); }
   to { opacity: 1; transform: translateY(0); }
 }
 
 @keyframes bounce {
   0%, 100% { transform: translateY(0); }
-  50% { transform: translateY(-10px); }
+  50% { transform: translateY(-8px); }
 }
 
 .animate-fade-in {
-  animation: fadeIn 0.6s ease-out forwards;
+  animation: fadeIn 0.5s cubic-bezier(0.34, 1.56, 0.64, 1) forwards;
 }
 
 .animate-slide-up {
-  animation: slideUp 0.6s ease-out forwards;
+  animation: slideUp 0.6s cubic-bezier(0.34, 1.56, 0.64, 1) forwards;
 }
 
 .animate-bounce {
-  animation: bounce 2s infinite;
+  animation: bounce 2.2s infinite ease-in-out;
 }
 
 /* 实用工具类 */
@@ -259,12 +317,13 @@ a:hover {
   }
   
   :root {
-    --font-size-h1: 24px;
-    --radius-lg: 20px;
+    --font-size-h1: 2rem;
+    --radius-lg: 24px;
   }
   
   .btn {
-    min-height: 44px;
+    min-height: 48px;
+    padding: 0.8rem 1.4rem;
   }
 }
 
@@ -277,18 +336,30 @@ a:hover {
 
 .gsc-search-button-v2 {
   border-radius: 50% !important;
-  padding: 8px !important;
+  padding: 10px !important;
   cursor: pointer !important;
+  background-color: var(--primary-color) !important;
+  border-color: var(--primary-color) !important;
+}
+
+.gsc-search-button-v2:hover {
+  background-color: var(--primary-hover) !important;
 }
 
 .gsc-input-box {
   border-radius: 9999px !important;
-  border: 1px solid var(--border-color) !important;
-  padding: 4px 12px !important;
+  border: 1.5px solid var(--border-color) !important;
+  padding: 6px 14px !important;
   box-shadow: none !important;
+  background: rgba(255, 255, 255, 0.8) !important;
 }
 
-/* 强制结果框全屏居中显示 (伪 Overlay) */
+.gsc-input-box:focus-within {
+  border-color: var(--primary-color) !important;
+  box-shadow: 0 0 0 4px rgba(255, 126, 33, 0.15) !important;
+}
+
+/* 强制结果框全屏居中显示 */
 .gsc-results-wrapper-nooverlay.gsc-results-wrapper-visible {
   position: fixed !important;
   top: 50% !important;
@@ -298,17 +369,16 @@ a:hover {
   max-width: 800px !important;
   height: 80vh !important;
   max-height: 800px !important;
-  background: #ffffff !important;
+  background: var(--surface-color) !important;
   z-index: 10000 !important;
-  box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.25) !important;
-  border-radius: 24px !important;
+  box-shadow: var(--shadow-lg) !important;
+  border-radius: var(--radius-lg) !important;
   padding: 24px !important;
   overflow-y: auto !important;
-  border: 1px solid var(--primary-color) !important;
-  animation: fadeIn 0.3s ease-out;
+  border: 2px solid var(--primary-color) !important;
+  animation: fadeIn 0.3s cubic-bezier(0.34, 1.56, 0.64, 1);
 }
 
-/* 遮罩层效果 */
 .gsc-results-wrapper-nooverlay.gsc-results-wrapper-visible::before {
   content: "点击外部或右上角关闭";
   position: absolute;
@@ -316,15 +386,15 @@ a:hover {
   left: 0;
   right: 0;
   padding: 8px;
-  background: var(--primary-color);
+  background: var(--gradient-warm);
   color: white;
   text-align: center;
   font-size: 12px;
-  border-radius: 24px 24px 0 0;
+  font-weight: 700;
+  border-radius: var(--radius-lg) var(--radius-lg) 0 0;
   pointer-events: none;
 }
 
-/* 结果内容美化 */
 .gs-webResult.gs-result {
   padding: 16px !important;
   border-bottom: 1px solid var(--border-color) !important;
@@ -338,5 +408,5 @@ a:hover {
 
 .gs-snippet {
   color: var(--text-secondary) !important;
-  line-height: 1.6 !important;
+  line-height: 1.7 !important;
 }

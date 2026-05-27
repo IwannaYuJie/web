@@ -1,6 +1,7 @@
 import { Suspense, lazy, useState, useEffect, useMemo } from 'react'
 import { useParams, Link, useNavigate } from 'react-router-dom'
-import { useArticle } from '../hooks/useArticles'
+import { useArticle, useArticlesData } from '../hooks/useArticles'
+import { getRelatedArticles, getSortedArticles } from '../utils/blogInsights'
 import { extractMarkdownToc } from '../utils/markdownUtils'
 
 const MarkdownRenderer = lazy(() => import('../components/MarkdownRenderer'))
@@ -13,10 +14,12 @@ function ArticleDetail() {
   const { id } = useParams()
   const navigate = useNavigate()
   const { article, loading, error, liked, toggleLike } = useArticle(id)
+  const { articles: allArticles } = useArticlesData()
 
   // 阅读进度
   const [readProgress, setReadProgress] = useState(0)
   const [showToc, setShowToc] = useState(false)
+  const [copyStatus, setCopyStatus] = useState('')
 
   // 计算阅读进度
   useEffect(() => {
@@ -53,6 +56,35 @@ function ArticleDetail() {
   const toc = useMemo(() => {
     return article ? extractMarkdownToc(article.content) : []
   }, [article])
+
+  const relatedArticles = useMemo(() => {
+    return getRelatedArticles(article, allArticles, 3)
+  }, [article, allArticles])
+
+  const articleNavigation = useMemo(() => {
+    if (!article) {
+      return { newer: null, older: null }
+    }
+
+    const sorted = getSortedArticles(allArticles)
+    const currentIndex = sorted.findIndex(item => String(item.id) === String(article.id))
+
+    return {
+      newer: currentIndex > 0 ? sorted[currentIndex - 1] : null,
+      older: currentIndex >= 0 && currentIndex < sorted.length - 1 ? sorted[currentIndex + 1] : null,
+    }
+  }, [article, allArticles])
+
+  const copyCurrentUrl = async () => {
+    try {
+      await navigator.clipboard.writeText(window.location.href)
+      setCopyStatus('已复制')
+      window.setTimeout(() => setCopyStatus(''), 1600)
+    } catch {
+      setCopyStatus('复制失败')
+      window.setTimeout(() => setCopyStatus(''), 1600)
+    }
+  }
 
   if (loading) {
     return (
@@ -110,13 +142,10 @@ function ArticleDetail() {
               </button>
             )}
             <button
-              onClick={() => {
-                navigator.clipboard.writeText(window.location.href)
-                alert('链接已复制到剪贴板！')
-              }}
+              onClick={copyCurrentUrl}
               className="btn btn-ghost text-sm"
             >
-              🔗 分享
+              🔗 {copyStatus || '分享'}
             </button>
           </div>
         </div>
@@ -251,6 +280,50 @@ function ArticleDetail() {
                 </div>
               </div>
             </div>
+
+            {(relatedArticles.length > 0 || articleNavigation.newer || articleNavigation.older) && (
+              <section className="mt-8 grid gap-6 lg:grid-cols-[1fr_320px] animate-slide-up" style={{ animationDelay: '0.25s' }}>
+                {relatedArticles.length > 0 && (
+                  <div className="glass p-6 rounded-2xl">
+                    <h2 className="text-xl font-extrabold text-text-color mb-4">相关阅读</h2>
+                    <div className="grid gap-3">
+                      {relatedArticles.map(item => (
+                        <Link key={item.id} to={`/article/${item.id}`} className="card card-hover block bg-white/75">
+                          <div className="flex flex-wrap gap-2 text-xs text-text-light mb-2">
+                            <span>{item.category}</span>
+                            <span>{item.date}</span>
+                            <span>{item.readTime} 分钟</span>
+                          </div>
+                          <h3 className="font-extrabold text-text-color">{item.title}</h3>
+                          <p className="text-sm text-text-secondary mt-2 line-clamp-2">{item.description}</p>
+                        </Link>
+                      ))}
+                    </div>
+                  </div>
+                )}
+
+                <aside className="glass p-6 rounded-2xl">
+                  <h2 className="text-lg font-extrabold text-text-color mb-4">前后阅读</h2>
+                  <div className="space-y-3">
+                    {articleNavigation.newer && (
+                      <Link to={`/article/${articleNavigation.newer.id}`} className="block rounded-xl bg-white/70 p-3 hover:bg-card-hover transition-colors">
+                        <div className="text-xs font-bold text-primary mb-1">上一篇</div>
+                        <div className="font-bold text-sm text-text-color line-clamp-2">{articleNavigation.newer.title}</div>
+                      </Link>
+                    )}
+                    {articleNavigation.older && (
+                      <Link to={`/article/${articleNavigation.older.id}`} className="block rounded-xl bg-white/70 p-3 hover:bg-card-hover transition-colors">
+                        <div className="text-xs font-bold text-primary mb-1">下一篇</div>
+                        <div className="font-bold text-sm text-text-color line-clamp-2">{articleNavigation.older.title}</div>
+                      </Link>
+                    )}
+                    {!articleNavigation.newer && !articleNavigation.older && (
+                      <p className="text-sm text-text-secondary">这是当前归档里唯一一篇文章。</p>
+                    )}
+                  </div>
+                </aside>
+              </section>
+            )}
 
             {/* Footer Actions */}
             <div className="mt-8 flex justify-center gap-4 animate-slide-up" style={{ animationDelay: '0.3s' }}>
