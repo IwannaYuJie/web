@@ -34,7 +34,7 @@ function HomeQuoteCard() {
     <div className="glass p-6 rounded-2xl relative overflow-hidden">
       <div className="absolute -right-4 -top-4 text-9xl text-primary/5 opacity-20 select-none">”</div>
       <h2 className="text-lg font-bold mb-4 flex items-center gap-2">
-        <span>🐾</span> 每日智慧
+        <span>🐾</span> 灵感抽卡
       </h2>
       <div className="mb-6 min-h-[100px] flex flex-col justify-center">
         {quote ? (
@@ -43,7 +43,7 @@ function HomeQuoteCard() {
             <footer className="text-right mt-2 text-sm font-bold not-italic text-primary">— {quote.author}</footer>
           </blockquote>
         ) : (
-          <div className="text-center text-text-light text-sm">点击下方按钮获取灵感...</div>
+          <div className="text-center text-text-light text-sm">点下面按钮随便抽一句...</div>
         )}
       </div>
       <button
@@ -51,7 +51,7 @@ function HomeQuoteCard() {
         disabled={quoteLoading}
         className="w-full btn btn-secondary justify-center"
       >
-        {quoteLoading ? '🤔 思考中...' : '🎲 获取灵感'}
+        {quoteLoading ? '🤔 抽卡中...' : '🎲 抽一张'}
       </button>
     </div>
   )

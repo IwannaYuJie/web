@@ -68,7 +68,7 @@ function TimestampConverter() {
         emoji="⏱️"
         tag="时间工具"
         title="时间戳转换"
-        desc="Unix 时间戳与日期时间双向转换，支持秒 / 毫秒，本地时区与 UTC 同时显示。"
+        desc="时间戳和日常日期互转，秒、毫秒都行，本地时区和 UTC 一起给你列出来。"
       />
 
       <div className="card mb-5">
@@ -87,7 +87,7 @@ function TimestampConverter() {
             onClick={fillNow}
             className="px-4 py-2 rounded-full bg-primary text-white text-sm font-bold hover:bg-primary-hover"
           >
-            填入当前时间
+            填入当前
           </button>
         </div>
       </div>
@@ -122,7 +122,7 @@ function TimestampConverter() {
               ['距现在', relative(parsedDate.getTime())],
             ]} />
           ) : (
-            <div className="text-text-secondary text-sm">输入一个时间戳查看结果</div>
+            <div className="text-text-secondary text-sm">输个时间戳看看结果~</div>
           )}
         </div>
 
@@ -146,7 +146,7 @@ function TimestampConverter() {
               ['距现在', relative(dateMs)],
             ]} />
           ) : (
-            <div className="text-text-secondary text-sm">输入一个日期查看时间戳</div>
+            <div className="text-text-secondary text-sm">输个日期查查时间戳~</div>
           )}
         </div>
       </div>

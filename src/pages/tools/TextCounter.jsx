@@ -18,14 +18,14 @@ function TextCounter() {
   const stats = useMemo(() => countStats(text), [text])
 
   const items = [
-    ['字符数', stats.chars],
-    ['字符数（不含空白）', stats.charsNoSpace],
-    ['字节数 (UTF-8)', stats.bytes],
+    ['总字数', stats.chars],
+    ['总字数（不要空格）', stats.charsNoSpace],
+    ['字节 (UTF-8)', stats.bytes],
     ['英文/数字单词', stats.words],
-    ['中日韩字符', stats.cjk],
-    ['行数', stats.lines],
-    ['段落数', stats.paragraphs],
-    ['预计阅读时长', `${stats.readingMinutes} 分钟`],
+    ['中日韩文字', stats.cjk],
+    ['一共几行', stats.lines],
+    ['段落', stats.paragraphs],
+    ['大概要读', `${stats.readingMinutes} 分钟`],
   ]
 
   return (
@@ -34,28 +34,28 @@ function TextCounter() {
         emoji="🔤"
         tag="文本工具"
         title="文本统计"
-        desc="统计字符数、字节数、单词、中日韩字符、行数、段落数与预计阅读时长。"
+        desc="贴段文字，帮你数数有多少个字、中英文字符、占多少字节、还要读多久。"
       />
 
       <div className="grid grid-cols-1 lg:grid-cols-[1fr_320px] gap-5">
         <div className="card">
           <div className="flex items-center justify-between mb-3">
-            <h3 className="font-bold text-primary">文本</h3>
+            <h3 className="font-bold text-primary">输入文本</h3>
             <div className="flex gap-2">
               <button
                 onClick={() => setText('')}
                 className="text-xs px-3 py-1 rounded-full bg-primary/10 text-primary hover:bg-primary/20"
-              >清空</button>
+              >全部清空</button>
               <button
                 onClick={async () => setText(await navigator.clipboard.readText().catch(() => ''))}
                 className="text-xs px-3 py-1 rounded-full bg-primary/10 text-primary hover:bg-primary/20"
-              >从剪贴板</button>
+              >贴剪贴板</button>
             </div>
           </div>
           <textarea
             value={text}
             onChange={(e) => setText(e.target.value)}
-            placeholder="在这里粘贴或输入文本…"
+            placeholder="把文本贴到这里…"
             className="w-full h-96 p-3 rounded-xl border-2 border-[var(--border-color)] bg-white/80 text-sm focus:outline-none focus:border-primary"
           />
         </div>

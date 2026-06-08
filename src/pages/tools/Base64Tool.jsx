@@ -67,7 +67,7 @@ function Base64Tool() {
         emoji="🔐"
         tag="编码工具"
         title="Base64 编解码"
-        desc="文本与文件的 Base64 编解码，支持 URL-safe 变体。文件不会上传，仅在浏览器内处理。"
+        desc="文本和文件转成 Base64，或者转回来。支持 URL-safe 模式，文件不传服务器。"
       />
 
       <div className="card mb-5">
@@ -97,7 +97,7 @@ function Base64Tool() {
               onChange={(e) => setInput(e.target.value)}
               spellCheck={false}
               className="w-full h-56 p-3 rounded-xl border-2 border-[var(--border-color)] bg-white/80 font-mono text-sm focus:outline-none focus:border-primary"
-              placeholder={mode === 'encode' ? '输入要编码的文本…' : '粘贴 Base64 字符串…'}
+              placeholder={mode === 'encode' ? '把原文写在这里…' : '把 Base64 贴在这里…'}
             />
           </div>
           <div>
@@ -113,7 +113,7 @@ function Base64Tool() {
             </div>
             {result.ok ? (
               <pre className="w-full h-56 overflow-auto p-3 rounded-xl border-2 border-[var(--border-color)] bg-white/80 font-mono text-sm whitespace-pre-wrap break-all">
-                {result.output || <span className="text-text-secondary">结果会显示在这里。</span>}
+                {result.output || <span className="text-text-secondary">结果会显示在这~</span>}
               </pre>
             ) : (
               <div className="w-full h-56 p-3 rounded-xl border-2 border-red-300 bg-red-50/60 text-red-700 text-sm font-mono">
@@ -129,7 +129,7 @@ function Base64Tool() {
         <label className="block border-2 border-dashed border-[var(--border-color)] rounded-xl p-6 text-center cursor-pointer hover:border-primary hover:bg-primary/5">
           <input type="file" onChange={handleFile} className="hidden" />
           <div className="text-3xl mb-1">📤</div>
-          <div className="text-sm text-text-secondary">点击选择文件（图片、文本等）</div>
+          <div className="text-sm text-text-secondary">点这里选文件（支持图片、文本什么的）</div>
         </label>
 
         {fileResult && (

@@ -75,7 +75,7 @@ function ArticleDetail() {
       <div className="wrap flex-center" style={{ minHeight: '60vh' }}>
         <div style={{ textAlign: 'center' }}>
           <div className="animate-bounce" style={{ fontSize: 60, marginBottom: 16 }}>🐱</div>
-          <h2 style={{ fontFamily: 'var(--serif)', fontWeight: 900, fontSize: 22, color: 'var(--accent)' }}>正在潜心阅读中…</h2>
+          <h2 style={{ fontFamily: 'var(--serif)', fontWeight: 900, fontSize: 22, color: 'var(--accent)' }}>文章加载中…</h2>
         </div>
       </div>
     )
@@ -89,7 +89,7 @@ function ArticleDetail() {
           <h1 style={{ fontFamily: 'var(--serif)', fontWeight: 900, fontSize: 26, color: 'var(--berry)', margin: '12px 0' }}>
             {error || '文章不存在'}
           </h1>
-          <p style={{ color: 'var(--ink-soft)', marginBottom: 22 }}>这篇文章可能已经被橘猫藏起来了…</p>
+          <p style={{ color: 'var(--ink-soft)', marginBottom: 22 }}>这篇可能被我藏起来或删了。</p>
           <Link to="/" className="btn">🏠 返回首页</Link>
         </div>
       </div>
@@ -154,7 +154,7 @@ function ArticleDetail() {
                   onClick={toggleLike}
                   style={liked ? { background: 'var(--berry)' } : undefined}
                 >
-                  {liked ? '🧡 已喜欢' : '🤍 喜欢这篇'}
+                  {liked ? '🧡 已点赞' : '🤍 点个赞'}
                 </button>
                 <button className="btn ghost" onClick={copyCurrentUrl}>
                   🔗 {copyStatus || '复制链接'}

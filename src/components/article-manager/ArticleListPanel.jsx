@@ -22,7 +22,7 @@ function ArticleListPanel({
           type="text"
           value={searchQuery}
           onChange={(e) => setSearchQuery(e.target.value)}
-          placeholder="搜索文章标题、描述或分类..."
+          placeholder="搜一搜标题、描述或分类..."
           className="w-full pl-11 pr-10 py-3 rounded-xl border border-border-color bg-white/70 focus:bg-white focus:border-primary focus:shadow-md outline-none transition-all"
         />
         {searchQuery && (
@@ -44,7 +44,7 @@ function ArticleListPanel({
       {loading && (
         <div className="glass p-12 rounded-2xl text-center animate-pulse">
           <div className="text-4xl mb-4">🐱</div>
-          <p className="text-text-secondary">正在加载文章数据...</p>
+          <p className="text-text-secondary">文章加载中...</p>
         </div>
       )}
 
@@ -138,7 +138,7 @@ function ArticleListPanel({
                 </>
               ) : (
                 <>
-                  <p className="text-text-secondary mb-4">暂无文章，开始创作你的第一篇博客吧！</p>
+                  <p className="text-text-secondary mb-4">还没写文章呢，赶紧来一篇！</p>
                   <button onClick={handleAddNew} className="btn btn-primary">
                     ✨ 创建文章
                   </button>

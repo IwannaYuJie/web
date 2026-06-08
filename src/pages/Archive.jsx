@@ -64,13 +64,13 @@ function Archive() {
 
   return (
     <div className="wrap" style={{ maxWidth: 900, paddingBottom: 48 }}>
-      <PageHead emoji="🗂️" title="文章归档" sub="按年份回顾全部文章" />
+      <PageHead emoji="🗂️" title="文章归档" sub="按年份翻一翻" />
 
       <div style={{ display: 'grid', gridTemplateColumns: 'repeat(4, 1fr)', gap: 12, marginBottom: 28 }}>
-        <StatPanel value={stats.articleCount} label="文章" />
-        <StatPanel value={stats.categoryCount} label="分类" />
-        <StatPanel value={stats.tagCount} label="标签" />
-        <StatPanel value={stats.totalReadMinutes} label="阅读分钟" />
+        <StatPanel value={stats.articleCount} label="篇文章" />
+        <StatPanel value={stats.categoryCount} label="个分类" />
+        <StatPanel value={stats.tagCount} label="个标签" />
+        <StatPanel value={stats.totalReadMinutes} label="分钟读完" />
       </div>
 
       <div className="panel" style={{ padding: 18, marginBottom: 24 }}>
@@ -81,7 +81,7 @@ function Archive() {
               type="text"
               value={searchQuery}
               onChange={e => setSearchQuery(e.target.value)}
-              placeholder="搜索标题、正文、描述或标签…"
+              placeholder="搜标题、正文、描述或标签…"
               style={{ paddingLeft: 38 }}
             />
           </div>
@@ -129,7 +129,7 @@ function Archive() {
       {loading ? (
         <div className="panel" style={{ textAlign: 'center', padding: 48 }}>
           <div className="animate-bounce" style={{ fontSize: 40 }}>🐱</div>
-          <p style={{ marginTop: 12, color: 'var(--ink-soft)' }}>正在整理归档…</p>
+          <p style={{ marginTop: 12, color: 'var(--ink-soft)' }}>归档加载中…</p>
         </div>
       ) : error ? (
         <div className="panel" style={{ textAlign: 'center', padding: 48, background: 'var(--k2-bg)' }}>
@@ -139,7 +139,7 @@ function Archive() {
       ) : archiveGroups.length === 0 ? (
         <div className="panel" style={{ textAlign: 'center', padding: 48 }}>
           <div style={{ fontSize: 40 }}>🍃</div>
-          <p style={{ marginTop: 12, color: 'var(--ink-soft)' }}>没有找到匹配的文章。</p>
+          <p style={{ marginTop: 12, color: 'var(--ink-soft)' }}>这个条件下没找到东西。</p>
           {hasFilters && <button onClick={clearFilters} className="btn ghost" style={{ marginTop: 16 }}>清除筛选</button>}
         </div>
       ) : (

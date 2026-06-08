@@ -99,7 +99,7 @@ function PasswordGenerator() {
         emoji="🔑"
         tag="安全工具"
         title="密码生成"
-        desc="使用 crypto.getRandomValues 生成强随机密码，自定义长度与字符集，整个过程不离开浏览器。"
+        desc="用浏览器自带的随机数生成器 (crypto) 做密码，长度、字符集随便调，全本地运行。"
       />
 
       <div className="grid grid-cols-1 lg:grid-cols-[320px_1fr] gap-5">
@@ -160,7 +160,7 @@ function PasswordGenerator() {
         </div>
 
         <div className="card">
-          <h3 className="font-bold text-primary mb-3">生成结果</h3>
+          <h3 className="font-bold text-primary mb-3">随机密码</h3>
           <div className="space-y-2">
             {list.map((pwd, i) => {
               const s = strengthOf(pwd)

@@ -50,7 +50,7 @@ function Footer() {
           <div className="panel-h" style={{ color: 'var(--sun)' }}>小窝状态</div>
           <div className="foot-visits">{visitors.toLocaleString()}</div>
           <div className="foot-visits-label">累计访客</div>
-          <p className="foot-copy">© {new Date().getFullYear()} 橘猫小窝 🐾 · 用 🧡 和 ☕ 制作</p>
+          <p className="foot-copy">© {new Date().getFullYear()} 橘猫小窝 · 慢更但还在更 🐾</p>
         </div>
       </div>
     </footer>

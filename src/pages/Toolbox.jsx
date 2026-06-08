@@ -4,16 +4,16 @@ const TOOLS = [
   {
     id: 'json-formatter',
     title: 'JSON 格式化',
-    description: '校验、美化、压缩 JSON。一眼看清结构，复制压缩版直接拿去用。',
+    description: '校验 / 美化 / 压缩 JSON，复制就能用。',
     icon: '🧾',
     path: '/toolbox/json-formatter',
-    tag: '高频',
+    tag: '常用',
     k: 'k1',
   },
   {
     id: 'timestamp',
     title: '时间戳转换',
-    description: 'Unix 时间戳与日期时间互转，支持秒 / 毫秒，本地与 UTC 同时显示。',
+    description: 'Unix 时间戳和日期互转，秒、毫秒、本地、UTC 都显示。',
     icon: '⏱️',
     path: '/toolbox/timestamp',
     tag: '常用',
@@ -22,7 +22,7 @@ const TOOLS = [
   {
     id: 'base64',
     title: 'Base64 编解码',
-    description: '文本与文件的 Base64 编解码，支持 URL-safe，文件不会上传。',
+    description: '文本和文件的 Base64 编解码，文件不会上传服务器。',
     icon: '🔐',
     path: '/toolbox/base64',
     tag: '常用',
@@ -31,7 +31,7 @@ const TOOLS = [
   {
     id: 'color',
     title: '颜色转换',
-    description: 'HEX、RGB、HSL 三种格式互转，附带取色板和常用预设。',
+    description: 'HEX / RGB / HSL 互转，附取色板和几个预设。',
     icon: '🎨',
     path: '/toolbox/color',
     tag: '设计',
@@ -40,7 +40,7 @@ const TOOLS = [
   {
     id: 'text-counter',
     title: '文本统计',
-    description: '统计字符数、字节数、单词、中日韩字符、行数与预计阅读时长。',
+    description: '数字符、字节、单词、CJK 字数、行数，估算阅读时间。',
     icon: '🔤',
     path: '/toolbox/text-counter',
     tag: '写作',
@@ -49,7 +49,7 @@ const TOOLS = [
   {
     id: 'password',
     title: '密码生成',
-    description: '基于 Web Crypto 的强随机密码生成，自定义长度和字符集。',
+    description: '用 Web Crypto 生成随机密码，长度和字符集都能调。',
     icon: '🔑',
     path: '/toolbox/password',
     tag: '安全',
@@ -58,7 +58,7 @@ const TOOLS = [
   {
     id: 'sprite-sheet-to-gif',
     title: '精灵图转 GIF',
-    description: '把精灵图按行列切分，再按指定 FPS 合成为 GIF 动画，浏览器内一键完成。',
+    description: '切分精灵图，按 FPS 合成 GIF，浏览器里跑完。',
     icon: '🎞️',
     path: '/toolbox/sprite-sheet-to-gif',
     tag: '招牌',
@@ -80,7 +80,7 @@ function PageHead({ emoji, title, sub }) {
 function Toolbox() {
   return (
     <div className="wrap" style={{ maxWidth: 1000, paddingBottom: 48 }}>
-      <PageHead emoji="🧰" title="实用工具箱" sub="开发日常高频小工具，全部本地运行，不上传数据" />
+      <PageHead emoji="🧰" title="工具箱" sub="自己常用的小工具，跑在浏览器里，不上传任何东西" />
 
       <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(280px, 1fr))', gap: 16 }}>
         {TOOLS.map(t => (

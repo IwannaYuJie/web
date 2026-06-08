@@ -273,9 +273,9 @@ function ArticleManager() {
           </h1>
         </div>
         <div className="panel" style={{ background: 'var(--k3-bg)', padding: 30 }}>
-          <div className="panel-h">🔑 管理员登录</div>
+          <div className="panel-h">🔑 后台登录</div>
           <p style={{ fontSize: 13.5, color: 'var(--ink-soft)', marginBottom: 18, lineHeight: 1.6 }}>
-            输入管理员密钥后可新增、编辑、删除文章。数据写入 Cloudflare KV。
+            输完密钥才能改文章。数据存在 Cloudflare KV。
           </p>
           <form onSubmit={handleLogin}>
             <div style={{ position: 'relative', marginBottom: 14 }}>
@@ -289,7 +289,7 @@ function ArticleManager() {
               />
             </div>
             <button type="submit" className="btn" style={{ width: '100%', justifyContent: 'center' }}>
-              登录管理后台 →
+              进去 →
             </button>
           </form>
           <div style={{ marginTop: 20, fontSize: 13, textAlign: 'center' }}>
@@ -309,7 +309,7 @@ function ArticleManager() {
               ✍️ 文章管理
             </h1>
             <p style={{ fontSize: 14.5, color: 'var(--ink-soft)', marginTop: 8, fontWeight: 500 }}>
-              共 {articles.length} 篇 · 管理员已登录
+              共 {articles.length} 篇 · 已登录
             </p>
           </div>
           <div style={{ display: 'flex', gap: 10, flexWrap: 'wrap' }}>

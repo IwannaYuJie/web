@@ -189,7 +189,7 @@ function SpriteSheetToGif() {
             精灵图转 GIF
           </h1>
           <p className="text-base text-text-secondary leading-relaxed">
-            上传精灵图 → 设置行列 → 调速 → 一键生成 GIF。整个流程在浏览器里完成。
+            把精灵图切成一帧一帧的，然后合成 GIF 动画，浏览器里一键搞定。
           </p>
         </div>
         <div className="relative z-10 text-6xl md:text-7xl select-none" aria-hidden="true">
@@ -213,8 +213,8 @@ function SpriteSheetToGif() {
                 style={{ display: 'none' }}
               />
               <span className="upload-icon">📤</span>
-              <p>点击或拖拽上传</p>
-              <p style={{ fontSize: '0.8rem', color: 'var(--text-secondary)' }}>PNG, JPG (推荐透明背景)</p>
+              <p>点这里或者把图片拖进来</p>
+              <p style={{ fontSize: '0.8rem', color: 'var(--text-secondary)' }}>PNG, JPG (透明底的更好看)</p>
             </label>
           </div>
 
@@ -224,7 +224,7 @@ function SpriteSheetToGif() {
             <div className="setting-group">
               <div className="setting-row">
                 <div className="setting-item">
-                  <label>横向分割数 (列)</label>
+                  <label>横着切几刀 (列数)</label>
                   <input
                     type="number"
                     className="setting-input"
@@ -234,7 +234,7 @@ function SpriteSheetToGif() {
                   />
                 </div>
                 <div className="setting-item">
-                  <label>纵向分割数 (行)</label>
+                  <label>竖着切几刀 (行数)</label>
                   <input
                     type="number"
                     className="setting-input"
@@ -261,15 +261,15 @@ function SpriteSheetToGif() {
             {image && (
               <div className="info-display">
                 <div className="info-row">
-                  <span>图像尺寸:</span>
+                  <span>图片总大小:</span>
                   <span>{image.width}px x {image.height}px</span>
                 </div>
                 <div className="info-row">
-                  <span>单帧尺寸:</span>
+                  <span>单帧大小:</span>
                   <span>{frameWidth}px x {frameHeight}px</span>
                 </div>
                 <div className="info-row">
-                  <span>总帧数:</span>
+                  <span>一共几帧:</span>
                   <span>{cols * rows}</span>
                 </div>
               </div>
@@ -293,7 +293,7 @@ function SpriteSheetToGif() {
               {image ? (
                 <canvas ref={previewCanvasRef} style={{ maxWidth: '100%', maxHeight: '200px', objectFit: 'contain' }} />
               ) : (
-                <span style={{ color: 'var(--text-secondary)' }}>等待上传...</span>
+                <span style={{ color: 'var(--text-secondary)' }}>等图来...</span>
               )}
             </div>
           </div>
@@ -309,7 +309,7 @@ function SpriteSheetToGif() {
               ) : (
                 <div className="empty-state">
                   <span style={{ fontSize: '3rem' }}>🖼️</span>
-                  <p>请从左侧面板上传图像</p>
+                  <p>先在左边传张图吧~</p>
                 </div>
               )}
             </div>
@@ -320,12 +320,12 @@ function SpriteSheetToGif() {
               disabled={!image || isGenerating}
               style={{ opacity: (!image || isGenerating) ? 0.7 : 1, cursor: (!image || isGenerating) ? 'not-allowed' : 'pointer' }}
             >
-              {isGenerating ? '⏳ 生成中...' : '🎞️ 生成 GIF 动画'}
+              {isGenerating ? '⏳ 正在生成...' : '🎞️ 生成 GIF'}
             </button>
 
             {generatedGif && (
               <div style={{ marginTop: '1rem', textAlign: 'center', animation: 'fadeIn 0.5s' }}>
-                <p style={{ marginBottom: '0.5rem', color: 'var(--primary-color)', fontWeight: 'bold' }}>✨ 生成成功!</p>
+                <p style={{ marginBottom: '0.5rem', color: 'var(--primary-color)', fontStyle: 'normal', fontWeight: 'bold' }}>✨ 搞定了！</p>
                 <img src={generatedGif} alt="Generated GIF" style={{ maxWidth: '100%', border: '2px solid var(--primary-color)', borderRadius: 'var(--radius-sm)', marginBottom: '1rem' }} />
                 <a
                   href={generatedGif}
@@ -333,7 +333,7 @@ function SpriteSheetToGif() {
                   className="secondary-button"
                   style={{ display: 'inline-block', textDecoration: 'none' }}
                 >
-                  ⬇️ 下载 GIF
+                  ⬇️ 存下 GIF
                 </a>
               </div>
             )}

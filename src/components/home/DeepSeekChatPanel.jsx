@@ -322,11 +322,11 @@ function DeepSeekChatPanel() {
       {/* Header */}
       <div className="ds-panel-header">
         <div>
-          <div className="ds-eyebrow">DeepSeek API Console</div>
+          <div className="ds-eyebrow">DeepSeek 控制台</div>
           <h2 className="text-2xl font-bold flex items-center gap-2 text-primary">
             <span>🤖</span> DeepSeek 对话
           </h2>
-          <p>填入自己的 Key，就能在首页直接调用 DeepSeek V4。</p>
+          <p>填上你自己的 API Key 就可以直接调 DeepSeek V4 了。</p>
         </div>
         <div className="ds-live-badge">
           <span></span>
@@ -384,8 +384,8 @@ function DeepSeekChatPanel() {
         <div className="ds-settings-popover">
           <div className="ds-settings-head">
             <div>
-              <strong>请求参数</strong>
-              <p>统一管理 DeepSeek Chat Completion 参数</p>
+              <strong>参数调节</strong>
+              <p>调一调 Temperature、Max Tokens 这些常用参数</p>
             </div>
             <div className="ds-settings-head-actions">
               <button type="button" onClick={resetOptions}>恢复默认</button>
@@ -426,7 +426,7 @@ function DeepSeekChatPanel() {
                   checked={options.thinking}
                   onChange={e => updateOption('thinking', e.target.checked)}
                 />
-                <span>启用 thinking</span>
+                <span>开启深度思考 (Thinking)</span>
               </label>
 
               <label className="ds-field">
@@ -443,12 +443,12 @@ function DeepSeekChatPanel() {
               </label>
 
               <label className="ds-field ds-field-wide">
-                <span>system prompt（点保存后生效）</span>
+                <span>System Prompt (点保存后生效)</span>
                 <textarea
                   rows={3}
                   value={systemPromptDraft}
                   onChange={e => setSystemPromptDraft(e.target.value)}
-                  placeholder="例如：你是一个简洁、准确的中文助手。"
+                  placeholder="例如：用大白话回答，不要说废话。"
                 />
                 <div className="ds-field-actions">
                   <button type="button" onClick={saveSystemPrompt}>保存 system prompt</button>
@@ -550,7 +550,7 @@ function DeepSeekChatPanel() {
                   checked={options.logprobs}
                   onChange={e => updateOption('logprobs', e.target.checked)}
                 />
-                <span>返回 logprobs</span>
+                <span>返回 Token 概率 (logprobs)</span>
               </label>
 
               <label className="ds-field">
@@ -584,7 +584,7 @@ function DeepSeekChatPanel() {
         {messages.length === 0 && (
           <div className="ds-empty">
             <span className="text-4xl">🐱</span>
-            <p>输入问题，让橘猫帮你问问 DeepSeek～</p>
+            <p>输入问题，让橘猫帮你问问 DeepSeek 呗~</p>
           </div>
         )}
         {messages.map((msg, i) => (
@@ -617,7 +617,7 @@ function DeepSeekChatPanel() {
         value={input}
         onChange={e => setInput(e.target.value)}
         onKeyDown={handleKeyDown}
-        placeholder="输入消息…（Enter 发送，Shift+Enter 换行）"
+        placeholder="跟 DeepSeek 聊点什么… (Enter 发送，Shift+Enter 换行)"
         rows={2}
         className="ds-textarea"
         disabled={loading}
@@ -632,7 +632,7 @@ function DeepSeekChatPanel() {
           disabled={loading || !input.trim()}
           className="btn btn-primary"
         >
-          {loading ? '⏳ 生成中…' : '发送 ➤'}
+          {loading ? '⏳ 正在输出…' : '发送 ➤'}
         </button>
       </div>
     </div>

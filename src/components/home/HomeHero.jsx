@@ -5,13 +5,13 @@ import { useIntervalValue } from '../../hooks'
 
 function getGreeting(currentTime) {
   const hour = currentTime.getHours()
-  if (hour < 6) { return '🌙 夜深了，记得早点休息哦~' }
-  if (hour < 9) { return '🌅 早安！新的一天开始啦~' }
-  if (hour < 12) { return '☀️ 上午好！元气满满地工作吧~' }
-  if (hour < 14) { return '🍴 中午好！记得吃午饭哦~' }
-  if (hour < 18) { return '🌤️ 下午好！继续加油鸭~' }
+  if (hour < 6) { return '🌙 夜深了，熬夜中...' }
+  if (hour < 9) { return '🌅 早上好！' }
+  if (hour < 12) { return '☀️ 上午好！今天也要摸摸鱼~' }
+  if (hour < 14) { return '🍴 中午好，干饭时间！' }
+  if (hour < 18) { return '🌤️ 下午好，摸鱼中...' }
   if (hour < 22) { return '🌆 晚上好！今天辛苦啦~' }
-  return '🌃 夜深了，早点休息吧~'
+  return '🌃 挺晚了，该睡了~'
 }
 
 function HomeHero({ stats, featuredArticle }) {
@@ -62,13 +62,13 @@ function HomeHero({ stats, featuredArticle }) {
         </div>
         <div className="flex flex-wrap gap-3 mb-8">
           <a href="#articles" className="btn btn-primary">
-            📚 开始阅读
+            📚 随便看看
           </a>
           <Link to="/archive" className="btn btn-secondary">
-            🗂️ 文章归档
+            🗂️ 翻旧账 (归档)
           </Link>
           <Link to="/about" className="btn btn-ghost">
-            👋 关于小窝
+            👋 关于我
           </Link>
         </div>
         <div className="grid grid-cols-1 sm:grid-cols-3 gap-4 mt-8 pt-8 border-t border-border-color/60">
@@ -125,19 +125,19 @@ function HomeHero({ stats, featuredArticle }) {
 
         {/* 橘猫状态面板 */}
         <div className="rounded-xl bg-white/50 p-4 border border-white/40 space-y-3">
-          <div className="text-xs font-bold text-primary flex items-center gap-1">🐾 橘猫状态机</div>
+          <div className="text-xs font-bold text-primary flex items-center gap-1">🐾 最近在干嘛</div>
           <div className="grid grid-cols-2 gap-2 text-[11px] text-text-secondary">
             <div className="bg-white/40 p-2 rounded-lg border border-border-color/30">
-              <div>🍗 饱食度</div>
-              <div className="font-bold text-text-color mt-0.5">92% (已吃饱)</div>
+              <div>主线</div>
+              <div className="font-bold text-text-color mt-0.5">Java 25</div>
             </div>
             <div className="bg-white/40 p-2 rounded-lg border border-border-color/30">
-              <div>🔋 电量</div>
-              <div className="font-bold text-text-color mt-0.5">85% (元气满满)</div>
+              <div>副线</div>
+              <div className="font-bold text-text-color mt-0.5">AI 工具</div>
             </div>
             <div className="bg-white/40 p-2 rounded-lg border border-border-color/30 col-span-2">
-              <div>🎯 当前动态</div>
-              <div className="font-bold text-primary mt-0.5">正在打磨前端组件排版...</div>
+              <div>进度</div>
+              <div className="font-bold text-primary mt-0.5">顺便倒腾下这个博客</div>
             </div>
           </div>
         </div>

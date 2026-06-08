@@ -40,9 +40,9 @@ function JsonFormatter() {
     <div className="container pb-12 animate-fade-in">
       <ToolHero
         emoji="🧾"
-        tag="开发工具"
+        tag="常用"
         title="JSON 格式化 / 校验"
-        desc="粘贴 JSON 文本，自动校验、缩进美化、压缩。所有处理都在浏览器内完成。"
+        desc="贴上 JSON，自动校验、排版美化或者一键压缩，同样是在浏览器里跑。"
       />
 
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-5">
@@ -51,7 +51,7 @@ function JsonFormatter() {
             <h3 className="font-bold text-primary">📥 输入</h3>
             <div className="flex gap-2">
               <button className="text-xs px-3 py-1 rounded-full bg-primary/10 text-primary hover:bg-primary/20"
-                onClick={() => setInput(SAMPLE)}>示例</button>
+                onClick={() => setInput(SAMPLE)}>来个例子</button>
               <button className="text-xs px-3 py-1 rounded-full bg-primary/10 text-primary hover:bg-primary/20"
                 onClick={() => setInput('')}>清空</button>
             </div>
@@ -61,7 +61,7 @@ function JsonFormatter() {
             onChange={(e) => setInput(e.target.value)}
             spellCheck={false}
             className="w-full h-80 p-3 rounded-xl border-2 border-[var(--border-color)] bg-white/80 font-mono text-sm focus:outline-none focus:border-primary"
-            placeholder="在这里粘贴 JSON…"
+            placeholder="把 JSON 贴到这里…"
           />
           <div className="mt-3 flex flex-wrap items-center gap-3 text-sm text-text-secondary">
             <label className="flex items-center gap-2">
@@ -78,8 +78,8 @@ function JsonFormatter() {
             </label>
             <span className="ml-auto">
               {result.ok
-                ? <span className="text-green-600 font-bold">✓ 合法 JSON</span>
-                : <span className="text-red-600 font-bold">✗ 解析失败</span>}
+                ? <span className="text-green-600 font-bold">✓ 格式没问题</span>
+                : <span className="text-red-600 font-bold">✗ 解析失败了</span>}
             </span>
           </div>
         </div>
@@ -107,7 +107,7 @@ function JsonFormatter() {
 
           {result.ok ? (
             <pre className="w-full h-80 overflow-auto p-3 rounded-xl border-2 border-[var(--border-color)] bg-white/80 font-mono text-sm whitespace-pre-wrap break-all">
-              {result.output || <span className="text-text-secondary">输入合法 JSON 后，会显示在这里。</span>}
+               {result.output || <span className="text-text-secondary">格式化后的内容会显示在这~</span>}
             </pre>
           ) : (
             <div className="w-full h-80 p-3 rounded-xl border-2 border-red-300 bg-red-50/60 text-red-700 text-sm font-mono whitespace-pre-wrap">
@@ -117,8 +117,8 @@ function JsonFormatter() {
 
           {result.ok && result.output && (
             <div className="mt-3 text-sm text-text-secondary flex justify-between">
-              <span>字节数: {result.size}</span>
-              <span>压缩后: {new Blob([minified]).size} B</span>
+              <span>大小: {result.size} B</span>
+              <span>压扁后: {new Blob([minified]).size} B</span>
             </div>
           )}
         </div>

@@ -30,10 +30,10 @@ function Hero({ stats, cover }) {
   }, [])
 
   const items = [
-    [pad2(stats.articleCount), '篇长文'],
-    [pad2(stats.categoryCount), '分类'],
-    [pad2(stats.tagCount), '标签'],
-    [pad2(Math.min(stats.totalReadMinutes, 99)), '分钟'],
+    [pad2(stats.articleCount), '篇文章'],
+    [pad2(stats.categoryCount), '个分类'],
+    [pad2(stats.tagCount), '个标签'],
+    [pad2(Math.min(stats.totalReadMinutes, 99)), '分钟读完'],
   ]
 
   return (
@@ -41,29 +41,29 @@ function Hero({ stats, cover }) {
       <div className="hero-grid" style={{ display: 'grid', gridTemplateColumns: 'minmax(0,1fr) minmax(380px,.92fr)', gap: 32, alignItems: 'stretch' }}>
         <div style={{ display: 'flex', flexDirection: 'column' }}>
           <div style={{ fontFamily: 'var(--disp)', fontSize: 13, fontWeight: 800, letterSpacing: '.1em', textTransform: 'uppercase', color: 'var(--berry)' }}>
-            {greet} · Java 后端 / AI 工具 / 个人项目
+            {greet} · 来记一笔
           </div>
           <h1 style={{ fontFamily: 'var(--serif)', fontWeight: 900, fontSize: 'clamp(52px, 8.5vw, 112px)', lineHeight: 0.9, letterSpacing: '-.02em', margin: '12px 0 4px' }}>
             <span style={{ color: 'var(--o)' }}>橘猫</span>
             <span style={{ color: 'var(--berry)' }}>小窝</span>
           </h1>
           <p style={{ fontSize: 16, lineHeight: 1.75, color: 'var(--ink-soft)', maxWidth: 460, margin: '8px 0 0', fontWeight: 500 }}>
-            记录工程实践、AI 工具折腾与个人项目。不追求热闹，先把
-            <b style={{ color: 'var(--ink)' }}>踩坑、判断和复盘</b>
-            写清楚。
+            一个慢更的博客。后端、AI、自己折腾的小项目都丢在这里，
+            <b style={{ color: 'var(--ink)' }}>主要写给半年后的自己看</b>
+            。
           </p>
           <div style={{ display: 'flex', gap: 10, flexWrap: 'wrap', marginTop: 18 }}>
-            <span className="sticker" style={{ transform: 'rotate(-2deg)' }}>踩坑 · 复盘 · 取舍</span>
-            <span className="sticker" style={{ transform: 'rotate(2deg)', background: 'var(--sun)' }}>先讲结论</span>
-            <span className="sticker" style={{ transform: 'rotate(-1deg)', background: 'var(--mint)', color: '#fff', borderColor: 'var(--mint)' }}>不追求热闹</span>
+            <span className="sticker" style={{ transform: 'rotate(-2deg)' }}>慢更</span>
+            <span className="sticker" style={{ transform: 'rotate(2deg)', background: 'var(--sun)' }}>凭印象写</span>
+            <span className="sticker" style={{ transform: 'rotate(-1deg)', background: 'var(--mint)', color: '#fff', borderColor: 'var(--mint)' }}>偶尔废话</span>
           </div>
           <div style={{ display: 'flex', gap: 12, marginTop: 22, flexWrap: 'wrap' }}>
             {cover ? (
-              <Link to={`/article/${cover.id}`} className="btn">📚 开始阅读</Link>
+              <Link to={`/article/${cover.id}`} className="btn">📚 看最新一篇</Link>
             ) : (
-              <Link to="/archive" className="btn">📚 开始阅读</Link>
+              <Link to="/archive" className="btn">📚 看最新一篇</Link>
             )}
-            <Link to="/archive" className="btn ghost">🗂️ 浏览归档</Link>
+            <Link to="/archive" className="btn ghost">🗂️ 翻翻归档</Link>
           </div>
           <div style={{ display: 'flex', gap: 0, marginTop: 'auto', paddingTop: 28, borderTop: '2px solid var(--line)', flexWrap: 'wrap' }}>
             {items.map(([n, l], i) => (
@@ -78,7 +78,7 @@ function Hero({ stats, cover }) {
         {cover && (
           <Link to={`/article/${cover.id}`} className="ec k1 hideSm" style={{ padding: 32, display: 'flex', flexDirection: 'column', minHeight: 340, textDecoration: 'none' }}>
             <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
-              <span className="cat-chip" style={{ color: 'var(--k1-fg)' }}>🔥 头条 · {cover.category}</span>
+              <span className="cat-chip" style={{ color: 'var(--k1-fg)' }}>最新 · {cover.category}</span>
               <span style={{ fontFamily: 'var(--disp)', fontSize: 12, fontWeight: 700, opacity: 0.55 }}>{cover.date}</span>
             </div>
             <h2 style={{ fontFamily: 'var(--serif)', fontWeight: 900, fontSize: 'clamp(26px,2.4vw,34px)', lineHeight: 1.25, margin: '18px 0 14px', color: 'var(--ink)' }}>
@@ -106,7 +106,7 @@ function FeaturedRow({ featured }) {
 
   return (
     <section style={{ marginBottom: 44 }}>
-      <div className="section-h"><h2>🔥 精选阅读</h2></div>
+      <div className="section-h"><h2>🔥 几篇可以先看的</h2></div>
       <div className="feat-grid" style={{ display: 'grid', gridTemplateColumns: side.length > 0 ? '1.3fr 1fr' : '1fr', gap: 16 }}>
         <Link to={`/article/${top.id}`} className="ec k2" style={{ padding: 30, display: 'flex', flexDirection: 'column', justifyContent: 'space-between', minHeight: 260 }}>
           <div>
@@ -137,7 +137,7 @@ function QuotePanel() {
   const [quote, setQuote] = useState(CAT_QUOTES[3])
   return (
     <div className="panel dark">
-      <div className="panel-h" style={{ color: 'var(--sun)' }}>🐾 每日智慧</div>
+      <div className="panel-h" style={{ color: 'var(--sun)' }}>🐾 顺手抄一句</div>
       <blockquote style={{ fontFamily: 'var(--serif)', fontSize: 17, lineHeight: 1.6, fontWeight: 700 }}>
         “{quote.text}”
       </blockquote>
@@ -164,7 +164,7 @@ function HomeSidebar({ cat, setCat, query, setQuery, categories, tags, articleCo
             type="text"
             value={query}
             onChange={e => setQuery(e.target.value)}
-            placeholder="搜索文章 / 标签..."
+            placeholder="搜文章 / 标签…"
             style={{ paddingLeft: 38 }}
           />
         </div>
@@ -211,16 +211,16 @@ function HomeSidebar({ cat, setCat, query, setQuery, categories, tags, articleCo
       )}
 
       <div className="panel" style={{ background: 'var(--k4-bg)' }}>
-        <div className="panel-h" style={{ color: 'var(--mint)' }}>🐱 橘猫状态机</div>
+        <div className="panel-h" style={{ color: 'var(--mint)' }}>🐱 最近在干嘛</div>
         <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 8, fontSize: 12 }}>
           <div style={{ background: 'var(--paper)', border: '2px solid var(--ink)', borderRadius: 12, padding: 10 }}>
-            🍗 饱食度<div style={{ fontWeight: 800, fontSize: 16 }}>92%</div>
+            主线<div style={{ fontWeight: 800, fontSize: 16 }}>Java 25</div>
           </div>
           <div style={{ background: 'var(--paper)', border: '2px solid var(--ink)', borderRadius: 12, padding: 10 }}>
-            🔋 电量<div style={{ fontWeight: 800, fontSize: 16 }}>85%</div>
+            副线<div style={{ fontWeight: 800, fontSize: 16 }}>AI 工具</div>
           </div>
           <div style={{ background: 'var(--paper)', border: '2px solid var(--ink)', borderRadius: 12, padding: 10, gridColumn: 'span 2' }}>
-            🎯 正在打磨第 {articleCount} 篇长文…
+            🎯 已经攒了 {articleCount} 篇，下一篇还在拖
           </div>
         </div>
         <button
@@ -228,7 +228,7 @@ function HomeSidebar({ cat, setCat, query, setQuery, categories, tags, articleCo
           className="btn ghost"
           style={{ width: '100%', marginTop: 14, justifyContent: 'center' }}
         >
-          👋 查看关于页
+          👋 关于我
         </button>
       </div>
     </aside>
@@ -272,13 +272,13 @@ function Home() {
         <div id="articles">
           <div className="section-h">
             <h2>📚 全部文章</h2>
-            <Link to="/archive" className="more">查看归档 →</Link>
+            <Link to="/archive" className="more">看归档 →</Link>
           </div>
 
           {articlesLoading ? (
             <div className="panel" style={{ textAlign: 'center', padding: 48 }}>
               <div className="animate-bounce" style={{ fontSize: 40 }}>🐱</div>
-              <p style={{ marginTop: 12, color: 'var(--ink-soft)' }}>正在努力加载文章…</p>
+              <p style={{ marginTop: 12, color: 'var(--ink-soft)' }}>文章加载中…</p>
             </div>
           ) : articlesError ? (
             <div className="panel" style={{ textAlign: 'center', padding: 48, background: 'var(--k2-bg)' }}>
@@ -326,7 +326,7 @@ function Home() {
             <div className="panel" style={{ textAlign: 'center', padding: 48 }}>
               <div style={{ fontSize: 40 }}>🍃</div>
               <p style={{ marginTop: 12, color: 'var(--ink-soft)' }}>
-                {searchQuery ? `没有找到包含 "${searchQuery}" 的文章` : '该分类下暂无文章，去看看别的吧～'}
+                {searchQuery ? `没找到包含 "${searchQuery}" 的文章` : '这个分类下还没东西，换一个看看'}
               </p>
               {(searchQuery || selectedCategory !== '全部') && (
                 <button

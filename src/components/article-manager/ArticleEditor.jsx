@@ -63,7 +63,7 @@ function ArticleEditor({
               name="description"
               value={formData.description}
               onChange={handleInputChange}
-              placeholder="简要描述文章内容..."
+              placeholder="用一两句话大概介绍一下写了啥..."
               rows="3"
               className="w-full p-3 rounded-xl border border-border-color bg-white/50 focus:bg-white focus:border-primary outline-none transition-all resize-none"
               required
@@ -78,7 +78,7 @@ function ArticleEditor({
                 name="readTime"
                 value={formData.readTime}
                 onChange={handleInputChange}
-                placeholder="例如：15"
+                placeholder="比如：15"
                 className="w-full p-3 rounded-xl border border-border-color bg-white/50 focus:bg-white focus:border-primary outline-none transition-all"
                 required
               />
@@ -120,7 +120,7 @@ function ArticleEditor({
                     handleAddTag()
                   }
                 }}
-                placeholder="输入标签后按回车添加"
+                placeholder="写个标签，回车或者点右边添加"
                 className="flex-1 p-3 rounded-xl border border-border-color bg-white/50 focus:bg-white focus:border-primary outline-none transition-all"
               />
               <button
@@ -177,7 +177,7 @@ function ArticleEditor({
                 name="content"
                 value={formData.content}
                 onChange={handleInputChange}
-                placeholder="输入文章的详细内容... 使用 ## 标题, - 列表等 Markdown 语法"
+                placeholder="在这里用 Markdown 语法写正文..."
                 rows="12"
                 className="w-full p-4 rounded-xl border border-border-color bg-white/50 focus:bg-white focus:border-primary outline-none transition-all font-mono text-sm leading-relaxed"
               />
@@ -198,7 +198,7 @@ function ArticleEditor({
               className="btn btn-primary px-8"
               disabled={submitting}
             >
-              {submitting ? '⏳ 提交中...' : (editingArticle ? '💾 保存修改' : '✅ 立即发布')}
+              {submitting ? '⏳ 正在提交...' : (editingArticle ? '💾 保存修改' : '✅ 马上发布')}
             </button>
           </div>
         </form>

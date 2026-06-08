@@ -43,12 +43,12 @@ function Tags() {
 
   return (
     <div className="wrap" style={{ maxWidth: 900, paddingBottom: 48 }}>
-      <PageHead emoji="#" title="标签与主题" sub="按出现次数浏览全部标签" />
+      <PageHead emoji="#" title="标签" sub="按出现次数排，越常写的越大一些" />
 
       {loading ? (
         <div className="panel" style={{ textAlign: 'center', padding: 48 }}>
           <div className="animate-bounce" style={{ fontSize: 40 }}>🐱</div>
-          <p style={{ marginTop: 12, color: 'var(--ink-soft)' }}>正在读取标签…</p>
+          <p style={{ marginTop: 12, color: 'var(--ink-soft)' }}>标签加载中…</p>
         </div>
       ) : error ? (
         <div className="panel" style={{ textAlign: 'center', padding: 48, background: 'var(--k2-bg)' }}>
@@ -125,7 +125,7 @@ function Tags() {
                 {filteredArticles.length === 0 && (
                   <div className="panel" style={{ textAlign: 'center', padding: 36 }}>
                     <div style={{ fontSize: 40 }}>🍃</div>
-                    <p style={{ marginTop: 12, color: 'var(--ink-soft)' }}>这个筛选下暂时没有文章。</p>
+                    <p style={{ marginTop: 12, color: 'var(--ink-soft)' }}>这个标签下还没文章。</p>
                   </div>
                 )}
               </div>
@@ -134,7 +134,7 @@ function Tags() {
 
           {!selectedTag && selectedCategory === '全部' && categories.length > 1 && (
             <>
-              <div className="section-h"><h2>📁 按分类筛选</h2></div>
+              <div className="section-h"><h2>📁 按分类看</h2></div>
               <div className="panel" style={{ display: 'flex', flexWrap: 'wrap', gap: 8 }}>
                 {categories.map(c => (
                   <button

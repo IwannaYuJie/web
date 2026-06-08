@@ -13,35 +13,35 @@ function AIChat() {
     {
       id: 'gemini-3.0-pro-preview',
       name: 'Gemini 3.0 Pro Preview',
-      desc: 'Gemini 新版多模态旗舰（预览版）',
+      desc: 'Gemini 新版旗舰预览，多模态能力拉满',
       inputPrice: '待定',
       outputPrice: '待定'
     },
     {
       id: 'gemini-2.5-pro',
       name: 'Gemini 2.5 Pro',
-      desc: '面对复杂推理与多轮对话的主力模型',
+      desc: '写复杂代码和长对话就用它，推理主力',
       inputPrice: '待定',
       outputPrice: '待定'
     },
     {
       id: 'openai/gpt-5',
       name: 'OpenAI GPT-5',
-      desc: 'OpenAI 最新通用模型，综合表现强',
+      desc: 'GPT-5 预览版，老牌旗舰，综合实力在线',
       inputPrice: '待定',
       outputPrice: '待定'
     },
     {
       id: 'claude-4.5-sonnet',
       name: 'Claude 4.5 Sonnet',
-      desc: 'Anthropic 最新旗舰，擅长代码与写作',
+      desc: 'Claude 新旗舰，码农狂喜，写代码和润色文字首选',
       inputPrice: '待定',
       outputPrice: '待定'
     },
     {
       id: 'deepseek/deepseek-v3.2-exp-thinking',
       name: 'DeepSeek V3.2 EXP Thinking',
-      desc: 'DeepSeek 思维链升级款，推理细腻',
+      desc: 'DeepSeek 思维链升级版，遇到难题让它多想想',
       inputPrice: '待定',
       outputPrice: '待定'
     }
@@ -193,14 +193,14 @@ function AIChat() {
         <div className="glass h-full rounded-2xl flex flex-col overflow-hidden border border-white/20 shadow-xl">
           <div className="p-4 border-b border-white/10 bg-gradient-to-r from-primary/10 to-transparent">
             <h3 className="font-bold text-lg flex items-center gap-2">
-              <span>🎯</span> 模型控制台
+              <span>🎯</span> 挑个模型
             </h3>
           </div>
 
           <div className="flex-1 overflow-y-auto p-4 space-y-6">
              {/* Model List */}
              <div className="space-y-2">
-               <label className="text-xs font-bold text-text-light uppercase tracking-wider">可用模型</label>
+               <label className="text-xs font-bold text-text-light uppercase tracking-wider">可选型号</label>
                {aiModels.map(model => (
                  <div
                    key={model.id}
@@ -236,7 +236,7 @@ function AIChat() {
 
           <div className="p-4 border-t border-white/10 bg-white/30">
             <label className="flex items-center justify-between cursor-pointer p-2 hover:bg-white/40 rounded-lg transition-colors">
-              <span className="text-sm font-medium">⚡ 流式输出</span>
+              <span className="text-sm font-medium">⚡ 边想边出 (流式)</span>
               <div className={`w-10 h-6 rounded-full p-1 transition-colors ${isStreaming ? 'bg-primary' : 'bg-gray-300'}`}
                    onClick={(e) => {
                      e.preventDefault()
@@ -262,13 +262,13 @@ function AIChat() {
                 <h2 className="font-bold text-text-color">{currentModel?.name}</h2>
                 <div className="text-xs text-primary flex items-center gap-1">
                   <span className="w-2 h-2 bg-green-400 rounded-full animate-pulse"></span>
-                  在线
+                  开机中
                 </div>
               </div>
            </div>
            <div className="flex items-center gap-2">
               <span className="text-xs px-2 py-1 bg-white/50 rounded-md text-text-secondary hidden sm:block">
-                 消耗 Tokens: {totalTokens}
+                 已消耗 Token: {totalTokens}
               </span>
               <button
                 onClick={clearChat}
@@ -285,11 +285,11 @@ function AIChat() {
            {messages.length === 0 ? (
              <div className="h-full flex flex-col items-center justify-center text-center opacity-60">
                 <div className="text-6xl mb-4 animate-bounce">💬</div>
-                <h3 className="text-xl font-bold mb-2">开始新的对话</h3>
-                <p className="text-sm max-w-xs">选择一个模型，问我任何问题，比如代码生成、创意写作或知识问答。</p>
+                <h3 className="text-xl font-bold mb-2">随便问点什么</h3>
+                <p className="text-sm max-w-xs">选个模型，想聊啥都行。写代码、写文章或者唠嗑都可以。</p>
 
                 <div className="mt-8 grid grid-cols-1 sm:grid-cols-2 gap-3 w-full max-w-lg px-4">
-                  {['👋 介绍一下你自己', '💻 写一个快速排序', '🧠 什么是机器学习', '🎨 给我讲个故事'].map(hint => (
+                  {['👋 你能帮我干点啥？', '💻 用 React 写个倒计时组件', '🧠 简单说下大模型是怎么火起来的', '🎨 帮我给这只橘猫起几个名字'].map(hint => (
                     <button
                       key={hint}
                       onClick={() => setInputMessage(hint)}
@@ -322,7 +322,7 @@ function AIChat() {
                         : 'bg-white text-text-color rounded-tl-none border border-border-color'}
                     `}>
                       <div className="whitespace-pre-wrap font-sans">
-                        {msg.content || <span className="animate-pulse">Thinking...</span>}
+                        {msg.content || <span className="animate-pulse">在想了在想了...</span>}
                       </div>
                     </div>
                  </div>
@@ -374,7 +374,7 @@ function AIChat() {
               </div>
            </div>
            <div className="text-center mt-2 text-[10px] text-text-light">
-             AI生成内容仅供参考，请注意甄别
+             AI 回答仅供参考，别全信哈
            </div>
         </div>
 
