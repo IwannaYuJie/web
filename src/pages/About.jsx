@@ -1,109 +1,108 @@
 import { Link } from 'react-router-dom'
 import { blogMilestones, blogProfile, blogProjects, contactLinks, nowItems } from '../data/blogProfile'
 
+const KS = ['k1', 'k2', 'k3', 'k4']
+
+function PageHead({ emoji, title, sub }) {
+  return (
+    <div style={{ padding: '34px 0 24px' }}>
+      <h1 style={{ fontFamily: 'var(--serif)', fontWeight: 900, fontSize: 'clamp(40px,7vw,72px)', lineHeight: 1, letterSpacing: '-.02em' }}>
+        {emoji} {title}
+      </h1>
+      {sub && <p style={{ fontSize: 16, color: 'var(--ink-soft)', marginTop: 12, fontWeight: 500 }}>{sub}</p>}
+    </div>
+  )
+}
+
 function About() {
   return (
-    <div className="container pb-12 space-y-10">
-      <section className="grid gap-8 lg:grid-cols-[1fr_320px] items-start">
-        <div className="space-y-6">
-          <div className="inline-flex items-center gap-2 rounded-full bg-white/70 px-4 py-2 text-sm font-bold text-primary border border-border-color">
-            <span>About</span>
-            <span>个人博客档案</span>
-          </div>
-          <div>
-            <h1 className="text-4xl md:text-5xl font-extrabold leading-tight text-text-color mb-5">
-              {blogProfile.owner}，在这里认真记录技术和生活的判断。
-            </h1>
-            <p className="text-lg text-text-secondary leading-relaxed max-w-3xl">
-              {blogProfile.intro}
-            </p>
-          </div>
-          <div className="grid gap-3 md:grid-cols-3">
-            {blogProfile.manifesto.map(item => (
-              <div key={item} className="card bg-white/80">
-                <p className="font-bold text-text-color">{item}</p>
-              </div>
-            ))}
-          </div>
-        </div>
+    <div className="wrap" style={{ maxWidth: 820, paddingBottom: 48 }}>
+      <PageHead emoji="👋" title="关于小窝" />
 
-        <aside className="glass rounded-2xl p-6">
-          <img
-            src={blogProfile.avatar}
-            alt={blogProfile.owner}
-            className="w-28 h-28 rounded-full border-4 border-white shadow-lg object-cover mb-5"
-          />
-          <h2 className="text-2xl font-extrabold text-text-color">{blogProfile.name}</h2>
-          <p className="text-sm text-text-secondary mt-2">{blogProfile.role}</p>
-          <div className="mt-5 space-y-2 text-sm text-text-secondary">
-            <p>📍 {blogProfile.location}</p>
-            <p>✉️ {blogProfile.email}</p>
-          </div>
-          <div className="mt-6 flex flex-wrap gap-2">
+      <div className="panel" style={{ display: 'flex', gap: 24, alignItems: 'center', marginBottom: 20, background: 'var(--k1-bg)', flexWrap: 'wrap' }}>
+        <img
+          src={blogProfile.avatar}
+          alt={blogProfile.owner}
+          style={{ width: 92, height: 92, borderRadius: 18, border: '3px solid var(--ink)', objectFit: 'cover', flexShrink: 0 }}
+        />
+        <div style={{ flex: 1, minWidth: 200 }}>
+          <h2 style={{ fontFamily: 'var(--serif)', fontWeight: 900, fontSize: 26 }}>{blogProfile.owner}</h2>
+          <p style={{ color: 'var(--ink-soft)', marginTop: 4, fontWeight: 600 }}>{blogProfile.role}</p>
+          <div style={{ display: 'flex', gap: 8, marginTop: 12, flexWrap: 'wrap' }}>
             {contactLinks.map(link => (
               <a
                 key={link.label}
                 href={link.href}
                 target={link.href.startsWith('http') ? '_blank' : undefined}
                 rel={link.href.startsWith('http') ? 'noreferrer' : undefined}
-                className="btn btn-secondary text-sm px-4 py-2"
+                className="sticker"
               >
-                {link.label}
+                {link.label === 'GitHub' ? '🐱 GitHub' : link.label === '邮件' ? '✉️ 邮件' : `🌐 ${link.label}`}
               </a>
             ))}
           </div>
-        </aside>
-      </section>
+        </div>
+      </div>
 
-      <section className="grid gap-6 lg:grid-cols-3">
-        {nowItems.map(item => (
-          <div key={item.title} className="glass rounded-2xl p-6">
-            <div className="text-sm font-bold text-primary mb-2">{item.title}</div>
-            <p className="text-text-secondary leading-relaxed">{item.value}</p>
+      <div className="panel" style={{ marginBottom: 20 }}>
+        <div className="panel-h">📝 这里是什么</div>
+        <p style={{ fontSize: 15.5, lineHeight: 1.8, color: 'var(--ink-soft)', fontWeight: 500 }}>
+          {blogProfile.intro}
+        </p>
+      </div>
+
+      <div className="panel" style={{ marginBottom: 20 }}>
+        <div className="panel-h">☕ 维护原则</div>
+        {blogProfile.manifesto.map((m, i) => (
+          <div key={i} style={{ display: 'flex', gap: 10, marginBottom: 10, fontSize: 15, fontWeight: 500, color: 'var(--ink-soft)', alignItems: 'flex-start' }}>
+            <b style={{ color: 'var(--accent)' }}>🐾</b>
+            <span>{m}</span>
           </div>
         ))}
-      </section>
+      </div>
 
-      <section className="space-y-5">
-        <div className="flex items-end justify-between gap-4">
-          <div>
-            <h2 className="text-2xl font-extrabold text-text-color">项目与实验</h2>
-            <p className="text-text-secondary mt-1">博客之外，也放一些正在打磨的小工具和玩具。</p>
+      <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(220px, 1fr))', gap: 12, marginBottom: 20 }}>
+        {nowItems.map((item, i) => (
+          <div key={item.title} className={`ec ${KS[i % 4]}`} style={{ padding: 18, cursor: 'default' }}>
+            <span className="cat cat-chip" style={{ border: 'none', padding: 0 }}>{item.title}</span>
+            <p style={{ marginTop: 6, fontSize: 14, lineHeight: 1.65, color: 'var(--ink-soft)' }}>{item.value}</p>
           </div>
-          <Link to="/archive" className="btn btn-ghost hidden sm:inline-flex">
-            看文章归档 →
-          </Link>
-        </div>
+        ))}
+      </div>
 
-        <div className="grid gap-4 md:grid-cols-3">
-          {blogProjects.map(project => (
-            <Link key={project.title} to={project.href} className="card card-hover block">
-              <div className="flex items-center justify-between gap-3 mb-4">
-                <h3 className="font-extrabold text-lg text-text-color">{project.title}</h3>
-                <span className="text-xs font-bold rounded-full bg-primary/10 text-primary px-3 py-1">
-                  {project.status}
-                </span>
+      <div className="panel" style={{ marginBottom: 20 }}>
+        <div className="panel-h">🧪 项目与实验</div>
+        <div style={{ display: 'grid', gap: 10 }}>
+          {blogProjects.map((p, i) => (
+            <Link
+              key={p.title}
+              to={p.href}
+              className={`ec ${KS[i % 4]}`}
+              style={{ padding: 18, display: 'grid', gridTemplateColumns: '1fr auto', gap: 12, alignItems: 'center' }}
+            >
+              <div>
+                <h3 style={{ fontSize: 18, margin: 0 }}>{p.title}</h3>
+                <p style={{ fontSize: 13.5, marginTop: 4, color: 'var(--ink-soft)', lineHeight: 1.5 }}>{p.description}</p>
               </div>
-              <p className="text-sm text-text-secondary leading-relaxed">{project.description}</p>
+              <span className="cat-chip" style={{ color: 'inherit' }}>{p.status}</span>
             </Link>
           ))}
         </div>
-      </section>
+      </div>
 
-      <section className="glass rounded-2xl p-6 md:p-8">
-        <h2 className="text-2xl font-extrabold text-text-color mb-6">小窝时间线</h2>
-        <div className="space-y-5">
-          {blogMilestones.map(item => (
-            <div key={`${item.date}-${item.title}`} className="grid gap-3 md:grid-cols-[120px_1fr]">
-              <div className="font-bold text-primary">{item.date}</div>
-              <div className="border-l-2 border-border-color pl-5 pb-5">
-                <h3 className="font-extrabold text-text-color">{item.title}</h3>
-                <p className="text-sm text-text-secondary mt-1 leading-relaxed">{item.description}</p>
-              </div>
+      <div className="panel">
+        <div className="panel-h">🕒 站点时间线</div>
+        {blogMilestones.map(item => (
+          <div key={`${item.date}-${item.title}`} style={{ display: 'flex', gap: 16, paddingLeft: 16, borderLeft: '3px solid var(--accent)', marginBottom: 18, position: 'relative' }}>
+            <span style={{ position: 'absolute', left: -8, top: 4, width: 13, height: 13, borderRadius: 4, background: 'var(--accent)', border: '2px solid var(--ink)' }} />
+            <div>
+              <div style={{ fontFamily: 'var(--disp)', fontWeight: 700, fontSize: 13, color: 'var(--accent)' }}>{item.date}</div>
+              <div style={{ fontWeight: 800, margin: '2px 0 4px' }}>{item.title}</div>
+              <div style={{ fontSize: 13.5, color: 'var(--ink-soft)', lineHeight: 1.6 }}>{item.description}</div>
             </div>
-          ))}
-        </div>
-      </section>
+          </div>
+        ))}
+      </div>
     </div>
   )
 }

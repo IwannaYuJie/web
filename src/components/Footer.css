@@ -1,109 +1,125 @@
-.footer {
-  padding: 4rem 0 3rem 0;
-  background: var(--surface-color);
-  border-top: 1px solid var(--border-color);
-  margin-top: 6rem;
-  text-align: center;
+.foot {
+  background: var(--ink);
+  color: var(--paper);
+  margin-top: 80px;
+  padding: 54px 0 40px;
   position: relative;
   z-index: 10;
 }
 
-@media (prefers-color-scheme: dark) {
-  .footer {
-    background: var(--surface-color);
-  }
+.foot a:hover { color: var(--sun); }
+
+.foot-inner {
+  max-width: var(--maxw);
+  margin: 0 auto;
+  padding: 0 28px;
+  display: grid;
+  grid-template-columns: 1.4fr 1fr 1fr;
+  gap: 40px;
 }
 
-.footer-content {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  gap: 2rem;
-}
-
-.footer-stats {
-  display: flex;
-  gap: 0;
-  padding: 0;
-  border-radius: var(--radius-full);
-  overflow: hidden;
-  border: 1.5px solid var(--border-color);
-  box-shadow: var(--shadow-sm);
-  background: var(--bg-color);
-}
-
-.stat-item {
+.foot-brand {
   display: flex;
   align-items: center;
-  gap: 0.5rem;
-  color: var(--text-secondary);
-  font-size: 0.85rem;
+  gap: 11px;
+  font-family: var(--disp);
+  font-size: 22px;
   font-weight: 700;
-  padding: 0.6rem 1.2rem;
+  letter-spacing: -0.02em;
+  color: var(--paper);
+  margin-bottom: 14px;
 }
-
-.stat-item:first-child {
-  background: rgba(255, 126, 33, 0.08);
-  border-right: 1.5px solid var(--border-color);
-  color: var(--primary-color);
-}
-
-.footer-copyright {
-  color: var(--text-light);
-  font-size: 0.85rem;
-  font-weight: 500;
-  letter-spacing: 0.01em;
-}
-
-.footer-links {
-  display: flex;
-  gap: 2rem;
-  flex-wrap: wrap;
-  justify-content: center;
-}
-
-.footer-link {
-  color: var(--text-secondary);
-  font-size: 0.92rem;
-  font-weight: 700;
-  transition: all var(--transition-fast);
+.foot-brand .mk {
   position: relative;
-  padding: 0.2rem 0;
+  width: 34px;
+  height: 34px;
 }
-
-.footer-link::after {
+.foot-brand .mk img {
+  width: 34px;
+  height: 34px;
+  border-radius: 9px;
+  object-fit: cover;
+  border: 2px solid var(--paper);
+  display: block;
+}
+.foot-brand .mk::before,
+.foot-brand .mk::after {
   content: '';
   position: absolute;
-  bottom: 0;
-  left: 0;
-  width: 100%;
-  height: 2px;
-  background: var(--primary-color);
-  transform: scaleX(0);
-  transform-origin: right;
-  transition: transform var(--transition-fast);
+  top: -7px;
+  width: 0;
+  height: 0;
+  border-left: 8px solid transparent;
+  border-right: 8px solid transparent;
+  border-bottom: 12px solid var(--paper);
+}
+.foot-brand .mk::before { left: 1px; transform: rotate(-15deg); }
+.foot-brand .mk::after { right: 1px; transform: rotate(15deg); }
+
+.foot-intro {
+  font-size: 13.5px;
+  line-height: 1.8;
+  opacity: 0.8;
+  max-width: 320px;
 }
 
-.footer-link:hover {
-  color: var(--primary-color);
+.foot-stickers {
+  display: flex;
+  gap: 8px;
+  margin-top: 18px;
+  flex-wrap: wrap;
+}
+.foot-stickers a {
+  font-size: 13px;
+  font-weight: 700;
+  padding: 7px 14px;
+  border-radius: 999px;
+  border: 2px solid var(--paper);
+  background: transparent;
+  color: var(--paper);
+  text-decoration: none;
+  transition: background 0.18s, color 0.18s;
+}
+.foot-stickers a:hover {
+  background: var(--paper);
+  color: var(--ink);
 }
 
-.footer-link:hover::after {
-  transform: scaleX(1);
-  transform-origin: left;
+.foot-links {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  font-size: 14px;
+  font-weight: 600;
+}
+.foot-links a { opacity: 0.85; }
+
+.foot-visits {
+  font-family: var(--disp);
+  font-size: 40px;
+  font-weight: 700;
+  color: var(--sun);
+  line-height: 1;
+}
+.foot-visits-label {
+  font-size: 12px;
+  opacity: 0.7;
+  margin-top: 4px;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
 }
 
-@media (max-width: 768px) {
-  .footer {
-    padding: 3rem 0 2rem 0;
-    margin-top: 4rem;
-  }
+.foot-copy {
+  font-size: 12.5px;
+  opacity: 0.7;
+  margin-top: 18px;
+}
 
-  .footer-stats {
-    flex-direction: row; /* 保持横向，不折行以维持整洁 */
-  }
+@media (max-width: 900px) {
+  .foot-inner { grid-template-columns: 1fr; gap: 30px; }
+}
 
-  .footer-links {
-    gap: 1.25rem;
-  }
+@media (max-width: 600px) {
+  .foot { margin-top: 56px; padding: 40px 0 28px; }
+  .foot-inner { padding: 0 18px; }
 }

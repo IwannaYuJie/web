@@ -2,7 +2,20 @@ import { useMemo, useState } from 'react'
 import { Link, useSearchParams } from 'react-router-dom'
 import { useArticlesData } from '../hooks'
 import { filterArticles, getArticleCategories } from '../utils/articleFilters'
-import { getCategorySummaries, getTagCloud } from '../utils/blogInsights'
+import { getTagCloud } from '../utils/blogInsights'
+
+const KS = ['k1', 'k2', 'k3', 'k4']
+
+function PageHead({ emoji, title, sub }) {
+  return (
+    <div style={{ padding: '34px 0 24px' }}>
+      <h1 style={{ fontFamily: 'var(--serif)', fontWeight: 900, fontSize: 'clamp(40px,7vw,72px)', lineHeight: 1, letterSpacing: '-.02em' }}>
+        {emoji} {title}
+      </h1>
+      {sub && <p style={{ fontSize: 16, color: 'var(--ink-soft)', marginTop: 12, fontWeight: 500 }}>{sub}</p>}
+    </div>
+  )
+}
 
 function Tags() {
   const { articles, loading, error, fetchArticles } = useArticlesData()
@@ -12,7 +25,6 @@ function Tags() {
   const selectedTag = searchParams.get('tag') || ''
   const tags = useMemo(() => getTagCloud(articles), [articles])
   const categories = useMemo(() => getArticleCategories(articles), [articles])
-  const categorySummaries = useMemo(() => getCategorySummaries(articles), [articles])
 
   const filteredArticles = useMemo(() => {
     return filterArticles(articles, {
@@ -26,138 +38,119 @@ function Tags() {
       setSearchParams({})
       return
     }
-
     setSearchParams({ tag })
   }
 
   return (
-    <div className="container pb-12 space-y-8">
-      <section className="glass rounded-2xl p-6 md:p-8">
-        <div className="text-sm font-bold text-primary mb-3">Tags</div>
-        <h1 className="text-4xl md:text-5xl font-extrabold text-text-color mb-4">标签与主题</h1>
-        <p className="text-text-secondary leading-relaxed max-w-3xl">
-          这里按关键词重新组织文章。技术栈、问题类型、模型名称和实践场景都会沉到标签里，方便以后串联阅读。
-        </p>
-      </section>
+    <div className="wrap" style={{ maxWidth: 900, paddingBottom: 48 }}>
+      <PageHead emoji="#" title="标签与主题" sub="按出现次数浏览全部标签" />
 
-      <section className="grid gap-6 lg:grid-cols-[1fr_320px]">
-        <div className="space-y-6">
-          <div className="glass rounded-2xl p-6">
-            <h2 className="text-xl font-extrabold text-text-color mb-4">标签云</h2>
-            {loading ? (
-              <div className="text-text-secondary">正在读取标签...</div>
-            ) : error ? (
-              <div>
-                <p className="text-red-500 mb-4">{error}</p>
-                <button onClick={fetchArticles} className="btn btn-primary">重试</button>
-              </div>
-            ) : (
-              <div className="flex flex-wrap gap-3">
-                {tags.map(item => (
-                  <button
-                    key={item.tag}
-                    onClick={() => selectTag(item.tag)}
-                    className={`rounded-full border px-4 py-2 font-bold transition-all ${
-                      selectedTag === item.tag
-                        ? 'border-primary bg-primary text-white'
-                        : 'border-border-color bg-white/70 text-text-secondary hover:text-primary'
-                    }`}
-                    style={{ fontSize: `${Math.min(1.25, 0.9 + item.count * 0.08)}rem` }}
-                  >
+      {loading ? (
+        <div className="panel" style={{ textAlign: 'center', padding: 48 }}>
+          <div className="animate-bounce" style={{ fontSize: 40 }}>🐱</div>
+          <p style={{ marginTop: 12, color: 'var(--ink-soft)' }}>正在读取标签…</p>
+        </div>
+      ) : error ? (
+        <div className="panel" style={{ textAlign: 'center', padding: 48, background: 'var(--k2-bg)' }}>
+          <p style={{ marginBottom: 16, color: 'var(--ink-soft)' }}>{error}</p>
+          <button onClick={fetchArticles} className="btn">重试</button>
+        </div>
+      ) : (
+        <>
+          <div style={{ display: 'flex', flexWrap: 'wrap', gap: 12, marginBottom: 32 }}>
+            {tags.map((item, i) => {
+              const active = selectedTag === item.tag
+              const kc = KS[i % 4]
+              return (
+                <button
+                  key={item.tag}
+                  onClick={() => selectTag(item.tag)}
+                  className={active ? 'ec' : `ec ${kc}`}
+                  style={{
+                    padding: '14px 20px',
+                    display: 'flex',
+                    alignItems: 'center',
+                    gap: 10,
+                    background: active ? 'var(--ink)' : undefined,
+                    color: active ? 'var(--paper)' : undefined,
+                  }}
+                >
+                  <span style={{ fontFamily: 'var(--serif)', fontWeight: 900, fontSize: 14 + item.count * 3 }}>
                     #{item.tag}
-                    <span className="ml-2 text-xs opacity-80">{item.count}</span>
-                  </button>
-                ))}
-              </div>
-            )}
+                  </span>
+                  <span style={{ fontFamily: 'var(--disp)', fontWeight: 700, fontSize: 13, opacity: 0.6 }}>
+                    {item.count}
+                  </span>
+                </button>
+              )
+            })}
           </div>
 
-          <div className="glass rounded-2xl p-6">
-            <div className="flex flex-wrap items-center justify-between gap-3 mb-5">
-              <h2 className="text-xl font-extrabold text-text-color">
-                {selectedTag ? `#${selectedTag}` : selectedCategory === '全部' ? '全部文章' : selectedCategory}
-              </h2>
-              {(selectedTag || selectedCategory !== '全部') && (
+          {(selectedTag || selectedCategory !== '全部') && (
+            <>
+              <div className="section-h">
+                <h2>
+                  {selectedTag ? `#${selectedTag}` : selectedCategory}
+                  <span style={{ fontFamily: 'var(--disp)', fontSize: 15, fontWeight: 600, color: 'var(--ink-soft)' }}>
+                    · {filteredArticles.length} 篇
+                  </span>
+                </h2>
                 <button
                   onClick={() => {
                     setSelectedCategory('全部')
                     setSearchParams({})
                   }}
-                  className="text-sm font-bold text-primary hover:text-primary-hover"
+                  style={{ background: 'none', border: 'none', color: 'var(--accent)', fontFamily: 'var(--disp)', fontWeight: 700, fontSize: 14, cursor: 'pointer' }}
                 >
-                  清除筛选
+                  清除筛选 ↻
                 </button>
-              )}
-            </div>
+              </div>
 
-            <div className="flex flex-wrap gap-2 mb-5">
-              {categories.map(category => (
-                <button
-                  key={category}
-                  onClick={() => setSelectedCategory(category)}
-                  className={`rounded-full px-3 py-1.5 text-sm font-bold transition-all ${
-                    selectedCategory === category
-                      ? 'bg-primary text-white'
-                      : 'bg-white/70 text-text-secondary hover:text-primary'
-                  }`}
-                >
-                  {category}
-                </button>
-              ))}
-            </div>
-
-            <div className="space-y-3">
-              {filteredArticles.map(article => (
-                <Link key={article.id} to={`/article/${article.id}`} className="card card-hover block">
-                  <div className="flex flex-wrap gap-2 text-xs text-text-light mb-2">
-                    <span>{article.date}</span>
-                    <span>{article.category}</span>
-                    <span>{article.readTime} 分钟</span>
+              <div style={{ display: 'flex', flexDirection: 'column', gap: 12 }}>
+                {filteredArticles.map((a, i) => (
+                  <Link
+                    key={a.id}
+                    to={`/article/${a.id}`}
+                    className={`ec ${KS[i % 4]}`}
+                    style={{ display: 'grid', gridTemplateColumns: 'auto auto 1fr auto', gap: 16, alignItems: 'center', padding: '18px 22px' }}
+                  >
+                    <span style={{ fontFamily: 'var(--disp)', fontSize: 13, fontWeight: 700, opacity: 0.55 }}>
+                      {a.date ? a.date.slice(5) : ''}
+                    </span>
+                    <span className="cat cat-chip" style={{ border: 'none', padding: 0 }}>{a.category}</span>
+                    <h3 style={{ fontSize: 19, margin: 0 }}>{a.title}</h3>
+                    <span className="arrow">→</span>
+                  </Link>
+                ))}
+                {filteredArticles.length === 0 && (
+                  <div className="panel" style={{ textAlign: 'center', padding: 36 }}>
+                    <div style={{ fontSize: 40 }}>🍃</div>
+                    <p style={{ marginTop: 12, color: 'var(--ink-soft)' }}>这个筛选下暂时没有文章。</p>
                   </div>
-                  <h3 className="font-extrabold text-lg text-text-color">{article.title}</h3>
-                  <p className="text-sm text-text-secondary mt-2 line-clamp-2">{article.description}</p>
-                </Link>
-              ))}
-              {!loading && filteredArticles.length === 0 && (
-                <div className="rounded-xl bg-white/70 p-6 text-center text-text-secondary">
-                  这个筛选下暂时没有文章。
-                </div>
-              )}
-            </div>
-          </div>
-        </div>
+                )}
+              </div>
+            </>
+          )}
 
-        <aside className="space-y-6">
-          <div className="glass rounded-2xl p-6">
-            <h2 className="text-lg font-extrabold text-text-color mb-4">分类地图</h2>
-            <div className="space-y-3">
-              {categorySummaries.map(item => (
-                <button
-                  key={item.category}
-                  onClick={() => setSelectedCategory(item.category)}
-                  className="w-full rounded-xl bg-white/70 p-3 text-left hover:bg-card-hover transition-colors"
-                >
-                  <div className="flex justify-between font-bold text-text-color">
-                    <span>{item.category}</span>
-                    <span className="text-primary">{item.count}</span>
-                  </div>
-                  <div className="mt-1 text-xs text-text-light">{item.readMinutes} 分钟阅读量</div>
-                </button>
-              ))}
-            </div>
-          </div>
-
-          <div className="glass rounded-2xl p-6">
-            <h2 className="text-lg font-extrabold text-text-color mb-3">阅读建议</h2>
-            <p className="text-sm text-text-secondary leading-relaxed">
-              先从分类选方向，再用标签缩小问题。遇到长文可以回到文章详情页的目录和相关阅读继续追。
-            </p>
-            <Link to="/archive" className="btn btn-primary mt-5 w-full">
-              打开归档
-            </Link>
-          </div>
-        </aside>
-      </section>
+          {!selectedTag && selectedCategory === '全部' && categories.length > 1 && (
+            <>
+              <div className="section-h"><h2>📁 按分类筛选</h2></div>
+              <div className="panel" style={{ display: 'flex', flexWrap: 'wrap', gap: 8 }}>
+                {categories.map(c => (
+                  <button
+                    key={c}
+                    onClick={() => setSelectedCategory(c)}
+                    className="sticker"
+                    style={c === '全部' ? { background: 'var(--ink)', color: 'var(--paper)', borderColor: 'var(--ink)' } : undefined}
+                  >
+                    {c}
+                  </button>
+                ))}
+              </div>
+            </>
+          )}
+        </>
+      )}
     </div>
   )
 }

@@ -1,58 +1,57 @@
 import { useState, useEffect, memo } from 'react'
+import { Link } from 'react-router-dom'
+import { blogProfile } from '../data/blogProfile'
 import './Footer.css'
 
+const FOOT_LINKS = [
+  { path: '/', label: '首页' },
+  { path: '/archive', label: '归档' },
+  { path: '/tags', label: '标签' },
+  { path: '/about', label: '关于' },
+  { path: '/toolbox', label: '工具箱' },
+  { path: '/games', label: '游戏' },
+]
+
 function Footer() {
-  const [visitorCount, setVisitorCount] = useState(12345)
-  const [currentTime, setCurrentTime] = useState(new Date())
+  const [visitors, setVisitors] = useState(12480)
 
-  // 模拟访客增长
   useEffect(() => {
-    const interval = setInterval(() => {
-      setVisitorCount(prev => prev + Math.floor(Math.random() * 2))
-    }, 5000)
-    return () => clearInterval(interval)
-  }, [])
-
-  // 更新时间
-  useEffect(() => {
-    const timer = setInterval(() => {
-      setCurrentTime(new Date())
-    }, 1000)
-    return () => clearInterval(timer)
+    const id = setInterval(() => {
+      setVisitors(v => v + (Math.random() < 0.5 ? 1 : 0))
+    }, 4000)
+    return () => clearInterval(id)
   }, [])
 
   return (
-    <footer className="footer">
-      <div className="container footer-content">
-        <div className="footer-stats">
-          <div className="stat-item">
-            <span>👥</span>
-            <span>访客: {visitorCount.toLocaleString()}</span>
+    <footer className="foot">
+      <div className="foot-inner">
+        <div>
+          <div className="foot-brand">
+            <span className="mk"><img src={blogProfile.avatar} alt="" /></span>
+            橘猫小窝
           </div>
-          <div className="stat-item">
-            <span>🕒</span>
-            <span>{currentTime.toLocaleTimeString('zh-CN', { hour: '2-digit', minute: '2-digit' })}</span>
+          <p className="foot-intro">{blogProfile.intro}</p>
+          <div className="foot-stickers">
+            <a href={blogProfile.github} target="_blank" rel="noreferrer">🐱 GitHub</a>
+            <a href={`mailto:${blogProfile.email}`}>✉️ Email</a>
           </div>
         </div>
 
-        <div className="footer-links">
-          <a href="/archive" className="footer-link">
-            归档
-          </a>
-          <a href="/tags" className="footer-link">
-            标签
-          </a>
-          <a href="/about" className="footer-link">
-            关于我
-          </a>
-          <a href="https://github.com/IwannaYuJie" target="_blank" rel="noreferrer" className="footer-link">
-            GitHub
-          </a>
+        <div>
+          <div className="panel-h" style={{ color: 'var(--sun)' }}>导航</div>
+          <div className="foot-links">
+            {FOOT_LINKS.map(l => (
+              <Link key={l.path} to={l.path}>{l.label}</Link>
+            ))}
+          </div>
         </div>
 
-        <p className="footer-copyright">
-          © {new Date().getFullYear()} 橘猫小窝 🐾 | 用 🧡 和 ☕ 制作
-        </p>
+        <div>
+          <div className="panel-h" style={{ color: 'var(--sun)' }}>小窝状态</div>
+          <div className="foot-visits">{visitors.toLocaleString()}</div>
+          <div className="foot-visits-label">累计访客</div>
+          <p className="foot-copy">© {new Date().getFullYear()} 橘猫小窝 🐾 · 用 🧡 和 ☕ 制作</p>
+        </div>
       </div>
     </footer>
   )

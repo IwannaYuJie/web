@@ -2,7 +2,33 @@ import { useMemo, useState } from 'react'
 import { Link } from 'react-router-dom'
 import { useArticlesData } from '../hooks'
 import { filterArticles, getArticleCategories, sortArticles } from '../utils/articleFilters'
-import { getArchiveGroups, getBlogStats, getCategorySummaries, getTagCloud } from '../utils/blogInsights'
+import { getArchiveGroups, getBlogStats, getTagCloud } from '../utils/blogInsights'
+
+const KCLASS_MAP = { 'Java核心': 'k1', 'JVM': 'k2', 'Spring框架': 'k3' }
+const KS = ['k1', 'k2', 'k3', 'k4']
+function kClassFor(category, i) {
+  return KCLASS_MAP[category] || KS[i % 4]
+}
+
+function PageHead({ emoji, title, sub }) {
+  return (
+    <div style={{ padding: '34px 0 24px' }}>
+      <h1 style={{ fontFamily: 'var(--serif)', fontWeight: 900, fontSize: 'clamp(40px,7vw,72px)', lineHeight: 1, letterSpacing: '-.02em' }}>
+        {emoji} {title}
+      </h1>
+      {sub && <p style={{ fontSize: 16, color: 'var(--ink-soft)', marginTop: 12, fontWeight: 500 }}>{sub}</p>}
+    </div>
+  )
+}
+
+function StatPanel({ value, label }) {
+  return (
+    <div className="panel" style={{ textAlign: 'center', padding: '18px 8px' }}>
+      <div style={{ fontFamily: 'var(--disp)', fontSize: 34, fontWeight: 700, color: 'var(--accent)' }}>{value}</div>
+      <div style={{ fontSize: 12, color: 'var(--ink-soft)', fontWeight: 600 }}>{label}</div>
+    </div>
+  )
+}
 
 function Archive() {
   const { articles, loading, error, fetchArticles } = useArticlesData()
@@ -14,7 +40,6 @@ function Archive() {
   const categories = useMemo(() => getArticleCategories(articles), [articles])
   const tags = useMemo(() => getTagCloud(articles), [articles])
   const stats = useMemo(() => getBlogStats(articles), [articles])
-  const categorySummaries = useMemo(() => getCategorySummaries(articles), [articles])
 
   const filteredArticles = useMemo(() => {
     const filtered = filterArticles(articles, {
@@ -23,7 +48,6 @@ function Archive() {
       selectedTags: selectedTag ? [selectedTag] : [],
       includeContent: true,
     })
-
     return sortArticles(filtered, 'date', sortOrder)
   }, [articles, searchQuery, selectedCategory, selectedTag, sortOrder])
 
@@ -36,173 +60,141 @@ function Archive() {
     setSortOrder('desc')
   }
 
+  const hasFilters = searchQuery || selectedCategory !== '全部' || selectedTag
+
   return (
-    <div className="container pb-12 space-y-8">
-      <section className="glass rounded-2xl p-6 md:p-8">
-        <div className="grid gap-8 lg:grid-cols-[1fr_360px] items-end">
-          <div>
-            <div className="text-sm font-bold text-primary mb-3">Archive</div>
-            <h1 className="text-4xl md:text-5xl font-extrabold text-text-color mb-4">文章归档</h1>
-            <p className="text-text-secondary leading-relaxed max-w-2xl">
-              把所有文章按时间、分类和标签串起来。想找旧坑位、技术判断或某个主题的连续记录，从这里最快。
-            </p>
-          </div>
-          <div className="grid grid-cols-2 gap-3">
-            <div className="rounded-xl bg-white/70 p-4 border border-border-color">
-              <div className="text-2xl font-extrabold text-primary">{stats.articleCount}</div>
-              <div className="text-xs text-text-secondary">文章</div>
-            </div>
-            <div className="rounded-xl bg-white/70 p-4 border border-border-color">
-              <div className="text-2xl font-extrabold text-primary">{stats.categoryCount}</div>
-              <div className="text-xs text-text-secondary">分类</div>
-            </div>
-            <div className="rounded-xl bg-white/70 p-4 border border-border-color">
-              <div className="text-2xl font-extrabold text-primary">{stats.tagCount}</div>
-              <div className="text-xs text-text-secondary">标签</div>
-            </div>
-            <div className="rounded-xl bg-white/70 p-4 border border-border-color">
-              <div className="text-2xl font-extrabold text-primary">{stats.totalReadMinutes}</div>
-              <div className="text-xs text-text-secondary">分钟</div>
-            </div>
-          </div>
-        </div>
-      </section>
+    <div className="wrap" style={{ maxWidth: 900, paddingBottom: 48 }}>
+      <PageHead emoji="🗂️" title="文章归档" sub="按年份回顾全部文章" />
 
-      <section className="grid gap-6 lg:grid-cols-[1fr_320px]">
-        <div className="space-y-6">
-          <div className="glass rounded-2xl p-4 space-y-4 sticky top-[80px] z-30">
-            <div className="grid gap-3 md:grid-cols-[1fr_auto]">
-              <input
-                value={searchQuery}
-                onChange={(event) => setSearchQuery(event.target.value)}
-                placeholder="搜索标题、正文、描述或标签..."
-                className="w-full px-4 py-3 rounded-xl border border-border-color bg-white/80 outline-none focus:border-primary"
-              />
-              <select
-                value={sortOrder}
-                onChange={(event) => setSortOrder(event.target.value)}
-                className="px-4 py-3 rounded-xl border border-border-color bg-white/80 text-text-color outline-none focus:border-primary"
+      <div style={{ display: 'grid', gridTemplateColumns: 'repeat(4, 1fr)', gap: 12, marginBottom: 28 }}>
+        <StatPanel value={stats.articleCount} label="文章" />
+        <StatPanel value={stats.categoryCount} label="分类" />
+        <StatPanel value={stats.tagCount} label="标签" />
+        <StatPanel value={stats.totalReadMinutes} label="阅读分钟" />
+      </div>
+
+      <div className="panel" style={{ padding: 18, marginBottom: 24 }}>
+        <div style={{ display: 'grid', gridTemplateColumns: '1fr auto', gap: 12 }}>
+          <div style={{ position: 'relative' }}>
+            <span style={{ position: 'absolute', left: 12, top: '50%', transform: 'translateY(-50%)', pointerEvents: 'none' }}>🔍</span>
+            <input
+              type="text"
+              value={searchQuery}
+              onChange={e => setSearchQuery(e.target.value)}
+              placeholder="搜索标题、正文、描述或标签…"
+              style={{ paddingLeft: 38 }}
+            />
+          </div>
+          <select
+            value={sortOrder}
+            onChange={e => setSortOrder(e.target.value)}
+            style={{ width: 'auto', minWidth: 140 }}
+          >
+            <option value="desc">最新优先</option>
+            <option value="asc">最早优先</option>
+          </select>
+        </div>
+
+        <div style={{ display: 'flex', flexWrap: 'wrap', gap: 7, marginTop: 14 }}>
+          {categories.map(c => (
+            <button
+              key={c}
+              onClick={() => setSelectedCategory(c)}
+              style={{
+                fontSize: 13,
+                fontWeight: 700,
+                padding: '6px 13px',
+                borderRadius: 999,
+                border: '2px solid var(--ink)',
+                background: selectedCategory === c ? 'var(--ink)' : 'transparent',
+                color: selectedCategory === c ? 'var(--paper)' : 'var(--ink)',
+                cursor: 'pointer',
+              }}
+            >
+              {c}
+            </button>
+          ))}
+        </div>
+
+        {hasFilters && (
+          <div style={{ display: 'flex', flexWrap: 'wrap', justifyContent: 'space-between', alignItems: 'center', gap: 12, paddingTop: 12, marginTop: 12, borderTop: '2px solid var(--line)', fontSize: 13, color: 'var(--ink-soft)' }}>
+            <span>当前筛选到 <b style={{ color: 'var(--accent)' }}>{filteredArticles.length}</b> 篇文章{selectedTag && <> · 标签 #{selectedTag}</>}</span>
+            <button onClick={clearFilters} style={{ background: 'none', border: 'none', color: 'var(--accent)', fontWeight: 700, cursor: 'pointer' }}>
+              清除筛选 ↻
+            </button>
+          </div>
+        )}
+      </div>
+
+      {loading ? (
+        <div className="panel" style={{ textAlign: 'center', padding: 48 }}>
+          <div className="animate-bounce" style={{ fontSize: 40 }}>🐱</div>
+          <p style={{ marginTop: 12, color: 'var(--ink-soft)' }}>正在整理归档…</p>
+        </div>
+      ) : error ? (
+        <div className="panel" style={{ textAlign: 'center', padding: 48, background: 'var(--k2-bg)' }}>
+          <p style={{ marginBottom: 16, color: 'var(--ink-soft)' }}>{error}</p>
+          <button onClick={fetchArticles} className="btn">重试</button>
+        </div>
+      ) : archiveGroups.length === 0 ? (
+        <div className="panel" style={{ textAlign: 'center', padding: 48 }}>
+          <div style={{ fontSize: 40 }}>🍃</div>
+          <p style={{ marginTop: 12, color: 'var(--ink-soft)' }}>没有找到匹配的文章。</p>
+          {hasFilters && <button onClick={clearFilters} className="btn ghost" style={{ marginTop: 16 }}>清除筛选</button>}
+        </div>
+      ) : (
+        archiveGroups.map((group, gi) => (
+          <section key={group.year} style={{ marginBottom: 32 }}>
+            <div className="section-h">
+              <h2>
+                {group.year}
+                <span style={{ fontFamily: 'var(--disp)', fontSize: 15, fontWeight: 600, color: 'var(--ink-soft)' }}>
+                  · {group.items.length} 篇
+                </span>
+              </h2>
+            </div>
+            <div style={{ display: 'flex', flexDirection: 'column', gap: 12 }}>
+              {group.items.map((a, i) => (
+                <Link
+                  key={a.id}
+                  to={`/article/${a.id}`}
+                  className={`ec ${kClassFor(a.category, gi * 7 + i)}`}
+                  style={{ display: 'grid', gridTemplateColumns: 'auto auto 1fr auto', gap: 16, alignItems: 'center', padding: '18px 22px' }}
+                >
+                  <span style={{ fontFamily: 'var(--disp)', fontSize: 13, fontWeight: 700, opacity: 0.55 }}>
+                    {a.date ? a.date.slice(5) : ''}
+                  </span>
+                  <span className="cat cat-chip" style={{ border: 'none', padding: 0 }}>{a.category}</span>
+                  <h3 style={{ fontSize: 19, margin: 0 }}>{a.title}</h3>
+                  <span className="arrow">→</span>
+                </Link>
+              ))}
+            </div>
+          </section>
+        ))
+      )}
+
+      {tags.length > 0 && (
+        <section style={{ marginTop: 32 }}>
+          <div className="section-h"><h2># 热门标签</h2></div>
+          <div className="panel" style={{ display: 'flex', flexWrap: 'wrap', gap: 8 }}>
+            {tags.slice(0, 24).map(item => (
+              <button
+                key={item.tag}
+                onClick={() => setSelectedTag(item.tag === selectedTag ? '' : item.tag)}
+                className="sticker"
+                style={
+                  selectedTag === item.tag
+                    ? { background: 'var(--accent)', color: '#fff', borderColor: 'var(--accent)' }
+                    : { fontSize: 12.5, padding: '6px 12px' }
+                }
               >
-                <option value="desc">最新优先</option>
-                <option value="asc">最早优先</option>
-              </select>
-            </div>
-
-            <div className="flex flex-wrap gap-2">
-              {categories.map(category => (
-                <button
-                  key={category}
-                  onClick={() => setSelectedCategory(category)}
-                  className={`px-4 py-2 rounded-full text-sm font-bold transition-all ${
-                    selectedCategory === category
-                      ? 'bg-primary text-white'
-                      : 'bg-white/70 text-text-secondary hover:text-primary'
-                  }`}
-                >
-                  {category}
-                </button>
-              ))}
-            </div>
-
-            {(searchQuery || selectedCategory !== '全部' || selectedTag) && (
-              <div className="flex flex-wrap items-center justify-between gap-3 pt-3 border-t border-border-color/60 text-sm text-text-secondary">
-                <span>当前筛选到 {filteredArticles.length} 篇文章</span>
-                <button onClick={clearFilters} className="font-bold text-primary hover:text-primary-hover">
-                  清除筛选
-                </button>
-              </div>
-            )}
+                #{item.tag} <b style={{ color: selectedTag === item.tag ? 'var(--sun)' : 'var(--accent)' }}>{item.count}</b>
+              </button>
+            ))}
           </div>
-
-          {loading ? (
-            <div className="glass rounded-2xl p-10 text-center text-text-secondary">正在整理归档...</div>
-          ) : error ? (
-            <div className="glass rounded-2xl p-10 text-center">
-              <p className="text-red-500 mb-4">{error}</p>
-              <button onClick={fetchArticles} className="btn btn-primary">重试</button>
-            </div>
-          ) : archiveGroups.length > 0 ? (
-            <div className="space-y-8">
-              {archiveGroups.map(group => (
-                <section key={group.year} className="space-y-4">
-                  <div className="flex items-center gap-3">
-                    <h2 className="text-2xl font-extrabold text-text-color">{group.year}</h2>
-                    <span className="text-sm text-text-secondary">{group.items.length} 篇</span>
-                    <div className="h-px flex-1 bg-border-color/70" />
-                  </div>
-                  <div className="space-y-3">
-                    {group.items.map(article => (
-                      <Link key={article.id} to={`/article/${article.id}`} className="card card-hover block">
-                        <div className="flex flex-col gap-3 md:flex-row md:items-center md:justify-between">
-                          <div>
-                            <div className="flex flex-wrap gap-2 text-xs text-text-light mb-2">
-                              <span>{article.date}</span>
-                              <span>{article.category}</span>
-                              <span>{article.readTime} 分钟</span>
-                            </div>
-                            <h3 className="text-lg font-extrabold text-text-color group-hover:text-primary">
-                              {article.title}
-                            </h3>
-                            <p className="text-sm text-text-secondary mt-2 line-clamp-2">{article.description}</p>
-                          </div>
-                          <span className="text-primary font-bold shrink-0">阅读 →</span>
-                        </div>
-                      </Link>
-                    ))}
-                  </div>
-                </section>
-              ))}
-            </div>
-          ) : (
-            <div className="glass rounded-2xl p-10 text-center">
-              <p className="text-text-secondary mb-4">没有找到匹配的文章。</p>
-              <button onClick={clearFilters} className="btn btn-secondary">清除筛选</button>
-            </div>
-          )}
-        </div>
-
-        <aside className="space-y-6">
-          <div className="glass rounded-2xl p-6">
-            <h2 className="text-lg font-extrabold text-text-color mb-4">热门标签</h2>
-            <div className="flex flex-wrap gap-2">
-              {tags.slice(0, 18).map(item => (
-                <button
-                  key={item.tag}
-                  onClick={() => setSelectedTag(item.tag === selectedTag ? '' : item.tag)}
-                  className={`rounded-full px-3 py-1.5 text-sm font-bold transition-all ${
-                    selectedTag === item.tag
-                      ? 'bg-primary text-white'
-                      : 'bg-white/70 text-text-secondary hover:text-primary'
-                  }`}
-                >
-                  #{item.tag} {item.count}
-                </button>
-              ))}
-            </div>
-          </div>
-
-          <div className="glass rounded-2xl p-6">
-            <h2 className="text-lg font-extrabold text-text-color mb-4">分类概览</h2>
-            <div className="space-y-3">
-              {categorySummaries.map(item => (
-                <button
-                  key={item.category}
-                  onClick={() => setSelectedCategory(item.category)}
-                  className="w-full rounded-xl bg-white/70 p-3 text-left hover:bg-card-hover transition-colors"
-                >
-                  <div className="flex justify-between gap-3 font-bold text-text-color">
-                    <span>{item.category}</span>
-                    <span className="text-primary">{item.count}</span>
-                  </div>
-                  <div className="text-xs text-text-light mt-1">
-                    最近更新 {item.latestDate}
-                  </div>
-                </button>
-              ))}
-            </div>
-          </div>
-        </aside>
-      </section>
+        </section>
+      )}
     </div>
   )
 }

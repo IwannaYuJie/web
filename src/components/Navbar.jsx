@@ -1,23 +1,22 @@
 import { useState, useEffect, memo } from 'react'
 import { Link, useLocation } from 'react-router-dom'
+import { blogProfile } from '../data/blogProfile'
 import './Navbar.css'
 
-// 导航链接配置 - 提取到组件外部
 const NAV_LINKS = [
-  { path: '/', label: '🏠 首页' },
-  { path: '/archive', label: '🗂️ 归档' },
-  { path: '/tags', label: '# 标签' },
-  { path: '/about', label: '👋 关于' },
-  { path: '/toolbox', label: '🧰 工具箱' },
-  { path: '/games', label: '🎮 游戏' },
-  { path: '/admin/articles', label: '✍️ 管理' },
+  { path: '/', label: '首页' },
+  { path: '/archive', label: '归档' },
+  { path: '/tags', label: '标签' },
+  { path: '/about', label: '关于' },
+  { path: '/toolbox', label: '工具箱' },
+  { path: '/games', label: '游戏' },
+  { path: '/admin/articles', label: '管理' },
 ]
 
 function isActiveLink(pathname, path) {
   if (path === '/') {
     return pathname === '/' || pathname.startsWith('/article/')
   }
-
   return pathname === path || pathname.startsWith(`${path}/`)
 }
 
@@ -26,66 +25,66 @@ function Navbar() {
   const [isMenuOpen, setIsMenuOpen] = useState(false)
   const location = useLocation()
 
-  // 监听滚动
   useEffect(() => {
-    const handleScroll = () => {
-      setIsScrolled(window.scrollY > 20)
-    }
-    window.addEventListener('scroll', handleScroll)
+    const handleScroll = () => setIsScrolled(window.scrollY > 12)
+    handleScroll()
+    window.addEventListener('scroll', handleScroll, { passive: true })
     return () => window.removeEventListener('scroll', handleScroll)
   }, [])
 
-  // 路由变化时关闭菜单
   useEffect(() => {
     setIsMenuOpen(false)
   }, [location.pathname])
 
   return (
-    <nav className={`navbar ${isScrolled ? 'scrolled' : ''}`}>
-      <div className="container nav-container">
-        <Link to="/" className="nav-logo">
-          <img src="/images/cat-avatar.png" alt="Logo" />
-          <span>橘猫小窝</span>
+    <div className={`bnav ${isScrolled ? 'scrolled' : ''}`}>
+      <div className="bnav-inner">
+        <Link to="/" className="bnav-logo" aria-label="返回首页">
+          <span className="bnav-mk">
+            <img src={blogProfile.avatar} alt="" />
+          </span>
+          橘猫小窝
         </Link>
 
-        {/* 桌面端菜单 */}
-        <div className="nav-links">
+        <nav className="bnav-links">
           {NAV_LINKS.map(link => (
             <Link
               key={link.path}
               to={link.path}
-              className={`nav-link ${isActiveLink(location.pathname, link.path) ? 'active' : ''}`}
+              className={isActiveLink(location.pathname, link.path) ? 'on' : ''}
             >
               {link.label}
             </Link>
           ))}
-        </div>
+        </nav>
 
-        {/* 移动端菜单按钮 */}
         <button
-          className="mobile-toggle"
-          onClick={() => setIsMenuOpen(!isMenuOpen)}
+          className="bnav-menu-btn"
+          onClick={() => setIsMenuOpen(o => !o)}
           aria-label="切换菜单"
         >
           {isMenuOpen ? '✕' : '☰'}
         </button>
+      </div>
 
-        {/* 移动端下拉菜单 */}
-        {isMenuOpen && (
-          <div className="mobile-menu">
-            {NAV_LINKS.map(link => (
+      {isMenuOpen && (
+        <div className="bnav-mobile">
+          {NAV_LINKS.map(link => {
+            const active = isActiveLink(location.pathname, link.path)
+            return (
               <Link
                 key={link.path}
                 to={link.path}
-                className={`nav-link ${isActiveLink(location.pathname, link.path) ? 'active' : ''}`}
+                className="sticker"
+                style={active ? { background: 'var(--accent)', color: '#fff', borderColor: 'var(--accent)' } : undefined}
               >
                 {link.label}
               </Link>
-            ))}
-          </div>
-        )}
-      </div>
-    </nav>
+            )
+          })}
+        </div>
+      )}
+    </div>
   )
 }
 

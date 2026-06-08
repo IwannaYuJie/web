@@ -266,72 +266,64 @@ function ArticleManager() {
 
   if (!isAuthenticated) {
     return (
-      <div className="container pb-12 max-w-md mx-auto pt-16">
-        <div className="glass rounded-[32px] p-10 text-center animate-fade-in relative overflow-hidden">
-          <div className="relative z-10">
-            <div className="inline-flex items-center justify-center w-20 h-20 rounded-full bg-primary/10 text-4xl mb-5">
-              🔒
-            </div>
-            <h1 className="text-3xl font-extrabold mb-2 text-gradient">管理员验证</h1>
-            <p className="text-text-secondary mb-7">输入密码以进入文章管理后台</p>
-            <form onSubmit={handleLogin} className="space-y-4">
+      <div className="wrap" style={{ maxWidth: 460, paddingTop: 36, paddingBottom: 48 }}>
+        <div style={{ padding: '34px 0 24px' }}>
+          <h1 style={{ fontFamily: 'var(--serif)', fontWeight: 900, fontSize: 'clamp(40px,7vw,72px)', lineHeight: 1, letterSpacing: '-.02em' }}>
+            ✍️ 文章管理
+          </h1>
+        </div>
+        <div className="panel" style={{ background: 'var(--k3-bg)', padding: 30 }}>
+          <div className="panel-h">🔑 管理员登录</div>
+          <p style={{ fontSize: 13.5, color: 'var(--ink-soft)', marginBottom: 18, lineHeight: 1.6 }}>
+            输入管理员密钥后可新增、编辑、删除文章。数据写入 Cloudflare KV。
+          </p>
+          <form onSubmit={handleLogin}>
+            <div style={{ position: 'relative', marginBottom: 14 }}>
+              <span style={{ position: 'absolute', left: 12, top: '50%', transform: 'translateY(-50%)', pointerEvents: 'none' }}>🔐</span>
               <input
                 type="password"
                 name="key"
-                placeholder="输入密码..."
-                className="w-full p-3 rounded-xl border border-border-color bg-white/70 focus:bg-white focus:border-primary outline-none transition-all text-center"
+                placeholder="管理员密钥…"
                 autoFocus
+                style={{ paddingLeft: 38 }}
               />
-              <button type="submit" className="btn btn-primary w-full">
-                ✨ 验证身份
-              </button>
-            </form>
-            <div className="mt-6 text-sm">
-              <Link to="/" className="text-text-light hover:text-primary transition-colors">← 返回首页</Link>
             </div>
+            <button type="submit" className="btn" style={{ width: '100%', justifyContent: 'center' }}>
+              登录管理后台 →
+            </button>
+          </form>
+          <div style={{ marginTop: 20, fontSize: 13, textAlign: 'center' }}>
+            <Link to="/" style={{ color: 'var(--ink-soft)', fontWeight: 600 }}>← 返回首页</Link>
           </div>
-
-          <div className="absolute top-0 right-0 w-48 h-48 bg-primary/10 rounded-full blur-3xl -translate-y-1/2 translate-x-1/2 pointer-events-none"></div>
-          <div className="absolute bottom-0 left-0 w-48 h-48 bg-secondary/10 rounded-full blur-3xl translate-y-1/2 -translate-x-1/2 pointer-events-none"></div>
         </div>
       </div>
     )
   }
 
   return (
-    <div className="container pb-12 max-w-6xl mx-auto">
-      {/* Header */}
-      <header className="mb-8 animate-fade-in">
-        <div className="flex justify-between items-end mb-6">
-          <div>
-            <h1 className="text-3xl font-extrabold text-gradient mb-2">📝 文章管理</h1>
-            <p className="text-text-secondary">管理你的Java技术文章库</p>
+    <div className="wrap" style={{ maxWidth: 1100, paddingBottom: 48 }}>
+      <header style={{ marginBottom: 24 }}>
+        <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-end', flexWrap: 'wrap', gap: 16, marginBottom: 16 }}>
+          <div style={{ padding: '24px 0 0' }}>
+            <h1 style={{ fontFamily: 'var(--serif)', fontWeight: 900, fontSize: 'clamp(34px,5vw,56px)', lineHeight: 1, letterSpacing: '-.02em' }}>
+              ✍️ 文章管理
+            </h1>
+            <p style={{ fontSize: 14.5, color: 'var(--ink-soft)', marginTop: 8, fontWeight: 500 }}>
+              共 {articles.length} 篇 · 管理员已登录
+            </p>
           </div>
-          <div className="flex gap-3">
-            <button
-              onClick={handleLogout}
-              className="btn btn-ghost text-text-light hover:text-red-500"
-              title="退出登录"
-            >
-              🔒 退出
+          <div style={{ display: 'flex', gap: 10, flexWrap: 'wrap' }}>
+            <button onClick={handleAddNew} className="btn" disabled={showForm}>
+              ＋ 新增文章
             </button>
-            <button
-              onClick={fetchArticles}
-              className="btn btn-secondary"
-              disabled={loading}
-            >
+            <button onClick={fetchArticles} className="btn ghost" disabled={loading}>
               🔄 刷新
             </button>
-            <button
-              onClick={handleAddNew}
-              className="btn btn-primary"
-              disabled={showForm}
-            >
-              ➕ 新增文章
+            <button onClick={handleLogout} className="btn ghost" title="退出登录">
+              🔒 退出
             </button>
           </div>
         </div>
-
       </header>
 
       {/* Form Modal/Section */}
