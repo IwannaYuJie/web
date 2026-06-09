@@ -1,0 +1,208 @@
+/**
+ * 智能五子棋对战样式 🌌
+ * 赛博霓虹风格
+ */
+
+.gobang-container {
+  width: 100%;
+  min-height: 100%;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 20px;
+  position: relative;
+  font-family: inherit;
+}
+
+/* 棋盘控制台面板 */
+.gobang-console {
+  background: var(--surface-color, #FBF3E5);
+  border: 2px solid var(--ink, #1E1813);
+  border-radius: var(--radius-lg, 24px);
+  padding: 30px;
+  max-width: 540px;
+  width: 100%;
+  box-shadow: var(--shadow-lg, 10px 10px 0 var(--ink));
+  text-align: center;
+  animation: gobangSlideIn 0.5s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+}
+
+@keyframes gobangSlideIn {
+  from { opacity: 0; transform: translateY(20px) scale(0.98); }
+  to { opacity: 1; transform: translateY(0) scale(1); }
+}
+
+.gobang-console .game-icon {
+  font-size: 64px;
+  margin-bottom: 12px;
+}
+
+.gobang-console .game-title {
+  font-size: 30px;
+  font-family: var(--serif);
+  font-weight: 900;
+  color: var(--ink, #1E1813);
+  margin-bottom: 8px;
+}
+
+.gobang-console .game-desc {
+  font-size: 14px;
+  color: var(--ink-soft, #5A4E42);
+  line-height: 1.6;
+  margin-bottom: 24px;
+}
+
+/* 模式选择 */
+.gobang-mode-select {
+  display: flex;
+  gap: 16px;
+  justify-content: center;
+  margin-bottom: 24px;
+}
+
+/* 游戏面板 */
+.gobang-board-wrapper {
+  background: var(--surface-color, #FBF3E5);
+  border: 2px solid var(--ink, #1E1813);
+  border-radius: var(--radius-lg, 24px);
+  padding: 24px;
+  box-shadow: var(--shadow-lg, 10px 10px 0 var(--ink));
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  animation: gobangSlideIn 0.4s ease-out;
+}
+
+/* 棋局顶部状态 */
+.gobang-status-row {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  width: 100%;
+  margin-bottom: 16px;
+  gap: 12px;
+}
+
+.gobang-turn-indicator {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-weight: 700;
+  font-size: 15px;
+  color: var(--ink, #1E1813);
+}
+
+.gobang-indicator-dot {
+  width: 14px;
+  height: 14px;
+  border-radius: 50%;
+  border: 1.5px solid var(--ink, #1E1813);
+}
+
+.gobang-indicator-dot.black {
+  background: #3B82F6; /* 赛博蓝 */
+  box-shadow: 0 0 8px #3B82F6;
+}
+
+.gobang-indicator-dot.white {
+  background: #EC4899; /* 霓虹粉 */
+  box-shadow: 0 0 8px #EC4899;
+}
+
+/* 赛博网格棋盘容器 */
+.gobang-board-canvas-box {
+  border: 3px solid var(--ink, #1E1813);
+  border-radius: var(--radius-md, 20px);
+  overflow: hidden;
+  box-shadow: var(--shadow-sm, 3px 3px 0 var(--ink));
+  background: #111827; /* 暗夜背景 */
+  cursor: pointer;
+  position: relative;
+}
+
+.gobang-board-canvas-box canvas {
+  display: block;
+}
+
+/* 结果弹窗 */
+.gobang-result-panel {
+  text-align: center;
+  margin-top: 18px;
+  padding: 16px;
+  border: 2px solid var(--ink, #1E1813);
+  border-radius: var(--radius-md, 20px);
+  background: var(--k1-bg, #FFE9D6);
+  width: 100%;
+  max-width: 450px;
+  box-shadow: var(--shadow-sm, 3px 3px 0 var(--ink));
+  animation: gobangPop 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+}
+
+@keyframes gobangPop {
+  from { transform: scale(0.9); opacity: 0; }
+  to { transform: scale(1); opacity: 1; }
+}
+
+.gobang-result-panel h3 {
+  font-size: 22px;
+  font-family: var(--serif);
+  font-weight: 900;
+  margin-bottom: 8px;
+  color: var(--ink, #1E1813);
+}
+
+.gobang-result-panel p {
+  font-size: 14px;
+  color: var(--ink-soft, #5A4E42);
+  margin-bottom: 16px;
+}
+
+/* 操作键组 */
+.gobang-action-row {
+  display: flex;
+  gap: 12px;
+  margin-top: 16px;
+}
+
+.gobang-btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
+  font-weight: 700;
+  font-size: 15px;
+  padding: 10px 20px;
+  border-radius: 12px;
+  border: 2px solid var(--ink, #1E1813);
+  background: var(--accent, #FF6B1A);
+  color: #fff;
+  box-shadow: var(--shadow-sm, 3px 3px 0 var(--ink));
+  cursor: pointer;
+  transition: transform 0.2s, box-shadow 0.2s;
+}
+
+.gobang-btn:hover {
+  transform: translate(-3px, -3px);
+  box-shadow: var(--shadow, 6px 6px 0 var(--ink));
+}
+
+.gobang-btn:active {
+  transform: translate(0, 0);
+  box-shadow: var(--shadow-sm, 3px 3px 0 var(--ink));
+}
+
+.gobang-btn.secondary {
+  background: var(--paper, #FBF3E5);
+  color: var(--ink, #1E1813);
+}
+
+.gobang-btn.pve {
+  background: var(--k3-bg, #E6DCFB);
+  color: var(--ink, #1E1813);
+}
+
+.gobang-btn.pvp {
+  background: var(--k4-bg, #D5F2EB);
+  color: var(--ink, #1E1813);
+}

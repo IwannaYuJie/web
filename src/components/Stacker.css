@@ -1,0 +1,214 @@
+/**
+ * 叠叠乐大挑战样式 🧱🌈
+ * 杂志撞色加霓虹炫彩风格
+ */
+
+.stacker-container {
+  width: 100%;
+  min-height: 100%;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 20px;
+  position: relative;
+  font-family: inherit;
+}
+
+/* 游戏面板 */
+.stacker-console {
+  background: var(--surface-color, #FBF3E5);
+  border: 2px solid var(--ink, #1E1813);
+  border-radius: var(--radius-lg, 24px);
+  padding: 40px;
+  max-width: 480px;
+  width: 100%;
+  box-shadow: var(--shadow-lg, 10px 10px 0 var(--ink));
+  text-align: center;
+  animation: stackerSlideIn 0.5s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+}
+
+@keyframes stackerSlideIn {
+  from { opacity: 0; transform: translateY(20px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+.stacker-console .game-icon {
+  font-size: 72px;
+  margin-bottom: 12px;
+  animation: blockBounce 1.5s ease-in-out infinite alternate;
+  display: inline-block;
+}
+
+@keyframes blockBounce {
+  from { transform: translateY(0) scale(1); }
+  to { transform: translateY(-8px) scale(0.96); }
+}
+
+.stacker-console .game-title {
+  font-size: 32px;
+  font-family: var(--serif);
+  font-weight: 900;
+  color: var(--ink, #1E1813);
+  margin-bottom: 12px;
+}
+
+.stacker-console .game-desc {
+  font-size: 14.5px;
+  color: var(--ink-soft, #5A4E42);
+  line-height: 1.7;
+  margin-bottom: 24px;
+}
+
+/* 游戏操作说明 */
+.stacker-controls-info {
+  background: rgba(19, 168, 142, 0.08); /* 绿薄荷底 */
+  border: 2px dashed var(--ink, #1E1813);
+  border-radius: var(--radius-md, 20px);
+  padding: 16px;
+  margin-bottom: 24px;
+  text-align: left;
+}
+
+.stacker-controls-info h4 {
+  font-size: 15px;
+  color: var(--ink, #1E1813);
+  margin-bottom: 8px;
+  text-align: center;
+  font-weight: 700;
+}
+
+.stacker-controls-info .control-row {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 10px;
+  font-size: 13.5px;
+  color: var(--ink-soft, #5A4E42);
+}
+
+.stacker-controls-info .control-key {
+  background: var(--ink, #1E1813);
+  color: var(--paper, #FBF3E5);
+  padding: 3px 10px;
+  border-radius: 6px;
+  font-weight: 700;
+  font-size: 12px;
+}
+
+/* 按钮 */
+.stacker-btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  font-weight: 700;
+  font-size: 16px;
+  padding: 12px 28px;
+  border-radius: 14px;
+  border: 2px solid var(--ink, #1E1813);
+  background: var(--accent, #FF6B1A);
+  color: #fff;
+  box-shadow: var(--shadow-sm, 3px 3px 0 var(--ink));
+  cursor: pointer;
+  transition: transform 0.2s, box-shadow 0.2s;
+}
+
+.stacker-btn:hover {
+  transform: translate(-3px, -3px);
+  box-shadow: var(--shadow, 6px 6px 0 var(--ink));
+}
+
+.stacker-btn:active {
+  transform: translate(0, 0);
+  box-shadow: var(--shadow-sm, 3px 3px 0 var(--ink));
+}
+
+.stacker-btn.secondary {
+  background: var(--paper, #FBF3E5);
+  color: var(--ink, #1E1813);
+}
+
+/* 运行画盘 */
+.stacker-board {
+  background: var(--surface-color, #FBF3E5);
+  border: 2px solid var(--ink, #1E1813);
+  border-radius: var(--radius-lg, 24px);
+  padding: 24px;
+  box-shadow: var(--shadow-lg, 10px 10px 0 var(--ink));
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  position: relative;
+}
+
+/* 状态显示 */
+.stacker-status-bar {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  width: 100%;
+  margin-bottom: 12px;
+  gap: 12px;
+}
+
+.stacker-stat {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  background: rgba(19, 168, 142, 0.08);
+  border: 2.2px solid var(--ink, #1E1813);
+  padding: 6px 14px;
+  border-radius: var(--radius-sm, 12px);
+  font-weight: 700;
+  color: var(--ink, #1E1813);
+  font-size: 14px;
+}
+
+.stacker-stat .stat-value {
+  color: var(--mint, #13A88E);
+  font-size: 16px;
+  font-weight: 900;
+}
+
+/* Canvas外框 */
+.stacker-canvas-wrap {
+  border: 3px solid var(--ink, #1E1813);
+  border-radius: var(--radius-md, 20px);
+  overflow: hidden;
+  box-shadow: var(--shadow-sm, 3px 3px 0 var(--ink));
+  background: #111827; /* 炫彩黑 */
+  cursor: pointer;
+  position: relative;
+}
+
+.stacker-canvas-wrap canvas {
+  display: block;
+}
+
+.stacker-combo-badge {
+  position: absolute;
+  top: 70px;
+  left: 50%;
+  transform: translateX(-50%);
+  pointer-events: none;
+  font-family: var(--disp);
+  font-size: 24px;
+  font-weight: 900;
+  text-shadow: 2px 2px 0 #000;
+  z-index: 10;
+  animation: comboPop 0.5s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+}
+
+@keyframes comboPop {
+  0% { transform: translateX(-50%) scale(0.6); opacity: 0; }
+  50% { transform: translateX(-50%) scale(1.25); opacity: 1; }
+  100% { transform: translateX(-50%) scale(1); opacity: 1; }
+}
+
+/* 按钮组 */
+.stacker-btn-group {
+  display: flex;
+  gap: 12px;
+  margin-top: 14px;
+}
