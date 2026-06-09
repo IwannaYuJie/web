@@ -34,7 +34,7 @@ function ArticleDetail() {
       setReadProgress(progress)
     }
     const handleScroll = () => {
-      if (!rafId) rafId = window.requestAnimationFrame(updateProgress)
+      if (!rafId) {rafId = window.requestAnimationFrame(updateProgress)}
     }
     handleScroll()
     window.addEventListener('scroll', handleScroll, { passive: true })
@@ -42,7 +42,7 @@ function ArticleDetail() {
     return () => {
       window.removeEventListener('scroll', handleScroll)
       window.removeEventListener('resize', handleScroll)
-      if (rafId) window.cancelAnimationFrame(rafId)
+      if (rafId) {window.cancelAnimationFrame(rafId)}
     }
   }, [])
 
@@ -50,7 +50,7 @@ function ArticleDetail() {
   const relatedArticles = useMemo(() => getRelatedArticles(article, allArticles, 2), [article, allArticles])
 
   const articleNavigation = useMemo(() => {
-    if (!article) return { newer: null, older: null }
+    if (!article) {return { newer: null, older: null }}
     const sorted = getSortedArticles(allArticles)
     const currentIndex = sorted.findIndex(item => String(item.id) === String(article.id))
     return {

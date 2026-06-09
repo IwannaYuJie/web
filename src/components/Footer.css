@@ -28,6 +28,7 @@
   letter-spacing: -0.02em;
   color: var(--paper);
   margin-bottom: 14px;
+  cursor: pointer;
 }
 .foot-brand .mk {
   position: relative;
@@ -52,9 +53,27 @@
   border-left: 8px solid transparent;
   border-right: 8px solid transparent;
   border-bottom: 12px solid var(--paper);
+  transition: transform 0.2s ease;
 }
 .foot-brand .mk::before { left: 1px; transform: rotate(-15deg); }
 .foot-brand .mk::after { right: 1px; transform: rotate(15deg); }
+
+/* Wiggle animations for footer logo ears */
+@keyframes footWiggleLeftEar {
+  0%, 100% { transform: rotate(-15deg); }
+  50% { transform: rotate(-32deg) translateY(-2px) translateX(-1px); }
+}
+@keyframes footWiggleRightEar {
+  0%, 100% { transform: rotate(15deg); }
+  50% { transform: rotate(32deg) translateY(-2px) translateX(1px); }
+}
+
+.foot-brand:hover .mk::before {
+  animation: footWiggleLeftEar 0.3s ease-in-out infinite;
+}
+.foot-brand:hover .mk::after {
+  animation: footWiggleRightEar 0.3s ease-in-out infinite;
+}
 
 .foot-intro {
   font-size: 13.5px;

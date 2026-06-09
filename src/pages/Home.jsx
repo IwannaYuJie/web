@@ -16,9 +16,9 @@ function pad2(n) { return String(n).padStart(2, '0') }
 
 function greetingNow() {
   const h = new Date().getHours()
-  if (h < 9) return '🌅 早安'
-  if (h < 12) return '☀️ 上午好'
-  if (h < 18) return '🌤️ 下午好'
+  if (h < 9) {return '🌅 早安'}
+  if (h < 12) {return '☀️ 上午好'}
+  if (h < 18) {return '🌤️ 下午好'}
   return '🌆 晚上好'
 }
 
@@ -100,7 +100,7 @@ function Hero({ stats, cover }) {
 }
 
 function FeaturedRow({ featured }) {
-  if (featured.length < 2) return null
+  if (featured.length < 2) {return null}
   const top = featured[1]
   const side = featured.slice(2, 4)
 
@@ -135,6 +135,15 @@ function FeaturedRow({ featured }) {
 
 function QuotePanel() {
   const [quote, setQuote] = useState(CAT_QUOTES[3])
+  const [isSpinning, setIsSpinning] = useState(false)
+
+  const handleNewQuote = () => {
+    setIsSpinning(true)
+    setQuote(CAT_QUOTES[Math.floor(Math.random() * CAT_QUOTES.length)])
+    // Clear rotation state after animation duration
+    setTimeout(() => setIsSpinning(false), 600)
+  }
+
   return (
     <div className="panel dark">
       <div className="panel-h" style={{ color: 'var(--sun)' }}>🐾 顺手抄一句</div>
@@ -145,9 +154,16 @@ function QuotePanel() {
       <button
         className="btn sun"
         style={{ width: '100%', marginTop: 16 }}
-        onClick={() => setQuote(CAT_QUOTES[Math.floor(Math.random() * CAT_QUOTES.length)])}
+        onClick={handleNewQuote}
       >
-        🎲 换一句
+        <span style={{
+          display: 'inline-block',
+          transform: isSpinning ? 'rotate(360deg)' : 'rotate(0deg)',
+          transition: isSpinning ? 'transform 0.6s cubic-bezier(0.19, 1, 0.22, 1)' : 'none'
+        }}>
+          🎲
+        </span>
+        &nbsp;换一句
       </button>
     </div>
   )

@@ -64,33 +64,64 @@
   border-left: 8px solid transparent;
   border-right: 8px solid transparent;
   border-bottom: 12px solid var(--ink);
+  transition: transform 0.2s ease;
 }
 .bnav-mk::before { left: 1px; transform: rotate(-15deg); }
 .bnav-mk::after { right: 1px; transform: rotate(15deg); }
 
+/* Logo Ears Wiggle Animation */
+@keyframes wiggleLeftEar {
+  0%, 100% { transform: rotate(-15deg); }
+  50% { transform: rotate(-32deg) translateY(-2px) translateX(-1px); }
+}
+@keyframes wiggleRightEar {
+  0%, 100% { transform: rotate(15deg); }
+  50% { transform: rotate(32deg) translateY(-2px) translateX(1px); }
+}
+
+.bnav-logo:hover .bnav-mk::before {
+  animation: wiggleLeftEar 0.3s ease-in-out infinite;
+}
+.bnav-logo:hover .bnav-mk::after {
+  animation: wiggleRightEar 0.3s ease-in-out infinite;
+}
+
 .bnav-links {
   display: flex;
-  gap: 6px;
+  gap: 8px;
   flex-wrap: wrap;
   justify-content: flex-end;
+  align-items: center;
 }
 .bnav-links a {
   font-family: var(--body);
   font-size: 14.5px;
-  font-weight: 600;
-  padding: 9px 16px;
+  font-weight: 700;
+  padding: 8px 14px;
   border-radius: 10px;
-  transition: background 0.18s, color 0.18s;
+  border: 2px solid transparent;
+  transition: all 0.2s cubic-bezier(0.175, 0.885, 0.32, 1.275);
   white-space: nowrap;
   color: var(--ink);
 }
 .bnav-links a:hover {
-  background: var(--ink);
-  color: var(--paper);
+  background: var(--sun);
+  color: var(--ink);
+  border-color: var(--ink);
+  transform: translate(-3px, -3px);
+  box-shadow: 3px 3px 0 var(--ink);
 }
 .bnav-links a.on {
   background: var(--accent);
   color: #fff;
+  border-color: var(--ink);
+  box-shadow: 2px 2px 0 var(--ink);
+}
+.bnav-links a.on:hover {
+  background: var(--accent);
+  color: #fff;
+  transform: translate(-3px, -3px);
+  box-shadow: 5px 5px 0 var(--ink);
 }
 
 .bnav-menu-btn {
