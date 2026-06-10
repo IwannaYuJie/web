@@ -20,11 +20,11 @@ const GAME_COMPONENTS = {
 
 const GAMES = [
   { id: 'snake-game', name: '贪吃蛇', icon: '🐍', description: '控制橘蛇吞吃苹果，避开墙壁和身体，挑战极限长度！', best: '最长 38', status: 'active', color: '#FF9F45' },
-  { id: 'tetris-game', name: '俄罗斯方块', icon: '🧱', description: '经典消除方块，控制下落方向进行整行消除以获得高分！', best: '最高 9900', status: 'active', color: '#E5366F' },
-  { id: 'game-2048', name: '2048', icon: '🔢', description: '简单的数字滑动合并游戏，凑出传说中的 2048 棋片！', best: '最高 12480', status: 'active', color: '#FFC42E' },
-  { id: 'minesweeper', name: '扫雷', icon: '💣', description: '考验推理与运气的经典扫雷，利用数字逻辑推测出地雷！', best: '最快 41s', status: 'active', color: '#6C3DD9' },
-  { id: 'memory-card', name: '记忆翻牌', icon: '🃏', description: '经典的卡牌翻转记忆测试，看看你最少几步能配对全部卡牌！', best: '最少 18 步', status: 'active', color: '#13A88E' },
-  { id: 'breakout', name: '打砖块', icon: '🏓', description: '移动底盘板反弹小球，精准击碎悬挂在上空的五彩砖块！', best: '通关 3 关', status: 'active', color: '#FF6B1A' },
+  { id: 'tetris-game', name: '俄罗斯方块', icon: '🧱', description: '经典消除方块，控制下落方向进行整行消除以获得高分！', best: '最高 9900', status: 'active', color: 'var(--berry)' },
+  { id: 'game-2048', name: '2048', icon: '🔢', description: '简单的数字滑动合并游戏，凑出传说中的 2048 棋片！', best: '最高 12480', status: 'active', color: 'var(--sun)' },
+  { id: 'minesweeper', name: '扫雷', icon: '💣', description: '考验推理与运气的经典扫雷，利用数字逻辑推测出地雷！', best: '最快 41s', status: 'active', color: 'var(--vi)' },
+  { id: 'memory-card', name: '记忆翻牌', icon: '🃏', description: '经典的卡牌翻转记忆测试，看看你最少几步能配对全部卡牌！', best: '最少 18 步', status: 'active', color: 'var(--mint)' },
+  { id: 'breakout', name: '打砖块', icon: '🏓', description: '移动底盘板反弹小球，精准击碎悬挂在上空的五彩砖块！', best: '通关 3 关', status: 'active', color: 'var(--o)' },
   { id: 'sliding-puzzle', name: '数字华容道', icon: '🧩', description: '拖动零散的数字板块，用最少的步骤和最短的时间重归原位！', best: '最少步数', status: 'active', color: '#8D6E63' },
   { id: 'whack-a-mole', name: '打地鼠', icon: '🔨', description: '30 秒极速挑战！看准冒出头的地鼠砸下去，考验反射神经！', best: '最高 56', status: 'active', color: '#4CAF50' },
   { id: 'flappy-cat', name: '飞天橘猫', icon: '🐱', description: '控制小胖橘猫在猫爬架间穿梭，收集它最爱的小鱼干！', best: '最高 32', status: 'active', color: '#FF9800' },

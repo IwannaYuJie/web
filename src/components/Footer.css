@@ -7,7 +7,33 @@
   z-index: 10;
 }
 
+/* 顶部一道五色印刷彩条 */
+.foot::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 6px;
+  background: linear-gradient(
+    90deg,
+    var(--o) 0 20%,
+    var(--berry) 20% 40%,
+    var(--vi) 40% 60%,
+    var(--mint) 60% 80%,
+    var(--sun) 80% 100%
+  );
+}
+
 .foot a:hover { color: var(--sun); }
+
+.foot-links a {
+  transition: transform 0.18s cubic-bezier(0.175, 0.885, 0.32, 1.275), opacity 0.18s, color 0.18s;
+}
+.foot-links a:hover {
+  opacity: 1;
+  transform: translateX(5px);
+}
 
 .foot-inner {
   max-width: var(--maxw);
@@ -119,6 +145,7 @@
   font-weight: 700;
   color: var(--sun);
   line-height: 1;
+  font-variant-numeric: tabular-nums;
 }
 .foot-visits-label {
   font-size: 12px;

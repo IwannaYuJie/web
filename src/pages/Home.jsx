@@ -43,7 +43,7 @@ function Hero({ stats, cover }) {
           <div style={{ fontFamily: 'var(--disp)', fontSize: 13, fontWeight: 800, letterSpacing: '.1em', textTransform: 'uppercase', color: 'var(--berry)' }}>
             {greet} · 来记一笔
           </div>
-          <h1 style={{ fontFamily: 'var(--serif)', fontWeight: 900, fontSize: 'clamp(52px, 8.5vw, 112px)', lineHeight: 0.9, letterSpacing: '-.02em', margin: '12px 0 4px' }}>
+          <h1 style={{ fontFamily: 'var(--serif)', fontWeight: 900, fontSize: 'clamp(52px, 8.5vw, 112px)', lineHeight: 0.9, letterSpacing: '-.02em', margin: '12px 0 4px', textShadow: '5px 5px 0 color-mix(in srgb, var(--sun) 55%, transparent)' }}>
             <span style={{ color: 'var(--o)' }}>橘猫</span>
             <span style={{ color: 'var(--berry)' }}>小窝</span>
           </h1>
@@ -65,11 +65,11 @@ function Hero({ stats, cover }) {
             )}
             <Link to="/archive" className="btn ghost">🗂️ 翻翻归档</Link>
           </div>
-          <div style={{ display: 'flex', gap: 0, marginTop: 'auto', paddingTop: 28, borderTop: '2px solid var(--line)', flexWrap: 'wrap' }}>
-            {items.map(([n, l], i) => (
-              <div key={l} style={{ paddingRight: 26, marginRight: 26, borderRight: i < items.length - 1 ? '2px solid var(--line)' : 'none' }}>
-                <div style={{ fontFamily: 'var(--disp)', fontSize: 30, fontWeight: 700, color: 'var(--accent)', lineHeight: 1 }}>{n}</div>
-                <div style={{ fontSize: 12, color: 'var(--ink-soft)', fontWeight: 600, marginTop: 4 }}>{l}</div>
+          <div className="hero-stats">
+            {items.map(([n, l]) => (
+              <div key={l} className="hero-stat">
+                <div className="n">{n}</div>
+                <div className="l">{l}</div>
               </div>
             ))}
           </div>

@@ -25,6 +25,7 @@ export default defineConfig(({ mode }) => {
 
     // 开发服务器配置
     server: {
+      port: Number(process.env.PORT) || 5173,
       // 配置代理解决 CORS 跨域问题
       proxy: createProxyConfig({
         arkApiKey,

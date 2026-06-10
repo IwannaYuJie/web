@@ -14,26 +14,26 @@
 }
 
 :root {
-  /* Surfaces & ink */
-  --paper: #FBF3E5;
-  --paper-2: #F5EAD6;
-  --ink: #1E1813;
-  --ink-soft: #5A4E42;
-  --line: #E6D9C2;
+  /* Surfaces & ink — 燕麦纸 + 浓缩咖啡墨 */
+  --paper: #F7F1E3;
+  --paper-2: #EFE6D0;
+  --ink: #221A10;
+  --ink-soft: #6A5B48;
+  --line: #E0D3B8;
 
-  /* Accents */
-  --o: #FF6B1A;       /* orange */
-  --berry: #E5366F;   /* berry */
-  --vi: #6C3DD9;      /* violet */
-  --mint: #13A88E;    /* mint */
-  --sun: #FFC42E;     /* sun */
+  /* Accents — 复古印刷五色：柿子橙 / 树莓 / 鸢尾紫 / 松绿 / 芥末黄 */
+  --o: #F2570A;       /* persimmon */
+  --berry: #D6336C;   /* raspberry */
+  --vi: #6741D9;      /* iris */
+  --mint: #0E9A7C;    /* pine */
+  --sun: #FFB703;     /* mustard */
   --accent: var(--o);
 
   /* Category card pairs */
-  --k1-bg: #FFE9D6; --k1-fg: var(--o);
-  --k2-bg: #FCDCE8; --k2-fg: var(--berry);
-  --k3-bg: #E6DCFB; --k3-fg: var(--vi);
-  --k4-bg: #D5F2EB; --k4-fg: var(--mint);
+  --k1-bg: #FFE3C9; --k1-fg: var(--o);
+  --k2-bg: #FAD6E2; --k2-fg: var(--berry);
+  --k3-bg: #E3DBF9; --k3-fg: var(--vi);
+  --k4-bg: #CFEFE2; --k4-fg: var(--mint);
 
   /* Shadows / radii */
   --shadow-hard: 6px 6px 0 var(--ink);
@@ -59,7 +59,7 @@
 
   /* -------- Legacy aliases (Tailwind & older components) -------- */
   --primary-color: var(--o);
-  --primary-hover: #E55A0F;
+  --primary-hover: #D84B06;
   --secondary-color: var(--mint);
   --accent-color: var(--berry);
 
@@ -94,21 +94,29 @@
 
 @media (prefers-color-scheme: dark) {
   :root {
-    --paper: #1A1410;
-    --paper-2: #241B14;
-    --ink: #F8EEDC;
-    --ink-soft: #C5B6A2;
-    --line: #3A2E22;
+    --paper: #16100A;
+    --paper-2: #211910;
+    --ink: #F6ECD8;
+    --ink-soft: #C8B89F;
+    --line: #3C2F1F;
 
-    --k1-bg: #3A2515;
-    --k2-bg: #3A1E2A;
-    --k3-bg: #2A1F3A;
-    --k4-bg: #16322B;
+    /* 夜间提亮一档，保证深底上的对比度 */
+    --o: #FF7A2E;
+    --berry: #F0598C;
+    --vi: #9C86F2;
+    --mint: #2FBF9F;
+    --sun: #FFC53D;
+
+    --k1-bg: #39220F;
+    --k2-bg: #3A1A28;
+    --k3-bg: #261E3E;
+    --k4-bg: #11352A;
 
     --shadow-hard: 6px 6px 0 #000;
     --shadow-hard-lg: 10px 10px 0 #000;
     --shadow-hard-sm: 3px 3px 0 #000;
 
+    --primary-hover: #FF8C4A;
     --text-light: #A0907B;
   }
 }
@@ -124,11 +132,15 @@ body {
   -webkit-font-smoothing: antialiased;
   letter-spacing: -0.005em;
   background-image:
-    radial-gradient(circle at 12% 18%, rgba(255, 107, 26, 0.05), transparent 40%),
-    radial-gradient(circle at 88% 8%, rgba(229, 54, 111, 0.05), transparent 38%);
+    radial-gradient(color-mix(in srgb, var(--ink) 7%, transparent) 1px, transparent 1.5px),
+    radial-gradient(circle at 12% 18%, rgba(242, 87, 10, 0.055), transparent 40%),
+    radial-gradient(circle at 88% 8%, rgba(214, 51, 108, 0.05), transparent 38%);
+  background-size: 22px 22px, auto, auto;
   background-attachment: fixed;
   overflow-x: hidden;
 }
+
+h1, h2, h3 { text-wrap: balance; }
 
 a {
   color: inherit;
@@ -146,6 +158,7 @@ button { font-family: inherit; cursor: pointer; }
   border: 3px solid var(--paper-2);
   border-radius: 99px;
 }
+::-webkit-scrollbar-thumb:hover { background: var(--accent); }
 
 /* Containers */
 .container,
@@ -178,6 +191,9 @@ button { font-family: inherit; cursor: pointer; }
 @keyframes marquee {
   from { transform: translateX(0); }
   to { transform: translateX(-50%); }
+}
+@media (prefers-reduced-motion: reduce) {
+  .ticker .run { animation: none; }
 }
 
 /* ---------- Editorial buttons ---------- */
@@ -283,9 +299,10 @@ button { font-family: inherit; cursor: pointer; }
   background: var(--k1-bg);
   color: var(--ink);
   text-decoration: none;
+  box-shadow: var(--shadow-hard-sm);
 }
 .ec:hover {
-  transform: translate(-5px, -5px);
+  transform: translate(-5px, -5px) rotate(-0.4deg);
   box-shadow: var(--shadow-hard-lg);
 }
 .ec .idx {
@@ -351,6 +368,54 @@ button { font-family: inherit; cursor: pointer; }
 .ec.k4 { background: var(--k4-bg); }
 .ec.k4 .cat, .ec.k4 .arrow { color: var(--k4-fg); }
 
+/* ---------- Hero stats ---------- */
+.hero-stats {
+  display: flex;
+  flex-wrap: wrap;
+  row-gap: 18px;
+  margin-top: auto;
+  padding-top: 28px;
+  border-top: 2px solid var(--line);
+}
+.hero-stat {
+  padding-right: 26px;
+  margin-right: 26px;
+  border-right: 2px solid var(--line);
+}
+.hero-stat:last-child {
+  padding-right: 0;
+  margin-right: 0;
+  border-right: none;
+}
+.hero-stat .n {
+  font-family: var(--disp);
+  font-size: 30px;
+  font-weight: 700;
+  color: var(--accent);
+  line-height: 1;
+}
+.hero-stat .l {
+  font-size: 12px;
+  color: var(--ink-soft);
+  font-weight: 600;
+  margin-top: 4px;
+}
+@media (max-width: 600px) {
+  .hero-stats {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 16px;
+  }
+  .hero-stat {
+    padding-right: 0;
+    margin-right: 0;
+    border-right: none;
+  }
+  .hero-stat:nth-child(odd) {
+    border-right: 2px solid var(--line);
+  }
+}
+
 /* ---------- Panels ---------- */
 .panel {
   border: 2px solid var(--ink);
@@ -358,6 +423,7 @@ button { font-family: inherit; cursor: pointer; }
   padding: 22px;
   background: var(--paper);
   color: var(--ink);
+  box-shadow: var(--shadow-hard-sm);
 }
 .panel.dark {
   background: var(--ink);
@@ -392,6 +458,16 @@ button { font-family: inherit; cursor: pointer; }
   align-items: center;
   gap: 12px;
   color: var(--ink);
+  /* 马克笔划线：标题底部一道芥末黄高亮 */
+  background-image: linear-gradient(
+    to top,
+    transparent 4%,
+    color-mix(in srgb, var(--sun) 60%, transparent) 4% 26%,
+    transparent 26%
+  );
+  padding: 0 6px;
+  margin: 0 -6px;
+  border-radius: 4px;
 }
 .section-h .more {
   font-family: var(--disp);
@@ -429,8 +505,14 @@ input[type="number"]:focus,
 textarea:focus,
 select:focus {
   box-shadow: var(--shadow-hard-sm);
+  transform: translate(-2px, -2px);
 }
 ::placeholder { color: #A8978A; }
+
+:is(.btn, .sticker, .bnav-links a):focus-visible {
+  outline: 3px solid var(--vi);
+  outline-offset: 2px;
+}
 
 /* ---------- Reveal animation ---------- */
 .reveal {
