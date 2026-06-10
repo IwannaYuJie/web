@@ -1,0 +1,292 @@
+/**
+ * 超级橘猫游戏样式 🐱🍄
+ * 橘猫小窝风格
+ */
+
+.sc-game-container {
+  width: 100%;
+  min-height: 100%;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 20px;
+  position: relative;
+  font-family: inherit;
+}
+
+/* 开始及结束屏幕 */
+.sc-screen {
+  background: var(--surface-color, #F7F1E3);
+  border: 2px solid var(--ink, #221A10);
+  border-radius: var(--radius-lg, 24px);
+  padding: 40px;
+  max-width: 520px;
+  width: 100%;
+  box-shadow: var(--shadow-lg, 10px 10px 0 var(--ink));
+  text-align: center;
+  animation: scSlideIn 0.5s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+  position: relative;
+  z-index: 1;
+}
+
+@keyframes scSlideIn {
+  from { opacity: 0; transform: translateY(20px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+.sc-screen .game-icon {
+  font-size: 64px;
+  margin-bottom: 12px;
+  animation: scBounce 2s ease-in-out infinite;
+  display: inline-block;
+}
+
+@keyframes scBounce {
+  0%, 100% { transform: translateY(0); }
+  50% { transform: translateY(-10px); }
+}
+
+.sc-screen .game-title {
+  font-size: 32px;
+  font-family: var(--serif);
+  font-weight: 900;
+  color: var(--ink, #221A10);
+  margin-bottom: 12px;
+}
+
+.sc-screen .game-desc {
+  font-size: 14.5px;
+  color: var(--ink-soft, #6A5B48);
+  line-height: 1.7;
+  margin-bottom: 24px;
+}
+
+/* 操作说明 */
+.sc-controls-info {
+  background: rgba(242, 87, 10, 0.08);
+  border: 2px dashed var(--ink, #221A10);
+  border-radius: var(--radius-md, 20px);
+  padding: 16px;
+  margin-bottom: 24px;
+}
+
+.sc-controls-info h4 {
+  font-size: 15px;
+  color: var(--ink, #221A10);
+  margin-bottom: 8px;
+  text-align: center;
+  font-weight: 700;
+}
+
+.sc-controls-info .control-row {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-wrap: wrap;
+  gap: 8px;
+  font-size: 13.5px;
+  color: var(--ink-soft, #6A5B48);
+}
+
+.sc-controls-info .control-key {
+  background: var(--ink, #221A10);
+  color: var(--paper, #F7F1E3);
+  padding: 3px 10px;
+  border-radius: 6px;
+  font-weight: 700;
+  font-size: 12px;
+}
+
+/* 按钮 */
+.sc-btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  font-weight: 700;
+  font-size: 16px;
+  padding: 12px 28px;
+  border-radius: 14px;
+  border: 2px solid var(--ink, #221A10);
+  background: var(--accent, #F2570A);
+  color: #fff;
+  box-shadow: var(--shadow-sm, 3px 3px 0 var(--ink));
+  cursor: pointer;
+  transition: transform 0.2s, box-shadow 0.2s;
+}
+
+.sc-btn:hover {
+  transform: translate(-3px, -3px);
+  box-shadow: var(--shadow, 6px 6px 0 var(--ink));
+}
+
+.sc-btn:active {
+  transform: translate(0, 0);
+  box-shadow: var(--shadow-sm, 3px 3px 0 var(--ink));
+}
+
+.sc-btn-secondary {
+  background: var(--paper, #F7F1E3);
+  color: var(--ink, #221A10);
+}
+
+/* 游戏面板 */
+.sc-game-board {
+  background: var(--surface-color, #F7F1E3);
+  border: 2px solid var(--ink, #221A10);
+  border-radius: var(--radius-lg, 24px);
+  padding: 24px;
+  box-shadow: var(--shadow-lg, 10px 10px 0 var(--ink));
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  animation: scSlideIn 0.4s ease-out;
+  position: relative;
+  z-index: 1;
+  max-width: 100%;
+}
+
+/* 状态栏 */
+.sc-status-bar {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  width: 100%;
+  margin-bottom: 12px;
+  gap: 10px;
+  flex-wrap: wrap;
+}
+
+.sc-stat {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  background: rgba(242, 87, 10, 0.08);
+  border: 2.2px solid var(--ink, #221A10);
+  padding: 6px 14px;
+  border-radius: var(--radius-sm, 12px);
+  font-weight: 700;
+  color: var(--ink, #221A10);
+  font-size: 14px;
+}
+
+.sc-stat .stat-value {
+  color: var(--accent, #F2570A);
+  font-size: 16px;
+  font-weight: 900;
+  font-variant-numeric: tabular-nums;
+}
+
+/* Canvas */
+.sc-canvas-wrap {
+  border: 3px solid var(--ink, #221A10);
+  border-radius: var(--radius-md, 20px);
+  overflow: hidden;
+  box-shadow: var(--shadow-sm, 3px 3px 0 var(--ink));
+  background: #8ED8F5;
+  max-width: 100%;
+}
+
+.sc-canvas-wrap canvas {
+  display: block;
+  max-width: 100%;
+  height: auto;
+  touch-action: none;
+}
+
+/* 移动端虚拟按键 */
+.sc-touch-controls {
+  display: none;
+  justify-content: space-between;
+  align-items: center;
+  width: 100%;
+  margin-top: 14px;
+  gap: 12px;
+}
+
+.sc-dpad {
+  display: flex;
+  gap: 10px;
+}
+
+.sc-touch-btn {
+  border: 2px solid var(--ink, #221A10);
+  background: var(--paper, #F7F1E3);
+  color: var(--ink, #221A10);
+  border-radius: 14px;
+  font-size: 20px;
+  font-weight: 900;
+  width: 64px;
+  height: 56px;
+  box-shadow: var(--shadow-sm, 3px 3px 0 var(--ink));
+  user-select: none;
+  -webkit-user-select: none;
+  touch-action: none;
+}
+
+.sc-touch-btn:active {
+  transform: translate(2px, 2px);
+  box-shadow: 1px 1px 0 var(--ink, #221A10);
+}
+
+.sc-touch-jump {
+  width: 96px;
+  background: var(--sun, #FFB703);
+  font-size: 16px;
+}
+
+@media (hover: none) and (pointer: coarse) {
+  .sc-touch-controls { display: flex; }
+}
+
+/* 按钮组 */
+.sc-btn-group {
+  display: flex;
+  gap: 12px;
+  margin-top: 14px;
+}
+
+/* 结束得分卡 */
+.sc-scores {
+  display: flex;
+  gap: 14px;
+  justify-content: center;
+  margin-bottom: 24px;
+  flex-wrap: wrap;
+}
+
+.sc-score-card {
+  background: var(--k1-bg, #FFE3C9);
+  border: 2px solid var(--ink, #221A10);
+  color: var(--ink, #221A10);
+  padding: 12px 20px;
+  border-radius: var(--radius-md, 20px);
+  min-width: 110px;
+  box-shadow: var(--shadow-sm, 3px 3px 0 var(--ink));
+}
+
+.sc-score-card .score-label {
+  font-size: 12.5px;
+  font-weight: 700;
+  margin-bottom: 4px;
+}
+
+.sc-score-card .score-num {
+  font-size: 28px;
+  font-weight: 900;
+  color: var(--accent, #F2570A);
+}
+
+.sc-score-card.best {
+  background: var(--k4-bg, #CFEFE2);
+}
+
+.sc-score-card.best .score-num {
+  color: var(--mint, #0E9A7C);
+}
+
+@media (max-width: 600px) {
+  .sc-game-board { padding: 14px; }
+  .sc-screen { padding: 28px 20px; }
+}

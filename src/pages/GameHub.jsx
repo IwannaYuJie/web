@@ -12,6 +12,7 @@ const GAME_COMPONENTS = {
   'sliding-puzzle': lazy(() => import('../components/SlidingPuzzle')),
   'whack-a-mole': lazy(() => import('../components/WhackAMole')),
   'flappy-cat': lazy(() => import('../components/FlappyCat')),
+  'super-cat': lazy(() => import('../components/SuperCat')),
   gobang: lazy(() => import('../components/Gobang')),
   stacker: lazy(() => import('../components/Stacker')),
   'yujie-game': lazy(() => import('../components/YujieGame')),
@@ -28,6 +29,7 @@ const GAMES = [
   { id: 'sliding-puzzle', name: '数字华容道', icon: '🧩', description: '拖动零散的数字板块，用最少的步骤和最短的时间重归原位！', best: '最少步数', status: 'active', color: '#8D6E63' },
   { id: 'whack-a-mole', name: '打地鼠', icon: '🔨', description: '30 秒极速挑战！看准冒出头的地鼠砸下去，考验反射神经！', best: '最高 56', status: 'active', color: '#4CAF50' },
   { id: 'flappy-cat', name: '飞天橘猫', icon: '🐱', description: '控制小胖橘猫在猫爬架间穿梭，收集它最爱的小鱼干！', best: '最高 32', status: 'active', color: '#FF9800' },
+  { id: 'super-cat', name: '超级橘猫', icon: '🍄', description: '马里奥风格横版闯关！顶问号砖、踩毛栗怪、跨越深坑摸到终点旗！', best: '通关', status: 'active', color: '#E53935' },
   { id: 'gobang', name: '智能五子棋', icon: '🌌', description: '赛博霓虹风格，对战内置启发式极小化极大搜索智能 AI！', best: '无纪录', status: 'active', color: '#3B82F6' },
   { id: 'stacker', name: '炫彩叠叠乐', icon: '🧱', description: '动感十足的楼层对齐挑战，彩虹渐变高楼与错位残片切割物理！', best: '无纪录', status: 'active', color: '#10B981' },
   { id: 'yujie-game', name: '雨姐的心动时刻', icon: '💕', description: '东北农家乐Galgame模拟，化身杰克用真诚与汗水打动雨姐！', best: '真爱结局', status: 'active', color: '#EC4899' },
@@ -205,9 +207,13 @@ function GameHub() {
                 <span className="aside-kicker">🌟 热门推荐</span>
                 <h3>大伙都在玩</h3>
                 <div className="aside-picks">
+                  <div className="pick-item" onClick={() => handleGameClick(GAMES.find(g => g.id === 'super-cat'))}>
+                    <div className="pick-icon">🍄</div>
+                    <span className="pick-text">超级橘猫 (新)</span>
+                  </div>
                   <div className="pick-item" onClick={() => handleGameClick(GAMES.find(g => g.id === 'flappy-cat'))}>
                     <div className="pick-icon">🐱</div>
-                    <span className="pick-text">飞天橘猫 (新)</span>
+                    <span className="pick-text">飞天橘猫</span>
                   </div>
                   <div className="pick-item" onClick={() => handleGameClick(GAMES.find(g => g.id === 'gobang'))}>
                     <div className="pick-icon">🌌</div>
