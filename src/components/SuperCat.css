@@ -178,6 +178,16 @@
   font-variant-numeric: tabular-nums;
 }
 
+.sc-mute-btn {
+  cursor: pointer;
+  transition: transform 0.15s;
+}
+
+.sc-mute-btn:hover {
+  transform: translate(-2px, -2px);
+  box-shadow: 2px 2px 0 var(--ink, #221A10);
+}
+
 /* Canvas */
 .sc-canvas-wrap {
   border: 3px solid var(--ink, #221A10);
@@ -234,6 +244,10 @@
   width: 96px;
   background: var(--sun, #FFB703);
   font-size: 16px;
+}
+
+.sc-touch-fire {
+  background: var(--k2-bg, #FAD6E2);
 }
 
 @media (hover: none) and (pointer: coarse) {
