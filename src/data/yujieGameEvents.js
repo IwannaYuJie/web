@@ -1,653 +1,975 @@
 /**
- * 《雨姐的心动时刻》详细事件数据
- * 包含所有剧情事件的对话、选项和分支
+ * 《雨姐的心动时刻》重制版 - 剧情事件数据
+ *
+ * 事件通用字段：
+ *   scene      场景id（决定背景）
+ *   cg         可选，大图（覆盖场景背景）
+ *   narration  旁白（无对话时直接展示）
+ *   dialogue   [{ character, text }]
+ *   choices    [{ id, text, effects, next, condition, advanceRoute, goose }]
+ *
+ * 选项效果 effects 字段：
+ *   affection / laokuaiAlert / money / ap / addItem / removeItem / setFlag / goose
+ *
+ * 选项条件 condition 字段：
+ *   minAffection / maxAffection / minAlert / maxAlert / hasItem / minMoney
+ *   flag / notFlag / minGooseCount / routeCompleted / routesCompleted
+ *
+ * next 特殊值：'HUB' 回自由行动地图，'NIGHT' 直接入夜，结局id 触发结局
  */
 
-// 导出所有游戏事件
 export const gameEvents = {
-  // ==================== 第一章：初来乍到 (Day 1) ====================
-  event_arrival: {
-    id: 'event_arrival',
+  // ==================== 序章：第1天 ====================
+  pro_arrive: {
+    id: 'pro_arrive',
     title: '抵达农家乐',
-    scene: 'farmhouse',
-    characters: ['jack'],
-    cg: 'cg_arrival.jpg',
-    narration: '经过长途跋涉，你终于来到了东北的这个小村庄。眼前是一座宽敞的农家院，院子里堆着柴火，空气中弥漫着炊烟的味道。',
+    scene: 'yard',
+    narration:
+      '坐了二十多个小时的火车加拖拉机，你终于站在了这个东北小村庄的入口。【玩法：❤️好感度决定雨姐对你的心意；👀警觉度是老蒯对你的提防——涨到45他就要轰人了，记得常去堂屋陪他喝AD钙奶。】',
     dialogue: [
-      { character: 'jack', text: '这就是传说中的东北农家乐吗？看起来很有特色啊！', avatar: 'character_jack.png' }
+      { character: 'jack', text: 'Hello？有人吗？这就是网上订的"雨姐农家乐"？院子里那只鹅为什么一直瞪我？' }
     ],
     choices: [
-      { id: 'choice_1_1', text: '大声喊："有人在家吗？"', effects: { affection: 2 }, next: 'event_meet_yujie' },
-      { id: 'choice_1_2', text: '礼貌地敲门', effects: { affection: 1 }, next: 'event_meet_yujie' }
-    ]
-  },
-
-  event_meet_yujie: {
-    id: 'event_meet_yujie',
-    title: '初见雨姐',
-    scene: 'farmhouse',
-    characters: ['jack', 'yujie'],
-    cg: 'cg_meet_yujie.jpg',
-    narration: '院门突然被推开，一个高大的身影出现在你面前。',
-    dialogue: [
-      { character: 'yujie', text: '哎呦！来客人啦？你就是网上预订的那个外国小伙吧？', avatar: 'character_yujie.png', expression: 'surprised' },
-      { character: 'jack', text: '是的，我是杰克。您就是雨姐吧？久仰大名！', avatar: 'character_jack.png' },
-      { character: 'yujie', text: '哈哈哈！啥久仰不久仰的，叫我雨姐就行！来来来，先进屋，外面怪冷的！', avatar: 'character_yujie.png', expression: 'happy' }
-    ],
-    choices: [
-      { id: 'choice_2_1', text: '主动帮忙拎行李', effects: { affection: 5 }, next: 'event_meet_laokuai' },
-      { id: 'choice_2_2', text: '夸赞雨姐的农家乐', effects: { affection: 3 }, next: 'event_meet_laokuai' },
-      { id: 'choice_2_3', text: '问雨姐需要帮什么忙', effects: { affection: 4 }, next: 'event_meet_laokuai' }
-    ]
-  },
-
-  event_meet_laokuai: {
-    id: 'event_meet_laokuai',
-    title: '遇见老蒯',
-    scene: 'farmhouse', 
-    characters: ['jack', 'yujie', 'laokuai'],
-    cg: 'cg_meet_laokuai.jpg',
-    narration: '进屋后，你看到一个瘦小的男人坐在炕上，手里拿着AD钙奶。',
-    dialogue: [
-      { character: 'laokuai', text: '雨姐，这就是那个外国客人啊？', avatar: 'character_laokuai.png', expression: 'curious' },
-      { character: 'yujie', text: '对啊，这是俺老公老蒯。老蒯，这是杰克，要在咱家住一阵子。', avatar: 'character_yujie.png' },
-      { character: 'laokuai', text: '哦...欢迎欢迎...', avatar: 'character_laokuai.png', expression: 'neutral' }
-    ],
-    choices: [
-      { id: 'choice_3_1', text: '热情地和老蒯握手', effects: { affection: 2, laokuaiAlert: -5 }, next: 'event_ch1_end' },
-      { id: 'choice_3_2', text: '送老蒯一瓶AD钙奶 (如果有的话)', condition: { hasItem: 'adMilk' }, effects: { affection: 1, laokuaiAlert: -10 }, next: 'event_ch1_end' },
-      { id: 'choice_3_3', text: '简单点头致意', effects: { affection: 0, laokuaiAlert: 0 }, next: 'event_ch1_end' },
-      { id: 'choice_3_4', text: '夸老蒯看起来很精神', effects: { affection: 1, laokuaiAlert: -2 }, next: 'event_ch1_end' }
-    ]
-  },
-
-  event_ch1_end: {
-    id: 'event_ch1_end',
-    title: '第一天结束',
-    scene: 'farmhouse',
-    narration: '第一天的生活就这样结束了。躺在炕上，你回想起今天发生的一切，对未来的生活充满了期待。',
-    choices: [
-      { id: 'choice_ch1_end', text: '睡觉，迎接第二天', effects: { day: 1 }, next: 'event_learn_dialect' } 
-    ]
-  },
-
-  // ==================== Day 2: 学习东北话 ====================
-  event_learn_dialect: {
-    id: 'event_learn_dialect',
-    title: '学习东北话',
-    scene: 'kitchen',
-    narration: '第二天一早，雨姐在教你一些东北方言。',
-    characters: ['yujie', 'jack'],
-    dialogue: [
-      { character: 'yujie', text: '杰克，你要想在这混得开，得学几句东北话！来，跟我念：“整一个！”', avatar: 'character_yujie.png' },
-      { character: 'jack', text: 'Zheng Yi Ge?', avatar: 'character_jack.png' }
-    ],
-    choices: [
-      { id: 'choice_dialect_1', text: '大声模仿：“整一个！”', effects: { affection: 5 }, next: 'event_dialect_quiz' },
-      { id: 'choice_dialect_2', text: '害羞地小声说', effects: { affection: 2 }, next: 'event_dialect_quiz' }
-    ]
-  },
-
-  event_dialect_quiz: {
-    id: 'event_dialect_quiz',
-    title: '方言测验',
-    scene: 'kitchen',
-    narration: '雨姐决定考考你。',
-    dialogue: [
-      { character: 'yujie', text: '那你知道“波棱盖儿卡秃噜皮了”是啥意思不？', avatar: 'character_yujie.png' }
-    ],
-    choices: [
-      { id: 'choice_quiz_1', text: '膝盖摔破皮了', effects: { affection: 10 }, next: 'event_ch2_transition' },
-      { id: 'choice_quiz_2', text: '头发掉光了', effects: { affection: -2 }, next: 'event_ch2_transition' },
-      { id: 'choice_quiz_3', text: '盖子拧不开了', effects: { affection: -2 }, next: 'event_ch2_transition' }
-    ]
-  },
-
-  event_ch2_transition: {
-     id: 'event_ch2_transition',
-     title: '休息',
-     scene: 'farmhouse',
-     narration: '学习了一上午，感觉自己更像个东北人了。',
-     choices: [
-       { id: 'choice_trans_2', text: '休息一晚', effects: { day: 1 }, next: 'event_goose_fight' }
-     ]
-  },
-
-  // ==================== Day 3: 遭遇大鹅 ====================
-  event_goose_fight: {
-    id: 'event_goose_fight',
-    title: '遭遇大鹅',
-    scene: 'farmhouse',
-    narration: '你在院子里散步，突然一只大白鹅向你冲了过来！',
-    choices: [
-      { id: 'choice_goose_1', text: '与大鹅决一死战', next: 'event_goose_lose' },
-      { id: 'choice_goose_2', text: '赶紧逃跑', next: 'event_goose_escape' },
-      { id: 'choice_goose_3', text: '喊雨姐救命', next: 'event_goose_help' }
-    ]
-  },
-
-  event_goose_lose: {
-    id: 'event_goose_lose',
-    title: '惨败',
-    scene: 'farmhouse',
-    narration: '你试图抓住大鹅的脖子，结果被它狠狠啄了一口。你狼狈地逃走了。',
-    dialogue: [
-      { character: 'yujie', text: '哈哈哈！大鹅可是村里一霸，你可别惹它！', avatar: 'character_yujie.png' }
-    ],
-    choices: [{ id: 'choice_lose_next', text: '尴尬地笑笑', effects: { affection: 2 }, next: 'event_ch2_start' }]
-  },
-
-  event_goose_escape: {
-    id: 'event_goose_escape',
-    title: '逃跑成功',
-    scene: 'farmhouse',
-    narration: '你好汉不吃眼前亏，撒腿就跑。',
-    choices: [{ id: 'choice_escape_next', text: '喘口气', effects: { day: 2 }, next: 'event_ch2_start' }]
-  },
-
-  event_goose_help: {
-    id: 'event_goose_help',
-    title: '救星降临',
-    scene: 'farmhouse',
-    narration: '雨姐听到呼救声，冲出来一把抓住了大鹅的脖子。',
-    dialogue: [
-      { character: 'yujie', text: '别怕！有姐在，这鹅伤不了你！', avatar: 'character_yujie.png' },
-      { character: 'jack', text: '雨姐，你太帅了！', avatar: 'character_jack.png' }
-    ],
-    choices: [{ id: 'choice_help_next', text: '感激涕零', effects: { affection: 8, day: 2 }, next: 'event_ch2_start' }]
-  },
-
-  // ==================== 第二章：融入生活 (Day 5) ====================
-  event_ch2_start: {
-    id: 'event_ch2_start',
-    title: '融入生活',
-    scene: 'kitchen',
-    narration: '已经在雨姐家住了几天了。这几天你努力适应这里的生活，今天决定帮雨姐分担一些农活。',
-    characters: ['jack', 'yujie', 'peisi'],
-    dialogue: [
-      { character: 'yujie', text: '杰克啊，这几天住得还习惯不？今天俺们要干不少活，你歇着就行。', avatar: 'character_yujie.png' },
-      { character: 'jack', text: '雨姐，我也想帮忙！我是来体验生活的，不是来当大爷的。', avatar: 'character_jack.png' },
-      { character: 'peisi', text: '嘿，这外国小伙还挺勤快！雨姐，就让他试试呗。佩斯，点火！', avatar: 'character_peisi.png' }
-    ],
-    choices: [
-      { id: 'choice_ch2_1', text: '帮忙劈柴', next: 'event_chop_wood' },
-      { id: 'choice_ch2_2', text: '帮忙喂猪', next: 'event_feed_pigs' },
-      { id: 'choice_ch2_3', text: '帮忙做饭', next: 'event_help_cooking' }
-    ]
-  },
-
-  event_chop_wood: {
-    id: 'event_chop_wood',
-    title: '劈柴',
-    scene: 'farmhouse',
-    narration: '你拿起斧头，试图劈开面前的木头。这比看起来要难多了。',
-    dialogue: [
-      { character: 'yujie', text: '小心点！别砸着脚！哎呀，一看就没干过这活。来，姐教你！', avatar: 'character_yujie.png' },
-      { character: 'jack', text: '这就来！嘿！哈！', avatar: 'character_jack.png' }
-    ],
-    choices: [
-      { id: 'choice_chop_1', text: '努力学习，劈了一堆柴', effects: { affection: 8, laokuaiAlert: -2, addItem: 'firewood' }, next: 'event_help_neighbor' },
-      { id: 'choice_chop_2', text: '不小心弄坏了斧头', effects: { affection: -2, laokuaiAlert: 5 }, next: 'event_help_neighbor' }
-    ]
-  },
-
-  event_feed_pigs: {
-    id: 'event_feed_pigs',
-    title: '喂猪',
-    scene: 'pigpen',
-    narration: '你提着猪食桶来到猪圈。那几头大肥猪看到吃的，立马围了上来。',
-    dialogue: [
-      { character: 'yujie', text: '哈哈，这些猪跟你还挺亲！看来你挺有猪缘啊！', avatar: 'character_yujie.png' },
-      { character: 'jack', text: '它们太可爱了！就像我的家人一样...呃，我是说像朋友。', avatar: 'character_jack.png' }
-    ],
-    choices: [
-      { id: 'choice_feed_1', text: '细心地喂每一头猪', effects: { affection: 5, laokuaiAlert: 0 }, next: 'event_help_neighbor' },
-      { id: 'choice_feed_2', text: '试图骑猪玩', effects: { affection: 10, laokuaiAlert: 5 }, next: 'event_help_neighbor' } 
-    ]
-  },
-
-  event_help_cooking: {
-    id: 'event_help_cooking',
-    title: '帮忙做饭',
-    scene: 'kitchen',
-    narration: '你走进厨房，佩斯正在忙得热火朝天。',
-    dialogue: [
-      { character: 'peisi', text: '来，杰克，帮我把这酸菜切了。', avatar: 'character_peisi.png' },
-      { character: 'jack', text: '没问题！看我的刀工！', avatar: 'character_jack.png' }
-    ],
-    choices: [
-      { id: 'choice_cook_1', text: '切得整整齐齐', effects: { affection: 6, addItem: 'pickledCabbage' }, next: 'event_help_neighbor' },
-      { id: 'choice_cook_2', text: '切得乱七八糟', effects: { affection: 2 }, next: 'event_help_neighbor' }
-    ]
-  },
-
-  // ==================== Day 8: 帮助邻居 ====================
-  event_help_neighbor: {
-      id: 'event_help_neighbor',
-      title: '帮助邻居',
-      scene: 'farmhouse',
-      effects: { day: 3 },
-      narration: '几天后，隔壁翠花姐来借东西，看起来很着急。',
-      dialogue: [
-          { character: 'cuihua', text: '哎呀雨姐，我家那口子不在，房顶漏雨了，这可咋整啊！', avatar: 'character_cuihua.png' },
-          { character: 'yujie', text: '别急！俺这就去给你修！', avatar: 'character_yujie.png' }
-      ],
-      choices: [
-          { id: 'choice_neighbor_1', text: '我也去帮忙！', next: 'event_fix_roof' },
-          { id: 'choice_neighbor_2', text: '留在家里陪老蒯聊天', next: 'event_chat_laokuai' }
-      ]
-  },
-
-  event_fix_roof: {
-      id: 'event_fix_roof',
-      title: '修房顶',
-      scene: 'farmhouse',
-      narration: '你和雨姐爬上房顶，一起修补瓦片。配合十分默契。',
-      dialogue: [
-          { character: 'yujie', text: '行啊杰克，没看出来你还会这手艺！', avatar: 'character_yujie.png', expression: 'happy' }
-      ],
-      choices: [
-          { id: 'choice_roof_1', text: '谦虚几句', effects: { affection: 8 }, next: 'event_ch3_start' }
-      ]
-  },
-
-  event_chat_laokuai: {
-      id: 'event_chat_laokuai',
-      title: '陪老蒯聊天',
-      scene: 'farmhouse',
-      narration: '你决定留在家里，试图缓解和老蒯的关系。',
-      dialogue: [
-          { character: 'laokuai', text: '你这外国人，还挺懂事。', avatar: 'character_laokuai.png' }
-      ],
-      choices: [
-          { id: 'choice_chat_lk_1', text: '聊聊家常', effects: { laokuaiAlert: -5 }, next: 'event_ch3_start' }
-      ]
-  },
-
-
-  // ==================== 第三章：赶大集 (Day 10) ====================
-  event_ch3_start: {
-    id: 'event_ch3_start',
-    title: '赶大集',
-    scene: 'market',
-    effects: { day: 2 },
-    narration: '今天是镇上赶集的日子。雨姐带着你来到了热闹的集市。',
-    characters: ['yujie', 'jack', 'cuihua'],
-    dialogue: [
-      { character: 'yujie', text: '杰克，这就是俺们东北的大集！想买啥随便挑！', avatar: 'character_yujie.png' },
-      { character: 'jack', text: 'Wow! So many people! 这里的气氛太棒了！', avatar: 'character_jack.png' }
-    ],
-    choices: [
-      { id: 'choice_ch3_1', text: '四处逛逛，买点东西', next: 'event_buy_gifts' },
-      { id: 'choice_ch3_2', text: '紧跟雨姐，怕走丢', effects: { affection: 3 }, next: 'event_meet_cuihua' }
-    ]
-  },
-
-  event_buy_gifts: {
-    id: 'event_buy_gifts',
-    title: '买礼物',
-    scene: 'market',
-    narration: '你看着琳琅满目的商品，想着该买点什么。',
-    choices: [
-      { id: 'choice_buy_1', text: '买一箱AD钙奶 (给老蒯)', effects: { money: -20, addItem: 'adMilk' }, next: 'event_meet_cuihua' },
-      { id: 'choice_buy_2', text: '买一袋软枣 (给雨姐)', effects: { money: -30, addItem: 'softJujube', affection: 5 }, next: 'event_meet_cuihua' },
-      { id: 'choice_buy_3', text: '什么都不买，省钱', effects: { money: 0 }, next: 'event_meet_cuihua' }
-    ]
-  },
-
-  event_meet_cuihua: {
-    id: 'event_meet_cuihua',
-    title: '遇见翠花',
-    scene: 'market',
-    narration: '正逛着，迎面走来一个嗑着瓜子的邻居大姐。',
-    dialogue: [
-      { character: 'cuihua', text: '哎呀，这不是雨姐吗？这是你家那个外国亲戚啊？长得真...别致啊！', avatar: 'character_cuihua.png' },
-      { character: 'yujie', text: '去去去，翠花你别瞎说。这是杰克，人家是国际友人！', avatar: 'character_yujie.png' },
-      { character: 'jack', text: '你好，美丽女士。', avatar: 'character_jack.png' }
-    ],
-    choices: [
-      { id: 'choice_cuihua_1', text: '夸赞翠花', effects: { affection: 0 }, next: 'event_pick_mushrooms' },
-      { id: 'choice_cuihua_2', text: '帮雨姐反驳', effects: { affection: 5 }, next: 'event_pick_mushrooms' }
-    ]
-  },
-
-  // ==================== Day 12: 上山采蘑菇 ====================
-  event_pick_mushrooms: {
-      id: 'event_pick_mushrooms',
-      title: '上山采蘑菇',
-      scene: 'snowfield', // 实际上是山上
-      effects: { day: 2 },
-      narration: '雨后，雨姐提议上山采蘑菇。',
-      characters: ['yujie', 'jack'],
-      dialogue: [
-          { character: 'yujie', text: '这山上宝贝可多了，榛蘑、松茸都有！你可得跟紧了。', avatar: 'character_yujie.png' }
-      ],
-      choices: [
-          { id: 'choice_mushroom_1', text: '仔细寻找', next: 'event_find_mushroom' },
-          { id: 'choice_mushroom_2', text: '只顾着看雨姐', next: 'event_watch_yujie' }
-      ]
-  },
-
-  event_find_mushroom: {
-      id: 'event_find_mushroom',
-      title: '大丰收',
-      scene: 'snowfield',
-      narration: '你发现了一大片榛蘑，雨姐夸你是福星。',
-      choices: [
-          { id: 'choice_find_1', text: '把蘑菇都给雨姐', effects: { affection: 5 }, next: 'event_ch4_start' }
-      ]
-  },
-
-  event_watch_yujie: {
-      id: 'event_watch_yujie',
-      title: '分心',
-      scene: 'snowfield',
-      narration: '你不小心踩到了一个烂泥坑，雨姐把你拉了出来，两人离得很近。',
-      choices: [
-          { id: 'choice_watch_1', text: '脸红心跳', effects: { affection: 8 }, next: 'event_ch4_start' }
-      ]
-  },
-
-  // ==================== 第四章：深入了解 (Day 15) ====================
-  event_ch4_start: {
-    id: 'event_ch4_start',
-    title: '深入了解',
-    scene: 'riverside',
-    effects: { day: 3 },
-    narration: '傍晚，你和雨姐在河边散步。夕阳西下，景色宜人。',
-    characters: ['yujie', 'jack'],
-    dialogue: [
-      { character: 'yujie', text: '杰克，你为啥大老远跑来中国啊？', avatar: 'character_yujie.png' },
-      { character: 'jack', text: '我想寻找一种真实的生活。在美国，一切都太快了。这里，很宁静，很真实。', avatar: 'character_jack.png' }
-    ],
-    choices: [
-      { id: 'choice_ch4_1', text: '趁机表达对雨姐的欣赏', next: 'event_riverside_talk' },
-      { id: 'choice_ch4_2', text: '采一束野花送给她', next: 'event_share_stories' }
-    ]
-  },
-
-  event_riverside_talk: {
-    id: 'event_riverside_talk',
-    title: '河边谈心',
-    scene: 'riverside',
-    dialogue: [
-      { character: 'jack', text: '雨姐，其实我觉得你是个很特别的女性。既坚强又温柔。', avatar: 'character_jack.png' },
-      { character: 'yujie', text: '（脸红）哎呀，说这些干啥...俺就是个农村妇女。', avatar: 'character_yujie.png' }
-    ],
-    choices: [
-      { id: 'choice_river_1', text: '握住她的手', effects: { affection: 10, laokuaiAlert: 10 }, next: 'event_laokuai_jealous' },
-      { id: 'choice_river_2', text: '静静地看着她', effects: { affection: 5 }, next: 'event_laokuai_jealous' }
-    ]
-  },
-
-  event_share_stories: {
-    id: 'event_share_stories',
-    title: '赠送野花',
-    scene: 'riverside',
-    narration: '你在路边采了一束野花，递给了雨姐。',
-    choices: [
-      { id: 'choice_flower_1', text: '送给她', effects: { affection: 15, laokuaiAlert: 5, addItem: 'flower' }, next: 'event_laokuai_jealous' }
-    ]
-  },
-
-  event_laokuai_jealous: {
-    id: 'event_laokuai_jealous',
-    title: '老蒯的醋意',
-    scene: 'farmhouse',
-    narration: '回到家，老蒯正站在门口，脸色不太好看。',
-    characters: ['laokuai', 'yujie', 'jack'],
-    dialogue: [
-      { character: 'laokuai', text: '去哪了？这么晚才回来？', avatar: 'character_laokuai.png', expression: 'angry' },
-      { character: 'yujie', text: '就在河边走了走，你急啥？', avatar: 'character_yujie.png' }
-    ],
-    choices: [
-      { id: 'choice_jealous_1', text: '解释说是去采风了', effects: { laokuaiAlert: -5 }, next: 'event_misunderstanding' },
-      { id: 'choice_jealous_2', text: '拿出AD钙奶安抚老蒯', condition: { hasItem: 'adMilk' }, effects: { laokuaiAlert: -20 }, next: 'event_misunderstanding' },
-      { id: 'choice_jealous_3', text: '沉默不语', effects: { laokuaiAlert: 10 }, next: 'event_misunderstanding' }
-    ]
-  },
-
-  // ==================== Day 18: 误会升级 ====================
-  event_misunderstanding: {
-      id: 'event_misunderstanding',
-      title: '误会',
-      scene: 'farmhouse',
-      effects: { day: 3 },
-      narration: '几天后，你发现老蒯一直在偷偷观察你。',
-      choices: [
-          { id: 'choice_mis_1', text: '主动找老蒯谈谈', next: 'event_talk_with_laokuai' },
-          { id: 'choice_mis_2', text: '避开他的目光', next: 'event_ch5_start' }
-      ]
-  },
-
-  event_talk_with_laokuai: {
-      id: 'event_talk_with_laokuai',
-      title: '男人之间的对话',
-      scene: 'farmhouse',
-      dialogue: [
-          { character: 'jack', text: '老蒯，我对雨姐只有尊敬。', avatar: 'character_jack.png' },
-          { character: 'laokuai', text: '哼，最好是这样。俺们家雨姐心善，你可别骗她。', avatar: 'character_laokuai.png' }
-      ],
-      choices: [
-          { id: 'choice_talk_lk_1', text: '保证', effects: { laokuaiAlert: -5 }, next: 'event_ch5_start' }
-      ]
-  },
-
-  // ==================== 第五章：杀猪菜 (Day 20) ====================
-  event_ch5_start: {
-    id: 'event_ch5_start',
-    title: '杀猪菜',
-    scene: 'pigpen',
-    effects: { day: 2 },
-    narration: '今天要杀猪请客。这是村里的大事。',
-    characters: ['yujie', 'jack', 'dabaobei'],
-    dialogue: [
-      { character: 'yujie', text: '大宝贝，按住猪腿！杰克，你敢不敢来帮忙？', avatar: 'character_yujie.png' },
-      { character: 'jack', text: '我...我试试！为了雨姐！', avatar: 'character_jack.png' }
-    ],
-    choices: [
-      { id: 'choice_ch5_1', text: '勇敢地上前按猪', next: 'event_kill_pig' },
-      { id: 'choice_ch5_2', text: '躲在一边看', effects: { affection: -5 }, next: 'event_big_feast' }
-    ]
-  },
-
-  event_kill_pig: {
-    id: 'event_kill_pig',
-    title: '按猪',
-    scene: 'pigpen',
-    narration: '场面十分混乱，但你表现得很英勇。雨姐对你刮目相看。',
-    choices: [
-      { id: 'choice_kill_1', text: '扛起半扇猪肉展示力量', effects: { affection: 20, addItem: 'pork' }, next: 'event_carry_pork' }
-    ]
-  },
-
-  event_carry_pork: {
-    id: 'event_carry_pork',
-    title: '扛猪肉',
-    scene: 'farmhouse',
-    narration: '你模仿雨姐的动作，扛起了半扇猪肉。虽然很重，但你咬牙坚持住了。',
-    dialogue: [
-      { character: 'yujie', text: '好样的小伙子！有俺当年的风范！', avatar: 'character_yujie.png', expression: 'happy' }
-    ],
-    choices: [
-      { id: 'choice_carry_1', text: '嘿嘿一笑', next: 'event_big_feast' }
-    ]
-  },
-
-  event_big_feast: {
-    id: 'event_big_feast',
-    title: '杀猪菜大宴',
-    scene: 'kitchen',
-    narration: '晚上，大家围坐在一起吃杀猪菜。热气腾腾的酸菜白肉，香气扑鼻。',
-    choices: [
-      { id: 'choice_feast_1', text: '给雨姐夹菜', effects: { affection: 5 }, next: 'event_yangge_dance' },
-      { id: 'choice_feast_2', text: '给老蒯夹菜', effects: { laokuaiAlert: -10 }, next: 'event_yangge_dance' }
-    ]
-  },
-
-  // ==================== Day 22: 扭秧歌大赛 ====================
-  event_yangge_dance: {
-      id: 'event_yangge_dance',
-      title: '扭秧歌',
-      scene: 'farmhouse',
-      effects: { day: 2 },
-      narration: '吃完饭，村里组织扭秧歌。锣鼓喧天，非常热闹。',
-      characters: ['yujie', 'jack'],
-      dialogue: [
-          { character: 'yujie', text: '来来来，杰克，扭起来！', avatar: 'character_yujie.png' }
-      ],
-      choices: [
-          { id: 'choice_dance_1', text: '展示你的街舞功底', effects: { affection: 5 }, next: 'event_dance_success' },
-          { id: 'choice_dance_2', text: '笨拙地模仿秧歌', effects: { affection: 8 }, next: 'event_ch6_start' }
-      ]
-  },
-
-  event_dance_success: {
-      id: 'event_dance_success',
-      title: '中西合璧',
-      scene: 'farmhouse',
-      narration: '你的街舞配上唢呐，竟然出奇地和谐，赢得了满堂喝彩。',
-      choices: [
-          { id: 'choice_dance_success', text: '向雨姐致意', next: 'event_ch6_start' }
-      ]
-  },
-
-  // ==================== 第六章：冬日情愫 (Day 25) ====================
-  event_ch6_start: {
-    id: 'event_ch6_start',
-    title: '冬日情愫',
-    scene: 'snowfield',
-    effects: { day: 3 },
-    narration: '外面下起了大雪。整个世界变成了白色。雨姐在院子里扫雪。',
-    characters: ['yujie', 'jack'],
-    choices: [
-      { id: 'choice_ch6_1', text: '陪她一起打雪仗', next: 'event_snow_play' },
-      { id: 'choice_ch6_2', text: '邀请她去散步', next: 'event_confession_chance' }
-    ]
-  },
-
-  event_snow_play: {
-    id: 'event_snow_play',
-    title: '雪地玩耍',
-    scene: 'snowfield',
-    narration: '你们像孩子一样在雪地里追逐打闹。笑声回荡在空旷的雪原上。',
-    dialogue: [
-      { character: 'yujie', text: '哈哈！看招！', avatar: 'character_yujie.png' },
-      { character: 'jack', text: '哎呀！雨姐你力气太大了！', avatar: 'character_jack.png' }
-    ],
-    choices: [
-      { id: 'choice_snow_1', text: '故意摔倒让她扶', effects: { affection: 10 }, next: 'event_farewell_gift' }
-    ]
-  },
-
-  event_confession_chance: {
-    id: 'event_confession_chance',
-    title: '表白的机会',
-    scene: 'snowfield',
-    narration: '雪停了。你们并肩走在雪地上，气氛非常浪漫。',
-    dialogue: [
-      { character: 'jack', text: '雨姐，我有话想对你说...', avatar: 'character_jack.png' }
-    ],
-    choices: [
-      { id: 'choice_confess_1', text: '欲言又止', next: 'event_farewell_gift' },
-      { id: 'choice_confess_2', text: '大胆说出心里话', effects: { affection: 15, laokuaiAlert: 20 }, next: 'event_farewell_gift' }
-    ]
-  },
-
-  // ==================== Day 28: 离别前的礼物 ====================
-  event_farewell_gift: {
-      id: 'event_farewell_gift',
-      title: '离别前的礼物',
-      scene: 'farmhouse',
-      effects: { day: 3 },
-      narration: '离别的日子快到了，你决定给雨姐留下一份特别的礼物。',
-      choices: [
-          { id: 'choice_gift_1', text: '亲手做一个相册', next: 'event_gift_photo' },
-          { id: 'choice_gift_2', text: '为她做一顿西餐', next: 'event_gift_meal' }
-      ]
-  },
-
-  event_gift_photo: {
-      id: 'event_gift_photo',
-      title: '珍贵回忆',
-      scene: 'farmhouse',
-      narration: '雨姐看着相册里的点点滴滴，眼眶湿润了。',
-      effects: { affection: 10 },
-      choices: [
-          { id: 'choice_photo_next', text: '准备离开', next: 'event_decision_time' }
-      ]
-  },
-
-  event_gift_meal: {
-      id: 'event_gift_meal',
-      title: '最后的晚餐',
-      scene: 'kitchen',
-      narration: '虽然你的手艺一般，但这份心意让大家都很难忘。',
-      effects: { affection: 5, laokuaiAlert: -5 },
-      choices: [
-          { id: 'choice_meal_next', text: '准备离开', next: 'event_decision_time' }
-      ]
-  },
-
-  event_decision_time: {
-    id: 'event_decision_time',
-    title: '抉择时刻',
-    scene: 'farmhouse',
-    effects: { day: 2 },
-    narration: '回到房间，你知道离别的日子快到了。或者是...不需要离别？',
-    choices: [
-      { id: 'choice_ch6_end', text: '迎接最终的审判', next: 'event_ch7_start' }
-    ]
-  },
-
-  // ==================== 第七章：最终抉择 (Day 30) ====================
-  event_ch7_start: {
-    id: 'event_ch7_start',
-    title: '最终抉择',
-    scene: 'farmhouse',
-    narration: '第30天。是你计划离开的日子，也是你做出决定的日子。大家都在院子里送你。',
-    characters: ['yujie', 'laokuai', 'jack'],
-    dialogue: [
-      { character: 'yujie', text: '杰克，你真的要走了吗？', avatar: 'character_yujie.png', expression: 'sad' },
-      { character: 'laokuai', text: '咳咳...那个，一路顺风啊。', avatar: 'character_laokuai.png' }
-    ],
-    choices: [
-      // 分支1：真爱结局 (高好感，低警觉)
-      { 
-        id: 'choice_true_ending', 
-        text: '【真爱】我不走了！雨姐，我爱你！(需:好感≥90, 警觉≤30)', 
-        condition: { minAffection: 90, maxAlert: 30 },
-        next: 'trueEnding' 
-      },
-      // 分支2：隐藏结局 (超高好感，超低警觉，全物品，40天)
-      { 
-        id: 'choice_secret_ending', 
-        text: '【隐藏】雨姐、老蒯...我们三个人一起过吧！(需:好感≥95, 警觉≤20, 全物品)', 
-        condition: { minAffection: 95, maxAlert: 20, hasAllItems: true },
-        effects: { day: 10 }, // 延长到40天
-        next: 'secretEnding' 
-      },
-      // 分支3：好友结局 (中等好感)
-      { 
-        id: 'choice_good_ending', 
-        text: '【好友】我会常回来看你们的，我的朋友们。(需:好感≥60)', 
-        condition: { minAffection: 60 },
-        next: 'goodEnding' 
-      },
-      // 分支4：平淡结局 (无门槛)
-      { 
-        id: 'choice_normal_ending', 
-        text: '【离开】再见了，感谢这段时间的照顾。', 
-        next: 'normalEnding' 
-      },
-      // 分支5：如果警觉度太高，可能会强制触发坏结局，这里作为一个选项展示
       {
-         id: 'choice_bad_ending',
-         text: '【冲突】老蒯，你为什么一直针对我？(危险)',
-         effects: { laokuaiAlert: 20 }, // 增加警觉度触发坏结局
-         next: 'badEnding'
+        id: 'pro_1_1',
+        text: '中气十足地喊："有人在家吗——！"',
+        effects: { affection: 2 },
+        next: 'pro_meet_yujie'
+      },
+      {
+        id: 'pro_1_2',
+        text: '礼貌地敲敲院门',
+        effects: { affection: 1 },
+        next: 'pro_meet_yujie'
+      },
+      {
+        id: 'pro_1_3',
+        text: '先跟门口的大鹅打个招呼',
+        effects: { goose: 1 },
+        next: 'pro_meet_yujie'
       }
     ]
+  },
+
+  pro_meet_yujie: {
+    id: 'pro_meet_yujie',
+    title: '初见雨姐',
+    scene: 'yard',
+    cg: 'yujie/cg_carry_pork.jpg',
+    narration: '话音未落，后院传来"嗬——！"一声大喝。一个高大的身影扛着半扇猪，健步如飞地从你面前掠过。',
+    dialogue: [
+      { character: 'yujie', text: '让让让让！猪要进仓房了！——哟，你就是那个外国客人杰克吧？' },
+      { character: 'jack', text: '是、是的……您一只手就……那可是半扇猪啊？！' },
+      { character: 'yujie', text: '嗨，这算啥！俺雨姐扛猪的时候，你还在啃汉堡呢！哈哈哈哈！' }
+    ],
+    choices: [
+      {
+        id: 'pro_2_1',
+        text: '冲上去帮忙搭手："姐，我来抬后面！"',
+        effects: { affection: 8 },
+        next: 'pro_meet_laokuai'
+      },
+      {
+        id: 'pro_2_2',
+        text: '看呆了："这也太帅了……"',
+        effects: { affection: 5 },
+        next: 'pro_meet_laokuai'
+      }
+    ]
+  },
+
+  pro_meet_laokuai: {
+    id: 'pro_meet_laokuai',
+    title: '炕上的男人',
+    scene: 'hall',
+    narration: '进了堂屋，热炕上盘腿坐着一个瘦小的男人，手里捧着一瓶AD钙奶，正用一种审视的目光打量你。',
+    dialogue: [
+      { character: 'laokuai', text: '这就是那个外国人？要在咱家住十三天？' },
+      { character: 'yujie', text: '对，杰克。这是俺家老蒯。老蒯，别老绷个脸，吓着客人。' },
+      { character: 'laokuai', text: '哼……（吸了一口AD钙奶）住可以，规矩得讲。' }
+    ],
+    choices: [
+      {
+        id: 'pro_3_1',
+        text: '热情地握住老蒯的手："哥！以后多关照！"',
+        effects: { affection: 2, laokuaiAlert: -3 },
+        next: 'pro_peisi_fire'
+      },
+      {
+        id: 'pro_3_2',
+        text: '老实点头："我一定守规矩。"',
+        effects: { laokuaiAlert: -1 },
+        next: 'pro_peisi_fire'
+      },
+      {
+        id: 'pro_3_3',
+        text: '盯着他的AD钙奶："这个……好喝吗？"',
+        effects: { laokuaiAlert: 5 },
+        next: 'pro_peisi_fire'
+      }
+    ]
+  },
+
+  pro_peisi_fire: {
+    id: 'pro_peisi_fire',
+    title: '佩斯，点火！',
+    scene: 'kitchen',
+    narration: '傍晚，厨房里热气升腾。一个精瘦的汉子正在灶台前待命，仿佛在等待一个神圣的指令。',
+    dialogue: [
+      { character: 'yujie', text: '佩斯——！点火——！' },
+      { character: 'peisi', text: '得嘞！！（咔嚓一声，灶膛里火光冲天）' },
+      { character: 'jack', text: 'Wow……这就是传说中的"佩斯点火"！比视频里还震撼！' },
+      { character: 'peisi', text: '嘿嘿，洋兄弟有眼光！一会儿酸菜白肉，管够造！' }
+    ],
+    choices: [
+      {
+        id: 'pro_4_1',
+        text: '抢着帮忙烧火："佩斯哥，风箱我来拉！"',
+        effects: { affection: 4 },
+        next: 'pro_night'
+      },
+      {
+        id: 'pro_4_2',
+        text: '干饭人本色：连造三碗，夸得停不下来',
+        effects: { affection: 4 },
+        next: 'pro_night'
+      }
+    ]
+  },
+
+  pro_night: {
+    id: 'pro_night',
+    title: '第一夜',
+    scene: 'hall',
+    narration:
+      '躺在热乎乎的炕上，你掰着手指头盘算：一共十三天。明天起每天有2点行动点，可以去【大厨房】【猪圈】【大集】【河边】【堂屋】【后山】自由行动。想得到好结局，就得想清楚把时间花在谁身上……',
+    choices: [{ id: 'pro_5_1', text: '睡觉，明天开始行动！', next: 'NIGHT' }]
+  },
+
+  // ==================== 支线一：大厨房（佩斯） ====================
+  route_kitchen_1: {
+    id: 'route_kitchen_1',
+    title: '帮厨初体验',
+    scene: 'kitchen',
+    narration: '你系上围裙钻进厨房，佩斯正在和一口大黑锅搏斗。',
+    dialogue: [
+      { character: 'peisi', text: '哟，洋兄弟来帮忙？那敢情好！先从烧火开始——佩斯，点火！哦不对，今天你来点。' },
+      { character: 'jack', text: '我点？……咳咳咳！烟往哪边拐啊这个！' }
+    ],
+    choices: [
+      {
+        id: 'kit_1_1',
+        text: '不服输，跟灶膛死磕到底',
+        effects: { affection: 5, money: 20 },
+        advanceRoute: 'kitchen',
+        next: 'HUB'
+      },
+      {
+        id: 'kit_1_2',
+        text: '换赛道：主动包揽洗菜切墩',
+        effects: { affection: 6, money: 20 },
+        advanceRoute: 'kitchen',
+        next: 'HUB'
+      }
+    ]
+  },
+
+  route_kitchen_2: {
+    id: 'route_kitchen_2',
+    title: '酸菜修行',
+    scene: 'kitchen',
+    narration: '雨姐抱来一颗比你脑袋还大的酸菜："今天学切酸菜。切好了晚上包饺子。"',
+    dialogue: [
+      { character: 'yujie', text: '刀要斜着走，丝要切得匀。看好了——唰唰唰！学会没？' },
+      { character: 'jack', text: '（这刀工，米其林大厨看了都得喊姐）' }
+    ],
+    choices: [
+      {
+        id: 'kit_2_1',
+        text: '认真展示学习成果，切得有模有样',
+        effects: { affection: 8, money: 25, addItem: 'pickledCabbage' },
+        advanceRoute: 'kitchen',
+        next: 'HUB'
+      },
+      {
+        id: 'kit_2_2',
+        text: '边切边偷吃："这酸菜，绝了！"',
+        effects: { affection: 5, money: 25 },
+        advanceRoute: 'kitchen',
+        next: 'HUB'
+      }
+    ]
+  },
+
+  route_kitchen_3: {
+    id: 'route_kitchen_3',
+    title: '独当一面',
+    scene: 'kitchen',
+    narration: '出师考核日。雨姐和佩斯抱着胳膊站在旁边，今天这顿饭，归你掌勺。',
+    dialogue: [
+      { character: 'peisi', text: '洋兄弟，整一个！' },
+      { character: 'yujie', text: '别紧张，大不了就当喂猪了，咱家猪不挑。' }
+    ],
+    choices: [
+      {
+        id: 'kit_3_1',
+        text: '亮绝活：中西合璧"黑椒酸菜炖排骨"',
+        effects: { affection: 10, money: 30, setFlag: 'chef' },
+        advanceRoute: 'kitchen',
+        next: 'HUB'
+      },
+      {
+        id: 'kit_3_2',
+        text: '稳扎稳打，复刻雨姐的家常菜',
+        effects: { affection: 10, money: 30 },
+        advanceRoute: 'kitchen',
+        next: 'HUB'
+      }
+    ]
+  },
+
+  route_kitchen_repeat: {
+    id: 'route_kitchen_repeat',
+    title: '帮厨打工',
+    scene: 'kitchen',
+    narration: '厨房永远缺人手。你熟练地烧火、切墩、刷锅，佩斯给你递了根黄瓜："兄弟，讲究！"',
+    choices: [
+      { id: 'kit_r_1', text: '收工钱（+15元）', effects: { money: 15 }, next: 'HUB' }
+    ]
+  },
+
+  // ==================== 支线二：猪圈 ====================
+  route_pigpen_1: {
+    id: 'route_pigpen_1',
+    title: '喂猪初体验',
+    scene: 'pigpen',
+    narration: '你提着猪食桶挪进猪圈，四头大肥猪呼啦一下围了上来，眼神比看见亲爹还亲。',
+    dialogue: [
+      { character: 'yujie', text: '哈哈哈哈！这些猪跟你挺有缘啊！' },
+      { character: 'jack', text: '它们好热情……等等，别拱我裤子！' }
+    ],
+    choices: [
+      {
+        id: 'pig_1_1',
+        text: '耐心喂好每一头，还顺手刷了食槽',
+        effects: { affection: 8 },
+        advanceRoute: 'pigpen',
+        next: 'HUB'
+      },
+      {
+        id: 'pig_1_2',
+        text: '边喂边给猪讲美国的故事',
+        effects: { affection: 6, laokuaiAlert: 2 },
+        advanceRoute: 'pigpen',
+        next: 'HUB'
+      }
+    ]
+  },
+
+  route_pigpen_2: {
+    id: 'route_pigpen_2',
+    title: '起名仪式',
+    scene: 'pigpen',
+    narration: '雨姐说最大的那头猪该有个名字了，这个光荣的任务交给了你。院墙外，村霸大鹅正探头探脑。',
+    dialogue: [
+      { character: 'yujie', text: '起名可是技术活，起好了猪都长得快！' }
+    ],
+    choices: [
+      {
+        id: 'pig_2_1',
+        text: '叫它"红烧肉"——寄托全村人的厚望',
+        effects: { affection: 10 },
+        advanceRoute: 'pigpen',
+        next: 'HUB'
+      },
+      {
+        id: 'pig_2_2',
+        text: '叫它"杰克二世"',
+        effects: { affection: 6 },
+        advanceRoute: 'pigpen',
+        next: 'HUB'
+      },
+      {
+        id: 'pig_2_3',
+        text: '不理猪了，去逗逗墙头那只大鹅',
+        effects: { affection: 4, goose: 1 },
+        advanceRoute: 'pigpen',
+        next: 'HUB'
+      }
+    ]
+  },
+
+  route_pigpen_3: {
+    id: 'route_pigpen_3',
+    title: '扛半扇猪',
+    scene: 'pigpen',
+    cg: 'yujie/cg_carry_pork.jpg',
+    narration: '"红烧肉"出栏的日子。雨姐正要把半扇猪扛去仓房，全村的目光（含一只鹅）都聚了过来。',
+    dialogue: [
+      { character: 'yujie', text: '这半扇少说得有一百五十斤，都看好了啊——' },
+      { character: 'jack', text: '（深呼吸）雨姐！今天让我来！' }
+    ],
+    choices: [
+      {
+        id: 'pig_3_1',
+        text: '怒吼一声，扛起半扇猪走完整个院子！',
+        effects: { affection: 20, addItem: 'pork' },
+        advanceRoute: 'pigpen',
+        next: 'HUB'
+      },
+      {
+        id: 'pig_3_2',
+        text: '和雨姐一人一头，抬着走',
+        effects: { affection: 12 },
+        advanceRoute: 'pigpen',
+        next: 'HUB'
+      },
+      {
+        id: 'pig_3_3',
+        text: '在旁边负责喊号和鼓掌',
+        effects: { affection: 4 },
+        advanceRoute: 'pigpen',
+        next: 'HUB'
+      }
+    ]
+  },
+
+  // ==================== 支线三：村口大集（翠花） ====================
+  route_market_1: {
+    id: 'route_market_1',
+    title: '砍价学徒',
+    scene: 'market',
+    narration: '翠花姐拉着你逛大集，现场教学东北砍价绝学。',
+    dialogue: [
+      { character: 'cuihua', text: '看好喽——"这白菜咋卖？""五毛。""五分卖不卖？！"……学会没？气势！主要是气势！' },
+      { character: 'jack', text: '这……这不是砍价，这是砍人啊。' }
+    ],
+    choices: [
+      {
+        id: 'mkt_1_1',
+        text: '现学现卖，用英语砍价把摊主整不会了',
+        effects: { affection: 3, money: 10 },
+        advanceRoute: 'market',
+        next: 'HUB'
+      },
+      {
+        id: 'mkt_1_2',
+        text: '帮翠花姐拎包当助理',
+        effects: { affection: 3 },
+        advanceRoute: 'market',
+        next: 'HUB'
+      }
+    ]
+  },
+
+  route_market_2: {
+    id: 'route_market_2',
+    title: '村口情报站',
+    scene: 'market',
+    narration: '嗑着瓜子的翠花姐神秘兮兮地凑过来："想知道雨姐稀罕啥不？姐这情报，瓜子换。"',
+    dialogue: [
+      { character: 'cuihua', text: '雨姐啊，嘴上说不在乎，其实最稀罕后山的软枣，还有……别人把她当女人看，不是当劳力看。' },
+      { character: 'jack', text: '（重要情报！记小本本）' }
+    ],
+    choices: [
+      {
+        id: 'mkt_2_1',
+        text: '虚心求教，再买点瓜子孝敬情报站',
+        effects: { affection: 5, money: -5, setFlag: 'knowsTaste' },
+        advanceRoute: 'market',
+        next: 'HUB'
+      },
+      {
+        id: 'mkt_2_2',
+        text: '听完就跑：情报到手，瓜子不买了',
+        effects: { setFlag: 'knowsTaste' },
+        advanceRoute: 'market',
+        next: 'HUB'
+      }
+    ]
+  },
+
+  route_market_3: {
+    id: 'route_market_3',
+    title: '翠花的直播间',
+    scene: 'market',
+    cg: 'yujie/cg_live.jpg',
+    narration: '集市角落，翠花姐正对着手机喊麦："家人们！这瓜子，老香了！三二一，上链接！"',
+    dialogue: [
+      { character: 'cuihua', text: '看见没，这就叫直播带货！姐一场能卖八十包瓜子！你们美国有这个不？' },
+      { character: 'jack', text: '有是有……但绝对没有您这个气势。' }
+    ],
+    choices: [
+      {
+        id: 'mkt_3_1',
+        text: '认真跟翠花姐学直播技巧',
+        effects: { affection: 3, setFlag: 'liveSkill' },
+        advanceRoute: 'market',
+        next: 'HUB'
+      },
+      {
+        id: 'mkt_3_2',
+        text: '帮翠花姐把货扛回家',
+        effects: { affection: 5 },
+        advanceRoute: 'market',
+        next: 'HUB'
+      }
+    ]
+  },
+
+  // ==================== 支线四：小河边（心动主线） ====================
+  route_riverside_1: {
+    id: 'route_riverside_1',
+    title: '河边谈心',
+    scene: 'riverside',
+    narration: '傍晚，你"偶遇"了在河边遛弯的雨姐。夕阳把她的影子拉得老长。',
+    dialogue: [
+      { character: 'yujie', text: '杰克，你说你们美国，也有这样的河不？' },
+      { character: 'jack', text: '有河，但没有……扛着半扇猪在河边走的人。' },
+      { character: 'yujie', text: '哈哈哈哈！你这张嘴啊！' }
+    ],
+    choices: [
+      {
+        id: 'riv_1_1',
+        text: '认真说："我来这里，就是想找这种真实的生活。"',
+        effects: { affection: 10, laokuaiAlert: 8 },
+        advanceRoute: 'riverside',
+        next: 'HUB'
+      },
+      {
+        id: 'riv_1_2',
+        text: '讲美国老家的糗事逗她开心',
+        effects: { affection: 8 },
+        advanceRoute: 'riverside',
+        next: 'HUB'
+      }
+    ]
+  },
+
+  route_riverside_2: {
+    id: 'route_riverside_2',
+    title: '心意',
+    scene: 'riverside',
+    narration: '又是河边。雨姐今天好像特意……把围裙换成了干净的。你摸了摸口袋。',
+    dialogue: [{ character: 'yujie', text: '今儿个咋有空陪俺遛弯？不用帮厨啦？' }],
+    choices: [
+      {
+        id: 'riv_2_1',
+        text: '献上后山采的野花（需：野花）',
+        condition: { hasItem: 'flower' },
+        effects: { affection: 15, laokuaiAlert: 12, removeItem: 'flower' },
+        advanceRoute: 'riverside',
+        next: 'HUB'
+      },
+      {
+        id: 'riv_2_2',
+        text: '掏出她最爱的软枣（需：软枣+情报）',
+        condition: { hasItem: 'softJujube', flag: 'knowsTaste' },
+        effects: { affection: 18, laokuaiAlert: 5, removeItem: 'softJujube' },
+        advanceRoute: 'riverside',
+        next: 'HUB'
+      },
+      {
+        id: 'riv_2_3',
+        text: '啥也没带，给她唱了一首英文情歌',
+        effects: { affection: 8, laokuaiAlert: 5 },
+        advanceRoute: 'riverside',
+        next: 'HUB'
+      }
+    ]
+  },
+
+  route_riverside_3: {
+    id: 'route_riverside_3',
+    title: '心动时刻',
+    scene: 'riverside',
+    narration: '河水哗哗地流。你们并排坐着，肩膀只差一拳的距离。谁都没说话，心跳声比河水还响。',
+    dialogue: [{ character: 'yujie', text: '（望着河面，小声）杰克，你说……十三天咋过得这么快呢。' }],
+    choices: [
+      {
+        id: 'riv_3_1',
+        text: '牵起她的手："因为每一天都很开心。"',
+        effects: { affection: 20, laokuaiAlert: 22 },
+        advanceRoute: 'riverside',
+        next: 'HUB'
+      },
+      {
+        id: 'riv_3_2',
+        text: '把军大衣披在她肩上（需：军大衣）',
+        condition: { hasItem: 'militaryCoat' },
+        effects: { affection: 25, laokuaiAlert: 5, removeItem: 'militaryCoat' },
+        advanceRoute: 'riverside',
+        next: 'HUB'
+      },
+      {
+        id: 'riv_3_3',
+        text: '把心事咽回去，默默陪她坐到天黑',
+        effects: { affection: 10, laokuaiAlert: 3 },
+        advanceRoute: 'riverside',
+        next: 'HUB'
+      }
+    ]
+  },
+
+  // ==================== 支线五：堂屋热炕（老蒯） ====================
+  route_laokuai_1: {
+    id: 'route_laokuai_1',
+    title: 'AD钙奶外交',
+    scene: 'hall',
+    narration: '你端着瓜子凑上热炕。老蒯往旁边挪了挪，算是给你腾了个位。',
+    dialogue: [{ character: 'laokuai', text: '（吸溜）坐吧。炕热乎。' }],
+    choices: [
+      {
+        id: 'lao_1_1',
+        text: '陪他喝AD钙奶唠嗑，从国际形势唠到猪的行情',
+        effects: { laokuaiAlert: -8 },
+        advanceRoute: 'laokuai',
+        next: 'HUB'
+      },
+      {
+        id: 'lao_1_2',
+        text: '献上整排AD钙奶（需：AD钙奶）',
+        condition: { hasItem: 'adMilk' },
+        effects: { laokuaiAlert: -15, removeItem: 'adMilk' },
+        advanceRoute: 'laokuai',
+        next: 'HUB'
+      },
+      {
+        id: 'lao_1_3',
+        text: '夸他："哥，你今天的气质，绝了。"',
+        effects: { laokuaiAlert: -5 },
+        advanceRoute: 'laokuai',
+        next: 'HUB'
+      }
+    ]
+  },
+
+  route_laokuai_2: {
+    id: 'route_laokuai_2',
+    title: '男人之间的对话',
+    scene: 'hall',
+    narration: '雨姐出门进货了。屋里就剩你和老蒯，他盯着你看了半天，终于开口。',
+    dialogue: [
+      { character: 'laokuai', text: '俺问你句话，你实说。你天天围着雨姐转悠，图啥？' },
+      { character: 'jack', text: '（来了，灵魂拷问）' }
+    ],
+    choices: [
+      {
+        id: 'lao_2_1',
+        text: '"雨姐是我见过最了不起的人，我尊敬她。"',
+        effects: { laokuaiAlert: -10, affection: 3 },
+        advanceRoute: 'laokuai',
+        next: 'HUB'
+      },
+      {
+        id: 'lao_2_2',
+        text: '"哥，说实话，我挺羡慕你的。"',
+        effects: { laokuaiAlert: -12 },
+        advanceRoute: 'laokuai',
+        next: 'HUB'
+      },
+      {
+        id: 'lao_2_3',
+        text: '岔开话题："哥，再给讲讲你年轻那会儿呗？"',
+        effects: { laokuaiAlert: -6 },
+        advanceRoute: 'laokuai',
+        next: 'HUB'
+      }
+    ]
+  },
+
+  route_laokuai_3: {
+    id: 'route_laokuai_3',
+    title: '结拜',
+    scene: 'hall',
+    narration: '连喝了几天AD钙奶，老蒯看你的眼神彻底变了。今天他郑重地搬出一整箱AD钙奶，摆在炕桌正中。',
+    dialogue: [
+      { character: 'laokuai', text: '杰克，俺寻思好了。你这人，行！俺要跟你结拜！' },
+      { character: 'yujie', text: '（门外探头）啥玩意儿？？' }
+    ],
+    choices: [
+      {
+        id: 'lao_3_1',
+        text: '"苍天在上，AD钙奶为证！大哥！"',
+        effects: { laokuaiAlert: -25, setFlag: 'brother' },
+        advanceRoute: 'laokuai',
+        next: 'HUB'
+      },
+      {
+        id: 'lao_3_2',
+        text: '"结拜就免了，做兄弟，在心中。"',
+        effects: { laokuaiAlert: -15 },
+        advanceRoute: 'laokuai',
+        next: 'HUB'
+      }
+    ]
+  },
+
+  // ==================== 支线六：后山 ====================
+  route_mountain_1: {
+    id: 'route_mountain_1',
+    title: '上山寻宝',
+    scene: 'mountain',
+    narration: '雨后的后山遍地是宝。雨姐给你指了指："榛蘑在树墩子底下，野花在坡那边。"',
+    dialogue: [{ character: 'yujie', text: '跟紧了，别乱跑——这山上可是有"那位爷"的地盘。（朝鹅鸣的方向努了努嘴）' }],
+    choices: [
+      {
+        id: 'mtn_1_1',
+        text: '仔细采了一大捧榛蘑',
+        effects: { affection: 5, addItem: 'mushroom' },
+        advanceRoute: 'mountain',
+        next: 'HUB'
+      },
+      {
+        id: 'mtn_1_2',
+        text: '悄悄采了一束带着露水的野花',
+        effects: { affection: 8, laokuaiAlert: 3, addItem: 'flower' },
+        advanceRoute: 'mountain',
+        next: 'HUB'
+      }
+    ]
+  },
+
+  route_mountain_2: {
+    id: 'route_mountain_2',
+    title: '软枣熟了',
+    scene: 'mountain',
+    narration: '半山腰的软枣树挂满了果子，紫莹莹的，看着就甜。',
+    dialogue: [{ character: 'yujie', text: '俺小时候天天爬这棵树。那时候俺可比你利索多了！' }],
+    choices: [
+      {
+        id: 'mtn_2_1',
+        text: '稳稳当当摘了一兜软枣',
+        effects: { affection: 5, addItem: 'softJujube' },
+        advanceRoute: 'mountain',
+        next: 'HUB'
+      },
+      {
+        id: 'mtn_2_2',
+        text: '非要够最高的那一枝——然后从树上掉了下来',
+        effects: { affection: 8, laokuaiAlert: 5, addItem: 'softJujube' },
+        advanceRoute: 'mountain',
+        next: 'HUB'
+      }
+    ]
+  },
+
+  route_mountain_3: {
+    id: 'route_mountain_3',
+    title: '大鹅的老巢',
+    scene: 'mountain',
+    cg: 'yujie/cg_goose.jpg',
+    narration: '你在密林深处发现了村霸大鹅的老巢：窝里赫然躺着几颗大鹅蛋！远处传来不祥的"嘎——"声。',
+    dialogue: [{ character: 'jack', text: '（冷静，杰克，冷静。蛋就在眼前，鹅在五十米外，你百米十二秒……大概）' }],
+    choices: [
+      {
+        id: 'mtn_3_1',
+        text: '富贵险中求：摸走一颗鹅蛋！',
+        effects: { goose: 1, addItem: 'gooseEgg' },
+        advanceRoute: 'mountain',
+        next: 'HUB'
+      },
+      {
+        id: 'mtn_3_2',
+        text: '对着鹅巢深深鞠了一躬，以示对鹅王的敬意',
+        effects: { goose: 1 },
+        advanceRoute: 'mountain',
+        next: 'HUB'
+      },
+      {
+        id: 'mtn_3_3',
+        text: '悄悄撤退，就当没看见',
+        effects: {},
+        advanceRoute: 'mountain',
+        next: 'HUB'
+      }
+    ]
+  },
+
+  // ==================== 日期事件：第3天 大鹅突袭 ====================
+  ev_goose_attack: {
+    id: 'ev_goose_attack',
+    title: '村霸驾到',
+    scene: 'yard',
+    cg: 'yujie/cg_goose.jpg',
+    narration: '第三天清晨，你正在院子里刷牙。突然，一道白色的身影张开双翅，以每小时三十公里的速度向你杀来！',
+    dialogue: [{ character: 'goose', text: '嘎————！！（翻译：此山是我开，此院是我栽！）' }],
+    choices: [
+      {
+        id: 'goose_a_1',
+        text: '爷们要战斗！跟它单挑！',
+        effects: { goose: 1 },
+        next: 'ev_goose_fight'
+      },
+      { id: 'goose_a_2', text: '好汉不吃眼前亏，跑！', next: 'ev_goose_run' },
+      { id: 'goose_a_3', text: '扯着嗓子喊："雨姐——救命——！"', next: 'ev_goose_save' }
+    ]
+  },
+
+  ev_goose_fight: {
+    id: 'ev_goose_fight',
+    title: '虽败犹荣',
+    scene: 'yard',
+    narration: '三分钟后，你拎着被啄成流苏的裤腿狼狈回屋。雨姐笑得直拍炕桌。',
+    dialogue: [
+      { character: 'yujie', text: '哈哈哈哈！敢跟它单挑的，全村你是头一个！有种！' }
+    ],
+    choices: [
+      {
+        id: 'goose_f_1',
+        text: '揉着胳膊苦笑："下次……下次一定赢。"',
+        effects: { affection: 4 },
+        next: 'HUB'
+      }
+    ]
+  },
+
+  ev_goose_run: {
+    id: 'ev_goose_run',
+    title: '战略转移',
+    scene: 'yard',
+    narration: '你以破个人纪录的速度冲回了屋。大鹅在门外踱了三圈，骄傲得像个得胜的将军。',
+    dialogue: [{ character: 'laokuai', text: '（隔窗递出一瓶AD钙奶）喝口压压惊。它连俺都追。' }],
+    choices: [
+      { id: 'goose_r_1', text: '含泪接过AD钙奶', effects: { laokuaiAlert: -3 }, next: 'HUB' }
+    ]
+  },
+
+  ev_goose_save: {
+    id: 'ev_goose_save',
+    title: '救星降临',
+    scene: 'yard',
+    narration: '雨姐一个箭步冲出来，单手掐住大鹅的脖子把它拎到半空，像拎一个暖水瓶。',
+    dialogue: [
+      { character: 'yujie', text: '别怕！有姐在，它伤不了你一根汗毛！' },
+      { character: 'jack', text: '（心动的感觉……等等，现在不是时候）' }
+    ],
+    choices: [
+      {
+        id: 'goose_s_1',
+        text: '"雨姐，你简直是我的超级英雄！"',
+        effects: { affection: 8 },
+        next: 'HUB'
+      }
+    ]
+  },
+
+  // ==================== 日期事件：第6天 赶集日 ====================
+  ev_market_day: {
+    id: 'ev_market_day',
+    title: '赶集日',
+    scene: 'market',
+    narration: '第六天，十里八村最大的集！雨姐甩给你一句话："想买啥自己挑，别乱花钱啊！"（钱包告急预警：今天有大集限定商品）',
+    dialogue: [
+      { character: 'cuihua', text: '哟，杰克也来啦！今儿这集可全乎，军大衣、AD钙奶、软枣，都是硬通货！' }
+    ],
+    choices: [
+      {
+        id: 'mktd_1',
+        text: '买军大衣（60元）——东北冬天的终极浪漫',
+        condition: { minMoney: 60 },
+        effects: { money: -60, addItem: 'militaryCoat' },
+        next: 'ev_noodle_man'
+      },
+      {
+        id: 'mktd_2',
+        text: '买整排AD钙奶（25元）——老蒯快乐水',
+        condition: { minMoney: 25 },
+        effects: { money: -25, addItem: 'adMilk' },
+        next: 'ev_noodle_man'
+      },
+      {
+        id: 'mktd_3',
+        text: '买软枣（20元）——雨姐的心头好',
+        condition: { minMoney: 20 },
+        effects: { money: -20, addItem: 'softJujube' },
+        next: 'ev_noodle_man'
+      },
+      { id: 'mktd_4', text: '捂紧钱包，就逛逛', next: 'ev_noodle_man' }
+    ]
+  },
+
+  ev_noodle_man: {
+    id: 'ev_noodle_man',
+    title: '神秘商人',
+    scene: 'market',
+    narration: '收摊时分，一个戴金链子的大哥把你拉到角落，神秘兮兮地掏出一包粉条。',
+    dialogue: [
+      { character: 'jack', text: '这是……粉条？' },
+      { character: 'laokuai', text: '（不知从哪冒出来，低声）那是镇上有名的"木薯哥"，专找人贴牌带货，佣金给得老高了……' },
+      { character: 'jack', text: '"纯红薯粉条，假一赔万"，一场直播给我一百块定金……家人们，这单接不接？' }
+    ],
+    choices: [
+      {
+        id: 'noodle_1',
+        text: '接！不就是直播吗，富贵险中求（危险！）',
+        effects: { money: 100, setFlag: 'noodleDeal' },
+        next: 'NIGHT'
+      },
+      {
+        id: 'noodle_2',
+        text: '拒绝：来路不明的货，不能坑"家人们"',
+        effects: { setFlag: 'refusedNoodles', affection: 5 },
+        next: 'NIGHT'
+      }
+    ]
+  },
+
+  // ==================== 日期事件：第9天 雨姐的烦恼 ====================
+  ev_yujie_trouble: {
+    id: 'ev_yujie_trouble',
+    title: '雨姐的烦恼',
+    scene: 'yard',
+    narration: '第九天一早，你发现雨姐坐在院子里发愁——农家乐的生意最近冷清了不少。',
+    dialogue: [
+      { character: 'yujie', text: '唉……客人一年比一年少。俺就会闷头干活，也不会啥宣传……' }
+    ],
+    choices: [
+      {
+        id: 'trouble_1',
+        text: '"那就把活干到极致！"撸起袖子大修农家乐',
+        effects: { affection: 10, laokuaiAlert: -5, ap: -1 },
+        next: 'HUB'
+      },
+      {
+        id: 'trouble_2',
+        text: '"雨姐，听我的，开直播！"（需：学过直播）',
+        condition: { flag: 'liveSkill' },
+        effects: { affection: 12, setFlag: 'livePath', ap: -1 },
+        next: 'HUB'
+      },
+      {
+        id: 'trouble_3',
+        text: '啥也不说，陪她在河边坐了一上午',
+        effects: { affection: 8, ap: -1 },
+        next: 'HUB'
+      }
+    ]
+  },
+
+  // ==================== 日期事件：第12天 ====================
+  // 接了粉条单 → 翻车强制剧情
+  ev_expose: {
+    id: 'ev_expose',
+    title: '东窗事发',
+    scene: 'yard',
+    narration: '杀猪宴的早上，院门被人拍响了。一个举着手机的陌生人站在门口，身后还跟着俩扛摄像机的。',
+    dialogue: [
+      { character: 'jack', text: '你们是……？' },
+      { character: 'goose', text: '嘎嘎嘎！（翻译：打假的来啦！打假的来啦！）' },
+      { character: 'yujie', text: '杰克……他们说你卖的"纯红薯粉条"里……没有红薯？！' }
+    ],
+    choices: [{ id: 'expose_1', text: '完了……', next: 'ending_noodle' }]
+  },
+
+  // 没接粉条单 → 杀猪菜大宴
+  ev_feast: {
+    id: 'ev_feast',
+    title: '杀猪菜大宴',
+    scene: 'kitchen',
+    cg: 'yujie/cg_feast.jpg',
+    narration: '第十二天，一年一度杀猪菜大宴！全村老小都来了，院子里支起八张桌。这是你表现的最后舞台。',
+    dialogue: [
+      { character: 'yujie', text: '杰克！今儿你是主角之一，想干哪个环节，自己挑！' },
+      { character: 'dabaobei', text: '杰、杰克哥，加油！俺给你打下手！' }
+    ],
+    choices: [
+      {
+        id: 'feast_1',
+        text: '掌勺全场！（需：走完厨房线）',
+        condition: { routeCompleted: 'kitchen' },
+        effects: { affection: 15, money: 50 },
+        next: 'ev_feast_end'
+      },
+      {
+        id: 'feast_2',
+        text: '当着全村的面，把半扇猪扛进场！（需：走完猪圈线）',
+        condition: { routeCompleted: 'pigpen' },
+        effects: { affection: 12, laokuaiAlert: 5 },
+        next: 'ev_feast_end'
+      },
+      {
+        id: 'feast_3',
+        text: '老老实实打下手、端盘子',
+        effects: { affection: 5 },
+        next: 'ev_feast_end'
+      }
+    ]
+  },
+
+  ev_feast_end: {
+    id: 'ev_feast_end',
+    title: '散席',
+    scene: 'yard',
+    narration:
+      '酒足饭饱，宾客散尽。雨姐看着杯盘狼藉却喜气洋洋的院子，长舒了一口气："有你们在，真好。" 明天，就是你在农家乐的最后一天了。',
+    choices: [{ id: 'feast_e_1', text: '回屋睡觉，养足精神', next: 'NIGHT' }]
+  },
+
+  // ==================== 终章：第13天 抉择日 ====================
+  ev_final: {
+    id: 'ev_final',
+    title: '抉择日',
+    scene: 'snow',
+    narration:
+      '第十三天。夜里落了今冬第一场雪。行李已经收拾好，全家人站在院子里送你——你最后的选择是什么？【结局由你十三天来的所作所为决定，亮起的选项就是你能走的路】',
+    dialogue: [
+      { character: 'yujie', text: '杰克，真……真要走啊？' },
+      { character: 'laokuai', text: '（别过脸去，吸溜AD钙奶的声音有点抖）' },
+      { character: 'goose', text: '嘎。（翻译：你看着办。）' }
+    ],
+    choices: [
+      {
+        id: 'final_love',
+        text: '💕【心动】"我不走了。雨姐，我喜欢你！"',
+        condition: { minAffection: 90, maxAlert: 40, routeCompleted: 'riverside' },
+        next: 'ending_love'
+      },
+      {
+        id: 'final_family',
+        text: '👨‍👩‍👦【一家人】"大哥大嫂！我想留下当你们老弟！"',
+        condition: { routeCompleted: 'laokuai', maxAlert: 20 },
+        next: 'ending_family'
+      },
+      {
+        id: 'final_chef',
+        text: '🧑‍🍳【帮工】"让我留下当大厨吧，管饭就行！"',
+        condition: { routesCompleted: ['kitchen', 'pigpen'], minAffection: 60 },
+        next: 'ending_chef'
+      },
+      {
+        id: 'final_streamer',
+        text: '📱【带货】"雨姐，咱们的酸菜，该让全国人民尝尝了！"',
+        condition: { routeCompleted: 'market', flagsAll: ['livePath', 'refusedNoodles'] },
+        next: 'ending_streamer'
+      },
+      {
+        id: 'final_goose',
+        text: '🪿【？？？】大鹅们突然列队站到了你的身后',
+        condition: { minGooseCount: 3 },
+        next: 'ending_goose'
+      },
+      {
+        id: 'final_friend',
+        text: '🤝【好友】"我会常回来的，我的朋友们！"',
+        condition: { minAffection: 50 },
+        next: 'ending_friend'
+      },
+      {
+        id: 'final_bye',
+        text: '😶【离开】"再见了，谢谢这段时间的照顾。"',
+        next: 'ending_bye'
+      }
+    ]
+  },
+
+  // ==================== 夜晚过渡 ====================
+  night_rest: {
+    id: 'night_rest',
+    title: '夜幕降临',
+    scene: 'hall',
+    narration: '夜深了，大鹅回巢，猪睡了，老蒯的呼噜声隔着墙都能听见。你躺在热炕上，回味着今天，期待着明天。',
+    choices: [{ id: 'night_1', text: '睡觉（进入下一天）', next: 'NIGHT' }]
   }
 }
 

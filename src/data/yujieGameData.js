@@ -1,311 +1,338 @@
 /**
- * 《雨姐的心动时刻》游戏数据配置
- * 东北雨姐Galgame完整数据文件
+ * 《雨姐的心动时刻》重制版 - 游戏基础数据
+ *
+ * 结构：序章(第1天) → 自由行动(第2-12天，每天2行动点) → 终章(第13天)
+ * 六条支线 + 固定日期事件 + 九个结局
  */
 
-// 角色数据
+// ==================== 角色 ====================
 export const characters = {
   jack: {
     id: 'jack',
     name: '杰克',
-    role: '男主角',
-    description: '来自美国的黑人小伙，对中国文化充满好奇',
-    avatar: 'character_jack.png', // 预留图片位置
-    traits: ['热情', '幽默', '勤劳', '真诚']
+    role: '男主角（你）',
+    description: '来自美国的黑人小伙，热情幽默，来中国寻找真实的生活',
+    avatar: null, // 玩家本人，不出立绘
+    emoji: '🧔🏿'
   },
   yujie: {
     id: 'yujie',
     name: '雨姐',
     role: '女主角',
-    description: '东北女汉子，性格豪放，干活利索，经营着农家乐',
-    avatar: 'character_yujie.png', // 预留图片位置
-    traits: ['豪爽', '能干', '热情', '直率'],
-    height: '178cm',
-    specialty: '能扛半扇猪'
+    description: '东北女汉子，能扛半扇猪，经营着农家乐',
+    avatar: 'yujie/yujie.jpg',
+    emoji: '💪'
   },
   laokuai: {
     id: 'laokuai',
     name: '老蒯',
     role: '雨姐老公',
-    description: '雨姐的老公，"娇夫"形象，身材瘦小',
-    avatar: 'character_laokuai.png', // 预留图片位置
-    traits: ['温和', '细心', '有点懒', '爱吃AD钙奶']
+    description: '"娇夫"人设，命根子是AD钙奶，警觉的眼神锁定你',
+    avatar: 'yujie/laokuai.jpg',
+    emoji: '🥛'
   },
   peisi: {
     id: 'peisi',
     name: '佩斯',
-    role: 'NPC',
-    description: '农家乐帮工，负责点火做饭',
-    avatar: 'character_peisi.png', // 预留图片位置
-    catchphrase: '佩斯，点火！'
+    role: '帮工',
+    description: '农家乐全能帮工，人形打火机',
+    avatar: null,
+    emoji: '🔥'
   },
   cuihua: {
     id: 'cuihua',
     name: '翠花',
-    role: 'NPC',
-    description: '邻居大姐，爱吃爱聊天',
-    avatar: 'character_cuihua.png', // 预留图片位置
-    traits: ['贪吃', '八卦', '热心']
+    role: '邻居',
+    description: '村口情报站站长，嗑瓜子十级学者，直播爱好者',
+    avatar: null,
+    emoji: '🌻'
   },
   dabaobei: {
     id: 'dabaobei',
     name: '大宝贝',
-    role: 'NPC',
-    description: '雨姐的徒弟，勤恳老实',
-    avatar: 'character_dabaobei.png', // 预留图片位置
-    traits: ['勤恳', '老实', '能干']
+    role: '徒弟',
+    description: '雨姐的徒弟，勤恳老实，力气活担当',
+    avatar: null,
+    emoji: '🐻'
+  },
+  goose: {
+    id: 'goose',
+    name: '村霸大鹅',
+    role: '???',
+    description: '本村真正的统治者，见你一次追你一次',
+    avatar: null,
+    emoji: '🪿'
   }
 }
 
-// 场景数据
+// ==================== 场景 ====================
+// image 为 null 时用 gradient 渐变兜底
 export const scenes = {
-  farmhouse: {
-    id: 'farmhouse',
+  yard: {
+    id: 'yard',
     name: '农家乐大院',
-    description: '雨姐家的农家乐，宽敞的院子里堆着柴火和农具',
-    background: 'scene_farmhouse.jpg', // 预留图片位置
-    music: 'bgm_farmhouse.mp3'
+    description: '雨姐家的院子，柴火堆得老高，大鹅在巡视领地',
+    image: 'yujie/scene_yard.jpg',
+    gradient: 'linear-gradient(160deg, #8d5524 0%, #c68642 55%, #e8b04b 100%)'
   },
   kitchen: {
     id: 'kitchen',
     name: '农家大厨房',
-    description: '热气腾腾的大厨房，佩斯正在灶台边忙活',
-    background: 'scene_kitchen.jpg', // 预留图片位置
-    music: 'bgm_kitchen.mp3'
+    description: '热气腾腾，酸菜缸和灶台的香气直往鼻子里钻',
+    image: 'yujie/scene_kitchen.jpg',
+    gradient: 'linear-gradient(160deg, #6d3b14 0%, #a85f22 60%, #d98e3a 100%)'
   },
   pigpen: {
     id: 'pigpen',
     name: '猪圈',
-    description: '养着大肥猪的猪圈，雨姐经常来这里干活',
-    background: 'scene_pigpen.jpg', // 预留图片位置
-    music: 'bgm_farm.mp3'
+    description: '几头大肥猪正等着开饭，哼哼声此起彼伏',
+    image: 'yujie/scene_pigpen.jpg',
+    gradient: 'linear-gradient(160deg, #5c4033 0%, #8b5a2b 60%, #b5793f 100%)'
   },
   market: {
     id: 'market',
-    name: '集市',
-    description: '热闹的东北大集，各种农产品和小吃',
-    background: 'scene_market.jpg', // 预留图片位置
-    music: 'bgm_market.mp3'
+    name: '村口大集',
+    description: '吆喝声、砍价声、炸丸子的香气，热闹非凡',
+    image: 'yujie/scene_market.jpg',
+    gradient: 'linear-gradient(160deg, #a33327 0%, #d45a2a 60%, #f0a03c 100%)'
   },
   riverside: {
     id: 'riverside',
-    name: '河边',
-    description: '村子旁的小河，风景优美，适合聊天',
-    background: 'scene_riverside.jpg', // 预留图片位置
-    music: 'bgm_riverside.mp3'
+    name: '小河边',
+    description: '村旁的小河，夕阳洒在水面上，适合说点心里话',
+    image: 'yujie/scene_riverside.jpg',
+    gradient: 'linear-gradient(160deg, #1d4e5f 0%, #3a7d8c 55%, #d4a35a 100%)'
   },
-  snowfield: {
-    id: 'snowfield',
-    name: '雪地',
-    description: '冬天的东北雪地，白茫茫一片',
-    background: 'scene_snowfield.jpg', // 预留图片位置
-    music: 'bgm_winter.mp3'
+  hall: {
+    id: 'hall',
+    name: '堂屋热炕',
+    description: '老蒯的地盘，炕桌上永远摆着一排AD钙奶',
+    image: 'yujie/scene_hall.jpg',
+    gradient: 'linear-gradient(160deg, #4a2c2a 0%, #7a4a3a 60%, #b07a50 100%)'
+  },
+  mountain: {
+    id: 'mountain',
+    name: '后山',
+    description: '蘑菇、软枣、野花……以及大鹅的老巢',
+    image: 'yujie/scene_mountain.jpg',
+    gradient: 'linear-gradient(160deg, #2d4a22 0%, #4f7a3a 60%, #8fae5a 100%)'
+  },
+  snow: {
+    id: 'snow',
+    name: '雪夜村庄',
+    description: '大雪簌簌地下，整个村子安静得能听见心跳',
+    image: 'yujie/scene_snow.jpg',
+    gradient: 'linear-gradient(160deg, #2c3e50 0%, #5d7a93 55%, #cfdde8 100%)'
   }
 }
 
-// 物品数据
+// ==================== 物品 ====================
 export const items = {
   adMilk: {
     id: 'adMilk',
     name: 'AD钙奶',
-    description: '老蒯最爱喝的饮料',
-    icon: 'item_admilk.png',
-    effect: { laokuaiAlert: -5 }
-  },
-  pork: {
-    id: 'pork',
-    name: '半扇猪肉',
-    description: '新鲜的猪肉，很重',
-    icon: 'item_pork.png',
-    effect: { affection: 10 }
+    emoji: '🥛',
+    description: '老蒯的命根子，送他准没错'
   },
   softJujube: {
     id: 'softJujube',
     name: '软枣',
-    description: '雨姐家种的特产软枣',
-    icon: 'item_softjujube.png',
-    effect: { affection: 5 }
+    emoji: '🫐',
+    description: '后山特产，雨姐从小吃到大'
   },
   pickledCabbage: {
     id: 'pickledCabbage',
     name: '酸菜',
-    description: '东北特色腌酸菜',
-    icon: 'item_pickledcabbage.png',
-    effect: { affection: 8 }
-  },
-  firewood: {
-    id: 'firewood',
-    name: '柴火',
-    description: '劈好的柴火',
-    icon: 'item_firewood.png',
-    effect: { affection: 5 }
+    emoji: '🥬',
+    description: '东北人的灵魂，你亲手切的'
   },
   flower: {
     id: 'flower',
     name: '野花',
-    description: '河边采的野花',
-    icon: 'item_flower.png',
-    effect: { affection: 15, laokuaiAlert: 10 }
+    emoji: '💐',
+    description: '后山采的，带着露水'
+  },
+  pork: {
+    id: 'pork',
+    name: '半扇猪肉',
+    emoji: '🥩',
+    description: '你扛过的那半扇，雨姐切了条后臀尖送你'
+  },
+  mushroom: {
+    id: 'mushroom',
+    name: '榛蘑',
+    emoji: '🍄',
+    description: '小鸡炖蘑菇的另一半'
+  },
+  militaryCoat: {
+    id: 'militaryCoat',
+    name: '军大衣',
+    emoji: '🧥',
+    description: '赶集日限定，东北冬天的终极浪漫'
+  },
+  gooseEgg: {
+    id: 'gooseEgg',
+    name: '大鹅蛋',
+    emoji: '🥚',
+    description: '从鹅王眼皮底下摸来的战利品'
   }
 }
 
-// 游戏结局配置
-export const endings = {
-  trueEnding: {
-    id: 'trueEnding',
-    name: '真爱结局',
-    description: '雨姐与杰克真心相爱，老蒯也接受了这段感情',
-    condition: { affection: 90, laokuaiAlert: 30, day: 30 },
-    image: 'ending_true.jpg',
-    text: '经过一个月的相处，雨姐发现杰克是个真诚善良的人。在一个雪夜，雨姐终于向杰克表白了心意。老蒯虽然心里不是滋味，但看到雨姐的幸福，也选择了祝福。杰克决定留在东北，和雨姐一起经营农家乐...'
-  },
-  goodEnding: {
-    id: 'goodEnding',
-    name: '好友结局',
-    description: '成为了很好的朋友',
-    condition: { affection: 60, affectionMax: 89, laokuaiAlert: 50 },
-    image: 'ending_good.jpg',
-    text: '虽然没有发展成恋人，但你和雨姐成为了很好的朋友。每年你都会来东北看望雨姐一家，品尝地道的东北菜。这份跨越国界的友谊，成为了你人生中最珍贵的回忆。'
-  },
-  normalEnding: {
-    id: 'normalEnding',
-    name: '平淡结局',
-    description: '普通的旅行经历',
-    condition: { affection: 30, affectionMax: 59 },
-    image: 'ending_normal.jpg',
-    text: '在东北的这段时间，你体验了不一样的生活。虽然和雨姐没有太深的交集，但这次旅行让你对中国文化有了更深的了解。带着美好的回忆，你踏上了归途。'
-  },
-  badEnding: {
-    id: 'badEnding',
-    name: '被赶走结局',
-    description: '老蒯的警觉度过高，被赶走了',
-    condition: { laokuaiAlert: 80 },
-    image: 'ending_bad.jpg',
-    text: '老蒯发现了你的意图，非常生气。在一次激烈的争吵后，你被赶出了农家乐。雨姐虽然有些不舍，但还是选择了家庭。你只能黯然离开东北...'
-  },
-  secretEnding: {
-    id: 'secretEnding',
-    name: '隐藏结局：三人行',
-    description: '神秘的三人关系',
-    condition: { affection: 95, laokuaiAlert: 20, hasAllItems: true, day: 40 },
-    image: 'ending_secret.jpg',
-    text: '在长时间的相处中，一个意想不到的情况发生了。老蒯竟然也对你产生了好感！经过深入的交流，三个人达成了一个特殊的共识。你们决定一起经营农家乐，开创一段不寻常但充满欢乐的生活...'
-  }
-}
-
-// 主线剧情章节
-export const chapters = [
-  {
-    id: 'chapter1',
-    day: 1,
-    title: '初来乍到',
-    scene: 'farmhouse',
-    description: '杰克第一次来到雨姐的农家乐',
-    events: ['event_arrival', 'event_meet_yujie', 'event_meet_laokuai']
-  },
-  {
-    id: 'chapter_extra1',
-    day: 2,
-    title: '东北文化',
+// ==================== 支线（自由行动地点） ====================
+export const routes = {
+  kitchen: {
+    id: 'kitchen',
+    name: '大厨房',
+    icon: '🍳',
     scene: 'kitchen',
-    description: '学习方言与遭遇大鹅',
-    events: ['event_learn_dialect', 'event_goose_fight']
+    description: '跟佩斯学手艺，还能赚工钱',
+    repeatable: true, // 走完后仍可帮厨打工
+    repeatText: '帮厨打工（+15元）'
   },
-  {
-    id: 'chapter2',
-    day: 5,
-    title: '融入生活',
-    scene: 'kitchen',
-    description: '开始帮忙做农活',
-    events: ['event_help_cooking', 'event_chop_wood', 'event_feed_pigs']
-  },
-  {
-    id: 'chapter_extra2',
-    day: 8,
-    title: '乐于助人',
-    scene: 'farmhouse',
-    description: '帮助邻居翠花修房顶',
-    events: ['event_help_neighbor']
-  },
-  {
-    id: 'chapter3',
-    day: 10,
-    title: '赶大集',
-    scene: 'market',
-    description: '和雨姐一起去集市',
-    events: ['event_market_trip', 'event_buy_gifts', 'event_meet_cuihua']
-  },
-  {
-    id: 'chapter_extra3',
-    day: 12,
-    title: '山中探险',
-    scene: 'snowfield',
-    description: '上山采蘑菇',
-    events: ['event_pick_mushrooms']
-  },
-  {
-    id: 'chapter4',
-    day: 15,
-    title: '深入了解',
-    scene: 'riverside',
-    description: '与雨姐的深入交流',
-    events: ['event_riverside_talk', 'event_share_stories', 'event_laokuai_jealous']
-  },
-  {
-    id: 'chapter_extra4',
-    day: 18,
-    title: '消除误会',
-    scene: 'farmhouse',
-    description: '解决与老蒯的误会',
-    events: ['event_misunderstanding']
-  },
-  {
-    id: 'chapter5',
-    day: 20,
-    title: '杀猪菜',
+  pigpen: {
+    id: 'pigpen',
+    name: '猪圈',
+    icon: '🐷',
     scene: 'pigpen',
-    description: '帮忙杀猪做杀猪菜',
-    events: ['event_kill_pig', 'event_carry_pork', 'event_big_feast']
+    description: '喂猪、起名、扛半扇猪',
+    repeatable: false
   },
-  {
-    id: 'chapter_extra5',
-    day: 22,
-    title: '欢庆时刻',
-    scene: 'farmhouse',
-    description: '扭秧歌大赛',
-    events: ['event_yangge_dance']
+  market: {
+    id: 'market',
+    name: '村口大集',
+    icon: '🛒',
+    scene: 'market',
+    description: '翠花姐的地盘，情报与商机',
+    repeatable: false
   },
-  {
-    id: 'chapter6',
-    day: 25,
-    title: '冬日情愫',
-    scene: 'snowfield',
-    description: '雪地里的浪漫时刻',
-    events: ['event_snow_play', 'event_confession_chance', 'event_decision_time']
+  riverside: {
+    id: 'riverside',
+    name: '小河边',
+    icon: '🌊',
+    scene: 'riverside',
+    description: '雨姐常去散心的地方（心动主线）',
+    repeatable: false
   },
-  {
-    id: 'chapter_extra6',
-    day: 28,
-    title: '最后的心意',
-    scene: 'farmhouse',
-    description: '准备离别的礼物',
-    events: ['event_farewell_gift']
+  laokuai: {
+    id: 'laokuai',
+    name: '堂屋热炕',
+    icon: '🥛',
+    scene: 'hall',
+    description: '陪老蒯唠嗑，把警觉度喝下去',
+    repeatable: false
   },
-  {
-    id: 'chapter7',
-    day: 30,
-    title: '最终抉择',
-    scene: 'farmhouse',
-    description: '做出最终的选择',
-    events: ['event_final_choice', 'event_ending_trigger']
+  mountain: {
+    id: 'mountain',
+    name: '后山',
+    icon: '⛰️',
+    scene: 'mountain',
+    description: '采蘑菇软枣，小心大鹅的老巢',
+    repeatable: false
   }
-]
+}
+
+// ==================== 结局 ====================
+export const endings = {
+  ending_love: {
+    id: 'ending_love',
+    name: '心动结局',
+    icon: '💕',
+    hint: '好感≥90，警觉≤40，走完河边线',
+    image: 'yujie/ending_warm.jpg',
+    text: '第13天的夜里下起了雪。你把雨姐约到河边，把憋了十三天的话一口气说完。雨姐盯着你看半天，一巴掌拍你背上："磨叽啥呢！俺也稀罕你！" 远处，老蒯抱着一箱AD钙奶默默转身，肩膀一抽一抽的……后来他说，那是冻的。'
+  },
+  ending_family: {
+    id: 'ending_family',
+    name: '东北一家人',
+    icon: '👨‍👩‍👦',
+    hint: '走完堂屋线，警觉≤20',
+    image: 'yujie/ending_warm.jpg',
+    text: '结拜仪式在堂屋举行，供桌上摆着一排AD钙奶。老蒯眼含热泪："弟啊！以后这就是你家！" 雨姐在旁边笑得直不起腰："得，俺家又添一口人！" 你成了这个家认证的"老弟"，户口本上没你，炕头上永远有你。'
+  },
+  ending_chef: {
+    id: 'ending_chef',
+    name: '金牌帮工',
+    icon: '🧑‍🍳',
+    hint: '走完厨房线和猪圈线，好感≥60',
+    image: 'yujie/cg_feast.jpg',
+    text: '杀猪菜大宴上，你一个人撑起八个灶眼，佩斯当场失业，抱着灶台哭。雨姐一拍桌子："别走了！管吃管住，酸菜管够！" 你成了农家乐的金牌大厨，招牌菜：杰克炖大鹅……的土豆。'
+  },
+  ending_streamer: {
+    id: 'ending_streamer',
+    name: '带货新星',
+    icon: '📱',
+    hint: '走完大集线，第9天选择直播，且拒绝贴牌粉条',
+    image: 'yujie/cg_live.jpg',
+    text: '你顶住高佣金的诱惑没碰贴牌粉条，转头把雨姐家的酸菜卖断了货。弹幕刷屏："这老外真实在！" 雨姐搂着你肩膀冲镜头喊："家人们！这是俺们家的卧龙！" 当晚，酸菜预售排到了明年开春。'
+  },
+  ending_noodle: {
+    id: 'ending_noodle',
+    name: '翻车结局',
+    icon: '💥',
+    hint: '彩蛋：替人卖「木薯粉条」试试？',
+    image: 'yujie/ending_sad.jpg',
+    text: '"家人们！纯红薯粉条，假一赔万！" 三天后，打假博主上门：这粉条里没有红薯，只有木薯。165元罚单（农家乐全部流动资金）贴在大门上，雨姐的大鹅在旁边幸灾乐祸地叫。你连夜扛着村口的火车跑路了……'
+  },
+  ending_friend: {
+    id: 'ending_friend',
+    name: '好友结局',
+    icon: '🤝',
+    hint: '好感≥50',
+    image: 'yujie/ending_warm.jpg',
+    text: '你走那天，雨姐往你包里硬塞了十斤酸菜："常回来啊老弟！" 老蒯递给你一瓶AD钙奶，啥也没说。你们成了铁哥们，此后每年冬天，你都雷打不动回来蹭一顿杀猪菜。'
+  },
+  ending_bye: {
+    id: 'ending_bye',
+    name: '路人结局',
+    icon: '😶',
+    hint: '好感不足50时默默离开',
+    image: 'yujie/ending_sad.jpg',
+    text: '十三天的农家乐体验卡到期了。你学会了几句东北话，胖了三斤，手机里多了几百张照片和一段大鹅追你的视频。雨姐在村口冲你挥手："有空再来啊！" 你想，大概会吧。'
+  },
+  ending_goose: {
+    id: 'ending_goose',
+    name: '大鹅之主',
+    icon: '🪿',
+    hint: '？？？（多和大鹅打交道）',
+    image: 'yujie/cg_goose.jpg',
+    text: '三次交锋之后，村里的大鹅们开了三天三夜的会，一致决定拥立你为新任鹅王。你被一群大鹅簇拥着巡视村庄，雨姐目瞪口呆，老蒯的AD钙奶掉在了地上。从此本村食物链顶端，写上了你的名字。'
+  },
+  ending_kicked: {
+    id: 'ending_kicked',
+    name: '被赶走',
+    icon: '😡',
+    hint: '警觉≥45，老蒯忍无可忍',
+    image: 'yujie/ending_sad.jpg',
+    text: '老蒯把你每天干了啥记了满满一本，当众宣读。你被雨姐拎着行李丢出大门，大鹅在你身后追出二里地。从此，这个小村庄成了你地图上的禁区。'
+  }
+}
+
+// ==================== 固定日期事件 ====================
+// advanceDay 时若命中则强制插入；day12 由引擎根据粉条flag/支线完成度另作分流
+export const dateEvents = {
+  3: 'ev_goose_attack',
+  6: 'ev_market_day',
+  9: 'ev_yujie_trouble',
+  13: 'ev_final'
+}
+
+export const TOTAL_DAYS = 13
+export const ACTIONS_PER_DAY = 2
+export const ALERT_GAME_OVER = 45 // 警觉度达到即强制触发被赶走结局
+export const MAX_ROUTE_STAGE = 3
+export const GALLERY_KEY = 'yujie_gallery_v2'
 
 // 导出默认配置
 export default {
   characters,
   scenes,
   items,
+  routes,
   endings,
-  chapters
+  dateEvents,
+  TOTAL_DAYS,
+  ACTIONS_PER_DAY,
+  ALERT_GAME_OVER,
+  MAX_ROUTE_STAGE,
+  GALLERY_KEY
 }

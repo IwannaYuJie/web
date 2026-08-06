@@ -779,3 +779,293 @@
   0%, 100% { opacity: 1; }
   50% { opacity: 0.5; }
 }
+
+/* ==================== 重制版新增 ==================== */
+.game-cover img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.status-num {
+  font-size: 14px;
+  min-width: 28px;
+  text-align: left;
+}
+
+/* 旁白文本（折叠进对话框的第一行） */
+.narration-text {
+  font-size: 19px;
+  line-height: 1.9;
+  color: var(--yujie-ink);
+  padding: 15px;
+  background: rgba(255, 248, 240, 0.78);
+  border-radius: 10px;
+  min-height: 80px;
+  font-style: italic;
+}
+
+/* emoji 头像 / 立绘兜底 */
+.emoji-avatar {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 100%;
+  height: 100%;
+  font-size: 32px;
+  background: rgba(255, 212, 163, 0.6);
+}
+
+.character-emoji {
+  display: flex;
+  align-items: flex-end;
+  justify-content: center;
+  width: 100%;
+  height: 100%;
+  font-size: 220px;
+  line-height: 1;
+  filter: drop-shadow(0 10px 20px rgba(0, 0, 0, 0.35));
+  padding-bottom: 20px;
+}
+
+/* 物品栏 */
+.game-inventory-bar {
+  position: fixed;
+  top: 60px;
+  left: 0;
+  right: 0;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 8px 30px;
+  background: rgba(92, 64, 51, 0.6);
+  backdrop-filter: blur(8px);
+  z-index: 99;
+  overflow-x: auto;
+}
+
+.inventory-label {
+  font-size: 20px;
+}
+
+.inventory-chip {
+  background: rgba(255, 255, 255, 0.88);
+  color: var(--yujie-ink);
+  border-radius: 999px;
+  padding: 4px 12px;
+  font-size: 14px;
+  font-weight: bold;
+  white-space: nowrap;
+}
+
+/* 效果飘字 */
+.effect-toast {
+  position: absolute;
+  top: 150px;
+  left: 50%;
+  transform: translateX(-50%);
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+  justify-content: center;
+  z-index: 60;
+  animation: toastFloat 1.8s ease-out forwards;
+  pointer-events: none;
+}
+
+.effect-toast-item {
+  background: rgba(255, 255, 255, 0.95);
+  color: var(--yujie-ink);
+  border: 1px solid rgba(255, 159, 69, 0.6);
+  border-radius: 999px;
+  padding: 8px 16px;
+  font-size: 16px;
+  font-weight: bold;
+  box-shadow: 0 8px 20px rgba(92, 64, 51, 0.2);
+}
+
+@keyframes toastFloat {
+  0% {
+    opacity: 0;
+    transform: translateX(-50%) translateY(20px);
+  }
+  15% {
+    opacity: 1;
+    transform: translateX(-50%) translateY(0);
+  }
+  80% {
+    opacity: 1;
+    transform: translateX(-50%) translateY(-10px);
+  }
+  100% {
+    opacity: 0;
+    transform: translateX(-50%) translateY(-30px);
+  }
+}
+
+/* 自由行动地图 */
+.hub-panel {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  width: 92%;
+  max-width: 1100px;
+  max-height: 78vh;
+  overflow-y: auto;
+  background: var(--yujie-surface);
+  border-radius: 24px;
+  padding: 28px;
+  box-shadow: 0 18px 40px rgba(92, 64, 51, 0.22);
+  border: 1px solid rgba(255, 212, 163, 0.8);
+  z-index: 50;
+  animation: dialogueFadeIn 0.3s ease-out;
+}
+
+.hub-title {
+  font-size: 24px;
+  font-weight: bold;
+  color: var(--yujie-ink);
+  text-align: center;
+  margin-bottom: 20px;
+}
+
+.hub-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+  gap: 16px;
+}
+
+.hub-card {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 8px;
+  padding: 22px 16px;
+  border: 2px solid rgba(255, 159, 69, 0.35);
+  border-radius: 18px;
+  background: linear-gradient(135deg, #fff6ec 0%, #ffe8d0 100%);
+  cursor: pointer;
+  transition: all 0.25s ease;
+  font-family: inherit;
+}
+
+.hub-card:hover:not(.disabled) {
+  transform: translateY(-4px);
+  border-color: #ff9f45;
+  box-shadow: var(--yujie-shadow-strong);
+}
+
+.hub-card.disabled {
+  opacity: 0.55;
+  cursor: default;
+  background: #f3ece4;
+}
+
+.hub-card-icon {
+  font-size: 44px;
+}
+
+.hub-card-name {
+  font-size: 20px;
+  font-weight: bold;
+  color: var(--yujie-ink);
+}
+
+.hub-card-desc {
+  font-size: 14px;
+  color: var(--yujie-muted);
+  text-align: center;
+  line-height: 1.5;
+}
+
+.hub-card-progress {
+  font-size: 14px;
+  color: #ff8c1a;
+  font-weight: bold;
+}
+
+.sleep-card {
+  background: linear-gradient(135deg, #e8ecf4 0%, #d4dbe8 100%);
+  border-color: rgba(120, 130, 150, 0.35);
+}
+
+.sleep-card:hover {
+  border-color: #7a8699;
+  box-shadow: 0 14px 36px rgba(90, 100, 120, 0.28);
+}
+
+/* 结局图鉴 */
+.gallery-block {
+  margin-top: 36px;
+}
+
+.gallery-title {
+  font-size: 20px;
+  font-weight: bold;
+  color: var(--yujie-ink);
+  margin-bottom: 14px;
+}
+
+.gallery-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(96px, 1fr));
+  gap: 10px;
+}
+
+.gallery-item {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 6px;
+  padding: 12px 6px;
+  border-radius: 12px;
+  border: 1px solid rgba(255, 159, 69, 0.3);
+  background: rgba(255, 248, 240, 0.8);
+}
+
+.gallery-item.locked {
+  opacity: 0.55;
+  filter: grayscale(0.6);
+}
+
+.gallery-item.unlocked {
+  border-color: #ff9f45;
+  box-shadow: 0 6px 16px rgba(255, 159, 69, 0.22);
+}
+
+.gallery-icon {
+  font-size: 26px;
+}
+
+.gallery-name {
+  font-size: 13px;
+  font-weight: bold;
+  color: var(--yujie-ink);
+}
+
+.ending-gallery-note {
+  margin-top: 10px;
+  font-size: 16px;
+  color: var(--yujie-muted);
+  font-weight: bold;
+}
+
+@media (max-width: 768px) {
+  .hub-grid {
+    grid-template-columns: repeat(2, 1fr);
+  }
+
+  .hub-card-icon {
+    font-size: 32px;
+  }
+
+  .character-emoji {
+    font-size: 120px;
+  }
+
+  .game-inventory-bar {
+    top: 96px;
+    padding: 6px 12px;
+  }
+}

@@ -1,146 +1,145 @@
-import { useState, useRef } from 'react'
+import { useEffect, useRef, useState } from 'react'
 import './YujieGame.css'
 import gameData from '../data/yujieGameData'
 import gameEvents from '../data/yujieGameEvents'
+import {
+  HUB,
+  NIGHT,
+  applyEffects,
+  checkCondition,
+  initialStats,
+  loadGallery,
+  morningEventForDay,
+  routeEventId,
+  summarizeChoice
+} from '../data/yujieGameEngine'
+
+const { characters, scenes, items, routes, endings, TOTAL_DAYS, ACTIONS_PER_DAY, ALERT_GAME_OVER, GALLERY_KEY } =
+  gameData
 
 /**
- * 雨姐的心动时刻 - 重制版核心引擎
- *
- * 这是一个基于状态机的Galgame引擎
- * 包含：剧情播放、选项分支、好感度系统、结局判定
+ * 雨姐的心动时刻 - 重制版
+ * 序章线性 → 自由行动hub → 日期强制事件 → 终章多结局
  */
 const YujieGame = ({ onExit }) => {
-  // ==================== 状态定义 ====================
-
-  // 游戏阶段: 'start' | 'playing' | 'ending'
-  const [gamePhase, setGamePhase] = useState('start')
-
-  // 玩家属性
-  const [stats, setStats] = useState({
-    affection: 0,      // 雨姐好感度
-    laokuaiAlert: 0,   // 老蒯警觉度
-    day: 1,            // 当前天数
-    money: 100,        // 初始资金
-    items: []          // 物品栏
-  })
-
-  // 当前剧情状态
-  const [currentEventId, setCurrentEventId] = useState('event_arrival')
+  const [gamePhase, setGamePhase] = useState('start') // start | playing | ending
+  const [stats, setStats] = useState(initialStats)
+  const [mode, setMode] = useState('event') // event | hub
+  const [currentEventId, setCurrentEventId] = useState('pro_arrive')
   const [dialogueIndex, setDialogueIndex] = useState(0)
-  const [_history, setHistory] = useState([]) // 记录选择历史 (unused but for future)
-
-  // 结局数据
   const [endingId, setEndingId] = useState(null)
-
-  // 自动滚动到底部的ref
+  const [toast, setToast] = useState(null) // { parts: [], key }
+  const [gallery, setGallery] = useState(loadGallery)
   const dialogueRef = useRef(null)
+  const toastTimer = useRef(null)
 
-  // ==================== 核心逻辑 ====================
+  // 飘字自动消失
+  useEffect(() => {
+    if (!toast) {
+      return
+    }
+    toastTimer.current = setTimeout(() => setToast(null), 1800)
+    return () => clearTimeout(toastTimer.current)
+  }, [toast])
 
-  // 开始新游戏
-  const startNewGame = () => {
-    setStats({
-      affection: 0,
-      laokuaiAlert: 0,
-      day: 1,
-      money: 100,
-      items: []
-    })
-    setCurrentEventId('event_arrival')
+  // ==================== 流程控制 ====================
+
+  const gotoEvent = (id) => {
+    setCurrentEventId(id)
     setDialogueIndex(0)
-    setHistory([])
-    setGamePhase('playing')
+    setMode('event')
   }
 
-  // 获取当前事件数据
-  const currentEvent = gameEvents[currentEventId] || {
-    title: '未知错误',
-    scene: 'farmhouse',
-    narration: '发生了一个错误，剧情丢失了...',
-    dialogue: [],
-    choices: []
-  }
-
-  // 处理点击继续剧情
-  const handleContinue = () => {
-    if (!currentEvent.dialogue) {return}
-
-    if (dialogueIndex < currentEvent.dialogue.length - 1) {
-      setDialogueIndex(prev => prev + 1)
+  // 进入下一天：重置行动点，命中日期事件则强制插入，否则回地图
+  const advanceDay = (currentStats) => {
+    const nextDay = currentStats.day + 1
+    const newStats = { ...currentStats, day: nextDay, actionPoints: ACTIONS_PER_DAY }
+    setStats(newStats)
+    const morningEvent = morningEventForDay(nextDay, newStats.flags)
+    if (morningEvent) {
+      gotoEvent(morningEvent)
+    } else {
+      setMode('hub')
     }
-    // 如果对话结束，显示选项（如果有）
-    // 注意：这里不需要做额外操作，渲染层会根据 dialogueIndex 判断是否显示选项
   }
 
-  // 处理选项选择
-  const handleChoice = (choice) => {
-    // 1. 更新属性
-    if (choice.effects) {
-      setStats(prev => ({
-        ...prev,
-        affection: prev.affection + (choice.effects.affection || 0),
-        laokuaiAlert: prev.laokuaiAlert + (choice.effects.laokuaiAlert || 0),
-        money: prev.money + (choice.effects.money || 0)
-      }))
-    }
-
-    // 2. 记录历史
-    setHistory(prev => [...prev, choice.id])
-
-    // 3. 转移到下一个事件
-    if (choice.next) {
-      // 检查是否是结局
-      if (gameData.endings[choice.next]) {
-        triggerEnding(choice.next)
-      } else if (gameEvents[choice.next]) {
-        setCurrentEventId(choice.next)
-        setDialogueIndex(0)
-      } else {
-        // 如果找不到下一个事件，回到开始或提示
-        console.warn('Next event not found:', choice.next)
-        // 临时处理：如果没有后续，进入默认结局
-        triggerEnding('normalEnding')
+  const triggerEnding = (id) => {
+    const unlocked = loadGallery()
+    if (!unlocked.includes(id)) {
+      unlocked.push(id)
+      try {
+        localStorage.setItem(GALLERY_KEY, JSON.stringify(unlocked))
+      } catch {
+        // localStorage 不可用时静默跳过
       }
     }
-  }
-
-  // 检查选项条件
-  const checkCondition = (condition) => {
-    if (!condition) {return true}
-
-    if (condition.minAffection && stats.affection < condition.minAffection) {return false}
-    if (condition.maxAffection && stats.affection > condition.maxAffection) {return false}
-    if (condition.minAlert && stats.laokuaiAlert < condition.minAlert) {return false}
-    if (condition.maxAlert && stats.laokuaiAlert > condition.maxAlert) {return false}
-    if (condition.hasItem && !stats.items.includes(condition.hasItem)) {return false}
-    // 检查是否拥有所有物品 (用于隐藏结局)
-    if (condition.hasAllItems) {
-       // 简单检查数量，假设至少收集4个核心物品
-       if (stats.items.length < 4) {return false}
-    }
-
-    return true
-  }
-
-  // 触发结局
-  const triggerEnding = (id) => {
+    setGallery(unlocked)
     setEndingId(id)
     setGamePhase('ending')
   }
 
-  // 获取角色图片 (预留，未来扩展用)
-  const _getCharacterImage = (charId) => {
-    const char = gameData.characters[charId]
-    return char ? `/images/${char.avatar}` : null
+  const startNewGame = () => {
+    setStats(initialStats())
+    setEndingId(null)
+    setToast(null)
+    setGamePhase('playing')
+    gotoEvent('pro_arrive')
   }
 
-  // 获取场景图片
-  const getSceneImage = (sceneId) => {
-    const scene = gameData.scenes[sceneId]
-    return scene ? `/images/${scene.background}` : null
+  // 选项选择
+  const handleChoice = (choice) => {
+    const newStats = applyEffects(stats, choice)
+    setStats(newStats)
+    const parts = summarizeChoice(choice)
+    if (parts.length) {
+      setToast({ parts, key: Date.now() })
+    }
+
+    const next = choice.next
+
+    // 警觉度爆表 → 强制被赶走（优先级高于普通跳转）
+    if (newStats.laokuaiAlert >= ALERT_GAME_OVER && !endings[next]) {
+      triggerEnding('ending_kicked')
+      return
+    }
+
+    if (next === HUB) {
+      if (newStats.actionPoints > 0) {
+        setMode('hub')
+      } else {
+        gotoEvent('night_rest')
+      }
+    } else if (next === NIGHT) {
+      advanceDay(newStats)
+    } else if (endings[next]) {
+      triggerEnding(next)
+    } else if (gameEvents[next]) {
+      gotoEvent(next)
+    } else {
+      console.warn('未知跳转目标:', next)
+      triggerEnding('ending_bye')
+    }
   }
 
-  // ==================== 渲染组件 ====================
+  // 点击继续对话
+  const handleContinue = (totalLines) => {
+    if (dialogueIndex < totalLines - 1) {
+      setDialogueIndex((prev) => prev + 1)
+    }
+  }
+
+  // hub 中选择地点
+  const handleRouteSelect = (routeId) => {
+    const eventId = routeEventId(routeId, stats.routes[routeId] || 0)
+    if (!eventId || !gameEvents[eventId]) {
+      console.warn('支线事件缺失:', routeId)
+      return
+    }
+    setStats((prev) => ({ ...prev, actionPoints: Math.max(0, prev.actionPoints - 1) }))
+    gotoEvent(eventId)
+  }
+
+  // ==================== 渲染辅助 ====================
 
   const exitButton = onExit ? (
     <button type="button" className="game-exit-button" onClick={onExit}>
@@ -148,8 +147,40 @@ const YujieGame = ({ onExit }) => {
     </button>
   ) : null
 
-  // 1. 开始界面
+  const renderAvatar = (charId, className) => {
+    const char = characters[charId]
+    if (!char) {
+      return null
+    }
+    if (char.avatar) {
+      return (
+        <img
+          src={`/images/${char.avatar}`}
+          alt={char.name}
+          className={className}
+          onError={(e) => {
+            e.target.style.display = 'none'
+          }}
+        />
+      )
+    }
+    return <span className={`${className} emoji-avatar`}>{char.emoji}</span>
+  }
+
+  // 场景背景样式：图片叠在渐变上，图挂了渐变兜底
+  const sceneStyle = (event) => {
+    const scene = scenes[event?.scene] || scenes.yard
+    const gradient = scene.gradient || scenes.yard.gradient
+    const img = event?.cg || scene.image
+    if (img) {
+      return { backgroundImage: `url(/images/${img}), ${gradient}` }
+    }
+    return { backgroundImage: gradient }
+  }
+
+  // ==================== 开始界面 ====================
   if (gamePhase === 'start') {
+    const total = Object.keys(endings).length
     return (
       <div className="yujie-game-container">
         {exitButton}
@@ -158,42 +189,73 @@ const YujieGame = ({ onExit }) => {
             <h1 className="game-title">
               <span className="title-icon">💕</span>
               雨姐的心动时刻
-              <span className="title-icon">🐕</span>
+              <span className="title-icon">🪿</span>
             </h1>
             <div className="game-cover">
-              {/* 这里可以放封面图，暂时用颜色代替 */}
-              <div style={{width: '100%', height: '100%', background: '#FF9F45', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: '40px', color: 'white'}}>
-                GAME COVER
-              </div>
+              <img
+                src="/images/yujie/cover.jpg"
+                alt="雨姐的心动时刻"
+                onError={(e) => {
+                  e.target.style.display = 'none'
+                }}
+              />
             </div>
             <p className="game-description">
-              一段跨越国界与文化的奇妙缘分。<br/>
-              你要扮演杰克，在东北农家乐中，<br/>
-              用真诚（和干活）打动雨姐的心！
+              十三天东北农家乐，每天2点行动点自由分配。
+              <br />
+              六条支线、九个结局——追雨姐、拜把子、当大厨、带大鹅，
+              <br />
+              甚至……卖一单不该卖的粉条。结局图鉴等你集齐！
             </p>
-            <button className="start-button" onClick={startNewGame}>
+            <button type="button" className="start-button" onClick={startNewGame}>
               <span className="button-icon">▶️</span>
               <span>开始这段缘分</span>
             </button>
+
+            <div className="gallery-block">
+              <div className="gallery-title">🏆 结局图鉴 {gallery.length}/{total}</div>
+              <div className="gallery-grid">
+                {Object.values(endings).map((ending) => {
+                  const unlocked = gallery.includes(ending.id)
+                  return (
+                    <div
+                      key={ending.id}
+                      className={`gallery-item ${unlocked ? 'unlocked' : 'locked'}`}
+                      title={unlocked ? ending.text : ending.hint}
+                    >
+                      <span className="gallery-icon">{unlocked ? ending.icon : '🔒'}</span>
+                      <span className="gallery-name">{unlocked ? ending.name : '？？？'}</span>
+                    </div>
+                  )
+                })}
+              </div>
+            </div>
           </div>
         </div>
       </div>
     )
   }
 
-  // 3. 结局界面
+  // ==================== 结局界面 ====================
   if (gamePhase === 'ending') {
-    const ending = gameData.endings[endingId] || gameData.endings.normalEnding
+    const ending = endings[endingId] || endings.ending_bye
+    const total = Object.keys(endings).length
     return (
       <div className="yujie-game-container">
         {exitButton}
         <div className="game-ending-screen">
           <div className="ending-content">
-            <h2 className="ending-title">{ending.name}</h2>
+            <h2 className="ending-title">
+              {ending.icon} {ending.name}
+            </h2>
             <div className="ending-image">
-              <div style={{width: '100%', height: '100%', background: '#FFB366', display: 'flex', alignItems: 'center', justifyContent: 'center', color: 'white'}}>
-                ENDING CG
-              </div>
+              <img
+                src={`/images/${ending.image}`}
+                alt={ending.name}
+                onError={(e) => {
+                  e.target.style.display = 'none'
+                }}
+              />
             </div>
             <div className="ending-text">
               <p>{ending.text}</p>
@@ -208,10 +270,18 @@ const YujieGame = ({ onExit }) => {
                 <span className="stat-label">老蒯警觉度</span>
                 <span className="stat-value">{stats.laokuaiAlert}</span>
               </div>
+              <div className="stat-item">
+                <span className="stat-label">鹅王之证</span>
+                <span className="stat-value">🪿×{stats.gooseCount}</span>
+              </div>
             </div>
 
-            <button className="restart-button" onClick={() => setGamePhase('start')}>
-              🔄 重新开始
+            <div className="ending-gallery-note">
+              🏆 结局图鉴：{gallery.length}/{total}
+            </div>
+
+            <button type="button" className="restart-button" onClick={() => setGamePhase('start')}>
+              🔄 再来一局
             </button>
           </div>
         </div>
@@ -219,15 +289,25 @@ const YujieGame = ({ onExit }) => {
     )
   }
 
-  // 2. 游戏主界面 (Playing)
-  const currentDialogue = currentEvent.dialogue ? currentEvent.dialogue[dialogueIndex] : null
+  // ==================== 游戏主界面 ====================
+  const currentEvent = gameEvents[currentEventId] || {
+    title: '未知错误',
+    scene: 'yard',
+    narration: '发生了一个错误，剧情丢失了……',
+    dialogue: [],
+    choices: []
+  }
 
-  // 如果对话还没完，或者当前是最后一句且还没有显示选项，则显示继续
-  // 如果对话完了，就显示选项
-  const showChoices = dialogueIndex >= (currentEvent.dialogue?.length || 0) - 1
-
-  // 当前正在说话的角色
-  const speaker = currentDialogue ? gameData.characters[currentDialogue.character] : null
+  // 把旁白折叠成第一行，用统一步进器推进
+  const lines = [
+    ...(currentEvent.narration ? [{ character: '__narrator', text: currentEvent.narration }] : []),
+    ...(currentEvent.dialogue || [])
+  ]
+  const currentLine = lines[dialogueIndex] || null
+  const isLastLine = dialogueIndex >= lines.length - 1
+  const speaker =
+    currentLine && currentLine.character !== '__narrator' ? characters[currentLine.character] : null
+  const visibleChoices = (currentEvent.choices || []).filter((c) => checkCondition(c.condition, stats))
 
   return (
     <div className="yujie-game-container">
@@ -236,140 +316,218 @@ const YujieGame = ({ onExit }) => {
       <div className="game-status-bar">
         <div className="status-item">
           <span className="status-icon">📅</span>
-          <span>第 {stats.day} 天</span>
+          <span>
+            第 {stats.day}/{TOTAL_DAYS} 天
+          </span>
+        </div>
+        <div className="status-item">
+          <span className="status-icon">⚡</span>
+          <span>行动点 ×{stats.actionPoints}</span>
         </div>
         <div className="status-item">
           <span className="status-icon">❤️</span>
-          <span>雨姐好感度</span>
           <div className="status-bar">
             <div
               className="status-fill affection"
-              style={{width: `${Math.min(stats.affection, 100)}%`}}
+              style={{ width: `${Math.min(stats.affection, 100)}%` }}
             ></div>
           </div>
+          <span className="status-num">{stats.affection}</span>
         </div>
         <div className="status-item">
           <span className="status-icon">👀</span>
-          <span>老蒯警觉度</span>
           <div className="status-bar">
             <div
               className="status-fill alert"
-              style={{width: `${Math.min(stats.laokuaiAlert, 100)}%`}}
+              style={{ width: `${Math.min(stats.laokuaiAlert, 100)}%` }}
             ></div>
           </div>
+          <span className="status-num">{stats.laokuaiAlert}</span>
+        </div>
+        <div className="status-item">
+          <span className="status-icon">💰</span>
+          <span>{stats.money}元</span>
         </div>
       </div>
 
+      {/* 物品栏 */}
+      {stats.items.length > 0 && (
+        <div className="game-inventory-bar">
+          <span className="inventory-label">🎒</span>
+          {stats.items.map((itemId) => {
+            const item = items[itemId]
+            return item ? (
+              <span key={itemId} className="inventory-chip" title={item.description}>
+                {item.emoji} {item.name}
+              </span>
+            ) : null
+          })}
+        </div>
+      )}
+
       {/* 游戏主舞台 */}
       <div className="game-main-area">
-        {/* 背景层 */}
-        <div
-          className="scene-background"
-          style={{
-            backgroundImage: getSceneImage(currentEvent.scene) ? `url(${getSceneImage(currentEvent.scene)})` : 'none',
-            backgroundColor: '#333' // Fallback
-          }}
-        ></div>
-
-        {/* 遮罩层 (让文字更清晰) */}
+        <div className="scene-background" style={sceneStyle(currentEvent)}></div>
         <div className="scene-overlay"></div>
 
-        {/* 场景名称 */}
         <div className="scene-name">
-          📍 {gameData.scenes[currentEvent.scene]?.name || '未知地点'}
+          📍 {currentEvent.title || scenes[currentEvent.scene]?.name || '未知地点'}
         </div>
 
-        {/* 角色层 */}
-        {speaker && speaker.id !== 'jack' && ( // 杰克通常不显示在屏幕上，除非是CG
+        {/* 效果飘字 */}
+        {toast && (
+          <div className="effect-toast" key={toast.key}>
+            {toast.parts.map((part) => (
+              <span key={part} className="effect-toast-item">
+                {part}
+              </span>
+            ))}
+          </div>
+        )}
+
+        {/* 角色立绘 */}
+        {mode === 'event' && speaker && speaker.id !== 'jack' && (
           <div className="character-area">
             <div className="character-sprite">
-              {/* 暂时使用占位符，实际应加载 speaker.avatar */}
-               <img
-                src={`/images/${speaker.avatar}`}
-                alt={speaker.name}
-                className="character-image"
-                onError={(e) => {e.target.style.display='none'}} //如果图片不存在隐藏
-              />
+              {speaker.avatar ? (
+                <img
+                  src={`/images/${speaker.avatar}`}
+                  alt={speaker.name}
+                  className="character-image"
+                  onError={(e) => {
+                    e.target.style.display = 'none'
+                  }}
+                />
+              ) : (
+                <span className="character-emoji">{speaker.emoji}</span>
+              )}
             </div>
           </div>
         )}
 
-        {/* 旁白/剧情描述 (如果当前没有对话，或者刚进入场景) */}
-        {(!currentDialogue && currentEvent.narration) && (
-          <div className="narration-box">
-            {currentEvent.narration}
+        {/* 自由行动地图 */}
+        {mode === 'hub' && (
+          <div className="hub-panel">
+            <div className="hub-title">
+              🗺️ 第 {stats.day} 天 · 今天去哪儿？（⚡×{stats.actionPoints}）
+            </div>
+            <div className="hub-grid">
+              {Object.values(routes).map((route) => {
+                const stage = stats.routes[route.id] || 0
+                const completed = stage >= gameData.MAX_ROUTE_STAGE
+                const usable = !completed || route.repeatable
+                return (
+                  <button
+                    type="button"
+                    key={route.id}
+                    className={`hub-card ${usable ? '' : 'disabled'}`}
+                    disabled={!usable}
+                    onClick={() => handleRouteSelect(route.id)}
+                  >
+                    <span className="hub-card-icon">{route.icon}</span>
+                    <span className="hub-card-name">{route.name}</span>
+                    <span className="hub-card-desc">
+                      {completed && route.repeatable ? route.repeatText : route.description}
+                    </span>
+                    <span className="hub-card-progress">
+                      {completed
+                        ? route.repeatable
+                          ? '🔁 可反复打工'
+                          : '✅ 已走完'
+                        : `剧情 ${'●'.repeat(stage)}${'○'.repeat(gameData.MAX_ROUTE_STAGE - stage)}`}
+                    </span>
+                  </button>
+                )
+              })}
+              <button
+                type="button"
+                className="hub-card sleep-card"
+                onClick={() => gotoEvent('night_rest')}
+              >
+                <span className="hub-card-icon">😴</span>
+                <span className="hub-card-name">回屋睡觉</span>
+                <span className="hub-card-desc">跳过今天，直接进入明天</span>
+                <span className="hub-card-progress">💤 休息</span>
+              </button>
+            </div>
           </div>
         )}
 
-        {/* 对话框 */}
-        <div className="dialogue-box" ref={dialogueRef}>
-          {currentDialogue ? (
-            <>
-              <div className="dialogue-header">
-                <div className="character-avatar">
-                  {/* 头像 */}
-                  <img
-                    src={`/images/${speaker?.avatar}`}
-                    alt={speaker?.name}
-                    onError={(e) => {e.target.src = 'https://placehold.co/60x60?text=?'}}
-                  />
-                </div>
-                <span className="character-name">{speaker?.name || '???'}</span>
-              </div>
-              <div className="dialogue-text">
-                {currentDialogue.text}
-              </div>
-
-              {/* 继续按钮 (如果不是最后一句，或者还没显示选项) */}
-              {!showChoices ? (
-                <div className="dialogue-continue" onClick={handleContinue}>
-                  <span>点击继续</span>
-                  <span className="continue-icon">▼</span>
-                </div>
+        {/* 对话/旁白/选项 */}
+        {mode === 'event' && (
+          <div className="dialogue-box" ref={dialogueRef}>
+            {currentLine ? (
+              currentLine.character === '__narrator' ? (
+                <>
+                  <div className="narration-text">{currentLine.text}</div>
+                  {!isLastLine ? (
+                    <div className="dialogue-continue" onClick={() => handleContinue(lines.length)}>
+                      <span>点击继续</span>
+                      <span className="continue-icon">▼</span>
+                    </div>
+                  ) : (
+                    <ChoiceList choices={visibleChoices} onPick={handleChoice} />
+                  )}
+                </>
               ) : (
-                // 如果是最后一句，且需要显示选项
-                <div className="choices-container">
-                   <div className="choices-title">做出你的选择：</div>
-                   {currentEvent.choices && currentEvent.choices
-                     .filter(choice => checkCondition(choice.condition))
-                     .map((choice, idx) => (
-                     <button
-                      key={choice.id}
-                      className="choice-button"
-                      onClick={() => handleChoice(choice)}
-                    >
-                      <span className="choice-number">{idx + 1}</span>
-                      <span className="choice-text">{choice.text}</span>
-                      {/* 调试模式下显示效果，正式版可隐藏 */}
-                      {/*
-                      <div className="choice-effects">
-                        {choice.effects?.affection > 0 && <span className="effect-positive">好感+{choice.effects.affection}</span>}
-                      </div>
-                      */}
-                    </button>
-                   ))}
-                </div>
-              )}
-            </>
-          ) : (
-             // 没有对话时（只有旁白），直接显示选项或下一步
-             <div className="choices-container">
-                {currentEvent.choices && currentEvent.choices
-                  .filter(choice => checkCondition(choice.condition))
-                  .map((choice, idx) => (
-                   <button
-                    key={choice.id}
-                    className="choice-button"
-                    onClick={() => handleChoice(choice)}
-                  >
-                    <span className="choice-number">{idx + 1}</span>
-                    <span className="choice-text">{choice.text}</span>
-                  </button>
-                 ))}
-             </div>
-          )}
-        </div>
+                <>
+                  <div className="dialogue-header">
+                    <div className="character-avatar">
+                      {renderAvatar(currentLine.character, 'avatar-img')}
+                    </div>
+                    <span className="character-name">{speaker?.name || '???'}</span>
+                  </div>
+                  <div className="dialogue-text">{currentLine.text}</div>
+                  {!isLastLine ? (
+                    <div className="dialogue-continue" onClick={() => handleContinue(lines.length)}>
+                      <span>点击继续</span>
+                      <span className="continue-icon">▼</span>
+                    </div>
+                  ) : (
+                    <ChoiceList choices={visibleChoices} onPick={handleChoice} />
+                  )}
+                </>
+              )
+            ) : (
+              <ChoiceList choices={visibleChoices} onPick={handleChoice} />
+            )}
+          </div>
+        )}
       </div>
+    </div>
+  )
+}
+
+// 选项列表（无可用选项时兜底推进，避免死局）
+const ChoiceList = ({ choices, onPick }) => {
+  if (!choices.length) {
+    return (
+      <div className="choices-container">
+        <button
+          type="button"
+          className="choice-button"
+          onClick={() => onPick({ id: 'fallback', next: 'NIGHT' })}
+        >
+          <span className="choice-number">→</span>
+          <span className="choice-text">（无可选项）先回屋休息</span>
+        </button>
+      </div>
+    )
+  }
+  return (
+    <div className="choices-container">
+      <div className="choices-title">做出你的选择：</div>
+      {choices.map((choice, idx) => (
+        <button
+          type="button"
+          key={choice.id}
+          className="choice-button"
+          onClick={() => onPick(choice)}
+        >
+          <span className="choice-number">{idx + 1}</span>
+          <span className="choice-text">{choice.text}</span>
+        </button>
+      ))}
     </div>
   )
 }
