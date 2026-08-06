@@ -30,3 +30,6 @@ lerna-debug.log*
 .env.production.local
 .env.development.local
 .env.test.local
+
+# Claude skill 本地密钥（含文章管理密码，切勿提交到公开仓库）
+.claude/skills/*/config.local.json
