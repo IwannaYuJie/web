@@ -4,10 +4,6 @@
 
 本项目使用后端代理方式保护 API Key，避免在前端暴露敏感信息。
 
-### 开发环境
-
-开发环境下，API Key 配置在 `vite.config.js` 中的代理配置里。
-
 ### 生产环境（Cloudflare Pages）
 
 生产环境下，需要在 Cloudflare Pages 的环境变量中配置 API Key：
@@ -18,28 +14,7 @@
 4. 添加以下环境变量：
 
 ```
-ARK_API_KEY=你的火山引擎API密钥
-QINIU_AI_API_KEY=你的七牛云AI API密钥
 ADMIN_KEY=你的文章管理密码（建议设置复杂密码）
-```
-
-### API 代理文件
-
-- **图片生成代理**: `functions/api/generate-image.js`
-  - 访问路径: `/api/generate-image`
-  - 目标API: 火山引擎图片生成 API
-
-- **AI对话代理**: `functions/api/ai-chat.js`
-  - 访问路径: `/api/ai-chat`
-  - 目标API: 七牛云 AI 推理 API
-
-### 工作原理
-
-```
-前端请求 → /api/ai-chat → Cloudflare Functions → 七牛云API
-                                ↑
-                          在这里添加 API Key
-                          用户看不到
 ```
 
 ### 安全优势

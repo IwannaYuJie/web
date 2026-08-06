@@ -13,7 +13,6 @@
 ### 2. 开发环境安全
 - [x] **.env 文件**：已添加到 `.gitignore`，不会提交到 Git
 - [x] **.env.example**：提供模板文件，不包含真实 API Key
-- [x] **Vite 代理**：开发环境通过环境变量读取 API Key
 
 ### 3. 生产环境安全
 - [x] **Cloudflare 环境变量**：生产 API Key 配置在 Cloudflare Dashboard
@@ -26,8 +25,7 @@
 
 ```bash
 # 检查是否有硬编码的 API Key（应该返回 0 个匹配）
-grep -r "sk-" --include="*.js" --include="*.jsx" src/ functions/ api/
-grep -r "d5409697-4157-4ea2-9265" --include="*.js" --include="*.jsx" src/ functions/ api/
+grep -r "sk-" --include="*.js" --include="*.jsx" src/ functions/
 ```
 
 ### 提交代码前检查
@@ -55,9 +53,6 @@ git status
 
 ### Cloudflare Pages 生产环境
 
-- [ ] 已在 Cloudflare Dashboard 配置 `ARK_API_KEY`
-- [ ] 已在 Cloudflare Dashboard 配置 `QINIU_AI_API_KEY`
-- [ ] 已测试 AI 功能是否正常工作
 - [ ] 确认后端代码不包含硬编码 API Key
 
 ### GitHub 仓库
@@ -108,7 +103,7 @@ grep -rE "(penghaoxiang|958656603|你的姓名|你的手机号)" \
 
 ### 1. 立即撤销泄露的 API Key
 
-- 登录对应的服务商控制台（火山引擎、七牛云）
+- 登录对应的服务商控制台
 - 删除或重置泄露的 API Key
 - 生成新的 API Key
 
@@ -155,17 +150,8 @@ git push origin --force --tags
 
 ### ✅ 安全措施已就位
 
-1. **函数级 API Key 保护**：
-   - `functions/api/ai-chat.js` - 仅从 `context.env.QINIU_AI_API_KEY` 读取
-   - `functions/api/generate-image.js` - 仅从 `context.env.ARK_API_KEY` 读取
-   - `api/generate-image.js` - 仅从 `process.env.ARK_API_KEY` 读取
-
-2. **开发环境保护**：
+1. **开发环境保护**：
    - `vite.config.js` - 从环境变量读取，提供占位符提示
-
-3. **前端安全**：
-   - `src/pages/ImageGenerator.jsx` - 不包含 API Key
-   - `src/components/YujieAIGame.jsx` - 仅调用后端代理
 
 ### ⚠️ 注意事项
 

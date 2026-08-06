@@ -17,7 +17,7 @@ function PageHead({ emoji, title, sub }) {
 function About() {
   return (
     <div className="wrap" style={{ maxWidth: 820, paddingBottom: 48 }}>
-      <PageHead emoji="👋" title="关于小窝" />
+      <PageHead emoji="" title="关于小窝" />
 
       <div className="panel" style={{ display: 'flex', gap: 24, alignItems: 'center', marginBottom: 20, background: 'var(--k1-bg)', flexWrap: 'wrap' }}>
         <img
@@ -37,7 +37,7 @@ function About() {
                 rel={link.href.startsWith('http') ? 'noreferrer' : undefined}
                 className="sticker"
               >
-                {link.label === 'GitHub' ? '🐱 GitHub' : link.label === '邮件' ? '✉️ 邮件' : `🌐 ${link.label}`}
+                {link.label}
               </a>
             ))}
           </div>
@@ -45,17 +45,17 @@ function About() {
       </div>
 
       <div className="panel" style={{ marginBottom: 20 }}>
-        <div className="panel-h">📝 这是什么</div>
+        <div className="panel-h">这是什么</div>
         <p style={{ fontSize: 15.5, lineHeight: 1.8, color: 'var(--ink-soft)', fontWeight: 500 }}>
           {blogProfile.intro}
         </p>
       </div>
 
       <div className="panel" style={{ marginBottom: 20 }}>
-        <div className="panel-h">☕ 写东西的时候我会</div>
+        <div className="panel-h">写东西的时候我会</div>
         {blogProfile.manifesto.map((m, i) => (
           <div key={i} style={{ display: 'flex', gap: 10, marginBottom: 10, fontSize: 15, fontWeight: 500, color: 'var(--ink-soft)', alignItems: 'flex-start' }}>
-            <b style={{ color: 'var(--accent)' }}>🐾</b>
+            <b style={{ color: 'var(--accent)' }}>·</b>
             <span>{m}</span>
           </div>
         ))}
@@ -71,7 +71,7 @@ function About() {
       </div>
 
       <div className="panel" style={{ marginBottom: 20 }}>
-        <div className="panel-h">🧪 顺便写的小东西</div>
+        <div className="panel-h">顺便写的小东西</div>
         <div style={{ display: 'grid', gap: 10 }}>
           {blogProjects.map((p, i) => (
             <Link
@@ -91,7 +91,7 @@ function About() {
       </div>
 
       <div className="panel">
-        <div className="panel-h">🕒 改了些什么</div>
+        <div className="panel-h">改了些什么</div>
         {blogMilestones.map(item => (
           <div key={`${item.date}-${item.title}`} style={{ display: 'flex', gap: 16, paddingLeft: 16, borderLeft: '3px solid var(--accent)', marginBottom: 18, position: 'relative' }}>
             <span style={{ position: 'absolute', left: -8, top: 4, width: 13, height: 13, borderRadius: 4, background: 'var(--accent)', border: '2px solid var(--ink)' }} />

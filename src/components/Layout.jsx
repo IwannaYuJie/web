@@ -44,7 +44,7 @@ export default function Layout({ children }) {
       return
     }
 
-    const emojis = ['🐾', '🐱', '🐟', '🧶', '⭐', '✨', '🐾', '❤️', '🎈', '🎉']
+    const emojis = ['🐱', '😺', '😸', '😹', '😻', '😼', '😽']
     const emoji = emojis[Math.floor(Math.random() * emojis.length)]
     const id = Date.now() + Math.random()
     

@@ -64,7 +64,7 @@ function Archive() {
 
   return (
     <div className="wrap" style={{ maxWidth: 900, paddingBottom: 48 }}>
-      <PageHead emoji="🗂️" title="文章归档" sub="按年份翻一翻" />
+      <PageHead emoji="" title="文章归档" sub="按年份翻一翻" />
 
       <div style={{ display: 'grid', gridTemplateColumns: 'repeat(4, 1fr)', gap: 12, marginBottom: 28 }}>
         <StatPanel value={stats.articleCount} label="篇文章" />
@@ -138,7 +138,7 @@ function Archive() {
         </div>
       ) : archiveGroups.length === 0 ? (
         <div className="panel" style={{ textAlign: 'center', padding: 48 }}>
-          <div style={{ fontSize: 40 }}>🍃</div>
+          <div style={{ fontSize: 40 }} />
           <p style={{ marginTop: 12, color: 'var(--ink-soft)' }}>这个条件下没找到东西。</p>
           {hasFilters && <button onClick={clearFilters} className="btn ghost" style={{ marginTop: 16 }}>清除筛选</button>}
         </div>

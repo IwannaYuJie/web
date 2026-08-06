@@ -3,8 +3,8 @@
 @tailwind utilities;
 
 /* ============================================================
-   橘猫小窝 — Editorial Pop (杂志撞色) Design System
-   Tokens from design_handoff_editorial_redesign + legacy aliases
+   橘猫小窝 — 暖纸感 Design System
+   柿子橙主色 + 松绿点缀，其余强调色为同暖色系变体
    ============================================================ */
 * {
   margin: 0;
@@ -21,24 +21,24 @@
   --ink-soft: #6A5B48;
   --line: #E0D3B8;
 
-  /* Accents — 复古印刷五色：柿子橙 / 树莓 / 鸢尾紫 / 松绿 / 芥末黄 */
-  --o: #F2570A;       /* persimmon */
-  --berry: #D6336C;   /* raspberry */
-  --vi: #6741D9;      /* iris */
-  --mint: #0E9A7C;    /* pine */
-  --sun: #FFB703;     /* mustard */
+  /* Accents — 暖纸感做减法：柿子橙主色 + 松绿点缀，其余为同暖色系变体 */
+  --o: #F2570A;       /* persimmon 主色 */
+  --berry: #C24A1E;   /* 砖橙，主色的深变体 */
+  --vi: #8A5A2B;      /* 胡桃棕，暖中性 */
+  --mint: #0E9A7C;    /* pine 辅助点缀 */
+  --sun: #F0A202;     /* 琥珀，主色的浅变体 */
   --accent: var(--o);
 
-  /* Category card pairs */
+  /* Category card pairs — 同暖色系深浅 + 一对绿 */
   --k1-bg: #FFE3C9; --k1-fg: var(--o);
-  --k2-bg: #FAD6E2; --k2-fg: var(--berry);
-  --k3-bg: #E3DBF9; --k3-fg: var(--vi);
+  --k2-bg: #FBEBC8; --k2-fg: #9A6B0F;
+  --k3-bg: #EAE1CF; --k3-fg: #7A5C3E;
   --k4-bg: #CFEFE2; --k4-fg: var(--mint);
 
-  /* Shadows / radii */
-  --shadow-hard: 6px 6px 0 var(--ink);
-  --shadow-hard-lg: 10px 10px 0 var(--ink);
-  --shadow-hard-sm: 3px 3px 0 var(--ink);
+  /* Shadows / radii — 硬阴影收敛为更小偏移 + 微透明 */
+  --shadow-hard: 4px 4px 0 color-mix(in srgb, var(--ink) 82%, transparent);
+  --shadow-hard-lg: 7px 7px 0 color-mix(in srgb, var(--ink) 82%, transparent);
+  --shadow-hard-sm: 2px 2px 0 color-mix(in srgb, var(--ink) 82%, transparent);
   --radius: 20px;
   --radius-md: 20px;
   --radius-sm: 12px;
@@ -61,7 +61,7 @@
   --primary-color: var(--o);
   --primary-hover: #D84B06;
   --secondary-color: var(--mint);
-  --accent-color: var(--berry);
+  --accent-color: var(--o);
 
   --bg-color: var(--paper);
   --surface-color: var(--paper-2);
@@ -102,19 +102,19 @@
 
     /* 夜间提亮一档，保证深底上的对比度 */
     --o: #FF7A2E;
-    --berry: #F0598C;
-    --vi: #9C86F2;
+    --berry: #E8764F;
+    --vi: #C09A6B;
     --mint: #2FBF9F;
-    --sun: #FFC53D;
+    --sun: #F5B53F;
 
     --k1-bg: #39220F;
-    --k2-bg: #3A1A28;
-    --k3-bg: #261E3E;
+    --k2-bg: #3A2E10;
+    --k3-bg: #2E251A;
     --k4-bg: #11352A;
 
-    --shadow-hard: 6px 6px 0 #000;
-    --shadow-hard-lg: 10px 10px 0 #000;
-    --shadow-hard-sm: 3px 3px 0 #000;
+    --shadow-hard: 4px 4px 0 rgba(0, 0, 0, 0.85);
+    --shadow-hard-lg: 7px 7px 0 rgba(0, 0, 0, 0.85);
+    --shadow-hard-sm: 2px 2px 0 rgba(0, 0, 0, 0.85);
 
     --primary-hover: #FF8C4A;
     --text-light: #A0907B;
@@ -132,10 +132,8 @@ body {
   -webkit-font-smoothing: antialiased;
   letter-spacing: -0.005em;
   background-image:
-    radial-gradient(color-mix(in srgb, var(--ink) 7%, transparent) 1px, transparent 1.5px),
-    radial-gradient(circle at 12% 18%, rgba(242, 87, 10, 0.055), transparent 40%),
-    radial-gradient(circle at 88% 8%, rgba(214, 51, 108, 0.05), transparent 38%);
-  background-size: 22px 22px, auto, auto;
+    radial-gradient(color-mix(in srgb, var(--ink) 5%, transparent) 1px, transparent 1.5px);
+  background-size: 22px 22px;
   background-attachment: fixed;
   overflow-x: hidden;
 }

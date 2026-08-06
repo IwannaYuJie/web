@@ -4,6 +4,37 @@
 
  ---
 
+## [2026-08-06] - 🧹 移除七牛云 AI 与 AI 创意工作室
+
+### ✂️ 调整
+- 移除七牛云 AI 相关全部代码与 AI 创意工作室模块：`/secret-chat`、`/deepseek-chat`、雨姐 AI 版游戏、相关 Functions 与本地代理。
+- 站点配色做减法，回归暖纸感单色点缀。
+- 全站文案口语化修订。
+
+## [2026-07-17] - 📰 当下 AI 专题文章更新
+
+### ✨ 新增文章
+- 文章 ID `14`：**《GPT-5.6 来了：Sol、Terra、Luna 不是三个名字，而是一套新的 AI 成本分层》**，梳理 GPT-5.6 三档模型、程序化工具调用、多 Agent 并行与成本路由思路。
+- 文章 ID `15`：**《Claude Tag 把 AI 拉进 Slack：当 Agent 成为团队成员，真正难的是什么？》**，分析共享 Agent、频道记忆、异步协作、权限与责任边界。
+- 文章 ID `16`：**《AI Agent 为什么都在抢“联网可信度”？Google 接入 Parallel Web Search 之后，我看到的下一场竞争》**，解释 Web Grounding、实时引用、多模型编排及企业 RAG 的关系。
+
+### 📝 内容维护
+- 新增 `content/articles/`，保留三篇已发布文章的 Markdown 源稿，方便后续校对、改写和灾备。
+- 新增 `content/articles/README.md`，说明线上 KV 与本地源稿的职责边界及密钥安全要求。
+- 三篇文章均引用 2026 年 6—7 月的官方一手资料，并在正文中区分厂商数据与作者判断。
+
+### ✅ 验证
+- 发布前完成必填字段、标签、正文长度和管理员权限校验。
+- 发布后逐篇对比本地源稿与线上 API 数据，标题、摘要、日期、分类、阅读时间、正文、标签和作者完全一致。
+- 线上文章详情页 `/article/14`、`/article/15`、`/article/16` 均返回 HTTP 200。
+
+### 📌 影响范围
+- `content/articles/2026-07-17-gpt-5-6.md`
+- `content/articles/2026-07-17-claude-tag.md`
+- `content/articles/2026-07-17-agent-web-grounding.md`
+- `content/articles/README.md`
+- Cloudflare KV 线上文章 ID `14`、`15`、`16`
+
 ## [2026-05-25] - 🧭 个人博客完全体改造
 
 ### ✨ 新特性

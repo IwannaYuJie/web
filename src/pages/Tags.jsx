@@ -124,7 +124,7 @@ function Tags() {
                 ))}
                 {filteredArticles.length === 0 && (
                   <div className="panel" style={{ textAlign: 'center', padding: 36 }}>
-                    <div style={{ fontSize: 40 }}>🍃</div>
+                    <div style={{ fontSize: 40 }} />
                     <p style={{ marginTop: 12, color: 'var(--ink-soft)' }}>这个标签下还没文章。</p>
                   </div>
                 )}
@@ -134,7 +134,7 @@ function Tags() {
 
           {!selectedTag && selectedCategory === '全部' && categories.length > 1 && (
             <>
-              <div className="section-h"><h2>📁 按分类看</h2></div>
+              <div className="section-h"><h2>按分类看</h2></div>
               <div className="panel" style={{ display: 'flex', flexWrap: 'wrap', gap: 8 }}>
                 {categories.map(c => (
                   <button

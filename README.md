@@ -1,12 +1,12 @@
 # 橘猫小窝 - 个人博客
 
-橘猫小窝是一个基于 **Vite + React + Cloudflare Pages Functions** 的个人博客项目。它不只是文章列表，还包含个人档案、文章归档、标签索引、文章管理、工具箱、小游戏和 AI 实验入口，适合长期维护个人技术内容和项目记录。
+橘猫小窝是一个基于 **Vite + React + Cloudflare Pages Functions** 的个人博客项目。它不只是文章列表，还包含个人档案、文章归档、标签索引、文章管理、工具箱和小游戏，适合长期维护个人技术内容和项目记录。
 
 ## 项目定位
 
 - **个人博客主页**：展示作者档案、最新文章、精选阅读、分类地图、标签云和项目入口。
 - **内容沉淀**：用文章、分类、标签、归档和相关阅读把知识串起来。
-- **项目索引**：把工具箱、小游戏、AI 对话等实验能力作为个人项目的一部分展示。
+- **项目索引**：把工具箱、小游戏等实验能力作为个人项目的一部分展示。
 - **可在线维护**：通过 Cloudflare KV + 管理后台支持文章新增、编辑、删除。
 - **文档同步**：功能变更需要同步更新 README、CHANGELOG 或对应 docs 文件。
 
@@ -36,7 +36,7 @@
 ### 关于页 `/about`
 
 - 展示作者定位、维护原则、近期主题、项目入口和站点时间线。
-- 项目入口包括 AI 创意工作室、工具箱和小游戏中心。
+- 项目入口包括工具箱和小游戏中心。
 
 ### 文章详情 `/article/:id`
 
@@ -56,8 +56,6 @@
 
 - `/toolbox`：实用工具箱。
 - `/games`：小游戏中心。
-- `/deepseek-chat`：DeepSeek 对话页。
-- `/secret-chat`：隐藏 AI 对话实验页。
 
 ## 项目结构
 
@@ -90,8 +88,7 @@ web/
 ├── functions/
 │   └── api/
 │       ├── articles.js                 # Cloudflare Pages 文章 API
-│       ├── init-articles.js            # 初始化文章种子数据
-│       └── ai-chat.js                  # AI 对话 API
+│       └── init-articles.js            # 初始化文章种子数据
 ├── shared/
 │   └── content/articlesSeed.js         # 本地开发/初始化文章种子
 ├── test/                               # Vitest 测试
@@ -119,7 +116,7 @@ npm run dev
 
 ### 可选环境变量
 
-AI 和管理功能依赖环境变量。开发时可复制 `.env.example`：
+管理功能依赖环境变量。开发时可复制 `.env.example`：
 
 ```bash
 cp .env.example .env
@@ -128,11 +125,8 @@ cp .env.example .env
 常见变量：
 
 - `DEV_ADMIN_KEY`：本地文章管理后台管理员密钥。
-- `ARK_API_KEY`：火山引擎相关 API Key。
-- `QINIU_AI_API_KEY`：七牛云 AI API Key。
-- `QINIU_API_KEY_2`：七牛备用 Key。
 
-生产环境请在 Cloudflare Pages / Vercel 项目环境变量中配置，不要硬编码到前端代码。
+生产环境请在 Cloudflare Pages 项目环境变量中配置，不要硬编码到前端代码。
 
 ## 常用脚本
 
@@ -180,10 +174,6 @@ Cloudflare Pages Functions 对路径匹配较严格，自定义域名上不要�
 - [docs/DEPLOYMENT.md](docs/DEPLOYMENT.md)
 - [docs/KV_SETUP_GUIDE.md](docs/KV_SETUP_GUIDE.md)
 - [docs/SECURITY_CHECKLIST.md](docs/SECURITY_CHECKLIST.md)
-
-### Vercel
-
-项目仍保留 `api/` 下的 Vercel 版本 API，但线上主路径更推荐 Cloudflare Pages + KV。
 
 ## 设计约定
 

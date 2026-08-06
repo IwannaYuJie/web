@@ -151,37 +151,6 @@ export function createMockApiPlugin(devAdminKey) {
           return
         }
 
-        if (url === '/api/notify-email' && req.method === 'POST') {
-          setJsonCors(res, 'POST, OPTIONS', 'Content-Type')
-          readRequestBody(req)
-            .then((payload) => {
-              console.log('[Mock] 📧 邮件通知请求:', {
-                success: payload.success,
-                source: payload.source,
-                prompt: payload.prompt?.substring(0, 50) + '...',
-                imageCount: payload.images?.length || 0,
-                error: payload.error,
-              })
-              res.statusCode = 200
-              res.end(JSON.stringify({
-                success: true,
-                message: '[Mock] 本地开发模式，邮件未实际发送',
-              }))
-            })
-            .catch(() => {
-              res.statusCode = 400
-              res.end(JSON.stringify({ error: '无效的请求数据' }))
-            })
-          return
-        }
-
-        if (url === '/api/notify-email' && req.method === 'OPTIONS') {
-          setJsonCors(res, 'POST, OPTIONS', 'Content-Type')
-          res.statusCode = 204
-          res.end()
-          return
-        }
-
         next()
       })
     },

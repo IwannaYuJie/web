@@ -8,8 +8,6 @@ const Archive = lazy(() => import('./pages/Archive'))
 const Tags = lazy(() => import('./pages/Tags'))
 const About = lazy(() => import('./pages/About'))
 
-const DeepSeekChat = lazy(() => import('./pages/DeepSeekChat'))
-const AIChat = lazy(() => import('./pages/AIChat'))
 const ArticleManager = lazy(() => import('./pages/ArticleManager'))
 const GameHub = lazy(() => import('./pages/GameHub'))
 
@@ -45,8 +43,6 @@ function App() {
             <Route path="/tags" element={<Tags />} />
             <Route path="/about" element={<About />} />
 
-            <Route path="/deepseek-chat" element={<DeepSeekChat />} />
-            <Route path="/secret-chat" element={<AIChat />} />
             <Route path="/admin/articles" element={<ArticleManager />} />
             <Route path="/games" element={<GameHub />} />
             <Route path="/toolbox" element={<Toolbox />} />

@@ -195,7 +195,7 @@ function ArticleManager() {
 
     // 表单验证
     if (!formData.title.trim() || !formData.description.trim() || !formData.readTime.trim()) {
-      alert('请填写所有必填字段！')
+      alert('标题、描述、阅读时间还没填完')
       return
     }
 

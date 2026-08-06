@@ -80,7 +80,7 @@ function PageHead({ emoji, title, sub }) {
 function Toolbox() {
   return (
     <div className="wrap" style={{ maxWidth: 1000, paddingBottom: 48 }}>
-      <PageHead emoji="🧰" title="工具箱" sub="自己常用的小工具，跑在浏览器里，不上传任何东西" />
+      <PageHead emoji="" title="工具箱" sub="自己常用的小工具，跑在浏览器里，不上传任何东西" />
 
       <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(280px, 1fr))', gap: 16 }}>
         {TOOLS.map(t => (

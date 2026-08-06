@@ -33,12 +33,6 @@ export const nowItems = [
 
 export const blogProjects = [
   {
-    title: 'AI 创意工作室',
-    description: '随手搭的几个 AI 小工具，图像生成、提示词调试这类。',
-    href: '/secret-chat',
-    status: '隐藏路径',
-  },
-  {
     title: '实用工具箱',
     description: '自己常用的小工具：JSON、时间戳、Base64、精灵图转 GIF 这些。',
     href: '/toolbox',
@@ -65,8 +59,8 @@ export const blogMilestones = [
   },
   {
     date: '2025-11',
-    title: '加了 AI 图像页',
-    description: '图像生成和提示词调试丢在隐藏路径下。',
+    title: '小游戏中心上线',
+    description: '第一批练手的小游戏凑齐，开了个游戏大厅。',
   },
 ]
 

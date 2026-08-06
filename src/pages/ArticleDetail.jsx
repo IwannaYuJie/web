@@ -85,12 +85,12 @@ function ArticleDetail() {
     return (
       <div className="wrap flex-center" style={{ minHeight: '60vh', padding: '40px 28px' }}>
         <div className="panel" style={{ textAlign: 'center', maxWidth: 480, padding: 36, background: 'var(--k2-bg)' }}>
-          <div style={{ fontSize: 60 }}>😿</div>
+          <div style={{ fontSize: 60 }} />
           <h1 style={{ fontFamily: 'var(--serif)', fontWeight: 900, fontSize: 26, color: 'var(--berry)', margin: '12px 0' }}>
             {error || '文章不存在'}
           </h1>
           <p style={{ color: 'var(--ink-soft)', marginBottom: 22 }}>这篇可能被我藏起来或删了。</p>
-          <Link to="/" className="btn">🏠 返回首页</Link>
+          <Link to="/" className="btn">返回首页</Link>
         </div>
       </div>
     )
@@ -116,9 +116,9 @@ function ArticleDetail() {
                 {article.title}
               </h1>
               <div style={{ display: 'flex', gap: 14, fontSize: 13, color: 'var(--ink-soft)', fontWeight: 600, flexWrap: 'wrap' }}>
-                <span>📅 {article.date}</span>
-                <span>⏱️ {article.readTime} 分钟</span>
-                <span>✍️ {article.author || '橘猫博主'}</span>
+                <span>{article.date}</span>
+                <span>{article.readTime} 分钟</span>
+                <span>{article.author || '橘猫博主'}</span>
                 {article.updatedAt && article.updatedAt !== article.date && (
                   <span style={{ opacity: 0.7 }}>· 更新于 {article.updatedAt}</span>
                 )}
@@ -154,10 +154,10 @@ function ArticleDetail() {
                   onClick={toggleLike}
                   style={liked ? { background: 'var(--berry)' } : undefined}
                 >
-                  {liked ? '🧡 已点赞' : '🤍 点个赞'}
+                  {liked ? '已点赞' : '点个赞'}
                 </button>
                 <button className="btn ghost" onClick={copyCurrentUrl}>
-                  🔗 {copyStatus || '复制链接'}
+                  {copyStatus || '复制链接'}
                 </button>
               </div>
             </div>
@@ -166,7 +166,7 @@ function ArticleDetail() {
           {toc.length > 0 && (
             <aside className="hideSm" style={{ position: 'sticky', top: 84 }}>
               <div className="panel" style={{ padding: 18, maxHeight: '70vh', overflowY: 'auto' }}>
-                <div className="panel-h">📑 目录</div>
+                <div className="panel-h">目录</div>
                 <div style={{ display: 'flex', flexDirection: 'column', gap: 10 }}>
                   {toc.map((item, i) => (
                     <a
@@ -195,7 +195,7 @@ function ArticleDetail() {
 
         {relatedArticles.length > 0 && (
           <section style={{ marginTop: 44 }}>
-            <div className="section-h"><h2>📚 相关阅读</h2></div>
+            <div className="section-h"><h2>相关阅读</h2></div>
             <div className="feat-grid" style={{ display: 'grid', gridTemplateColumns: 'repeat(2, 1fr)', gap: 16 }}>
               {relatedArticles.map((a, i) => (
                 <Link key={a.id} to={`/article/${a.id}`} className={`ec ${kClassFor(a.category, i)}`} style={{ padding: 22 }}>

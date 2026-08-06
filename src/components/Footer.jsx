@@ -33,7 +33,7 @@ function Footer() {
           <p className="foot-intro">{blogProfile.intro}</p>
           <div className="foot-stickers">
             <a href={blogProfile.github} target="_blank" rel="noreferrer">🐱 GitHub</a>
-            <a href={`mailto:${blogProfile.email}`}>✉️ Email</a>
+            <a href={`mailto:${blogProfile.email}`}>Email</a>
           </div>
         </div>
 
@@ -50,7 +50,7 @@ function Footer() {
           <div className="panel-h" style={{ color: 'var(--sun)' }}>小窝状态</div>
           <div className="foot-visits">{visitors.toLocaleString()}</div>
           <div className="foot-visits-label">累计访客</div>
-          <p className="foot-copy">© {new Date().getFullYear()} 橘猫小窝 · 慢更但还在更 🐾</p>
+          <p className="foot-copy">© {new Date().getFullYear()} 橘猫小窝 · 慢更但还在更</p>
         </div>
       </div>
     </footer>

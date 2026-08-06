@@ -16,10 +16,10 @@ function pad2(n) { return String(n).padStart(2, '0') }
 
 function greetingNow() {
   const h = new Date().getHours()
-  if (h < 9) {return '🌅 早安'}
-  if (h < 12) {return '☀️ 上午好'}
-  if (h < 18) {return '🌤️ 下午好'}
-  return '🌆 晚上好'
+  if (h < 9) {return '早安'}
+  if (h < 12) {return '上午好'}
+  if (h < 18) {return '下午好'}
+  return '晚上好'
 }
 
 function Hero({ stats, cover }) {
@@ -59,11 +59,11 @@ function Hero({ stats, cover }) {
           </div>
           <div style={{ display: 'flex', gap: 12, marginTop: 22, flexWrap: 'wrap' }}>
             {cover ? (
-              <Link to={`/article/${cover.id}`} className="btn">📚 看最新一篇</Link>
+              <Link to={`/article/${cover.id}`} className="btn">看最新一篇</Link>
             ) : (
-              <Link to="/archive" className="btn">📚 看最新一篇</Link>
+              <Link to="/archive" className="btn">看最新一篇</Link>
             )}
-            <Link to="/archive" className="btn ghost">🗂️ 翻翻归档</Link>
+            <Link to="/archive" className="btn ghost">翻翻归档</Link>
           </div>
           <div className="hero-stats">
             {items.map(([n, l]) => (
@@ -88,7 +88,7 @@ function Hero({ stats, cover }) {
               {cover.description}
             </p>
             <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginTop: 'auto', paddingTop: 22 }}>
-              <span style={{ fontSize: 13, color: 'var(--ink-soft)', fontWeight: 600 }}>⏱️ {cover.readTime} 分钟阅读</span>
+              <span style={{ fontSize: 13, color: 'var(--ink-soft)', fontWeight: 600 }}>{cover.readTime} 分钟阅读</span>
               <span className="arrow" style={{ fontSize: 17 }}>阅读全文 →</span>
             </div>
             <div className="paw" style={{ fontSize: 44 }}>🐾</div>
@@ -106,7 +106,7 @@ function FeaturedRow({ featured }) {
 
   return (
     <section style={{ marginBottom: 44 }}>
-      <div className="section-h"><h2>🔥 几篇可以先看的</h2></div>
+      <div className="section-h"><h2>几篇可以先看的</h2></div>
       <div className="feat-grid" style={{ display: 'grid', gridTemplateColumns: side.length > 0 ? '1.3fr 1fr' : '1fr', gap: 16 }}>
         <Link to={`/article/${top.id}`} className="ec k2" style={{ padding: 30, display: 'flex', flexDirection: 'column', justifyContent: 'space-between', minHeight: 260 }}>
           <div>
@@ -146,7 +146,7 @@ function QuotePanel() {
 
   return (
     <div className="panel dark">
-      <div className="panel-h" style={{ color: 'var(--sun)' }}>🐾 顺手抄一句</div>
+      <div className="panel-h" style={{ color: 'var(--sun)' }}>顺手抄一句</div>
       <blockquote style={{ fontFamily: 'var(--serif)', fontSize: 17, lineHeight: 1.6, fontWeight: 700 }}>
         “{quote.text}”
       </blockquote>
@@ -160,10 +160,8 @@ function QuotePanel() {
           display: 'inline-block',
           transform: isSpinning ? 'rotate(360deg)' : 'rotate(0deg)',
           transition: isSpinning ? 'transform 0.6s cubic-bezier(0.19, 1, 0.22, 1)' : 'none'
-        }}>
-          🎲
-        </span>
-        &nbsp;换一句
+        }} />
+        换一句
       </button>
     </div>
   )
@@ -227,7 +225,7 @@ function HomeSidebar({ cat, setCat, query, setQuery, categories, tags, articleCo
       )}
 
       <div className="panel" style={{ background: 'var(--k4-bg)' }}>
-        <div className="panel-h" style={{ color: 'var(--mint)' }}>🐱 最近在干嘛</div>
+        <div className="panel-h" style={{ color: 'var(--mint)' }}>最近在干嘛</div>
         <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 8, fontSize: 12 }}>
           <div style={{ background: 'var(--paper)', border: '2px solid var(--ink)', borderRadius: 12, padding: 10 }}>
             主线<div style={{ fontWeight: 800, fontSize: 16 }}>Java 25</div>
@@ -236,7 +234,7 @@ function HomeSidebar({ cat, setCat, query, setQuery, categories, tags, articleCo
             副线<div style={{ fontWeight: 800, fontSize: 16 }}>AI 工具</div>
           </div>
           <div style={{ background: 'var(--paper)', border: '2px solid var(--ink)', borderRadius: 12, padding: 10, gridColumn: 'span 2' }}>
-            🎯 已经攒了 {articleCount} 篇，下一篇还在拖
+            已经攒了 {articleCount} 篇，下一篇还在拖
           </div>
         </div>
         <button
@@ -244,7 +242,7 @@ function HomeSidebar({ cat, setCat, query, setQuery, categories, tags, articleCo
           className="btn ghost"
           style={{ width: '100%', marginTop: 14, justifyContent: 'center' }}
         >
-          👋 关于我
+          关于我
         </button>
       </div>
     </aside>
@@ -287,7 +285,7 @@ function Home() {
       <div className="home-main" style={{ display: 'grid', gridTemplateColumns: '1fr 340px', gap: 28 }}>
         <div id="articles">
           <div className="section-h">
-            <h2>📚 全部文章</h2>
+            <h2>全部文章</h2>
             <Link to="/archive" className="more">看归档 →</Link>
           </div>
 
@@ -298,9 +296,9 @@ function Home() {
             </div>
           ) : articlesError ? (
             <div className="panel" style={{ textAlign: 'center', padding: 48, background: 'var(--k2-bg)' }}>
-              <div style={{ fontSize: 40 }}>😿</div>
+              <div style={{ fontSize: 40 }} />
               <p style={{ marginTop: 12, color: 'var(--ink-soft)' }}>{articlesError}</p>
-              <button onClick={fetchArticles} className="btn" style={{ marginTop: 16 }}>🔄 重试</button>
+              <button onClick={fetchArticles} className="btn" style={{ marginTop: 16 }}>重试</button>
             </div>
           ) : paginatedArticles.length > 0 ? (
             <>
@@ -340,7 +338,7 @@ function Home() {
             </>
           ) : (
             <div className="panel" style={{ textAlign: 'center', padding: 48 }}>
-              <div style={{ fontSize: 40 }}>🍃</div>
+              <div style={{ fontSize: 40 }} />
               <p style={{ marginTop: 12, color: 'var(--ink-soft)' }}>
                 {searchQuery ? `没找到包含 "${searchQuery}" 的文章` : '这个分类下还没东西，换一个看看'}
               </p>
@@ -353,7 +351,7 @@ function Home() {
                   className="btn ghost"
                   style={{ marginTop: 16 }}
                 >
-                  🔄 清除筛选
+                  清除筛选
                 </button>
               )}
             </div>
@@ -390,7 +388,7 @@ function Home() {
           transition: 'opacity 0.3s, transform 0.3s',
         }}
       >
-        ⬆
+        ↑
       </button>
     </div>
   )
