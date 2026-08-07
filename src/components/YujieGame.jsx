@@ -168,15 +168,11 @@ const YujieGameInner = ({ onExit }) => {
     return <span className={`${className} emoji-avatar`}>{char.emoji}</span>
   }
 
-  // 场景背景样式：图片叠在渐变上，图挂了渐变兜底
-  const sceneStyle = (event) => {
+  // 场景背景：主图 contain 完整显示，底层同款模糊放大填充，图挂了用渐变兜底
+  const sceneLayers = (event) => {
     const scene = scenes[event?.scene] || scenes.yard
-    const gradient = scene.gradient || scenes.yard.gradient
     const img = event?.cg || scene.image
-    if (img) {
-      return { backgroundImage: `url(/images/${img}), ${gradient}` }
-    }
-    return { backgroundImage: gradient }
+    return { gradient: scene.gradient || scenes.yard.gradient, imgUrl: img ? `/images/${img}` : null }
   }
 
   // ==================== 开始界面 ====================
@@ -368,7 +364,23 @@ const YujieGameInner = ({ onExit }) => {
 
       {/* 游戏主舞台 */}
       <div className="game-main-area">
-        <div className="scene-background" style={sceneStyle(currentEvent)}></div>
+        {/* 背景层：渐变兜底 + 模糊填充 + 主图完整显示（contain 不裁剪） */}
+        <div
+          className="scene-background"
+          style={{ backgroundImage: sceneLayers(currentEvent).gradient }}
+        ></div>
+        {sceneLayers(currentEvent).imgUrl && (
+          <>
+            <div
+              className="scene-background-blur"
+              style={{ backgroundImage: `url(${sceneLayers(currentEvent).imgUrl})` }}
+            ></div>
+            <div
+              className="scene-background-main"
+              style={{ backgroundImage: `url(${sceneLayers(currentEvent).imgUrl})` }}
+            ></div>
+          </>
+        )}
         <div className="scene-overlay"></div>
 
         <div className="scene-name">

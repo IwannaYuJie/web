@@ -1071,3 +1071,32 @@
     padding: 6px 12px;
   }
 }
+
+/* 背景两层方案：模糊放大垫底 + 主图 contain 完整显示（竖版小图不再被裁没） */
+.scene-background-blur {
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background-size: cover;
+  background-position: center;
+  filter: blur(28px) brightness(0.7);
+  transform: scale(1.15);
+}
+
+.scene-background-main {
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background-size: contain;
+  background-position: center;
+  background-repeat: no-repeat;
+}
+
+/* 角色立绘照片圆角卡片化，避免生硬矩形 */
+.character-image {
+  border-radius: 24px;
+}
