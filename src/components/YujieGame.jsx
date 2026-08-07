@@ -1,4 +1,5 @@
 import { useEffect, useRef, useState } from 'react'
+import { createPortal } from 'react-dom'
 import './YujieGame.css'
 import gameData from '../data/yujieGameData'
 import gameEvents from '../data/yujieGameEvents'
@@ -21,7 +22,7 @@ const { characters, scenes, items, routes, endings, TOTAL_DAYS, ACTIONS_PER_DAY,
  * 雨姐的心动时刻 - 重制版
  * 序章线性 → 自由行动hub → 日期强制事件 → 终章多结局
  */
-const YujieGame = ({ onExit }) => {
+const YujieGameInner = ({ onExit }) => {
   const [gamePhase, setGamePhase] = useState('start') // start | playing | ending
   const [stats, setStats] = useState(initialStats)
   const [mode, setMode] = useState('event') // event | hub
@@ -531,5 +532,9 @@ const ChoiceList = ({ choices, onPick }) => {
     </div>
   )
 }
+
+// 通过 Portal 挂到 body：GameHub 容器上的 animate-fade-in 动画以 forwards 保留 transform，
+// 会把 position:fixed 的包含块变成面板自身，导致游戏全屏布局被压缩变形
+const YujieGame = (props) => createPortal(<YujieGameInner {...props} />, document.body)
 
 export default YujieGame

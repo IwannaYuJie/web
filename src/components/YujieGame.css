@@ -785,6 +785,8 @@
   width: 100%;
   height: 100%;
   object-fit: cover;
+  /* 封面是竖版人像，焦点上移对准脸部，避免只裁到胸口 */
+  object-position: center 18%;
 }
 
 .status-num {
