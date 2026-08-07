@@ -11,6 +11,7 @@ import {
   initialStats,
   loadGallery,
   morningEventForDay,
+  pickPortrait,
   routeEventId,
   summarizeChoice
 } from '../data/yujieGameEngine'
@@ -148,15 +149,16 @@ const YujieGameInner = ({ onExit }) => {
     </button>
   ) : null
 
-  const renderAvatar = (charId, className) => {
+  const renderAvatar = (charId, className, seed) => {
     const char = characters[charId]
     if (!char) {
       return null
     }
-    if (char.avatar) {
+    const img = pickPortrait(char, seed || charId)
+    if (img) {
       return (
         <img
-          src={`/images/${char.avatar}`}
+          src={`/images/${img}`}
           alt={char.name}
           className={className}
           onError={(e) => {
@@ -398,13 +400,13 @@ const YujieGameInner = ({ onExit }) => {
           </div>
         )}
 
-        {/* 角色立绘 */}
+        {/* 角色立绘：按 事件+台词 从形象池轮换，不再全程复用同一张 */}
         {mode === 'event' && speaker && speaker.id !== 'jack' && (
           <div className="character-area">
             <div className="character-sprite">
-              {speaker.avatar ? (
+              {pickPortrait(speaker, `${currentEventId}:${dialogueIndex}`) ? (
                 <img
-                  src={`/images/${speaker.avatar}`}
+                  src={`/images/${pickPortrait(speaker, `${currentEventId}:${dialogueIndex}`)}`}
                   alt={speaker.name}
                   className="character-image"
                   onError={(e) => {
@@ -486,7 +488,7 @@ const YujieGameInner = ({ onExit }) => {
                 <>
                   <div className="dialogue-header">
                     <div className="character-avatar">
-                      {renderAvatar(currentLine.character, 'avatar-img')}
+                      {renderAvatar(currentLine.character, 'avatar-img', `${currentEventId}:${dialogueIndex}`)}
                     </div>
                     <span className="character-name">{speaker?.name || '???'}</span>
                   </div>

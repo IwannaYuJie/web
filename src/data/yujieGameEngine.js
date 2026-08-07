@@ -154,3 +154,24 @@ export const routeEventId = (routeId, stage) => {
   }
   return `route_${routeId}_${stage + 1}`
 }
+
+// djb2 字符串哈希：同一 事件+台词 永远得到同一差分，保证可复现
+export const hashSeed = (str) => {
+  let h = 5381
+  for (let i = 0; i < str.length; i++) {
+    h = ((h * 33) ^ str.charCodeAt(i)) >>> 0
+  }
+  return h
+}
+
+// 从角色形象池（avatar + portraits 差分）中按种子轮换选一张；无图返回 null（走 emoji 兜底）
+export const pickPortrait = (char, seed) => {
+  if (!char) {
+    return null
+  }
+  const pool = [char.avatar, ...(char.portraits || [])].filter(Boolean)
+  if (!pool.length) {
+    return null
+  }
+  return pool[hashSeed(String(seed)) % pool.length]
+}

@@ -6,6 +6,8 @@
  */
 
 // ==================== 角色 ====================
+// avatar 为默认形象；portraits 为差分池（AI 生成的表情/姿势变体），
+// 对话立绘与头像按 事件+台词 哈希从池中轮换，避免全程复用同一张图
 export const characters = {
   jack: {
     id: 'jack',
@@ -13,6 +15,7 @@ export const characters = {
     role: '男主角（你）',
     description: '来自美国的黑人小伙，热情幽默，来中国寻找真实的生活',
     avatar: 'yujie/char_jack.jpg', // 形象参考：东北黑人博主伊博
+    portraits: ['yujie/char_jack_happy.jpg', 'yujie/char_jack_serious.jpg', 'yujie/char_jack_embarrassed.jpg'],
     emoji: '🧔🏿'
   },
   yujie: {
@@ -21,6 +24,13 @@ export const characters = {
     role: '女主角',
     description: '东北女汉子，能扛半扇猪，经营着农家乐',
     avatar: 'yujie/yujie.jpg',
+    portraits: [
+      'yujie/char_yujie_laugh.jpg',
+      'yujie/char_yujie_gentle.jpg',
+      'yujie/char_yujie_serious.jpg',
+      'yujie/char_yujie_shy.jpg',
+      'yujie/char_yujie_surprised.jpg'
+    ],
     emoji: '💪'
   },
   laokuai: {
@@ -29,6 +39,7 @@ export const characters = {
     role: '雨姐老公',
     description: '"娇夫"人设，命根子是AD钙奶，警觉的眼神锁定你',
     avatar: 'yujie/laokuai.jpg',
+    portraits: ['yujie/char_laokuai_proud.jpg', 'yujie/char_laokuai_angry.jpg', 'yujie/char_laokuai_wronged.jpg'],
     emoji: '🥛'
   },
   peisi: {
@@ -37,6 +48,7 @@ export const characters = {
     role: '帮工',
     description: '农家乐全能帮工，人形打火机',
     avatar: 'yujie/char_peisi.jpg',
+    portraits: ['yujie/char_peisi_happy.jpg', 'yujie/char_peisi_serious.jpg'],
     emoji: '🔥'
   },
   cuihua: {
@@ -45,6 +57,7 @@ export const characters = {
     role: '邻居',
     description: '村口情报站站长，嗑瓜子十级学者，直播爱好者',
     avatar: 'yujie/char_cuihua.jpg',
+    portraits: ['yujie/char_cuihua_happy.jpg', 'yujie/char_cuihua_gossip.jpg'],
     emoji: '🌻'
   },
   dabaobei: {
@@ -53,6 +66,7 @@ export const characters = {
     role: '徒弟',
     description: '雨姐的徒弟，勤恳能干的壮实姑娘，力气活担当',
     avatar: 'yujie/char_dabaobei.jpg',
+    portraits: ['yujie/char_dabaobei_happy.jpg', 'yujie/char_dabaobei_shy.jpg'],
     emoji: '🐻'
   },
   goose: {
