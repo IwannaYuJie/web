@@ -12,7 +12,7 @@ export const characters = {
     name: '杰克',
     role: '男主角（你）',
     description: '来自美国的黑人小伙，热情幽默，来中国寻找真实的生活',
-    avatar: null, // 玩家本人，不出立绘
+    avatar: 'yujie/char_jack.jpg', // 形象参考：东北黑人博主伊博
     emoji: '🧔🏿'
   },
   yujie: {
@@ -36,7 +36,7 @@ export const characters = {
     name: '佩斯',
     role: '帮工',
     description: '农家乐全能帮工，人形打火机',
-    avatar: null,
+    avatar: 'yujie/char_peisi.jpg',
     emoji: '🔥'
   },
   cuihua: {
@@ -44,15 +44,15 @@ export const characters = {
     name: '翠花',
     role: '邻居',
     description: '村口情报站站长，嗑瓜子十级学者，直播爱好者',
-    avatar: null,
+    avatar: 'yujie/char_cuihua.jpg',
     emoji: '🌻'
   },
   dabaobei: {
     id: 'dabaobei',
     name: '大宝贝',
     role: '徒弟',
-    description: '雨姐的徒弟，勤恳老实，力气活担当',
-    avatar: null,
+    description: '雨姐的徒弟，勤恳能干的壮实姑娘，力气活担当',
+    avatar: 'yujie/char_dabaobei.jpg',
     emoji: '🐻'
   },
   goose: {
@@ -60,7 +60,7 @@ export const characters = {
     name: '村霸大鹅',
     role: '???',
     description: '本村真正的统治者，见你一次追你一次',
-    avatar: null,
+    avatar: 'yujie/char_goose.jpg',
     emoji: '🪿'
   }
 }
