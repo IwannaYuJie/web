@@ -1173,3 +1173,19 @@
     right: 1%;
   }
 }
+
+/* 场景图横版铺满（空场景背景用） */
+.scene-background-cover {
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background-size: cover;
+  background-position: center;
+}
+
+/* 立绘加大，舞台上更有存在感 */
+.stage-sprite {
+  height: min(80vh, 760px);
+}

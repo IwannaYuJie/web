@@ -170,11 +170,15 @@ const YujieGameInner = ({ onExit }) => {
     return <span className={`${className} emoji-avatar`}>{char.emoji}</span>
   }
 
-  // 场景背景：主图 contain 完整显示，底层同款模糊放大填充，图挂了用渐变兜底
+  // 场景背景：scene 图横版铺满（cover）；CG 竖版图 contain 完整显示+模糊垫底；图挂了渐变兜底
   const sceneLayers = (event) => {
     const scene = scenes[event?.scene] || scenes.yard
     const img = event?.cg || scene.image
-    return { gradient: scene.gradient || scenes.yard.gradient, imgUrl: img ? `/images/${img}` : null }
+    return {
+      gradient: scene.gradient || scenes.yard.gradient,
+      imgUrl: img ? `/images/${img}` : null,
+      isCg: Boolean(event?.cg)
+    }
   }
 
   // ==================== 开始界面 ====================
@@ -396,23 +400,36 @@ const YujieGameInner = ({ onExit }) => {
 
       {/* 游戏主舞台 */}
       <div className="game-main-area">
-        {/* 背景层：渐变兜底 + 模糊填充 + 主图完整显示（contain 不裁剪） */}
-        <div
-          className="scene-background"
-          style={{ backgroundImage: sceneLayers(currentEvent).gradient }}
-        ></div>
-        {sceneLayers(currentEvent).imgUrl && (
-          <>
-            <div
-              className="scene-background-blur"
-              style={{ backgroundImage: `url(${sceneLayers(currentEvent).imgUrl})` }}
-            ></div>
-            <div
-              className="scene-background-main"
-              style={{ backgroundImage: `url(${sceneLayers(currentEvent).imgUrl})` }}
-            ></div>
-          </>
-        )}
+        {/* 背景层：渐变兜底；CG 竖版 contain+模糊垫底；场景横版 cover 铺满 */}
+        {(() => {
+          const layers = sceneLayers(currentEvent)
+          return (
+            <>
+              <div
+                className="scene-background"
+                style={{ backgroundImage: layers.gradient }}
+              ></div>
+              {layers.imgUrl &&
+                (layers.isCg ? (
+                  <>
+                    <div
+                      className="scene-background-blur"
+                      style={{ backgroundImage: `url(${layers.imgUrl})` }}
+                    ></div>
+                    <div
+                      className="scene-background-main"
+                      style={{ backgroundImage: `url(${layers.imgUrl})` }}
+                    ></div>
+                  </>
+                ) : (
+                  <div
+                    className="scene-background-cover"
+                    style={{ backgroundImage: `url(${layers.imgUrl})` }}
+                  ></div>
+                ))}
+            </>
+          )
+        })()}
         <div className="scene-overlay"></div>
 
         <div className="scene-name">
