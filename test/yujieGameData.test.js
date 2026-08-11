@@ -119,6 +119,12 @@ describe('雨姐游戏数据校验', () => {
       if (char.avatar) {
         refs.push(char.avatar)
       }
+      for (const img of Object.values(char.portraits || {})) {
+        refs.push(img)
+      }
+      for (const img of Object.values(char.sprites || {})) {
+        refs.push(img)
+      }
     }
     for (const ending of Object.values(endings)) {
       if (ending.image) {

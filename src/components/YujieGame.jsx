@@ -149,12 +149,12 @@ const YujieGameInner = ({ onExit }) => {
     </button>
   ) : null
 
-  const renderAvatar = (charId, className, seed) => {
+  const renderAvatar = (charId, className, seed, expression) => {
     const char = characters[charId]
     if (!char) {
       return null
     }
-    const img = pickPortrait(char, seed || charId)
+    const img = pickPortrait(char, seed || charId, expression, 'avatar')
     if (img) {
       return (
         <img
@@ -308,6 +308,36 @@ const YujieGameInner = ({ onExit }) => {
     currentLine && currentLine.character !== '__narrator' ? characters[currentLine.character] : null
   const visibleChoices = (currentEvent.choices || []).filter((c) => checkCondition(c.condition, stats))
 
+  // 舞台角色：按对话首次出场顺序，最多3人；1人→居中，2人→左右，3人→左中右
+  const stageIds = []
+  for (const line of lines) {
+    if (line.character !== '__narrator' && !stageIds.includes(line.character)) {
+      stageIds.push(line.character)
+    }
+    if (stageIds.length >= 3) {
+      break
+    }
+  }
+  // 角色当前表情：到当前台词为止，他最近一句标注的 expression
+  const expressionOf = (charId) => {
+    for (let i = dialogueIndex; i >= 0; i--) {
+      const line = lines[i]
+      if (line && line.character === charId && line.expression) {
+        return line.expression
+      }
+    }
+    return null
+  }
+  const positionOf = (idx, total) => {
+    if (total === 1) {
+      return 'center'
+    }
+    if (total === 2) {
+      return idx === 0 ? 'left' : 'right'
+    }
+    return ['left', 'center', 'right'][idx]
+  }
+
   return (
     <div className="yujie-game-container">
       {exitButton}
@@ -400,23 +430,33 @@ const YujieGameInner = ({ onExit }) => {
           </div>
         )}
 
-        {/* 角色立绘：按 事件+台词 从形象池轮换，不再全程复用同一张 */}
-        {mode === 'event' && speaker && speaker.id !== 'jack' && (
-          <div className="character-area">
-            <div className="character-sprite">
-              {pickPortrait(speaker, `${currentEventId}:${dialogueIndex}`) ? (
-                <img
-                  src={`/images/${pickPortrait(speaker, `${currentEventId}:${dialogueIndex}`)}`}
-                  alt={speaker.name}
-                  className="character-image"
-                  onError={(e) => {
-                    e.target.style.display = 'none'
-                  }}
-                />
-              ) : (
-                <span className="character-emoji">{speaker.emoji}</span>
-              )}
-            </div>
+        {/* Galgame 舞台：角色立绘左右站位，说话者高亮，其他人变暗 */}
+        {mode === 'event' && (
+          <div className="stage-layer">
+            {stageIds.map((cid, idx) => {
+              const char = characters[cid]
+              if (!char) {
+                return null
+              }
+              const img = pickPortrait(char, `${currentEventId}:${cid}:${idx}`, expressionOf(cid), 'sprite')
+              const pos = positionOf(idx, stageIds.length)
+              const active = currentLine && currentLine.character === cid
+              return (
+                <div key={cid} className={`stage-sprite ${pos} ${active ? 'active' : 'dim'}`}>
+                  {img ? (
+                    <img
+                      src={`/images/${img}`}
+                      alt={char.name}
+                      onError={(e) => {
+                        e.target.style.display = 'none'
+                      }}
+                    />
+                  ) : (
+                    <span className="character-emoji">{char.emoji}</span>
+                  )}
+                </div>
+              )
+            })}
           </div>
         )}
 
@@ -488,7 +528,12 @@ const YujieGameInner = ({ onExit }) => {
                 <>
                   <div className="dialogue-header">
                     <div className="character-avatar">
-                      {renderAvatar(currentLine.character, 'avatar-img', `${currentEventId}:${dialogueIndex}`)}
+                      {renderAvatar(
+                        currentLine.character,
+                        'avatar-img',
+                        `${currentEventId}:${dialogueIndex}`,
+                        currentLine.expression
+                      )}
                     </div>
                     <span className="character-name">{speaker?.name || '???'}</span>
                   </div>

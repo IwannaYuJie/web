@@ -6,8 +6,9 @@
  */
 
 // ==================== 角色 ====================
-// avatar 为默认形象；portraits 为差分池（AI 生成的表情/姿势变体），
-// 对话立绘与头像按 事件+台词 哈希从池中轮换，避免全程复用同一张图
+// avatar：默认形象；portraits：情绪→不透明照片（对话框圆形头像用）；
+// sprites：情绪→透明底全身立绘（舞台站位用）。
+// 立绘/头像按台词标注的 expression 选图，无标注时按 事件+台词 哈希轮换
 export const characters = {
   jack: {
     id: 'jack',
@@ -15,7 +16,17 @@ export const characters = {
     role: '男主角（你）',
     description: '来自美国的黑人小伙，热情幽默，来中国寻找真实的生活',
     avatar: 'yujie/char_jack.jpg', // 形象参考：东北黑人博主伊博
-    portraits: ['yujie/char_jack_happy.jpg', 'yujie/char_jack_serious.jpg', 'yujie/char_jack_embarrassed.jpg'],
+    portraits: {
+      happy: 'yujie/char_jack_happy.jpg',
+      serious: 'yujie/char_jack_serious.jpg',
+      embarrassed: 'yujie/char_jack_embarrassed.jpg'
+    },
+    sprites: {
+      default: 'yujie/sprite_jack_default.png',
+      happy: 'yujie/sprite_jack_happy.png',
+      serious: 'yujie/sprite_jack_serious.png',
+      embarrassed: 'yujie/sprite_jack_embarrassed.png'
+    },
     emoji: '🧔🏿'
   },
   yujie: {
@@ -24,13 +35,21 @@ export const characters = {
     role: '女主角',
     description: '东北女汉子，能扛半扇猪，经营着农家乐',
     avatar: 'yujie/yujie.jpg',
-    portraits: [
-      'yujie/char_yujie_laugh.jpg',
-      'yujie/char_yujie_gentle.jpg',
-      'yujie/char_yujie_serious.jpg',
-      'yujie/char_yujie_shy.jpg',
-      'yujie/char_yujie_surprised.jpg'
-    ],
+    portraits: {
+      laugh: 'yujie/char_yujie_laugh.jpg',
+      gentle: 'yujie/char_yujie_gentle.jpg',
+      serious: 'yujie/char_yujie_serious.jpg',
+      shy: 'yujie/char_yujie_shy.jpg',
+      surprised: 'yujie/char_yujie_surprised.jpg'
+    },
+    sprites: {
+      default: 'yujie/sprite_yujie_default.png',
+      laugh: 'yujie/sprite_yujie_laugh.png',
+      gentle: 'yujie/sprite_yujie_gentle.png',
+      serious: 'yujie/sprite_yujie_serious.png',
+      shy: 'yujie/sprite_yujie_shy.png',
+      surprised: 'yujie/sprite_yujie_surprised.png'
+    },
     emoji: '💪'
   },
   laokuai: {
@@ -39,7 +58,17 @@ export const characters = {
     role: '雨姐老公',
     description: '"娇夫"人设，命根子是AD钙奶，警觉的眼神锁定你',
     avatar: 'yujie/laokuai.jpg',
-    portraits: ['yujie/char_laokuai_proud.jpg', 'yujie/char_laokuai_angry.jpg', 'yujie/char_laokuai_wronged.jpg'],
+    portraits: {
+      proud: 'yujie/char_laokuai_proud.jpg',
+      angry: 'yujie/char_laokuai_angry.jpg',
+      wronged: 'yujie/char_laokuai_wronged.jpg'
+    },
+    sprites: {
+      default: 'yujie/sprite_laokuai_default.png',
+      proud: 'yujie/sprite_laokuai_proud.png',
+      angry: 'yujie/sprite_laokuai_angry.png',
+      wronged: 'yujie/sprite_laokuai_wronged.png'
+    },
     emoji: '🥛'
   },
   peisi: {
@@ -48,7 +77,14 @@ export const characters = {
     role: '帮工',
     description: '农家乐全能帮工，人形打火机',
     avatar: 'yujie/char_peisi.jpg',
-    portraits: ['yujie/char_peisi_happy.jpg', 'yujie/char_peisi_serious.jpg'],
+    portraits: {
+      happy: 'yujie/char_peisi_happy.jpg',
+      serious: 'yujie/char_peisi_serious.jpg'
+    },
+    sprites: {
+      default: 'yujie/sprite_peisi_default.png',
+      happy: 'yujie/sprite_peisi_happy.png'
+    },
     emoji: '🔥'
   },
   cuihua: {
@@ -57,7 +93,14 @@ export const characters = {
     role: '邻居',
     description: '村口情报站站长，嗑瓜子十级学者，直播爱好者',
     avatar: 'yujie/char_cuihua.jpg',
-    portraits: ['yujie/char_cuihua_happy.jpg', 'yujie/char_cuihua_gossip.jpg'],
+    portraits: {
+      happy: 'yujie/char_cuihua_happy.jpg',
+      gossip: 'yujie/char_cuihua_gossip.jpg'
+    },
+    sprites: {
+      default: 'yujie/sprite_cuihua_default.png',
+      happy: 'yujie/sprite_cuihua_happy.png'
+    },
     emoji: '🌻'
   },
   dabaobei: {
@@ -66,7 +109,14 @@ export const characters = {
     role: '徒弟',
     description: '雨姐的徒弟，勤恳能干的壮实姑娘，力气活担当',
     avatar: 'yujie/char_dabaobei.jpg',
-    portraits: ['yujie/char_dabaobei_happy.jpg', 'yujie/char_dabaobei_shy.jpg'],
+    portraits: {
+      happy: 'yujie/char_dabaobei_happy.jpg',
+      shy: 'yujie/char_dabaobei_shy.jpg'
+    },
+    sprites: {
+      default: 'yujie/sprite_dabaobei_default.png',
+      happy: 'yujie/sprite_dabaobei_happy.png'
+    },
     emoji: '🐻'
   },
   goose: {
@@ -75,6 +125,9 @@ export const characters = {
     role: '???',
     description: '本村真正的统治者，见你一次追你一次',
     avatar: 'yujie/char_goose.jpg',
+    sprites: {
+      default: 'yujie/sprite_goose_default.png'
+    },
     emoji: '🪿'
   }
 }
@@ -252,7 +305,7 @@ export const endings = {
     name: '心动结局',
     icon: '💕',
     hint: '好感≥90，警觉≤40，走完河边线',
-    image: 'yujie/ending_warm.jpg',
+    image: 'yujie/ending_love.jpg',
     text: '第13天的夜里下起了雪。你把雨姐约到河边，把憋了十三天的话一口气说完。雨姐盯着你看半天，一巴掌拍你背上："磨叽啥呢！俺也稀罕你！" 远处，老蒯抱着一箱AD钙奶默默转身，肩膀一抽一抽的……后来他说，那是冻的。'
   },
   ending_family: {
@@ -260,7 +313,7 @@ export const endings = {
     name: '东北一家人',
     icon: '👨‍👩‍👦',
     hint: '走完堂屋线，警觉≤20',
-    image: 'yujie/ending_warm.jpg',
+    image: 'yujie/ending_family.jpg',
     text: '结拜仪式在堂屋举行，供桌上摆着一排AD钙奶。老蒯眼含热泪："弟啊！以后这就是你家！" 雨姐在旁边笑得直不起腰："得，俺家又添一口人！" 你成了这个家认证的"老弟"，户口本上没你，炕头上永远有你。'
   },
   ending_chef: {
@@ -268,7 +321,7 @@ export const endings = {
     name: '金牌帮工',
     icon: '🧑‍🍳',
     hint: '走完厨房线和猪圈线，好感≥60',
-    image: 'yujie/cg_feast.jpg',
+    image: 'yujie/ending_chef.jpg',
     text: '杀猪菜大宴上，你一个人撑起八个灶眼，佩斯当场失业，抱着灶台哭。雨姐一拍桌子："别走了！管吃管住，酸菜管够！" 你成了农家乐的金牌大厨，招牌菜：杰克炖大鹅……的土豆。'
   },
   ending_streamer: {
@@ -276,7 +329,7 @@ export const endings = {
     name: '带货新星',
     icon: '📱',
     hint: '走完大集线，第9天选择直播，且拒绝贴牌粉条',
-    image: 'yujie/cg_live.jpg',
+    image: 'yujie/ending_streamer.jpg',
     text: '你顶住高佣金的诱惑没碰贴牌粉条，转头把雨姐家的酸菜卖断了货。弹幕刷屏："这老外真实在！" 雨姐搂着你肩膀冲镜头喊："家人们！这是俺们家的卧龙！" 当晚，酸菜预售排到了明年开春。'
   },
   ending_noodle: {
@@ -284,7 +337,7 @@ export const endings = {
     name: '翻车结局',
     icon: '💥',
     hint: '彩蛋：替人卖「木薯粉条」试试？',
-    image: 'yujie/ending_sad.jpg',
+    image: 'yujie/ending_noodle.jpg',
     text: '"家人们！纯红薯粉条，假一赔万！" 三天后，打假博主上门：这粉条里没有红薯，只有木薯。165元罚单（农家乐全部流动资金）贴在大门上，雨姐的大鹅在旁边幸灾乐祸地叫。你连夜扛着村口的火车跑路了……'
   },
   ending_friend: {
@@ -300,7 +353,7 @@ export const endings = {
     name: '路人结局',
     icon: '😶',
     hint: '好感不足50时默默离开',
-    image: 'yujie/ending_sad.jpg',
+    image: 'yujie/ending_bye.jpg',
     text: '十三天的农家乐体验卡到期了。你学会了几句东北话，胖了三斤，手机里多了几百张照片和一段大鹅追你的视频。雨姐在村口冲你挥手："有空再来啊！" 你想，大概会吧。'
   },
   ending_goose: {
@@ -308,7 +361,7 @@ export const endings = {
     name: '大鹅之主',
     icon: '🪿',
     hint: '？？？（多和大鹅打交道）',
-    image: 'yujie/cg_goose.jpg',
+    image: 'yujie/ending_goose.jpg',
     text: '三次交锋之后，村里的大鹅们开了三天三夜的会，一致决定拥立你为新任鹅王。你被一群大鹅簇拥着巡视村庄，雨姐目瞪口呆，老蒯的AD钙奶掉在了地上。从此本村食物链顶端，写上了你的名字。'
   },
   ending_kicked: {

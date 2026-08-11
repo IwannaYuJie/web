@@ -1100,3 +1100,76 @@
 .character-image {
   border-radius: 24px;
 }
+
+/* ==================== Galgame 舞台站位 ==================== */
+.stage-layer {
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  z-index: 20;
+  pointer-events: none;
+  overflow: hidden;
+}
+
+.stage-sprite {
+  position: absolute;
+  bottom: 0;
+  height: min(68vh, 640px);
+  display: flex;
+  align-items: flex-end;
+  justify-content: center;
+  transition: transform 0.35s ease, opacity 0.35s ease;
+}
+
+.stage-sprite img {
+  height: 100%;
+  width: auto;
+  object-fit: contain;
+  transform-origin: bottom center;
+  transition: filter 0.35s ease, transform 0.35s ease;
+}
+
+.stage-sprite.left {
+  left: 4%;
+}
+
+.stage-sprite.right {
+  right: 4%;
+}
+
+.stage-sprite.center {
+  left: 50%;
+  transform: translateX(-50%);
+}
+
+/* 说话者：全亮 + 投影 + 略微放大 */
+.stage-sprite.active img {
+  filter: drop-shadow(0 14px 28px rgba(0, 0, 0, 0.5));
+  transform: scale(1.02);
+}
+
+/* 非说话者：变暗 + 略缩小，退到后排 */
+.stage-sprite.dim {
+  opacity: 0.9;
+}
+
+.stage-sprite.dim img {
+  filter: brightness(0.5) saturate(0.8);
+  transform: scale(0.93);
+}
+
+@media (max-width: 768px) {
+  .stage-sprite {
+    height: 42vh;
+  }
+
+  .stage-sprite.left {
+    left: 1%;
+  }
+
+  .stage-sprite.right {
+    right: 1%;
+  }
+}

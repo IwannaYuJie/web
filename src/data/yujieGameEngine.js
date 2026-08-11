@@ -164,14 +164,27 @@ export const hashSeed = (str) => {
   return h
 }
 
-// 从角色形象池（avatar + portraits 差分）中按种子轮换选一张；无图返回 null（走 emoji 兜底）
-export const pickPortrait = (char, seed) => {
+// 从角色形象池选图：
+// - kind='sprite' 取透明立绘池，kind='avatar' 取头像照片池
+// - 台词标了 expression 且池里有对应图 → 直接用（图文对应）
+// - 池里没有该表情 → 回退 default
+// - 没标表情 → 按种子哈希轮换（同一句台词永远同一张图）
+export const pickPortrait = (char, seed, expression, kind = 'sprite') => {
   if (!char) {
     return null
   }
-  const pool = [char.avatar, ...(char.portraits || [])].filter(Boolean)
-  if (!pool.length) {
-    return null
+  const map = (kind === 'avatar' ? char.portraits : char.sprites) || null
+  if (map) {
+    if (expression && map[expression]) {
+      return map[expression]
+    }
+    if (expression && map.default) {
+      return map.default
+    }
+    const pool = Object.values(map)
+    if (pool.length) {
+      return pool[hashSeed(String(seed)) % pool.length]
+    }
   }
-  return pool[hashSeed(String(seed)) % pool.length]
+  return char.avatar || null
 }

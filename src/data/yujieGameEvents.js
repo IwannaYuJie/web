@@ -5,7 +5,7 @@
  *   scene      场景id（决定背景）
  *   cg         可选，大图（覆盖场景背景）
  *   narration  旁白（无对话时直接展示）
- *   dialogue   [{ character, text }]
+ *   dialogue   [{ character, text, expression? }]  expression 对应角色形象池的情绪键
  *   choices    [{ id, text, effects, next, condition, advanceRoute, goose }]
  *
  * 选项效果 effects 字段：
@@ -13,7 +13,7 @@
  *
  * 选项条件 condition 字段：
  *   minAffection / maxAffection / minAlert / maxAlert / hasItem / minMoney
- *   flag / notFlag / minGooseCount / routeCompleted / routesCompleted
+ *   flag / notFlag / flagsAll / minGooseCount / routeCompleted / routesCompleted
  *
  * next 特殊值：'HUB' 回自由行动地图，'NIGHT' 直接入夜，结局id 触发结局
  */
@@ -27,7 +27,7 @@ export const gameEvents = {
     narration:
       '坐了二十多个小时的火车加拖拉机，你终于站在了这个东北小村庄的入口。【玩法：❤️好感度决定雨姐对你的心意；👀警觉度是老蒯对你的提防——涨到45他就要轰人了，记得常去堂屋陪他喝AD钙奶。】',
     dialogue: [
-      { character: 'jack', text: 'Hello？有人吗？这就是网上订的"雨姐农家乐"？院子里那只鹅为什么一直瞪我？' }
+      { character: 'jack', text: 'Hello？有人吗？这就是网上订的"雨姐农家乐"？院子里那只鹅为什么一直瞪我？', expression: 'happy' }
     ],
     choices: [
       {
@@ -58,9 +58,9 @@ export const gameEvents = {
     cg: 'yujie/cg_carry_pork.jpg',
     narration: '话音未落，后院传来"嗬——！"一声大喝。一个高大的身影扛着半扇猪，健步如飞地从你面前掠过。',
     dialogue: [
-      { character: 'yujie', text: '让让让让！猪要进仓房了！——哟，你就是那个外国客人杰克吧？' },
-      { character: 'jack', text: '是、是的……您一只手就……那可是半扇猪啊？！' },
-      { character: 'yujie', text: '嗨，这算啥！俺雨姐扛猪的时候，你还在啃汉堡呢！哈哈哈哈！' }
+      { character: 'yujie', text: '让让让让！猪要进仓房了！——哟，你就是那个外国客人杰克吧？', expression: 'surprised' },
+      { character: 'jack', text: '是、是的……您一只手就……那可是半扇猪啊？！', expression: 'embarrassed' },
+      { character: 'yujie', text: '嗨，这算啥！俺雨姐扛猪的时候，你还在啃汉堡呢！哈哈哈哈！', expression: 'laugh' }
     ],
     choices: [
       {
@@ -84,9 +84,9 @@ export const gameEvents = {
     scene: 'hall',
     narration: '进了堂屋，热炕上盘腿坐着一个瘦小的男人，手里捧着一瓶AD钙奶，正用一种审视的目光打量你。',
     dialogue: [
-      { character: 'laokuai', text: '这就是那个外国人？要在咱家住十三天？' },
-      { character: 'yujie', text: '对，杰克。这是俺家老蒯。老蒯，别老绷个脸，吓着客人。' },
-      { character: 'laokuai', text: '哼……（吸了一口AD钙奶）住可以，规矩得讲。' }
+      { character: 'laokuai', text: '这就是那个外国客人？要在咱家住十三天？', expression: 'angry' },
+      { character: 'yujie', text: '对，杰克。这是俺家老蒯。老蒯，别老绷个脸，吓着客人。', expression: 'gentle' },
+      { character: 'laokuai', text: '哼……（吸了一口AD钙奶）住可以，规矩得讲。', expression: 'proud' }
     ],
     choices: [
       {
@@ -116,10 +116,10 @@ export const gameEvents = {
     scene: 'kitchen',
     narration: '傍晚，厨房里热气升腾。一个精瘦的汉子正在灶台前待命，仿佛在等待一个神圣的指令。',
     dialogue: [
-      { character: 'yujie', text: '佩斯——！点火——！' },
-      { character: 'peisi', text: '得嘞！！（咔嚓一声，灶膛里火光冲天）' },
-      { character: 'jack', text: 'Wow……这就是传说中的"佩斯点火"！比视频里还震撼！' },
-      { character: 'peisi', text: '嘿嘿，洋兄弟有眼光！一会儿酸菜白肉，管够造！' }
+      { character: 'yujie', text: '佩斯——！点火——！', expression: 'serious' },
+      { character: 'peisi', text: '得嘞！！（咔嚓一声，灶膛里火光冲天）', expression: 'happy' },
+      { character: 'jack', text: 'Wow……这就是传说中的"佩斯点火"！比视频里还震撼！', expression: 'happy' },
+      { character: 'peisi', text: '嘿嘿，洋兄弟有眼光！一会儿酸菜白肉，管够造！', expression: 'happy' }
     ],
     choices: [
       {
@@ -153,8 +153,8 @@ export const gameEvents = {
     scene: 'kitchen',
     narration: '你系上围裙钻进厨房，佩斯正在和一口大黑锅搏斗。',
     dialogue: [
-      { character: 'peisi', text: '哟，洋兄弟来帮忙？那敢情好！先从烧火开始——佩斯，点火！哦不对，今天你来点。' },
-      { character: 'jack', text: '我点？……咳咳咳！烟往哪边拐啊这个！' }
+      { character: 'peisi', text: '哟，洋兄弟来帮忙？那敢情好！先从烧火开始——佩斯，点火！哦不对，今天你来点。', expression: 'happy' },
+      { character: 'jack', text: '我点？……咳咳咳！烟往哪边拐啊这个！', expression: 'embarrassed' }
     ],
     choices: [
       {
@@ -180,8 +180,8 @@ export const gameEvents = {
     scene: 'kitchen',
     narration: '雨姐抱来一颗比你脑袋还大的酸菜："今天学切酸菜。切好了晚上包饺子。"',
     dialogue: [
-      { character: 'yujie', text: '刀要斜着走，丝要切得匀。看好了——唰唰唰！学会没？' },
-      { character: 'jack', text: '（这刀工，米其林大厨看了都得喊姐）' }
+      { character: 'yujie', text: '刀要斜着走，丝要切得匀。看好了——唰唰唰！学会没？', expression: 'serious' },
+      { character: 'jack', text: '（这刀工，米其林大厨看了都得喊姐）', expression: 'serious' }
     ],
     choices: [
       {
@@ -207,8 +207,8 @@ export const gameEvents = {
     scene: 'kitchen',
     narration: '出师考核日。雨姐和佩斯抱着胳膊站在旁边，今天这顿饭，归你掌勺。',
     dialogue: [
-      { character: 'peisi', text: '洋兄弟，整一个！' },
-      { character: 'yujie', text: '别紧张，大不了就当喂猪了，咱家猪不挑。' }
+      { character: 'peisi', text: '洋兄弟，整一个！', expression: 'happy' },
+      { character: 'yujie', text: '别紧张，大不了就当喂猪了，咱家猪不挑。', expression: 'laugh' }
     ],
     choices: [
       {
@@ -245,8 +245,8 @@ export const gameEvents = {
     scene: 'pigpen',
     narration: '你提着猪食桶挪进猪圈，四头大肥猪呼啦一下围了上来，眼神比看见亲爹还亲。',
     dialogue: [
-      { character: 'yujie', text: '哈哈哈哈！这些猪跟你挺有缘啊！' },
-      { character: 'jack', text: '它们好热情……等等，别拱我裤子！' }
+      { character: 'yujie', text: '哈哈哈哈！这些猪跟你挺有缘啊！', expression: 'laugh' },
+      { character: 'jack', text: '它们好热情……等等，别拱我裤子！', expression: 'embarrassed' }
     ],
     choices: [
       {
@@ -272,7 +272,7 @@ export const gameEvents = {
     scene: 'pigpen',
     narration: '雨姐说最大的那头猪该有个名字了，这个光荣的任务交给了你。院墙外，村霸大鹅正探头探脑。',
     dialogue: [
-      { character: 'yujie', text: '起名可是技术活，起好了猪都长得快！' }
+      { character: 'yujie', text: '起名可是技术活，起好了猪都长得快！', expression: 'serious' }
     ],
     choices: [
       {
@@ -306,8 +306,8 @@ export const gameEvents = {
     cg: 'yujie/cg_carry_pork.jpg',
     narration: '"红烧肉"出栏的日子。雨姐正要把半扇猪扛去仓房，全村的目光（含一只鹅）都聚了过来。',
     dialogue: [
-      { character: 'yujie', text: '这半扇少说得有一百五十斤，都看好了啊——' },
-      { character: 'jack', text: '（深呼吸）雨姐！今天让我来！' }
+      { character: 'yujie', text: '这半扇少说得有一百五十斤，都看好了啊——', expression: 'serious' },
+      { character: 'jack', text: '（深呼吸）雨姐！今天让我来！', expression: 'serious' }
     ],
     choices: [
       {
@@ -341,8 +341,8 @@ export const gameEvents = {
     scene: 'market',
     narration: '翠花姐拉着你逛大集，现场教学东北砍价绝学。',
     dialogue: [
-      { character: 'cuihua', text: '看好喽——"这白菜咋卖？""五毛。""五分卖不卖？！"……学会没？气势！主要是气势！' },
-      { character: 'jack', text: '这……这不是砍价，这是砍人啊。' }
+      { character: 'cuihua', text: '看好喽——"这白菜咋卖？""五毛。""五分卖不卖？！"……学会没？气势！主要是气势！', expression: 'happy' },
+      { character: 'jack', text: '这……这不是砍价，这是砍人啊。', expression: 'embarrassed' }
     ],
     choices: [
       {
@@ -368,8 +368,8 @@ export const gameEvents = {
     scene: 'market',
     narration: '嗑着瓜子的翠花姐神秘兮兮地凑过来："想知道雨姐稀罕啥不？姐这情报，瓜子换。"',
     dialogue: [
-      { character: 'cuihua', text: '雨姐啊，嘴上说不在乎，其实最稀罕后山的软枣，还有……别人把她当女人看，不是当劳力看。' },
-      { character: 'jack', text: '（重要情报！记小本本）' }
+      { character: 'cuihua', text: '雨姐啊，嘴上说不在乎，其实最稀罕后山的软枣，还有……别人把她当女人看，不是当劳力看。', expression: 'gossip' },
+      { character: 'jack', text: '（重要情报！记小本本）', expression: 'serious' }
     ],
     choices: [
       {
@@ -396,8 +396,8 @@ export const gameEvents = {
     cg: 'yujie/cg_live.jpg',
     narration: '集市角落，翠花姐正对着手机喊麦："家人们！这瓜子，老香了！三二一，上链接！"',
     dialogue: [
-      { character: 'cuihua', text: '看见没，这就叫直播带货！姐一场能卖八十包瓜子！你们美国有这个不？' },
-      { character: 'jack', text: '有是有……但绝对没有您这个气势。' }
+      { character: 'cuihua', text: '看见没，这就叫直播带货！姐一场能卖八十包瓜子！你们美国有这个不？', expression: 'happy' },
+      { character: 'jack', text: '有是有……但绝对没有您这个气势。', expression: 'happy' }
     ],
     choices: [
       {
@@ -424,9 +424,9 @@ export const gameEvents = {
     scene: 'riverside',
     narration: '傍晚，你"偶遇"了在河边遛弯的雨姐。夕阳把她的影子拉得老长。',
     dialogue: [
-      { character: 'yujie', text: '杰克，你说你们美国，也有这样的河不？' },
-      { character: 'jack', text: '有河，但没有……扛着半扇猪在河边走的人。' },
-      { character: 'yujie', text: '哈哈哈哈！你这张嘴啊！' }
+      { character: 'yujie', text: '杰克，你说你们美国，也有这样的河不？', expression: 'gentle' },
+      { character: 'jack', text: '有河，但没有……扛着半扇猪在河边走的人。', expression: 'happy' },
+      { character: 'yujie', text: '哈哈哈哈！你这张嘴啊！', expression: 'laugh' }
     ],
     choices: [
       {
@@ -451,7 +451,9 @@ export const gameEvents = {
     title: '心意',
     scene: 'riverside',
     narration: '又是河边。雨姐今天好像特意……把围裙换成了干净的。你摸了摸口袋。',
-    dialogue: [{ character: 'yujie', text: '今儿个咋有空陪俺遛弯？不用帮厨啦？' }],
+    dialogue: [
+      { character: 'yujie', text: '今儿个咋有空陪俺遛弯？不用帮厨啦？', expression: 'gentle' }
+    ],
     choices: [
       {
         id: 'riv_2_1',
@@ -465,14 +467,14 @@ export const gameEvents = {
         id: 'riv_2_2',
         text: '掏出她最爱的软枣（需：软枣+情报）',
         condition: { hasItem: 'softJujube', flag: 'knowsTaste' },
-        effects: { affection: 18, laokuaiAlert: 5, removeItem: 'softJujube' },
+        effects: { affection: 18, laokuaiAlert: 10, removeItem: 'softJujube' },
         advanceRoute: 'riverside',
         next: 'HUB'
       },
       {
         id: 'riv_2_3',
         text: '啥也没带，给她唱了一首英文情歌',
-        effects: { affection: 8, laokuaiAlert: 5 },
+        effects: { affection: 8, laokuaiAlert: 8 },
         advanceRoute: 'riverside',
         next: 'HUB'
       }
@@ -484,7 +486,9 @@ export const gameEvents = {
     title: '心动时刻',
     scene: 'riverside',
     narration: '河水哗哗地流。你们并排坐着，肩膀只差一拳的距离。谁都没说话，心跳声比河水还响。',
-    dialogue: [{ character: 'yujie', text: '（望着河面，小声）杰克，你说……十三天咋过得这么快呢。' }],
+    dialogue: [
+      { character: 'yujie', text: '（望着河面，小声）杰克，你说……十三天咋过得这么快呢。', expression: 'shy' }
+    ],
     choices: [
       {
         id: 'riv_3_1',
@@ -497,14 +501,14 @@ export const gameEvents = {
         id: 'riv_3_2',
         text: '把军大衣披在她肩上（需：军大衣）',
         condition: { hasItem: 'militaryCoat' },
-        effects: { affection: 25, laokuaiAlert: 5, removeItem: 'militaryCoat' },
+        effects: { affection: 25, laokuaiAlert: 10, removeItem: 'militaryCoat' },
         advanceRoute: 'riverside',
         next: 'HUB'
       },
       {
         id: 'riv_3_3',
         text: '把心事咽回去，默默陪她坐到天黑',
-        effects: { affection: 10, laokuaiAlert: 3 },
+        effects: { affection: 10, laokuaiAlert: 5 },
         advanceRoute: 'riverside',
         next: 'HUB'
       }
@@ -517,7 +521,7 @@ export const gameEvents = {
     title: 'AD钙奶外交',
     scene: 'hall',
     narration: '你端着瓜子凑上热炕。老蒯往旁边挪了挪，算是给你腾了个位。',
-    dialogue: [{ character: 'laokuai', text: '（吸溜）坐吧。炕热乎。' }],
+    dialogue: [{ character: 'laokuai', text: '（吸溜）坐吧。炕热乎。', expression: 'proud' }],
     choices: [
       {
         id: 'lao_1_1',
@@ -550,8 +554,8 @@ export const gameEvents = {
     scene: 'hall',
     narration: '雨姐出门进货了。屋里就剩你和老蒯，他盯着你看了半天，终于开口。',
     dialogue: [
-      { character: 'laokuai', text: '俺问你句话，你实说。你天天围着雨姐转悠，图啥？' },
-      { character: 'jack', text: '（来了，灵魂拷问）' }
+      { character: 'laokuai', text: '俺问你句话，你实说。你天天围着雨姐转悠，图啥？', expression: 'angry' },
+      { character: 'jack', text: '（来了，灵魂拷问）', expression: 'embarrassed' }
     ],
     choices: [
       {
@@ -584,8 +588,8 @@ export const gameEvents = {
     scene: 'hall',
     narration: '连喝了几天AD钙奶，老蒯看你的眼神彻底变了。今天他郑重地搬出一整箱AD钙奶，摆在炕桌正中。',
     dialogue: [
-      { character: 'laokuai', text: '杰克，俺寻思好了。你这人，行！俺要跟你结拜！' },
-      { character: 'yujie', text: '（门外探头）啥玩意儿？？' }
+      { character: 'laokuai', text: '杰克，俺寻思好了。你这人，行！俺要跟你结拜！', expression: 'proud' },
+      { character: 'yujie', text: '（门外探头）啥玩意儿？？', expression: 'surprised' }
     ],
     choices: [
       {
@@ -611,7 +615,9 @@ export const gameEvents = {
     title: '上山寻宝',
     scene: 'mountain',
     narration: '雨后的后山遍地是宝。雨姐给你指了指："榛蘑在树墩子底下，野花在坡那边。"',
-    dialogue: [{ character: 'yujie', text: '跟紧了，别乱跑——这山上可是有"那位爷"的地盘。（朝鹅鸣的方向努了努嘴）' }],
+    dialogue: [
+      { character: 'yujie', text: '跟紧了，别乱跑——这山上可是有"那位爷"的地盘。（朝鹅鸣的方向努了努嘴）', expression: 'serious' }
+    ],
     choices: [
       {
         id: 'mtn_1_1',
@@ -635,7 +641,9 @@ export const gameEvents = {
     title: '软枣熟了',
     scene: 'mountain',
     narration: '半山腰的软枣树挂满了果子，紫莹莹的，看着就甜。',
-    dialogue: [{ character: 'yujie', text: '俺小时候天天爬这棵树。那时候俺可比你利索多了！' }],
+    dialogue: [
+      { character: 'yujie', text: '俺小时候天天爬这棵树。那时候俺可比你利索多了！', expression: 'gentle' }
+    ],
     choices: [
       {
         id: 'mtn_2_1',
@@ -660,7 +668,9 @@ export const gameEvents = {
     scene: 'mountain',
     cg: 'yujie/cg_goose.jpg',
     narration: '你在密林深处发现了村霸大鹅的老巢：窝里赫然躺着几颗大鹅蛋！远处传来不祥的"嘎——"声。',
-    dialogue: [{ character: 'jack', text: '（冷静，杰克，冷静。蛋就在眼前，鹅在五十米外，你百米十二秒……大概）' }],
+    dialogue: [
+      { character: 'jack', text: '（冷静，杰克，冷静。蛋就在眼前，鹅在五十米外，你百米十二秒……大概）', expression: 'serious' }
+    ],
     choices: [
       {
         id: 'mtn_3_1',
@@ -712,7 +722,7 @@ export const gameEvents = {
     scene: 'yard',
     narration: '三分钟后，你拎着被啄成流苏的裤腿狼狈回屋。雨姐笑得直拍炕桌。',
     dialogue: [
-      { character: 'yujie', text: '哈哈哈哈！敢跟它单挑的，全村你是头一个！有种！' }
+      { character: 'yujie', text: '哈哈哈哈！敢跟它单挑的，全村你是头一个！有种！', expression: 'laugh' }
     ],
     choices: [
       {
@@ -729,7 +739,9 @@ export const gameEvents = {
     title: '战略转移',
     scene: 'yard',
     narration: '你以破个人纪录的速度冲回了屋。大鹅在门外踱了三圈，骄傲得像个得胜的将军。',
-    dialogue: [{ character: 'laokuai', text: '（隔窗递出一瓶AD钙奶）喝口压压惊。它连俺都追。' }],
+    dialogue: [
+      { character: 'laokuai', text: '（隔窗递出一瓶AD钙奶）喝口压压惊。它连俺都追。', expression: 'proud' }
+    ],
     choices: [
       { id: 'goose_r_1', text: '含泪接过AD钙奶', effects: { laokuaiAlert: -3 }, next: 'HUB' }
     ]
@@ -741,8 +753,8 @@ export const gameEvents = {
     scene: 'yard',
     narration: '雨姐一个箭步冲出来，单手掐住大鹅的脖子把它拎到半空，像拎一个暖水瓶。',
     dialogue: [
-      { character: 'yujie', text: '别怕！有姐在，它伤不了你一根汗毛！' },
-      { character: 'jack', text: '（心动的感觉……等等，现在不是时候）' }
+      { character: 'yujie', text: '别怕！有姐在，它伤不了你一根汗毛！', expression: 'serious' },
+      { character: 'jack', text: '（心动的感觉……等等，现在不是时候）', expression: 'happy' }
     ],
     choices: [
       {
@@ -761,7 +773,7 @@ export const gameEvents = {
     scene: 'market',
     narration: '第六天，十里八村最大的集！雨姐甩给你一句话："想买啥自己挑，别乱花钱啊！"（钱包告急预警：今天有大集限定商品）',
     dialogue: [
-      { character: 'cuihua', text: '哟，杰克也来啦！今儿这集可全乎，军大衣、AD钙奶、软枣，都是硬通货！' }
+      { character: 'cuihua', text: '哟，杰克也来啦！今儿这集可全乎，军大衣、AD钙奶、软枣，都是硬通货！', expression: 'happy' }
     ],
     choices: [
       {
@@ -795,9 +807,9 @@ export const gameEvents = {
     scene: 'market',
     narration: '收摊时分，一个戴金链子的大哥把你拉到角落，神秘兮兮地掏出一包粉条。',
     dialogue: [
-      { character: 'jack', text: '这是……粉条？' },
-      { character: 'laokuai', text: '（不知从哪冒出来，低声）那是镇上有名的"木薯哥"，专找人贴牌带货，佣金给得老高了……' },
-      { character: 'jack', text: '"纯红薯粉条，假一赔万"，一场直播给我一百块定金……家人们，这单接不接？' }
+      { character: 'jack', text: '这是……粉条？', expression: 'serious' },
+      { character: 'laokuai', text: '（不知从哪冒出来，低声）那是镇上有名的"木薯哥"，专找人贴牌带货，佣金给得老高了……', expression: 'proud' },
+      { character: 'jack', text: '"纯红薯粉条，假一赔万"，一场直播给我一百块定金……家人们，这单接不接？', expression: 'embarrassed' }
     ],
     choices: [
       {
@@ -822,7 +834,7 @@ export const gameEvents = {
     scene: 'yard',
     narration: '第九天一早，你发现雨姐坐在院子里发愁——农家乐的生意最近冷清了不少。',
     dialogue: [
-      { character: 'yujie', text: '唉……客人一年比一年少。俺就会闷头干活，也不会啥宣传……' }
+      { character: 'yujie', text: '唉……客人一年比一年少。俺就会闷头干活，也不会啥宣传……', expression: 'serious' }
     ],
     choices: [
       {
@@ -855,9 +867,9 @@ export const gameEvents = {
     scene: 'yard',
     narration: '杀猪宴的早上，院门被人拍响了。一个举着手机的陌生人站在门口，身后还跟着俩扛摄像机的。',
     dialogue: [
-      { character: 'jack', text: '你们是……？' },
+      { character: 'jack', text: '你们是……？', expression: 'embarrassed' },
       { character: 'goose', text: '嘎嘎嘎！（翻译：打假的来啦！打假的来啦！）' },
-      { character: 'yujie', text: '杰克……他们说你卖的"纯红薯粉条"里……没有红薯？！' }
+      { character: 'yujie', text: '杰克……他们说你卖的"纯红薯粉条"里……没有红薯？！', expression: 'surprised' }
     ],
     choices: [{ id: 'expose_1', text: '完了……', next: 'ending_noodle' }]
   },
@@ -870,8 +882,8 @@ export const gameEvents = {
     cg: 'yujie/cg_feast.jpg',
     narration: '第十二天，一年一度杀猪菜大宴！全村老小都来了，院子里支起八张桌。这是你表现的最后舞台。',
     dialogue: [
-      { character: 'yujie', text: '杰克！今儿你是主角之一，想干哪个环节，自己挑！' },
-      { character: 'dabaobei', text: '杰、杰克哥，加油！俺给你打下手！' }
+      { character: 'yujie', text: '杰克！今儿你是主角之一，想干哪个环节，自己挑！', expression: 'laugh' },
+      { character: 'dabaobei', text: '杰、杰克哥，加油！俺给你打下手！', expression: 'happy' }
     ],
     choices: [
       {
@@ -914,8 +926,8 @@ export const gameEvents = {
     narration:
       '第十三天。夜里落了今冬第一场雪。行李已经收拾好，全家人站在院子里送你——你最后的选择是什么？【结局由你十三天来的所作所为决定，亮起的选项就是你能走的路】',
     dialogue: [
-      { character: 'yujie', text: '杰克，真……真要走啊？' },
-      { character: 'laokuai', text: '（别过脸去，吸溜AD钙奶的声音有点抖）' },
+      { character: 'yujie', text: '杰克，真……真要走啊？', expression: 'shy' },
+      { character: 'laokuai', text: '（别过脸去，吸溜AD钙奶的声音有点抖）', expression: 'wronged' },
       { character: 'goose', text: '嘎。（翻译：你看着办。）' }
     ],
     choices: [
