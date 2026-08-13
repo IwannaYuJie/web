@@ -1,0 +1,23 @@
+[Unit]
+Description=Orange Cat Blog article API
+After=network-online.target
+Wants=network-online.target
+
+[Service]
+Type=simple
+User=orange-cat
+Group=orange-cat
+WorkingDirectory=/opt/orange-cat-blog/current
+EnvironmentFile=/etc/orange-cat-blog.env
+Environment=ADMIN_KEY_FILE=/etc/orange-cat-blog-admin-key
+ExecStart=/usr/bin/node server/index.mjs
+Restart=on-failure
+RestartSec=3
+NoNewPrivileges=true
+PrivateTmp=true
+ProtectHome=true
+ProtectSystem=strict
+ReadWritePaths=/var/lib/orange-cat-blog
+
+[Install]
+WantedBy=multi-user.target

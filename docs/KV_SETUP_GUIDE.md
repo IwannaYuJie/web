@@ -1,6 +1,8 @@
 # Cloudflare KV 配置指南 🗄️
 
-本项目使用 Cloudflare KV 存储文章数据。按照以下步骤配置 KV 命名空间。
+> 迁移说明：自 2026-08-13 起，正式站文章数据已改由甲骨文 VPS 文件存储提供。本指南只用于维护原 Cloudflare Pages/KV 回滚环境。
+
+回滚环境使用 Cloudflare KV 存储文章数据。按照以下步骤配置 KV 命名空间。
 
 ## 📋 配置步骤
 

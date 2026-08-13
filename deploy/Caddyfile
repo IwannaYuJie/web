@@ -1,0 +1,38 @@
+(orange-cat-site) {
+    encode zstd gzip
+
+    handle /api/* {
+        reverse_proxy 127.0.0.1:8361
+    }
+
+    handle /healthz {
+        reverse_proxy 127.0.0.1:8361
+    }
+
+    handle {
+        root * /opt/orange-cat-blog/current/dist
+        try_files {path} /index.html
+        file_server
+    }
+
+    header {
+        -Server
+        X-Content-Type-Options nosniff
+        X-Frame-Options DENY
+        Referrer-Policy strict-origin-when-cross-origin
+    }
+
+    @immutable path /assets/*
+    header @immutable Cache-Control "public, max-age=31536000, immutable"
+
+    @static path /images/* /gif.worker.js
+    header @static Cache-Control "public, max-age=3600, must-revalidate"
+}
+
+orange-cat-preview.168.110.59.224.nip.io {
+    import orange-cat-site
+}
+
+jumaomaomaoju.cn, www.jumaomaomaoju.cn {
+    import orange-cat-site
+}

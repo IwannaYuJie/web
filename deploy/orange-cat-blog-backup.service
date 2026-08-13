@@ -1,0 +1,7 @@
+[Unit]
+Description=Back up Orange Cat Blog article data
+After=orange-cat-blog.service
+
+[Service]
+Type=oneshot
+ExecStart=/usr/local/sbin/orange-cat-blog-backup

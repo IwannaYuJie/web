@@ -1,13 +1,13 @@
 # 橘猫小窝 - 个人博客
 
-橘猫小窝是一个基于 **Vite + React + Cloudflare Pages Functions** 的个人博客项目。它不只是文章列表，还包含个人档案、文章归档、标签索引、文章管理、工具箱和小游戏，适合长期维护个人技术内容和项目记录。
+橘猫小窝是一个基于 **Vite + React + Node.js + Caddy** 的个人博客项目。生产站运行在甲骨文 VPS，Cloudflare 负责 DNS、代理和缓存；原 Cloudflare Pages 项目仅作为迁移观察期内的回滚副本。它不只是文章列表，还包含个人档案、文章归档、标签索引、文章管理、工具箱和小游戏，适合长期维护个人技术内容和项目记录。
 
 ## 项目定位
 
 - **个人博客主页**：展示作者档案、最新文章、精选阅读、分类地图、标签云和项目入口。
 - **内容沉淀**：用文章、分类、标签、归档和相关阅读把知识串起来。
 - **项目索引**：把工具箱、小游戏等实验能力作为个人项目的一部分展示。
-- **可在线维护**：通过 Cloudflare KV + 管理后台支持文章新增、编辑、删除。
+- **可在线维护**：通过 VPS 文件存储 + 管理后台支持文章新增、编辑、删除，并保留原子写入和每日备份。
 - **文档同步**：功能变更需要同步更新 README、CHANGELOG 或对应 docs 文件。
 
 ## 当前主要功能
@@ -49,8 +49,8 @@
 
 - 使用管理员密钥登录。
 - 支持新增、编辑、删除文章。
-- 文章数据通过 `/api/articles` 写入 Cloudflare KV。
-- Cloudflare 自定义域名下使用查询参数与 `X-HTTP-Method-Override` 兼容 PUT / DELETE。
+- 文章数据通过 `/api/articles` 写入 VPS 的 `/var/lib/orange-cat-blog/articles.json`。
+- 写操作使用查询参数与 `X-HTTP-Method-Override` 兼容 PUT / DELETE，前端无需因迁移改接口。
 
 ### 其他入口
 
@@ -87,8 +87,13 @@ web/
 │       └── markdownUtils.js            # Markdown 目录提取
 ├── functions/
 │   └── api/
-│       ├── articles.js                 # Cloudflare Pages 文章 API
-│       └── init-articles.js            # 初始化文章种子数据
+│       ├── articles.js                 # Cloudflare Pages 回滚 API
+│       └── init-articles.js            # 回滚环境初始化入口
+├── server/
+│   ├── app.mjs                         # VPS 文章 API 与文件存储
+│   ├── articleStore.mjs                # 原子写入与写队列
+│   └── index.mjs                       # 生产进程入口
+├── deploy/                              # systemd、Caddy 与备份配置
 ├── shared/
 │   └── content/articlesSeed.js         # 本地开发/初始化文章种子
 ├── test/                               # Vitest 测试
@@ -126,7 +131,7 @@ cp .env.example .env
 
 - `DEV_ADMIN_KEY`：本地文章管理后台管理员密钥。
 
-生产环境请在 Cloudflare Pages 项目环境变量中配置，不要硬编码到前端代码。
+生产环境密钥放在 VPS 的 `/etc/orange-cat-blog-admin-key`，其他参数放在 `/etc/orange-cat-blog.env`，不要硬编码到前端或提交到仓库。
 
 ## 常用脚本
 
@@ -136,6 +141,7 @@ npm test
 npm run typecheck
 npm run build
 npm run preview
+npm run start:api
 ```
 
 本次个人博客完全体改造已验证：
@@ -157,21 +163,24 @@ npm run preview
 - `POST /api/articles?id=<id>` + `X-HTTP-Method-Override: DELETE`：删除文章。
 - `POST /api/articles?id=auth-check`：校验管理员密钥。
 
-Cloudflare Pages Functions 对路径匹配较严格，自定义域名上不要使用 `/api/articles/<id>` 作为写操作路径；项目已统一使用查询参数。
+为兼容原 Cloudflare Pages 客户端，写操作继续统一使用查询参数。VPS API 也兼容读取 `/api/articles/<id>`。
 
 ## 部署要点
 
-### Cloudflare Pages
+### 甲骨文 VPS（当前生产）
 
-1. 构建命令：`npm run build`
-2. 输出目录：`dist`
-3. Functions 目录：`functions/`
-4. KV 绑定变量名：`ARTICLES_KV`
-5. 初始化文章：部署后访问 `/api/init-articles`
+1. 本地完成 lint、测试、类型检查和构建。
+2. 将版本上传到 `/opt/orange-cat-blog/releases/<timestamp>`。
+3. 原子切换 `/opt/orange-cat-blog/current` 并重启 `orange-cat-blog.service`。
+4. Caddy 为正式域名提供 HTTPS、静态站点与 `/api/*` 反代。
+5. `orange-cat-blog-backup.timer` 每日备份文章数据。
+
+当前正式地址是 `https://jumaomaomaoju.cn`；原 Pages 回滚地址是 `https://web-b0b.pages.dev`。
 
 详细流程见：
 
 - [docs/DEPLOYMENT.md](docs/DEPLOYMENT.md)
+- [docs/ORACLE_MIGRATION.md](docs/ORACLE_MIGRATION.md)
 - [docs/KV_SETUP_GUIDE.md](docs/KV_SETUP_GUIDE.md)
 - [docs/SECURITY_CHECKLIST.md](docs/SECURITY_CHECKLIST.md)
 

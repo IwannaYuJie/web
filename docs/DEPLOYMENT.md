@@ -1,51 +1,62 @@
-# 🚀 部署说明
+# 部署说明
 
-## API Key 安全配置
+## 当前生产架构
 
-本项目使用后端代理方式保护 API Key，避免在前端暴露敏感信息。
+- 正式域名：`https://jumaomaomaoju.cn`
+- 运行主机：甲骨文 VPS `168.110.59.224`
+- Cloudflare：负责权威 DNS、代理和缓存，不再承载站点运行时与文章数据
+- 静态站点：Caddy 从 `/opt/orange-cat-blog/current/dist` 提供
+- 文章 API：`orange-cat-blog.service`，仅监听 `127.0.0.1:8361`
+- 文章数据：`/var/lib/orange-cat-blog/articles.json`
+- 回滚站点：`https://web-b0b.pages.dev`
 
-### 生产环境（Cloudflare Pages）
+## 管理密钥
 
-生产环境下，需要在 Cloudflare Pages 的环境变量中配置 API Key：
+管理员密钥只保存在服务器的 `/etc/orange-cat-blog-admin-key`，权限为仅服务用户可读。仓库、构建产物、日志和文档都不保存真实密钥。
 
-1. 登录 Cloudflare Dashboard
-2. 进入你的 Pages 项目
-3. 点击 **Settings** → **Environment variables**
-4. 添加以下环境变量：
+本地开发可复制 `.env.example` 为 `.env`，使用 `DEV_ADMIN_KEY` 配合 Vite mock。直接运行 VPS API 时使用：
 
-```
-ADMIN_KEY=你的文章管理密码（建议设置复杂密码）
-```
-
-### 安全优势
-
-✅ API Key 存储在服务器端，不会暴露给用户  
-✅ 前端代码中不包含任何敏感信息  
-✅ 支持环境变量配置，便于管理  
-✅ 解决 CORS 跨域问题  
-
-## 部署步骤
-
-1. 推送代码到 Git 仓库
-2. 在 Cloudflare Pages 创建项目
-3. 配置环境变量（见上文）
-4. 自动部署完成
-
-## 本地开发
-
-```bash
-# 安装依赖
-npm install
-
-# 启动开发服务器
-npm run dev
-
-# 构建生产版本
-npm run build
+```text
+ADMIN_KEY=本地测试密钥
+ARTICLES_DATA_FILE=./data/articles.json
+API_HOST=127.0.0.1
+API_PORT=8361
 ```
 
-## 注意事项
+## 发布流程
 
-⚠️ 不要将 `.env` 文件提交到 Git 仓库  
-⚠️ 定期更换 API Key 以提高安全性  
-⚠️ 生产环境必须配置环境变量，否则会使用默认值（不安全）
+1. 运行 `npm run lint`、`npm test`、`npm run typecheck`、`npm run build`。
+2. 上传新 release 到 `/opt/orange-cat-blog/releases/<timestamp>`。
+3. 不用构建产物覆盖 `/var/lib/orange-cat-blog/articles.json`。
+4. 将 `/opt/orange-cat-blog/current` 原子切换到新 release。
+5. 重启 `orange-cat-blog.service`，验证并重载 Caddy。
+6. 检查 `/healthz`、`/api/articles`、首页、文章详情、管理后台和所有深层路由。
+
+服务器配置模板位于：
+
+- `deploy/orange-cat-blog.service`
+- `deploy/orange-cat-blog-backup.service`
+- `deploy/orange-cat-blog-backup.timer`
+- `deploy/backup-articles.sh`
+- `deploy/Caddyfile`
+
+## 数据保护
+
+- 每次写入使用临时文件加原子替换，并保留 `articles.json.previous`。
+- `orange-cat-blog-backup.timer` 每日将快照写入 `/var/backups/orange-cat-blog/`。
+- 发布只切换应用 release，文章数据与应用目录分离。
+- `/api/init-articles` 不在 VPS 暴露，避免未授权覆盖数据。
+
+## 回滚
+
+- 应用：把 `/opt/orange-cat-blog/current` 指回上一个 release，重启 API 并重载 Caddy。
+- 数据：先停止写入，再从 `articles.json.previous` 或每日备份恢复。
+- 域名：将 Cloudflare Pages 自定义域名重新绑定到 `web` 项目；观察期内保留 Pages 与 KV。
+
+更完整的迁移记录、路径和验收结果见 [ORACLE_MIGRATION.md](ORACLE_MIGRATION.md)。
+
+## 安全提醒
+
+- `.env`、管理员密钥、文章快照和服务器备份都不提交到 Git。
+- API 端口保持 loopback，不在主机防火墙或 OCI 安全列表额外开放。
+- 写操作继续要求 `X-Admin-Key`；无效密钥应返回 HTTP 401。

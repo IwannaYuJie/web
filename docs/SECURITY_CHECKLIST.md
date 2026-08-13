@@ -5,7 +5,7 @@
 ## ✅ 已完成的安全措施
 
 ### 1. API Key 保护
-- [x] **后端 API 代理**：所有外部 API 调用通过 Cloudflare Functions 代理
+- [x] **后端 API 代理**：文章写操作通过 VPS Node API 处理，Cloudflare Functions 仅保留在回滚环境
 - [x] **移除硬编码**：已移除所有源代码中的 API Key 硬编码
 - [x] **环境变量**：API Key 仅通过环境变量读取
 - [x] **前端安全**：前端代码不包含任何 API Key
@@ -15,7 +15,9 @@
 - [x] **.env.example**：提供模板文件，不包含真实 API Key
 
 ### 3. 生产环境安全
-- [x] **Cloudflare 环境变量**：生产 API Key 配置在 Cloudflare Dashboard
+- [x] **VPS 密钥文件**：生产管理员密钥只保存在 `/etc/orange-cat-blog-admin-key`
+- [x] **Loopback 监听**：Node API 只监听 `127.0.0.1:8361`，由 Caddy 对外转发
+- [x] **数据备份**：原子写入、上一版本副本和每日定时备份均已启用
 - [x] **错误处理**：缺少环境变量时返回友好错误提示
 - [x] **CORS 保护**：仅允许必要的跨域请求
 
@@ -51,9 +53,16 @@ git status
 - [ ] 确认 `.env` 在 `.gitignore` 中
 - [ ] 确认 `.env` 未被 Git 跟踪（`git status` 不显示）
 
-### Cloudflare Pages 生产环境
+### VPS 生产环境
 
 - [ ] 确认后端代码不包含硬编码 API Key
+- [ ] 确认 `/etc/orange-cat-blog-admin-key` 权限未放宽
+- [ ] 确认 `orange-cat-blog.service` 与 `orange-cat-blog-backup.timer` 为 active
+- [ ] 确认 `127.0.0.1:8361` 未对公网开放
+
+### Cloudflare Pages 回滚环境
+
+- [ ] 回滚观察期内保留原 Pages 项目、KV 和管理员环境变量
 
 ### GitHub 仓库
 
@@ -156,10 +165,10 @@ git push origin --force --tags
 ### ⚠️ 注意事项
 
 - 本地开发需要配置 `.env` 文件
-- Cloudflare 部署需要配置环境变量
+- Cloudflare 回滚环境仍需保留对应环境变量
 - 定期检查新增代码是否引入硬编码
 
 ---
 
-**最后更新**: 2025年1月15日  
+**最后更新**: 2026年8月13日
 **检查频率**: 每次代码修改后 + 每月定期审查
