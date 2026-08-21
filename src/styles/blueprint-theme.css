@@ -1,9 +1,10 @@
 /* ============================================================
    工业建筑蓝图主题系统 (Architectural CAD Blueprint Theme)
-   设计特点：
-   1. 经典 CAD 建筑机械制图深蓝底 (#0A2E50)
-   2. 白色粉笔线 + 浅蓝工程坐标方格网
-   3. 工业图纸图章与技术制图排版
+   高对比度优化：
+   1. 深蓝底色 (#0A2E50)
+   2. 主标题与标注：纯白 (#FFFFFF) 与高亮天蓝 (#38BDF8)
+   3. 正文与段落：纯白 (#FFFFFF) / 冰白 (#F0F9FF)
+   4. 副文本与日期标签：高亮浅蓝 (#BAE6FD)
    ============================================================ */
 
 [data-theme="blueprint"] {
@@ -20,16 +21,16 @@
   --vi: #A78BFA;      /* 辅助紫 */
   --accent: var(--o);
 
-  /* 蓝图图纸卡片 */
+  /* 蓝图图纸高对比卡片 */
   --k1-bg: #0E3D6B; --k1-fg: #38BDF8;
   --k2-bg: #11467A; --k2-fg: #FDE047;
   --k3-bg: #0E3D6B; --k3-fg: #BAE6FD;
   --k4-bg: #11467A; --k4-fg: #34D399;
 
   /* 蓝图白线硬阴影 */
-  --shadow-hard: 4px 4px 0 #041B33, 0 0 0 1px #38BDF8;
-  --shadow-hard-lg: 7px 7px 0 #041B33, 0 0 0 1.5px #38BDF8;
-  --shadow-hard-sm: 2px 2px 0 #041B33, 0 0 0 1px #38BDF8;
+  --shadow-hard: 4px 4px 0 #041B33, 0 0 0 1.5px #38BDF8;
+  --shadow-hard-lg: 7px 7px 0 #041B33, 0 0 0 2px #38BDF8;
+  --shadow-hard-sm: 2px 2px 0 #041B33, 0 0 0 1.5px #38BDF8;
 
   --disp: 'Space Grotesk', 'Courier New', monospace;
   --body: 'Space Grotesk', 'PingFang SC', sans-serif;
@@ -62,15 +63,41 @@ body[data-theme="blueprint"] {
   background-attachment: fixed !important;
 }
 
+/* 标题与文字高对比度保护 */
+[data-theme="blueprint"] h1,
+[data-theme="blueprint"] h2,
+[data-theme="blueprint"] h3,
+[data-theme="blueprint"] h4 {
+  color: #FFFFFF !important;
+  text-shadow: 2px 2px 0 #041B33, 0 0 10px rgba(56, 189, 248, 0.5) !important;
+}
+
+[data-theme="blueprint"] p,
+[data-theme="blueprint"] span,
+[data-theme="blueprint"] li {
+  color: #F0F9FF;
+}
+
+[data-theme="blueprint"] .idx,
+[data-theme="blueprint"] .hero-stat .l,
+[data-theme="blueprint"] .ec-date,
+[data-theme="blueprint"] .ec .cat {
+  color: #BAE6FD !important;
+  opacity: 1 !important;
+  font-weight: 700 !important;
+}
+
 /* 蓝图导航栏 */
 [data-theme="blueprint"] .bnav {
   background: rgba(10, 46, 80, 0.95) !important;
-  border-bottom: 2px solid #38BDF8 !important;
+  border-bottom: 2.5px solid #38BDF8 !important;
+  box-shadow: 0 4px 15px rgba(4, 27, 51, 0.6) !important;
 }
 
 [data-theme="blueprint"] .bnav-logo {
   color: #38BDF8 !important;
   letter-spacing: 1px;
+  text-shadow: 0 0 8px rgba(56, 189, 248, 0.6);
 }
 
 [data-theme="blueprint"] .bnav-logo::before {
@@ -90,24 +117,32 @@ body[data-theme="blueprint"] {
   background: #38BDF8 !important;
   color: #0A2E50 !important;
   border-style: solid !important;
-  font-weight: 800;
+  font-weight: 900 !important;
 }
 
 /* 蓝图图纸卡片 */
 [data-theme="blueprint"] .ec,
 [data-theme="blueprint"] .panel {
   border-radius: 0px !important;
-  border: 1.5px solid #38BDF8 !important;
+  border: 2px solid #38BDF8 !important;
   background: #0E3D6B !important;
   box-shadow: var(--shadow-hard) !important;
   color: #FFFFFF !important;
-  position: relative;
 }
 
 [data-theme="blueprint"] .ec:hover {
   transform: translate(-3px, -3px) !important;
   box-shadow: var(--shadow-hard-lg) !important;
   background: #124C84 !important;
+}
+
+[data-theme="blueprint"] .ec h3 {
+  color: #FFFFFF !important;
+}
+
+[data-theme="blueprint"] .ec p,
+[data-theme="blueprint"] .ec .desc {
+  color: #F0F9FF !important;
 }
 
 /* 蓝图按钮 */
@@ -135,20 +170,17 @@ body[data-theme="blueprint"] {
   border-bottom: 2px solid #38BDF8 !important;
 }
 
-/* Hero 标题 */
-[data-theme="blueprint"] .hero-grid h1 {
-  text-shadow: 3px 3px 0 #041B33, 0 0 10px rgba(56, 189, 248, 0.4) !important;
+[data-theme="blueprint"] .ticker .run b {
+  color: #FDE047 !important;
 }
-
-[data-theme="blueprint"] .hero-grid h1 span:first-child { color: #FFFFFF !important; }
-[data-theme="blueprint"] .hero-grid h1 span:last-child { color: #38BDF8 !important; }
 
 /* 贴纸 */
 [data-theme="blueprint"] .sticker {
   border-radius: 0px !important;
-  border: 1px solid #38BDF8 !important;
+  border: 1.5px solid #38BDF8 !important;
   background: #0E3D6B !important;
-  color: #BAE6FD !important;
+  color: #FFFFFF !important;
+  font-weight: 800 !important;
 }
 
 /* 页脚 */

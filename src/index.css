@@ -653,3 +653,43 @@ select:focus {
   color: var(--ink-soft) !important;
   line-height: 1.7 !important;
 }
+
+/* ============================================================
+   暗色与强反差主题通用对比度保护 (Theme Readability Guard)
+   ============================================================ */
+[data-theme="cyberpunk"] .bg-white\/50,
+[data-theme="cyberpunk"] .bg-white\/60,
+[data-theme="cyberpunk"] .bg-white\/70,
+[data-theme="cyberpunk"] .bg-white\/75,
+[data-theme="cyberpunk"] .bg-white\/80,
+[data-theme="cyberpunk"] .bg-white,
+[data-theme="matrix"] .bg-white\/50,
+[data-theme="matrix"] .bg-white\/60,
+[data-theme="matrix"] .bg-white\/70,
+[data-theme="matrix"] .bg-white\/75,
+[data-theme="matrix"] .bg-white\/80,
+[data-theme="matrix"] .bg-white,
+[data-theme="blueprint"] .bg-white\/50,
+[data-theme="blueprint"] .bg-white\/60,
+[data-theme="blueprint"] .bg-white\/70,
+[data-theme="blueprint"] .bg-white\/75,
+[data-theme="blueprint"] .bg-white\/80,
+[data-theme="blueprint"] .bg-white {
+  background-color: var(--paper-2) !important;
+  color: #FFFFFF !important;
+  border-color: var(--border-color) !important;
+}
+
+[data-theme="cyberpunk"] .text-text-secondary,
+[data-theme="matrix"] .text-text-secondary,
+[data-theme="blueprint"] .text-text-secondary {
+  color: var(--text-secondary) !important;
+}
+
+[data-theme="pixel"] .text-text-secondary {
+  color: #1E3F1E !important;
+}
+
+[data-theme="y2k"] .text-text-secondary {
+  color: #111111 !important;
+}

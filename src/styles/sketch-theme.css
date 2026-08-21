@@ -1,433 +1,154 @@
 /* ============================================================
-   手绘草图/漫画手账全新主题系统 (Super Vibrant Sketch & Comic Theme)
-   彻底颠覆默认暖橙米黄调：
-   1. 背景：清爽手绘绘图白底 + 浅蓝工程网格原稿纸
-   2. 主色调：宝蓝钢笔墨水 + 柠檬黄马克笔 + 荧光粉水彩（鲜明对比）
-   3. 字体：全站 100% 站酷快乐体 (ZCOOL KuaiLe) + Patrick Hand
-   4. 卡片：实体彩色便利贴（黄/粉/蓝/绿），交错倾斜贴纸 + 和纸胶带
-   5. 动效：悬停手绘微晃摇摆 + 盖印章触感
+   手绘手账主题系统 (Total Sketch & Scrapbook Theme)
+   高对比度优化：
+   1. 绘图纯白底色 (#FFFFFF) + 浅蓝工程方格网
+   2. 全站所有文字、标题、正文使用高对比深宝蓝黑墨水 (#0B2545 / #111827)
+   3. 站酷快乐体全量应用，彩色便利贴内部文字浓郁清晰
    ============================================================ */
 
-/* ---------- 1. 全新颠覆性色彩系统 (Vibrant Sketch Palette) ---------- */
 [data-theme="sketch"] {
-  /* 绘图白底草稿纸 + 炭黑石墨铅笔墨水 */
   --paper: #FFFFFF;
-  --paper-2: #F1F5F9;
-  --ink: #0F172A;
-  --ink-soft: #334155;
+  --paper-2: #F8FAFC;
+  --ink: #0B2545;
+  --ink-soft: #1E3A8A;
   --line: #CBD5E1;
 
-  /* 彻底告别默认橙色，换上活力手绘漫画色系 */
-  --o: #2563EB;       /* 宝蓝钢笔墨水主色 */
-  --sun: #FFDF00;     /* 柠檬黄马克笔高光 */
+  --o: #2563EB;       /* 宝蓝墨水蓝 */
+  --sun: #FFDF00;     /* 柠檬黄马克笔 */
   --berry: #FF2A5F;   /* 荧光草莓粉 */
-  --mint: #00D26A;    /* 鲜嫩青草绿 */
-  --vi: #7C3AED;      /* 漫画葡萄紫 */
+  --mint: #00D26A;    /* 青草绿 */
+  --vi: #7C3AED;      /* 葡萄紫 */
   --accent: var(--o);
 
-  /* 四色实体便利贴卡片 */
-  --k1-bg: #FFE4E8; --k1-fg: #E11D48;  /* 樱花粉便签 */
-  --k2-bg: #FEF08A; --k2-fg: #854D0E;  /* 柠檬黄便签 */
-  --k3-bg: #BAE6FD; --k3-fg: #0369A1;  /* 晴空蓝便签 */
-  --k4-bg: #BBF7D0; --k4-fg: #15803D;  /* 青苹果绿便签 */
+  /* 四色实体彩色便利贴（淡浅背景配极深文字） */
+  --k1-bg: #FFE4EC; --k1-fg: #0B2545;
+  --k2-bg: #FFF7D6; --k2-fg: #0B2545;
+  --k3-bg: #E0F2FE; --k3-fg: #0B2545;
+  --k4-bg: #DCFCE7; --k4-fg: #0B2545;
 
-  /* 错位粗线条硬阴影 */
-  --shadow-hard: 4px 4px 0 #0F172A;
-  --shadow-hard-lg: 8px 8px 0 #0F172A;
-  --shadow-hard-sm: 2.5px 2.5px 0 #0F172A;
+  /* 铅笔实色硬投影 */
+  --shadow-hard: 3px 3px 0 #0B2545;
+  --shadow-hard-lg: 6px 6px 0 #0B2545;
+  --shadow-hard-sm: 2px 2px 0 #0B2545;
 
-  /* 全站强制手写字体 */
-  --disp: 'ZCOOL KuaiLe', 'ZCOOL QingKe HuangYou', 'Patrick Hand', 'Chalkboard SE', cursive, sans-serif;
-  --serif: 'ZCOOL KuaiLe', 'Patrick Hand', 'STKaiti', cursive, serif;
-  --body: 'ZCOOL KuaiLe', 'Patrick Hand', 'Chalkboard SE', 'PingFang SC', cursive, sans-serif;
+  --disp: 'ZCOOL KuaiLe', 'Patrick Hand', cursive, sans-serif;
+  --body: 'ZCOOL KuaiLe', 'Patrick Hand', 'PingFang SC', sans-serif;
+  --serif: 'ZCOOL KuaiLe', cursive, sans-serif;
 
-  /* Legacy aliases */
   --primary-color: var(--o);
   --primary-hover: #1D4ED8;
   --secondary-color: var(--sun);
   --accent-color: var(--berry);
   --bg-color: var(--paper);
   --surface-color: var(--paper-2);
-  --text-color: var(--ink);
-  --text-secondary: var(--ink-soft);
-  --border-color: var(--ink);
+  --text-color: #0B2545;
+  --text-secondary: #1E3A8A;
+  --border-color: #0B2545;
   --card-bg: var(--paper);
   --card-hover: var(--paper-2);
 }
 
-/* 深色模式：深蓝黑板/蓝图手绘风 */
-@media (prefers-color-scheme: dark) {
-  [data-theme="sketch"] {
-    --paper: #0F172A;
-    --paper-2: #1E293B;
-    --ink: #F8FAFC;
-    --ink-soft: #94A3B8;
-    --line: #334155;
-
-    --o: #38BDF8;
-    --sun: #FDE047;
-    --berry: #FB7185;
-    --mint: #4ADE80;
-    --vi: #C084FC;
-
-    --k1-bg: #4C0519; --k1-fg: #FDA4AF;
-    --k2-bg: #422006; --k2-fg: #FEF08A;
-    --k3-bg: #082F49; --k3-fg: #7DD3FC;
-    --k4-bg: #052E16; --k4-fg: #86EFAC;
-
-    --shadow-hard: 4px 4px 0 #020617;
-    --shadow-hard-lg: 8px 8px 0 #020617;
-    --shadow-hard-sm: 2.5px 2.5px 0 #020617;
-  }
+/* 全局手写字体与深色墨水高对比度保护 */
+[data-theme="sketch"] * {
+  font-family: 'ZCOOL KuaiLe', 'Patrick Hand', cursive, sans-serif !important;
 }
 
-/* ---------- 2. 全站 100% 强制手写快乐体 ---------- */
-html[data-theme="sketch"],
-html[data-theme="sketch"] body,
-[data-theme="sketch"] *,
-[data-theme="sketch"] button,
-[data-theme="sketch"] input,
-[data-theme="sketch"] textarea,
-[data-theme="sketch"] select,
-[data-theme="sketch"] a {
-  font-family: 'ZCOOL KuaiLe', 'Patrick Hand', 'Chalkboard SE', cursive, sans-serif !important;
+[data-theme="sketch"] h1,
+[data-theme="sketch"] h2,
+[data-theme="sketch"] h3,
+[data-theme="sketch"] h4,
+[data-theme="sketch"] p,
+[data-theme="sketch"] span,
+[data-theme="sketch"] li,
+[data-theme="sketch"] .idx,
+[data-theme="sketch"] .hero-stat .l,
+[data-theme="sketch"] .hero-stat .n,
+[data-theme="sketch"] .ec-date,
+[data-theme="sketch"] .ec .cat {
+  color: #0B2545 !important;
+  opacity: 1 !important;
+  font-weight: 800 !important;
 }
 
-/* ---------- 3. 清爽浅蓝手绘漫画原稿纸底纹 ---------- */
+/* 绘图白底 + 浅蓝工程方格 */
 html[data-theme="sketch"] body,
 body[data-theme="sketch"] {
-  background-color: var(--paper) !important;
-  color: var(--ink) !important;
+  background-color: #FFFFFF !important;
+  color: #0B2545 !important;
   background-image:
-    linear-gradient(to right, rgba(37, 99, 235, 0.08) 1.5px, transparent 1.5px),
-    linear-gradient(to bottom, rgba(37, 99, 235, 0.08) 1.5px, transparent 1.5px) !important;
-  background-size: 26px 26px !important;
+    linear-gradient(rgba(37, 99, 235, 0.12) 1.5px, transparent 1.5px),
+    linear-gradient(90deg, rgba(37, 99, 235, 0.12) 1.5px, transparent 1.5px) !important;
+  background-size: 24px 24px !important;
   background-attachment: fixed !important;
 }
 
-@media (prefers-color-scheme: dark) {
-  html[data-theme="sketch"] body,
-  body[data-theme="sketch"] {
-    background-image:
-      linear-gradient(to right, rgba(56, 189, 248, 0.12) 1.5px, transparent 1.5px),
-      linear-gradient(to bottom, rgba(56, 189, 248, 0.12) 1.5px, transparent 1.5px) !important;
-  }
-}
-
-/* ---------- 4. Hero 首屏双色手绘漫画艺术字 ---------- */
-[data-theme="sketch"] .hero-grid h1 {
-  font-family: 'ZCOOL KuaiLe', cursive !important;
-  text-shadow: 4px 4px 0 var(--sun), 8px 8px 0 var(--ink) !important;
-  transform: rotate(-1.5deg) scale(1.02);
-  display: inline-block;
-  margin: 14px 0 !important;
-}
-
-[data-theme="sketch"] .hero-grid h1 span:first-child {
-  color: var(--o) !important;
-}
-
-[data-theme="sketch"] .hero-grid h1 span:last-child {
-  color: var(--berry) !important;
-}
-
-/* Hero 问候标语 */
-[data-theme="sketch"] .hero-grid div[style*="textTransform: uppercase"] {
-  color: var(--berry) !important;
-  font-size: 15px !important;
-  transform: rotate(-1deg);
-}
-
-/* 标题马克笔波浪高光划线 */
-[data-theme="sketch"] .section-h h2 {
-  font-family: 'ZCOOL KuaiLe', cursive !important;
-  color: var(--ink) !important;
-  background-image: linear-gradient(
-    to top,
-    transparent 10%,
-    color-mix(in srgb, var(--sun) 90%, transparent) 10% 48%,
-    transparent 48%
-  ) !important;
-  padding: 0 12px !important;
-  transform: rotate(-0.8deg);
-  border-radius: 8px;
-}
-
-[data-theme="sketch"] .section-h h2::before {
-  content: '🖍️ ';
-  font-size: 0.9em;
-}
-
-/* ---------- 5. 实体四色便利贴（便签纸）卡片 ---------- */
-[data-theme="sketch"] .ec {
-  border-radius: 255px 15px 225px 15px / 15px 225px 15px 255px !important;
-  border: 3px solid var(--ink) !important;
-  box-shadow: var(--shadow-hard) !important;
-  position: relative;
-  transition: transform 0.25s cubic-bezier(0.175, 0.885, 0.32, 1.275), box-shadow 0.25s !important;
-}
-
-/* 四种彩色便利贴强对比背景 */
-[data-theme="sketch"] .ec.k1 { background: var(--k1-bg) !important; color: #881337 !important; }
-[data-theme="sketch"] .ec.k2 { background: var(--k2-bg) !important; color: #713F12 !important; }
-[data-theme="sketch"] .ec.k3 { background: var(--k3-bg) !important; color: #0C4A6E !important; }
-[data-theme="sketch"] .ec.k4 { background: var(--k4-bg) !important; color: #14532D !important; }
-
-/* 交错随机微倾斜角度，极富手账感 */
-[data-theme="sketch"] .ec:nth-child(4n+1) { transform: rotate(-1.5deg); }
-[data-theme="sketch"] .ec:nth-child(4n+2) { transform: rotate(1.6deg); }
-[data-theme="sketch"] .ec:nth-child(4n+3) { transform: rotate(-1.1deg); }
-[data-theme="sketch"] .ec:nth-child(4n+4) { transform: rotate(1.3deg); }
-
-/* 卡片悬停：如便签纸被手掀开 */
-[data-theme="sketch"] .ec:hover {
-  transform: translate(-6px, -8px) rotate(0deg) scale(1.04) !important;
-  box-shadow: 10px 10px 0 var(--ink) !important;
-  z-index: 15;
-}
-
-/* 顶部半透明彩色和纸胶带 (Washi Tape) */
-[data-theme="sketch"] .ec::before {
-  content: '';
-  position: absolute;
-  top: -10px;
-  left: 50%;
-  transform: translateX(-50%) rotate(-2deg);
-  width: 70px;
-  height: 18px;
-  background: color-mix(in srgb, var(--sun) 85%, transparent);
-  border: 1px dashed color-mix(in srgb, var(--ink) 40%, transparent);
-  border-radius: 2px;
-  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.15);
-  pointer-events: none;
-  z-index: 4;
-}
-
-[data-theme="sketch"] .ec.k1::before { background: color-mix(in srgb, var(--berry) 45%, white); }
-[data-theme="sketch"] .ec.k2::before { background: color-mix(in srgb, var(--sun) 85%, white); }
-[data-theme="sketch"] .ec.k3::before { background: color-mix(in srgb, var(--o) 45%, white); }
-[data-theme="sketch"] .ec.k4::before { background: color-mix(in srgb, var(--mint) 50%, white); }
-
-/* 最新封面卡片手绘红色大印章 (Stamp) */
-[data-theme="sketch"] .hero-grid .ec.k1::after {
-  content: '★ NEW! 🐾';
-  position: absolute;
-  top: 16px;
-  right: 16px;
-  font-family: 'ZCOOL KuaiLe', cursive !important;
-  font-size: 14px;
-  font-weight: 900;
-  color: var(--berry);
-  border: 2.5px dashed var(--berry);
-  padding: 4px 10px;
-  border-radius: 255px 15px 225px 15px / 15px 225px 15px 255px;
-  transform: rotate(14deg);
-  background: rgba(255, 255, 255, 0.7);
-  pointer-events: none;
-}
-
-/* ---------- 6. 手绘手账面板 (Panels & Sidebar) ---------- */
-[data-theme="sketch"] .panel {
-  border-radius: 245px 18px 230px 16px / 18px 230px 16px 245px !important;
-  border: 3px solid var(--ink) !important;
-  box-shadow: var(--shadow-hard) !important;
-  position: relative;
-  background: #FFFFFF !important;
-  color: var(--ink) !important;
-}
-
-[data-theme="sketch"] .panel::before {
-  content: '';
-  position: absolute;
-  top: -11px;
-  left: 50%;
-  transform: translateX(-50%) rotate(-1deg);
-  width: 85px;
-  height: 20px;
-  background: color-mix(in srgb, var(--sun) 85%, transparent);
-  border: 1px dashed color-mix(in srgb, var(--ink) 45%, transparent);
-  border-radius: 2px;
-  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.15);
-  pointer-events: none;
-  z-index: 4;
-}
-
-/* 侧边栏顺手抄一句：粉笔黑板风 */
-[data-theme="sketch"] .panel.dark {
-  background: #1E293B !important;
-  color: #F8FAFC !important;
-  border-color: #0F172A !important;
-}
-
-[data-theme="sketch"] .panel.dark::before {
-  background: color-mix(in srgb, var(--mint) 75%, transparent);
-}
-
-/* ---------- 7. 亮黄漫画手绘按钮 (Comic Buttons) ---------- */
-@keyframes sketchWobble {
-  0% { transform: translate(-3px, -3px) rotate(0deg); }
-  25% { transform: translate(-3px, -3px) rotate(-2.5deg) scale(1.04); }
-  75% { transform: translate(-3px, -3px) rotate(2.5deg) scale(1.04); }
-  100% { transform: translate(-3px, -3px) rotate(0deg); }
-}
-
-@keyframes sketchStamp {
-  0% { transform: scale(1); }
-  50% { transform: scale(0.94) rotate(-1deg); }
-  100% { transform: scale(0.97) translate(1px, 1px); }
-}
-
-[data-theme="sketch"] .btn,
-[data-theme="sketch"] .btn-primary {
-  border-radius: 255px 15px 225px 15px / 15px 225px 15px 255px !important;
-  border: 3px solid var(--ink) !important;
-  background: var(--sun) !important;
-  color: #0F172A !important;
-  box-shadow: var(--shadow-hard) !important;
-  font-weight: 900 !important;
-  font-size: 17px !important;
-}
-
-[data-theme="sketch"] .btn.ghost,
-[data-theme="sketch"] .btn-ghost,
-[data-theme="sketch"] .btn-secondary {
-  background: #FFFFFF !important;
-  color: #0F172A !important;
-  border: 3px solid var(--ink) !important;
-}
-
-[data-theme="sketch"] .btn:hover:not(:disabled) {
-  animation: sketchWobble 0.28s ease-in-out infinite alternate !important;
-  box-shadow: var(--shadow-hard-lg) !important;
-  background: var(--berry) !important;
-  color: #FFFFFF !important;
-}
-
-[data-theme="sketch"] .btn:active:not(:disabled) {
-  animation: sketchStamp 0.15s ease-out forwards !important;
-  box-shadow: 2px 2px 0 var(--ink) !important;
-}
-
-/* 贴纸 Stickers 手绘彩色化 */
-[data-theme="sketch"] .sticker {
-  border-radius: 255px 15px 225px 15px / 15px 225px 15px 255px !important;
-  border: 2.5px solid var(--ink) !important;
-  font-weight: 900 !important;
-  font-size: 14.5px !important;
-  box-shadow: 3px 3px 0 var(--ink) !important;
-  background: #FFFFFF !important;
-  color: var(--ink) !important;
-}
-
-[data-theme="sketch"] .sticker:hover {
-  transform: rotate(6deg) scale(1.15) !important;
-  box-shadow: 5px 5px 0 var(--ink) !important;
-  background: var(--sun) !important;
-  color: #0F172A !important;
-}
-
-/* ---------- 8. 手绘手账导航栏 (Scrapbook Navbar) ---------- */
+/* 导航栏 */
 [data-theme="sketch"] .bnav {
-  border-bottom: 3px dashed var(--ink) !important;
-  background: rgba(255, 255, 255, 0.94) !important;
-  backdrop-filter: blur(8px) !important;
+  background: rgba(255, 255, 255, 0.95) !important;
+  border-bottom: 3px solid #0B2545 !important;
+  box-shadow: 0 4px 0 #0B2545 !important;
 }
 
 [data-theme="sketch"] .bnav-logo {
+  color: #2563EB !important;
   font-size: 26px !important;
-  font-weight: 900 !important;
-  color: var(--o) !important;
-  transform: rotate(-1.5deg);
-}
-
-[data-theme="sketch"] .bnav-mk img {
-  border-radius: 255px 15px 225px 15px / 15px 225px 15px 255px !important;
-  border: 2.8px solid var(--ink) !important;
-  transform: rotate(-3deg);
+  text-shadow: 2px 2px 0 #FFDF00 !important;
 }
 
 [data-theme="sketch"] .bnav-links a {
-  border-radius: 255px 15px 225px 15px / 15px 225px 15px 255px !important;
-  font-size: 16.5px !important;
+  border: 2px solid #0B2545 !important;
+  background: #FFFFFF !important;
+  color: #0B2545 !important;
+  border-radius: 255px 15px 225px 15px/15px 225px 15px 255px !important;
+}
+
+[data-theme="sketch"] .bnav-links a:hover,
+[data-theme="sketch"] .bnav-links a.on {
+  background: #FFDF00 !important;
+  color: #0B2545 !important;
+  box-shadow: 3px 3px 0 #0B2545 !important;
+}
+
+/* 便利贴卡片 */
+[data-theme="sketch"] .ec {
+  border: 2.5px solid #0B2545 !important;
+  box-shadow: 4px 4px 0 #0B2545 !important;
+  border-radius: 255px 15px 225px 15px/15px 225px 15px 255px !important;
+}
+
+[data-theme="sketch"] .ec.k1 { background: #FFE4EC !important; transform: rotate(-1.5deg); }
+[data-theme="sketch"] .ec.k2 { background: #FFF7D6 !important; transform: rotate(1.2deg); }
+[data-theme="sketch"] .ec.k3 { background: #E0F2FE !important; transform: rotate(-1deg); }
+[data-theme="sketch"] .ec.k4 { background: #DCFCE7 !important; transform: rotate(1.5deg); }
+
+[data-theme="sketch"] .ec:hover {
+  transform: scale(1.03) rotate(0deg) !important;
+  box-shadow: 7px 7px 0 #0B2545 !important;
+}
+
+/* 按钮 */
+[data-theme="sketch"] .btn,
+[data-theme="sketch"] .btn-primary {
+  border: 2.5px solid #0B2545 !important;
+  background: #FFDF00 !important;
+  color: #0B2545 !important;
+  box-shadow: 4px 4px 0 #0B2545 !important;
+  border-radius: 255px 15px 225px 15px/15px 225px 15px 255px !important;
   font-weight: 900 !important;
 }
 
-[data-theme="sketch"] .bnav-links a:hover {
-  background: var(--sun) !important;
-  color: #0F172A !important;
-  border-color: var(--ink) !important;
-  transform: translate(-3px, -3px) rotate(-1deg);
-}
-
-[data-theme="sketch"] .bnav-links a.on {
-  border: 2.8px solid var(--ink) !important;
-  background: var(--o) !important;
+[data-theme="sketch"] .btn:hover:not(:disabled) {
+  background: #FF2A5F !important;
   color: #FFFFFF !important;
-  box-shadow: 3px 3px 0 var(--ink) !important;
-  transform: rotate(-1.2deg);
 }
 
 /* 跑马灯 Ticker */
 [data-theme="sketch"] .ticker {
-  background: #0F172A !important;
-  color: #FEF08A !important;
-  border-bottom: 3px solid #0F172A !important;
-  font-size: 15px !important;
-  font-weight: 800;
+  background: #2563EB !important;
+  color: #FFFFFF !important;
+  border-bottom: 2.5px solid #0B2545 !important;
 }
 
-/* 页脚 */
-[data-theme="sketch"] .foot {
-  background: #F8FAFC !important;
-  border-top: 3px dashed var(--ink) !important;
-}
-
-/* ---------- 9. 手绘输入框与表单 (Sketch Inputs) ---------- */
-[data-theme="sketch"] input[type="text"],
-[data-theme="sketch"] input[type="password"],
-[data-theme="sketch"] input[type="search"],
-[data-theme="sketch"] input[type="email"],
-[data-theme="sketch"] input[type="number"],
-[data-theme="sketch"] textarea,
-[data-theme="sketch"] select {
-  border-radius: 255px 15px 225px 15px / 15px 225px 15px 255px !important;
-  border: 3px solid var(--ink) !important;
-  background: #FFFFFF !important;
-  font-size: 16px !important;
-  font-weight: 800 !important;
-}
-
-[data-theme="sketch"] input:focus,
-[data-theme="sketch"] textarea:focus,
-[data-theme="sketch"] select:focus {
-  box-shadow: 5px 5px 0 var(--ink) !important;
-  transform: translate(-2px, -3px) rotate(-0.5deg) !important;
-}
-
-/* ---------- 10. 文章详情与 Markdown 手绘效果 ---------- */
-[data-theme="sketch"] .markdown-content blockquote {
-  border-left: 6px solid var(--ink) !important;
-  border-radius: 255px 15px 225px 15px / 15px 225px 15px 255px !important;
-  background: var(--k2-bg) !important;
-  color: #713F12 !important;
-  border-top: 2px dashed var(--ink);
-  border-right: 2px dashed var(--ink);
-  border-bottom: 2px dashed var(--ink);
-  box-shadow: 4px 4px 0 var(--ink) !important;
-  font-size: 17.5px;
-  transform: rotate(-0.8deg);
-}
-
-[data-theme="sketch"] .markdown-content pre,
-[data-theme="sketch"] .markdown-content .code-block {
-  border-radius: 255px 15px 225px 15px / 15px 225px 15px 255px !important;
-  border: 3px solid var(--ink) !important;
-  box-shadow: 5px 5px 0 var(--ink) !important;
-}
-
-[data-theme="sketch"] .markdown-content img {
-  border-radius: 255px 15px 225px 15px / 15px 225px 15px 255px !important;
-  border: 3px solid var(--ink) !important;
-  box-shadow: 6px 6px 0 var(--ink) !important;
-  transform: rotate(0.8deg);
+[data-theme="sketch"] .ticker .run b {
+  color: #FFDF00 !important;
 }

@@ -1,16 +1,16 @@
 /* ============================================================
    多巴胺果冻气泡主题系统 (Dopamine Bubble Jelly Theme)
-   设计特点：
-   1. 梦幻马卡龙粉紫渐变底色 (#FFF0F5 -> #F5E8FF)
-   2. 40px 超大水晶果冻圆角 + 晶莹玻璃透光
-   3. 浮动起伏呼吸感动效 (Floating Bubble)
+   高对比度优化：
+   1. 渐变马卡龙粉紫底色 (#FFF0F5)
+   2. 全站文字统一使用高对比深浆果紫黑 (#380D3D)
+   3. 白底果冻卡片 (+毛玻璃 blur) 内部文字绝不发浅发灰
    ============================================================ */
 
 [data-theme="bubble"] {
   --paper: #FFF0F5;
   --paper-2: #FCE4EC;
-  --ink: #4A154B;
-  --ink-soft: #883997;
+  --ink: #380D3D;
+  --ink-soft: #6B21A8;
   --line: #F8BBD0;
 
   --o: #FF477E;       /* 蜜桃果冻红 */
@@ -20,11 +20,11 @@
   --vi: #9D4EDD;      /* 芋泥啵啵紫 */
   --accent: var(--o);
 
-  /* 马卡龙马卡龙卡片 */
-  --k1-bg: #FFE5EC; --k1-fg: #E63956;
-  --k2-bg: #FFF4D0; --k2-fg: #B38600;
-  --k3-bg: #E2F0CB; --k3-fg: #4F772D;
-  --k4-bg: #E8EAFF; --k4-fg: #5C67DE;
+  /* 白底高对比卡片 */
+  --k1-bg: #FFFFFF; --k1-fg: #E63956;
+  --k2-bg: #FFFFFF; --k2-fg: #B38600;
+  --k3-bg: #FFFFFF; --k3-fg: #4F772D;
+  --k4-bg: #FFFFFF; --k4-fg: #5C67DE;
 
   /* 柔美 Q 弹果冻阴影 */
   --shadow-hard: 0 8px 24px rgba(255, 71, 126, 0.2), 4px 4px 0 #FFB3C1;
@@ -41,8 +41,8 @@
   --accent-color: var(--berry);
   --bg-color: var(--paper);
   --surface-color: var(--paper-2);
-  --text-color: var(--ink);
-  --text-secondary: var(--ink-soft);
+  --text-color: #380D3D;
+  --text-secondary: #6B21A8;
   --border-color: var(--line);
   --card-bg: #FFFFFF;
   --card-hover: #FFFFFF;
@@ -52,7 +52,7 @@
 html[data-theme="bubble"] body,
 body[data-theme="bubble"] {
   background-color: #FFF0F5 !important;
-  color: #4A154B !important;
+  color: #380D3D !important;
   background-image:
     radial-gradient(circle at 20% 30%, rgba(255, 182, 193, 0.45) 0%, transparent 50%),
     radial-gradient(circle at 80% 70%, rgba(225, 190, 231, 0.45) 0%, transparent 50%),
@@ -61,21 +61,50 @@ body[data-theme="bubble"] {
   background-attachment: fixed !important;
 }
 
+/* 全站文字高对比度保护 */
+[data-theme="bubble"] h1,
+[data-theme="bubble"] h2,
+[data-theme="bubble"] h3,
+[data-theme="bubble"] h4,
+[data-theme="bubble"] p,
+[data-theme="bubble"] span,
+[data-theme="bubble"] li {
+  color: #380D3D;
+}
+
+[data-theme="bubble"] .idx,
+[data-theme="bubble"] .hero-stat .l,
+[data-theme="bubble"] .ec-date,
+[data-theme="bubble"] .ec .cat {
+  color: #6B21A8 !important;
+  opacity: 1 !important;
+  font-weight: 700 !important;
+}
+
 /* 40px 超大果冻气泡卡片 */
 [data-theme="bubble"] .ec,
 [data-theme="bubble"] .panel {
   border-radius: 36px !important;
   border: 3px solid #FFC2D1 !important;
-  background: rgba(255, 255, 255, 0.9) !important;
+  background: rgba(255, 255, 255, 0.95) !important;
   backdrop-filter: blur(12px) !important;
   box-shadow: var(--shadow-hard) !important;
-  transition: all 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275) !important;
+  color: #380D3D !important;
 }
 
 [data-theme="bubble"] .ec:hover {
   transform: translateY(-8px) scale(1.03) !important;
   box-shadow: var(--shadow-hard-lg) !important;
   border-color: #FF758F !important;
+}
+
+[data-theme="bubble"] .ec h3 {
+  color: #380D3D !important;
+}
+
+[data-theme="bubble"] .ec p,
+[data-theme="bubble"] .ec .desc {
+  color: #4A154B !important;
 }
 
 /* 果冻 Q 弹按钮 */
@@ -86,7 +115,7 @@ body[data-theme="bubble"] {
   background: linear-gradient(135deg, #FF758F, #FF477E) !important;
   color: #FFFFFF !important;
   box-shadow: 0 6px 18px rgba(255, 71, 126, 0.35) !important;
-  font-weight: 800;
+  font-weight: 900;
   font-size: 16.5px !important;
 }
 
@@ -97,7 +126,7 @@ body[data-theme="bubble"] {
 
 /* 导航栏 */
 [data-theme="bubble"] .bnav {
-  background: rgba(255, 240, 245, 0.85) !important;
+  background: rgba(255, 240, 245, 0.9) !important;
   backdrop-filter: blur(16px) !important;
   border-bottom: 3px solid #FFC2D1 !important;
 }
@@ -105,7 +134,8 @@ body[data-theme="bubble"] {
 [data-theme="bubble"] .bnav-links a {
   border-radius: 999px !important;
   border: 2px solid transparent;
-  color: #4A154B !important;
+  color: #380D3D !important;
+  font-weight: 800;
 }
 
 [data-theme="bubble"] .bnav-links a.on {
@@ -128,8 +158,9 @@ body[data-theme="bubble"] {
   border-radius: 999px !important;
   border: 2px solid #FFB3C1 !important;
   background: #FFFFFF !important;
-  color: #4A154B !important;
+  color: #380D3D !important;
   box-shadow: 0 4px 10px rgba(255, 71, 126, 0.15) !important;
+  font-weight: 800 !important;
 }
 
 /* 跑马灯 Ticker */
@@ -137,4 +168,8 @@ body[data-theme="bubble"] {
   background: #FF477E !important;
   color: #FFFFFF !important;
   border-bottom: 3px solid #FFB3C1 !important;
+}
+
+[data-theme="bubble"] .ticker .run b {
+  color: #FFD166 !important;
 }

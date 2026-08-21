@@ -1,35 +1,36 @@
 /* ============================================================
    黑客帝国终端主题系统 (Matrix Terminal CLI Theme)
-   设计特点：
-   1. 纯黑底色 (#000000) + 荧光终端绿 (#00FF41) 字符流
-   2. 等宽代码字体 + 命令行窗口卡片 [>_ terminal]
-   3. 终端绿光 Glow 发光 + 闪烁打字光标
+   高对比度优化：
+   1. 背景纯黑 (#000000)
+   2. 主标题与关键词：高亮荧光终端绿 (#00FF41) + 绿光发光
+   3. 正文与阅读文本：高亮纯白 (#FFFFFF) / 亮绿 (#39FF14)，绝不发暗
+   4. 副文本与日期标签：高亮浅薄荷绿 (#85FF9E)
    ============================================================ */
 
 [data-theme="matrix"] {
   --paper: #000000;
   --paper-2: #051408;
   --ink: #00FF41;
-  --ink-soft: #00A32A;
-  --line: #003B00;
+  --ink-soft: #85FF9E;
+  --line: #008F11;
 
   --o: #00FF41;       /* 终端绿 */
   --sun: #39FF14;     /* 亮荧光绿 */
   --berry: #00FF66;   /* 矩阵绿 */
   --mint: #00FF41;    /* 核心绿 */
-  --vi: #008F11;      /* 琥珀深绿 */
+  --vi: #85FF9E;      /* 浅薄荷绿 */
   --accent: var(--o);
 
-  /* 终端绿黑卡片 */
-  --k1-bg: #001A06; --k1-fg: #00FF41;
-  --k2-bg: #002409; --k2-fg: #39FF14;
-  --k3-bg: #001A06; --k3-fg: #00FF66;
-  --k4-bg: #002409; --k4-fg: #00FF41;
+  /* 终端绿黑高对比卡片 */
+  --k1-bg: #051408; --k1-fg: #00FF41;
+  --k2-bg: #08200C; --k2-fg: #39FF14;
+  --k3-bg: #051408; --k3-fg: #00FF66;
+  --k4-bg: #08200C; --k4-fg: #00FF41;
 
   /* 绿光矩阵发光 */
-  --shadow-hard: 0 0 10px rgba(0, 255, 65, 0.4), 3px 3px 0 #003B00;
-  --shadow-hard-lg: 0 0 20px rgba(0, 255, 65, 0.6), 5px 5px 0 #00FF41;
-  --shadow-hard-sm: 0 0 6px rgba(0, 255, 65, 0.3), 2px 2px 0 #003B00;
+  --shadow-hard: 0 0 10px rgba(0, 255, 65, 0.5), 3px 3px 0 #005A0E;
+  --shadow-hard-lg: 0 0 22px rgba(0, 255, 65, 0.7), 5px 5px 0 #00FF41;
+  --shadow-hard-sm: 0 0 6px rgba(0, 255, 65, 0.4), 2px 2px 0 #005A0E;
 
   --disp: 'Courier New', 'Space Grotesk', monospace;
   --body: 'Courier New', 'PingFang SC', monospace;
@@ -41,46 +42,69 @@
   --accent-color: var(--o);
   --bg-color: var(--paper);
   --surface-color: var(--paper-2);
-  --text-color: #00FF41;
-  --text-secondary: #00A32A;
+  --text-color: #FFFFFF;
+  --text-secondary: #85FF9E;
   --border-color: #00FF41;
   --card-bg: var(--paper-2);
-  --card-hover: #08200C;
+  --card-hover: #0C2B10;
 }
 
-/* 纯黑背景 + 代码点阵字符底纹 */
+/* 纯黑背景 + 代码网格 */
 html[data-theme="matrix"] body,
 body[data-theme="matrix"] {
   background-color: #000000 !important;
-  color: #00FF41 !important;
+  color: #FFFFFF !important;
   background-image:
-    linear-gradient(rgba(0, 255, 65, 0.06) 1px, transparent 1px),
-    linear-gradient(90deg, rgba(0, 255, 65, 0.06) 1px, transparent 1px) !important;
-  background-size: 20px 20px !important;
+    linear-gradient(rgba(0, 255, 65, 0.08) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(0, 255, 65, 0.08) 1px, transparent 1px) !important;
+  background-size: 24px 24px !important;
   background-attachment: fixed !important;
 }
 
-/* 强制全站等宽黑客字体 */
+/* 全站等宽科技代码字体与高对比度文字 */
 [data-theme="matrix"] * {
   font-family: 'Courier New', monospace !important;
-  text-shadow: 0 0 4px rgba(0, 255, 65, 0.5);
+}
+
+[data-theme="matrix"] h1,
+[data-theme="matrix"] h2,
+[data-theme="matrix"] h3,
+[data-theme="matrix"] h4 {
+  color: #00FF41 !important;
+  text-shadow: 0 0 8px rgba(0, 255, 65, 0.7) !important;
+}
+
+[data-theme="matrix"] p,
+[data-theme="matrix"] li,
+[data-theme="matrix"] span {
+  color: #F0FFF4;
+}
+
+[data-theme="matrix"] .idx,
+[data-theme="matrix"] .hero-stat .l,
+[data-theme="matrix"] .ec-date,
+[data-theme="matrix"] .ec .cat {
+  color: #85FF9E !important;
+  opacity: 1 !important;
+  font-weight: 700 !important;
 }
 
 /* 导航栏终端化 */
 [data-theme="matrix"] .bnav {
   background: rgba(0, 0, 0, 0.95) !important;
   border-bottom: 2px solid #00FF41 !important;
-  box-shadow: 0 0 15px rgba(0, 255, 65, 0.3) !important;
+  box-shadow: 0 0 15px rgba(0, 255, 65, 0.35) !important;
 }
 
 [data-theme="matrix"] .bnav-logo {
   color: #00FF41 !important;
   letter-spacing: 2px;
+  text-shadow: 0 0 10px rgba(0, 255, 65, 0.8);
 }
 
 [data-theme="matrix"] .bnav-logo::before {
   content: 'root@cat:~# ';
-  color: #00A32A;
+  color: #85FF9E;
   font-size: 14px;
 }
 
@@ -95,23 +119,32 @@ body[data-theme="matrix"] {
 [data-theme="matrix"] .bnav-links a.on {
   background: #00FF41 !important;
   color: #000000 !important;
-  box-shadow: 0 0 12px #00FF41 !important;
-  text-shadow: none !important;
+  box-shadow: 0 0 14px #00FF41 !important;
+  font-weight: 900 !important;
 }
 
 /* 终端窗口卡片 */
 [data-theme="matrix"] .ec,
 [data-theme="matrix"] .panel {
   border-radius: 2px !important;
-  border: 1.8px solid #00FF41 !important;
+  border: 2px solid #00FF41 !important;
   background: #051408 !important;
-  color: #00FF41 !important;
-  box-shadow: 0 0 12px rgba(0, 255, 65, 0.3), 4px 4px 0 #003B00 !important;
+  box-shadow: 0 0 14px rgba(0, 255, 65, 0.35), 4px 4px 0 #005A0E !important;
 }
 
 [data-theme="matrix"] .ec:hover {
   transform: translate(-3px, -3px) !important;
-  box-shadow: 0 0 20px rgba(0, 255, 65, 0.7), 6px 6px 0 #00FF41 !important;
+  box-shadow: 0 0 24px rgba(0, 255, 65, 0.8), 6px 6px 0 #00FF41 !important;
+  background: #09240F !important;
+}
+
+[data-theme="matrix"] .ec h3 {
+  color: #00FF41 !important;
+}
+
+[data-theme="matrix"] .ec p,
+[data-theme="matrix"] .ec .desc {
+  color: #FFFFFF !important;
 }
 
 /* 终端按钮 */
@@ -119,17 +152,15 @@ body[data-theme="matrix"] {
 [data-theme="matrix"] .btn-primary {
   border-radius: 2px !important;
   border: 2px solid #00FF41 !important;
-  background: #000000 !important;
-  color: #00FF41 !important;
-  box-shadow: 0 0 10px rgba(0, 255, 65, 0.5) !important;
-  font-weight: 900;
+  background: #00FF41 !important;
+  color: #000000 !important;
+  box-shadow: 0 0 12px rgba(0, 255, 65, 0.6) !important;
+  font-weight: 900 !important;
 }
 
 [data-theme="matrix"] .btn:hover:not(:disabled) {
-  background: #00FF41 !important;
-  color: #000000 !important;
-  box-shadow: 0 0 20px #00FF41 !important;
-  text-shadow: none !important;
+  background: #39FF14 !important;
+  box-shadow: 0 0 22px #39FF14 !important;
 }
 
 /* 跑马灯 Ticker */
@@ -139,10 +170,25 @@ body[data-theme="matrix"] {
   border-bottom: 2px solid #00FF41 !important;
 }
 
+[data-theme="matrix"] .ticker .run b {
+  color: #39FF14 !important;
+}
+
 /* 贴纸 */
 [data-theme="matrix"] .sticker {
   border-radius: 2px !important;
-  border: 1px solid #00FF41 !important;
-  background: #001A06 !important;
+  border: 1.5px solid #00FF41 !important;
+  background: #08200C !important;
   color: #00FF41 !important;
+  font-weight: 800 !important;
+}
+
+/* 输入框 */
+[data-theme="matrix"] input,
+[data-theme="matrix"] textarea,
+[data-theme="matrix"] select {
+  border: 2px solid #00FF41 !important;
+  background: #000000 !important;
+  color: #00FF41 !important;
+  box-shadow: inset 0 0 8px rgba(0, 255, 65, 0.3) !important;
 }

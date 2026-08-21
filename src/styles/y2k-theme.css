@@ -1,17 +1,16 @@
 /* ============================================================
    酸性千禧主题系统 (Neo-Brutalism Acid Y2K Theme)
-   设计特点：
-   1. 高饱和酸性电光黄底色 (#E6FF00) + 纯黑高反差碰撞
-   2. 32px 巨型果冻胶囊圆角 + 潮流酸性新野兽派排版
-   3. 浮夸巨型阴影与酸性撞色
+   高对比度优化：
+   1. 电光黄底色 (#E6FF00) 配纯黑 (#000000) 极致对比度
+   2. 黑色背景配高光白 (#FFFFFF) 或电光黄 (#E6FF00)
+   3. 32px 巨型果冻胶囊圆角，所有文本粗壮醒目
    ============================================================ */
 
 [data-theme="y2k"] {
-  /* 高饱和酸性电光黄 + 浓黑墨水 */
   --paper: #E6FF00;
   --paper-2: #D8F000;
   --ink: #000000;
-  --ink-soft: #222222;
+  --ink-soft: #111111;
   --line: #000000;
 
   --o: #000000;       /* 粗壮纯黑 */
@@ -22,10 +21,10 @@
   --accent: var(--o);
 
   /* 高对比酸性卡片 */
-  --k1-bg: #FF0055; --k1-fg: #FFFFFF;  /* 荧光红底白字 */
-  --k2-bg: #FFFFFF; --k2-fg: #000000;  /* 纯白底黑字 */
-  --k3-bg: #00F0FF; --k3-fg: #000000;  /* 电光蓝底黑字 */
-  --k4-bg: #7C3AED; --k4-fg: #FFFFFF;  /* 极光紫底白字 */
+  --k1-bg: #FFFFFF; --k1-fg: #000000;
+  --k2-bg: #FFFFFF; --k2-fg: #000000;
+  --k3-bg: #FFFFFF; --k3-fg: #000000;
+  --k4-bg: #FFFFFF; --k4-fg: #000000;
 
   /* 强烈的纯黑硬阴影 */
   --shadow-hard: 5px 5px 0 #000000;
@@ -42,8 +41,8 @@
   --accent-color: #FF0055;
   --bg-color: var(--paper);
   --surface-color: var(--paper-2);
-  --text-color: var(--ink);
-  --text-secondary: var(--ink-soft);
+  --text-color: #000000;
+  --text-secondary: #111111;
   --border-color: #000000;
   --card-bg: #FFFFFF;
   --card-hover: #FFFFFF;
@@ -59,6 +58,24 @@ body[data-theme="y2k"] {
     linear-gradient(90deg, rgba(0, 0, 0, 0.08) 1.5px, transparent 1.5px) !important;
   background-size: 32px 32px !important;
   background-attachment: fixed !important;
+}
+
+/* 全站文字高对比度纯黑 */
+[data-theme="y2k"] h1,
+[data-theme="y2k"] h2,
+[data-theme="y2k"] h3,
+[data-theme="y2k"] h4,
+[data-theme="y2k"] p,
+[data-theme="y2k"] span,
+[data-theme="y2k"] li,
+[data-theme="y2k"] .idx,
+[data-theme="y2k"] .hero-stat .l,
+[data-theme="y2k"] .hero-stat .n,
+[data-theme="y2k"] .ec-date,
+[data-theme="y2k"] .ec .cat {
+  color: #000000 !important;
+  opacity: 1 !important;
+  font-weight: 800 !important;
 }
 
 /* 导航栏 */
@@ -92,11 +109,12 @@ body[data-theme="y2k"] {
   box-shadow: 5px 5px 0 #000000 !important;
 }
 
-/* 32px 超大果冻胶囊圆角卡片与面板 */
+/* 32px 超大果冻胶囊圆角卡片与面板（白底纯黑字，极度清晰） */
 [data-theme="y2k"] .ec,
 [data-theme="y2k"] .panel {
   border-radius: 30px !important;
   border: 3.5px solid #000000 !important;
+  background: #FFFFFF !important;
   box-shadow: 6px 6px 0 #000000 !important;
   color: #000000 !important;
 }
@@ -106,12 +124,14 @@ body[data-theme="y2k"] {
   box-shadow: 10px 10px 0 #000000 !important;
 }
 
-[data-theme="y2k"] .ec.k1 { background: #FF0055 !important; color: #FFFFFF !important; }
-[data-theme="y2k"] .ec.k1 h3, [data-theme="y2k"] .ec.k1 p { color: #FFFFFF !important; }
-[data-theme="y2k"] .ec.k2 { background: #FFFFFF !important; color: #000000 !important; }
-[data-theme="y2k"] .ec.k3 { background: #00F0FF !important; color: #000000 !important; }
-[data-theme="y2k"] .ec.k4 { background: #7C3AED !important; color: #FFFFFF !important; }
-[data-theme="y2k"] .ec.k4 h3, [data-theme="y2k"] .ec.k4 p { color: #FFFFFF !important; }
+[data-theme="y2k"] .ec h3 {
+  color: #000000 !important;
+}
+
+[data-theme="y2k"] .ec p,
+[data-theme="y2k"] .ec .desc {
+  color: #111111 !important;
+}
 
 /* 巨型醒目按钮 */
 [data-theme="y2k"] .btn,
@@ -157,6 +177,10 @@ body[data-theme="y2k"] {
   color: #E6FF00 !important;
   border-bottom: 3.5px solid #000000 !important;
   font-weight: 900 !important;
+}
+
+[data-theme="y2k"] .ticker .run b {
+  color: #FF0055 !important;
 }
 
 /* 页脚 */

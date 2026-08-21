@@ -1,16 +1,17 @@
 /* ============================================================
    赛博霓虹主题系统 (Cyberpunk Neon HUD Theme)
-   设计特点：
-   1. 纯黑曜石深色暗夜底色 (#080C14) + 极光扫描线
-   2. 45° 斜切科技角 (Clip-path HUD) + 霓虹发光 Glow 阴影
-   3. 荧光粉 (#FF007F) + 赛博电光青 (#00F0FF) 科技等宽排版
+   高对比度优化：
+   1. 深黑黑曜石暗夜底色 (#080C14)
+   2. 主标题：高亮电光青 (#00F0FF) / 荧光粉 (#FF007F) + 霓虹发光
+   3. 正文与段落：纯净高亮白 (#FFFFFF)
+   4. 副文本与日期标签：明亮淡蓝 (#93C5FD)
    ============================================================ */
 
 [data-theme="cyberpunk"] {
   --paper: #080C14;
-  --paper-2: #0F1726;
+  --paper-2: #0F172A;
   --ink: #00F0FF;
-  --ink-soft: #94A3B8;
+  --ink-soft: #93C5FD;
   --line: #1E293B;
 
   --o: #FF007F;       /* 霓虹荧光粉 */
@@ -21,10 +22,10 @@
   --accent: var(--o);
 
   /* 四色赛博卡片 */
-  --k1-bg: #1A0B1A; --k1-fg: #FF007F;
-  --k2-bg: #1A170B; --k2-fg: #FFE600;
-  --k3-bg: #0B171A; --k3-fg: #00F0FF;
-  --k4-bg: #0B1A10; --k4-fg: #00FF66;
+  --k1-bg: #140B18; --k1-fg: #FF007F;
+  --k2-bg: #18150B; --k2-fg: #FFE600;
+  --k3-bg: #0B161A; --k3-fg: #00F0FF;
+  --k4-bg: #0B1A12; --k4-fg: #00FF66;
 
   /* 霓虹发光与硬阴影 */
   --shadow-hard: 0 0 14px rgba(0, 240, 255, 0.45), 4px 4px 0 #FF007F;
@@ -41,8 +42,8 @@
   --accent-color: var(--o);
   --bg-color: var(--paper);
   --surface-color: var(--paper-2);
-  --text-color: #F8FAFC;
-  --text-secondary: #94A3B8;
+  --text-color: #FFFFFF;
+  --text-secondary: #93C5FD;
   --border-color: #00F0FF;
   --card-bg: var(--paper-2);
   --card-hover: #162032;
@@ -52,12 +53,36 @@
 html[data-theme="cyberpunk"] body,
 body[data-theme="cyberpunk"] {
   background-color: #080C14 !important;
-  color: #F8FAFC !important;
+  color: #FFFFFF !important;
   background-image:
     linear-gradient(rgba(0, 240, 255, 0.08) 1px, transparent 1px),
     linear-gradient(90deg, rgba(0, 240, 255, 0.08) 1px, transparent 1px) !important;
   background-size: 32px 32px !important;
   background-attachment: fixed !important;
+}
+
+/* 文字高对比度保护 */
+[data-theme="cyberpunk"] h1,
+[data-theme="cyberpunk"] h2,
+[data-theme="cyberpunk"] h3,
+[data-theme="cyberpunk"] h4 {
+  color: #00F0FF !important;
+  text-shadow: 0 0 10px rgba(0, 240, 255, 0.7) !important;
+}
+
+[data-theme="cyberpunk"] p,
+[data-theme="cyberpunk"] span,
+[data-theme="cyberpunk"] li {
+  color: #FFFFFF;
+}
+
+[data-theme="cyberpunk"] .idx,
+[data-theme="cyberpunk"] .hero-stat .l,
+[data-theme="cyberpunk"] .ec-date,
+[data-theme="cyberpunk"] .ec .cat {
+  color: #93C5FD !important;
+  opacity: 1 !important;
+  font-weight: 700 !important;
 }
 
 /* 导航栏 */
@@ -74,9 +99,9 @@ body[data-theme="cyberpunk"] {
 
 [data-theme="cyberpunk"] .bnav-links a {
   border-radius: 4px !important;
-  border: 1px solid rgba(0, 240, 255, 0.4) !important;
-  color: #E2E8F0 !important;
-  background: rgba(0, 240, 255, 0.05);
+  border: 1px solid rgba(0, 240, 255, 0.5) !important;
+  color: #FFFFFF !important;
+  background: rgba(0, 240, 255, 0.08);
 }
 
 [data-theme="cyberpunk"] .bnav-links a:hover,
@@ -101,21 +126,25 @@ body[data-theme="cyberpunk"] {
 [data-theme="cyberpunk"] .panel {
   border-radius: 4px !important;
   border: 2px solid #00F0FF !important;
-  background: #0F1726 !important;
+  background: #0F172A !important;
   box-shadow: 0 0 14px rgba(0, 240, 255, 0.3), 4px 4px 0 #FF007F !important;
-  color: #F8FAFC !important;
+  color: #FFFFFF !important;
 }
 
 [data-theme="cyberpunk"] .ec:hover {
   transform: translate(-3px, -3px) !important;
   box-shadow: 0 0 25px rgba(255, 0, 127, 0.7), 6px 6px 0 #00F0FF !important;
   border-color: #FF007F !important;
+  background: #141F36 !important;
 }
 
-[data-theme="cyberpunk"] .ec h3,
-[data-theme="cyberpunk"] .section-h h2 {
+[data-theme="cyberpunk"] .ec h3 {
   color: #00F0FF !important;
-  text-shadow: 0 0 10px rgba(0, 240, 255, 0.6);
+}
+
+[data-theme="cyberpunk"] .ec p,
+[data-theme="cyberpunk"] .ec .desc {
+  color: #FFFFFF !important;
 }
 
 /* 按钮 */
@@ -139,8 +168,9 @@ body[data-theme="cyberpunk"] {
 [data-theme="cyberpunk"] .sticker {
   border-radius: 4px !important;
   border: 1.5px solid #00F0FF !important;
-  background: #0B171A !important;
+  background: #0F172A !important;
   color: #00F0FF !important;
+  font-weight: 800 !important;
 }
 
 /* 跑马灯 Ticker */
@@ -151,9 +181,13 @@ body[data-theme="cyberpunk"] {
   box-shadow: 0 0 10px rgba(0, 240, 255, 0.5);
 }
 
+[data-theme="cyberpunk"] .ticker .run b {
+  color: #FFE600 !important;
+}
+
 /* 页脚 */
 [data-theme="cyberpunk"] .foot {
   background: #060910 !important;
   border-top: 2px solid #00F0FF !important;
-  color: #94A3B8 !important;
+  color: #93C5FD !important;
 }
