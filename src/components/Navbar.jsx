@@ -1,6 +1,7 @@
 import { useState, useEffect, memo } from 'react'
 import { Link, useLocation } from 'react-router-dom'
 import { blogProfile } from '../data/blogProfile'
+import ThemeToggle from './ThemeToggle'
 import './Navbar.css'
 
 const NAV_LINKS = [
@@ -46,42 +47,53 @@ function Navbar() {
           橘猫小窝
         </Link>
 
-        <nav className="bnav-links">
-          {NAV_LINKS.map(link => (
-            <Link
-              key={link.path}
-              to={link.path}
-              className={isActiveLink(location.pathname, link.path) ? 'on' : ''}
-            >
-              {link.label}
-            </Link>
-          ))}
-        </nav>
+        <div className="bnav-actions">
+          <nav className="bnav-links">
+            {NAV_LINKS.map(link => (
+              <Link
+                key={link.path}
+                to={link.path}
+                className={isActiveLink(location.pathname, link.path) ? 'on' : ''}
+              >
+                {link.label}
+              </Link>
+            ))}
+          </nav>
 
-        <button
-          className="bnav-menu-btn"
-          onClick={() => setIsMenuOpen(o => !o)}
-          aria-label="切换菜单"
-        >
-          {isMenuOpen ? '✕' : '☰'}
-        </button>
+          <div className="bnav-theme-wrap hide-mobile">
+            <ThemeToggle />
+          </div>
+
+          <button
+            className="bnav-menu-btn"
+            onClick={() => setIsMenuOpen(o => !o)}
+            aria-label="切换菜单"
+          >
+            {isMenuOpen ? '✕' : '☰'}
+          </button>
+        </div>
       </div>
 
       {isMenuOpen && (
         <div className="bnav-mobile">
-          {NAV_LINKS.map(link => {
-            const active = isActiveLink(location.pathname, link.path)
-            return (
-              <Link
-                key={link.path}
-                to={link.path}
-                className="sticker"
-                style={active ? { background: 'var(--accent)', color: '#fff', borderColor: 'var(--accent)' } : undefined}
-              >
-                {link.label}
-              </Link>
-            )
-          })}
+          <div className="bnav-mobile-theme">
+            <ThemeToggle />
+          </div>
+          <div className="bnav-mobile-links">
+            {NAV_LINKS.map(link => {
+              const active = isActiveLink(location.pathname, link.path)
+              return (
+                <Link
+                  key={link.path}
+                  to={link.path}
+                  className="sticker"
+                  style={active ? { background: 'var(--accent)', color: '#fff', borderColor: 'var(--accent)' } : undefined}
+                >
+                  {link.label}
+                </Link>
+              )
+            })}
+          </div>
         </div>
       )}
     </div>

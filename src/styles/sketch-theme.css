@@ -1,0 +1,294 @@
+/* ============================================================
+   手绘草图主题系统 (Hand-drawn / Sketch Theme)
+   设计灵感：手账本、漫画草稿、方格草稿纸、彩色铅笔与和纸胶带
+   全部作用于 [data-theme="sketch"] 作用域，确保对默认主题 0 侵入
+   ============================================================ */
+
+/* ---------- 1. 主题变量覆盖 (Sketch Variables) ---------- */
+[data-theme="sketch"] {
+  /* 纸张与墨水 —— 手账素描纸 + 炭黑石墨笔触 */
+  --paper: #FAF7F0;
+  --paper-2: #F1ECE0;
+  --ink: #1B1814;
+  --ink-soft: #5C5346;
+  --line: #DFD5C2;
+
+  /* 手绘彩色马克笔/彩铅色彩 */
+  --o: #FF5A18;       /* 鲜活柿子橙手绘马克笔 */
+  --berry: #E5385D;   /* 玫粉彩铅 */
+  --vi: #7C512C;      /* 木色水彩 */
+  --mint: #0EAD80;    /* 松绿彩铅 */
+  --sun: #FFC400;     /* 荧光马克笔亮黄 */
+  --accent: var(--o);
+
+  /* 便签卡片色系 —— 浅彩便签纸 */
+  --k1-bg: #FFF0E2; --k1-fg: #E64E0C;
+  --k2-bg: #FFF8DE; --k2-fg: #94690C;
+  --k3-bg: #F4EFE4; --k3-fg: #6B5238;
+  --k4-bg: #E4FAF1; --k4-fg: #0B8F69;
+
+  /* 手绘错位硬阴影 */
+  --shadow-hard: 3.5px 3.5px 0 var(--ink);
+  --shadow-hard-lg: 6px 6px 0 var(--ink);
+  --shadow-hard-sm: 2px 2px 0 var(--ink);
+
+  /* 手绘字体栈（手写体、圆润手绘中英文） */
+  --disp: 'Patrick Hand', 'Caveat', 'Kalam', 'Chalkboard SE', 'Comic Sans MS', 'Architects Daughter', 'PingFang SC', sans-serif;
+  --serif: 'Chalkboard SE', 'STKaiti', 'KaiTi', '华文行楷', 'Noto Serif SC', serif;
+  --body: 'Patrick Hand', 'Chalkboard SE', 'Comic Sans MS', 'PingFang SC', 'Noto Sans SC', sans-serif;
+
+  /* Legacy aliases 映射 */
+  --primary-color: var(--o);
+  --primary-hover: #E04808;
+  --secondary-color: var(--mint);
+  --accent-color: var(--o);
+  --bg-color: var(--paper);
+  --surface-color: var(--paper-2);
+  --text-color: var(--ink);
+  --text-secondary: var(--ink-soft);
+  --border-color: var(--ink);
+  --card-bg: var(--paper);
+  --card-hover: var(--paper-2);
+}
+
+/* 深色模式下的手绘黑板/蓝图风 (Chalkboard & Blueprint Sketch) */
+@media (prefers-color-scheme: dark) {
+  [data-theme="sketch"] {
+    --paper: #121820;
+    --paper-2: #1A2330;
+    --ink: #F7F3E9;
+    --ink-soft: #B0BECE;
+    --line: #27374D;
+
+    --o: #FF7336;
+    --berry: #FF5376;
+    --vi: #CDB380;
+    --mint: #2CD69D;
+    --sun: #FFD043;
+
+    --k1-bg: #2C1E18;
+    --k2-bg: #2B2615;
+    --k3-bg: #222934;
+    --k4-bg: #102A24;
+
+    --shadow-hard: 3.5px 3.5px 0 #070B0E;
+    --shadow-hard-lg: 6px 6px 0 #070B0E;
+    --shadow-hard-sm: 2px 2px 0 #070B0E;
+  }
+}
+
+/* ---------- 2. 5mm 手绘方格草稿纸底纹 (Grid Canvas) ---------- */
+html[data-theme="sketch"] body,
+body[data-theme="sketch"] {
+  background-color: var(--paper) !important;
+  color: var(--ink);
+  background-image:
+    linear-gradient(to right, color-mix(in srgb, var(--ink) 6.5%, transparent) 1.2px, transparent 1.2px),
+    linear-gradient(to bottom, color-mix(in srgb, var(--ink) 6.5%, transparent) 1.2px, transparent 1.2px) !important;
+  background-size: 22px 22px !important;
+  background-attachment: fixed !important;
+}
+
+/* ---------- 3. 手绘动效与微抖动 (Sketch Animations) ---------- */
+@keyframes sketchJiggle {
+  0% { transform: translate(-3px, -3px) rotate(0deg); }
+  25% { transform: translate(-3px, -3px) rotate(-1.2deg); }
+  75% { transform: translate(-3px, -3px) rotate(1.2deg); }
+  100% { transform: translate(-3px, -3px) rotate(0deg); }
+}
+
+@keyframes sketchStamp {
+  0% { transform: scale(1); }
+  50% { transform: scale(0.96) rotate(-0.5deg); }
+  100% { transform: scale(0.98); }
+}
+
+/* ---------- 4. 手绘不规则边框与组件强化 ---------- */
+
+/* 手绘按钮 (Sketch Buttons) */
+[data-theme="sketch"] .btn,
+[data-theme="sketch"] .btn-primary,
+[data-theme="sketch"] .btn-secondary,
+[data-theme="sketch"] .btn-ghost {
+  border-radius: 255px 15px 225px 15px / 15px 225px 15px 255px !important;
+  border: 2.5px solid var(--ink) !important;
+  letter-spacing: 0.02em;
+  font-weight: 800;
+}
+
+[data-theme="sketch"] .btn:hover:not(:disabled) {
+  animation: sketchJiggle 0.35s ease-in-out infinite alternate;
+  box-shadow: var(--shadow-hard-lg) !important;
+}
+
+[data-theme="sketch"] .btn:active:not(:disabled) {
+  animation: sketchStamp 0.15s ease-out forwards;
+  box-shadow: 1.5px 1.5px 0 var(--ink) !important;
+}
+
+/* 手绘便签卡片 (Sketch Editorial Cards) */
+[data-theme="sketch"] .ec {
+  border-radius: 255px 25px 225px 25px / 25px 225px 25px 255px !important;
+  border: 2.5px solid var(--ink) !important;
+  box-shadow: 4px 4px 0 var(--ink) !important;
+  transition: transform 0.22s cubic-bezier(0.175, 0.885, 0.32, 1.275), box-shadow 0.22s !important;
+}
+
+[data-theme="sketch"] .ec:hover {
+  transform: translate(-4px, -4px) rotate(-0.8deg) !important;
+  box-shadow: 7px 7px 0 var(--ink) !important;
+}
+
+/* 手绘面板 (Sketch Panels) 与 和纸胶带装饰 */
+[data-theme="sketch"] .panel {
+  border-radius: 245px 18px 230px 16px / 18px 230px 16px 245px !important;
+  border: 2.5px solid var(--ink) !important;
+  box-shadow: 3.5px 3.5px 0 var(--ink) !important;
+  position: relative;
+}
+
+/* 卡片/面板顶部和纸胶带装饰 (Washi Tape Accent) */
+[data-theme="sketch"] .panel::before,
+[data-theme="sketch"] .home-main .panel::before {
+  content: '';
+  position: absolute;
+  top: -9px;
+  left: 50%;
+  transform: translateX(-50%) rotate(-1deg);
+  width: 72px;
+  height: 16px;
+  background: color-mix(in srgb, var(--sun) 75%, transparent);
+  border: 1px dashed color-mix(in srgb, var(--ink) 35%, transparent);
+  border-radius: 2px;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.08);
+  pointer-events: none;
+  z-index: 2;
+}
+
+/* 深色面板胶带微调 */
+[data-theme="sketch"] .panel.dark::before {
+  background: color-mix(in srgb, var(--mint) 65%, transparent);
+}
+
+/* 手绘贴纸与胶囊 (Sketch Stickers & Chips) */
+[data-theme="sketch"] .sticker,
+[data-theme="sketch"] .cat-chip {
+  border-radius: 255px 15px 225px 15px / 15px 225px 15px 255px !important;
+  border: 2px solid var(--ink) !important;
+}
+
+[data-theme="sketch"] .sticker:hover {
+  transform: rotate(4deg) scale(1.1) !important;
+  box-shadow: 3px 3px 0 var(--ink) !important;
+}
+
+/* 手绘表单输入框 (Sketch Forms) */
+[data-theme="sketch"] input[type="text"],
+[data-theme="sketch"] input[type="password"],
+[data-theme="sketch"] input[type="search"],
+[data-theme="sketch"] input[type="email"],
+[data-theme="sketch"] input[type="number"],
+[data-theme="sketch"] textarea,
+[data-theme="sketch"] select {
+  border-radius: 255px 15px 225px 15px / 15px 225px 15px 255px !important;
+  border: 2.5px solid var(--ink) !important;
+  background: var(--paper) !important;
+}
+
+[data-theme="sketch"] input:focus,
+[data-theme="sketch"] textarea:focus,
+[data-theme="sketch"] select:focus {
+  box-shadow: 3px 3px 0 var(--ink) !important;
+  transform: translate(-2px, -2px) rotate(-0.3deg) !important;
+}
+
+/* ---------- 5. 导航栏与页脚的手绘风微调 ---------- */
+[data-theme="sketch"] .bnav {
+  border-bottom: 2.5px solid transparent;
+}
+
+[data-theme="sketch"] .bnav.scrolled {
+  border-bottom: 2.5px solid var(--ink) !important;
+  box-shadow: 0 4px 0 var(--ink) !important;
+}
+
+[data-theme="sketch"] .bnav-links a {
+  border-radius: 255px 15px 225px 15px / 15px 225px 15px 255px !important;
+}
+
+[data-theme="sketch"] .bnav-links a.on {
+  border: 2px solid var(--ink) !important;
+}
+
+[data-theme="sketch"] .foot {
+  border-top: 2.5px solid var(--ink) !important;
+  background-image:
+    linear-gradient(to right, color-mix(in srgb, var(--ink) 5%, transparent) 1px, transparent 1px),
+    linear-gradient(to bottom, color-mix(in srgb, var(--ink) 5%, transparent) 1px, transparent 1px);
+  background-size: 20px 20px;
+}
+
+/* ---------- 6. 标题马克笔涂鸦划线 (Highlighter Scribble) ---------- */
+[data-theme="sketch"] .section-h h2 {
+  background-image: linear-gradient(
+    to top,
+    transparent 6%,
+    color-mix(in srgb, var(--sun) 75%, transparent) 6% 32%,
+    transparent 32%
+  ) !important;
+  position: relative;
+}
+
+[data-theme="sketch"] .section-h h2::after {
+  content: ' ~';
+  color: var(--o);
+  font-family: var(--disp);
+  font-weight: 800;
+  letter-spacing: -2px;
+}
+
+/* 跑马灯 Ticker 手绘风格强化 */
+[data-theme="sketch"] .ticker {
+  border-bottom: 2.5px solid var(--ink) !important;
+}
+
+/* 头像与图标手绘圆角 */
+[data-theme="sketch"] .bnav-mk img,
+[data-theme="sketch"] .foot-brand .mk img {
+  border-radius: 255px 15px 225px 15px / 15px 225px 15px 255px !important;
+  border: 2px solid var(--ink) !important;
+}
+
+/* 滚动条素描质感 */
+[data-theme="sketch"] ::-webkit-scrollbar-thumb {
+  border-radius: 255px 15px 225px 15px / 15px 225px 15px 255px;
+}
+
+/* ---------- 7. Markdown 正文与代码块手绘增强 ---------- */
+[data-theme="sketch"] .markdown-content blockquote {
+  border-left: 4px solid var(--ink) !important;
+  border-radius: 12px 255px 15px 12px / 255px 15px 12px 255px !important;
+  background: var(--k2-bg) !important;
+  border-top: 1px dashed var(--line);
+  border-right: 1px dashed var(--line);
+  border-bottom: 1px dashed var(--line);
+}
+
+[data-theme="sketch"] .markdown-content pre,
+[data-theme="sketch"] .markdown-content .code-block {
+  border-radius: 255px 15px 225px 15px / 15px 225px 15px 255px !important;
+  border: 2px solid var(--ink) !important;
+  box-shadow: 3px 3px 0 var(--ink) !important;
+}
+
+[data-theme="sketch"] .markdown-content img {
+  border-radius: 255px 15px 225px 15px / 15px 225px 15px 255px !important;
+  border: 2px solid var(--ink) !important;
+  box-shadow: 3px 3px 0 var(--ink) !important;
+}
+
+/* 分页按钮手绘圆角与边框 */
+[data-theme="sketch"] .pagination-btn,
+[data-theme="sketch"] .flex button:not(.theme-toggle-btn):not(.btn) {
+  border-radius: 255px 15px 225px 15px / 15px 225px 15px 255px;
+}

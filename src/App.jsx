@@ -1,5 +1,6 @@
 import { Suspense, lazy } from 'react'
 import { BrowserRouter as Router, Routes, Route } from 'react-router-dom'
+import { ThemeProvider } from './context/ThemeContext'
 import Layout from './components/Layout'
 
 const Home = lazy(() => import('./pages/Home'))
@@ -33,30 +34,32 @@ function PageLoader() {
 
 function App() {
   return (
-    <Router future={{ v7_startTransition: true, v7_relativeSplatPath: true }}>
-      <Layout>
-        <Suspense fallback={<PageLoader />}>
-          <Routes>
-            <Route path="/" element={<Home />} />
-            <Route path="/article/:id" element={<ArticleDetail />} />
-            <Route path="/archive" element={<Archive />} />
-            <Route path="/tags" element={<Tags />} />
-            <Route path="/about" element={<About />} />
+    <ThemeProvider>
+      <Router future={{ v7_startTransition: true, v7_relativeSplatPath: true }}>
+        <Layout>
+          <Suspense fallback={<PageLoader />}>
+            <Routes>
+              <Route path="/" element={<Home />} />
+              <Route path="/article/:id" element={<ArticleDetail />} />
+              <Route path="/archive" element={<Archive />} />
+              <Route path="/tags" element={<Tags />} />
+              <Route path="/about" element={<About />} />
 
-            <Route path="/admin/articles" element={<ArticleManager />} />
-            <Route path="/games" element={<GameHub />} />
-            <Route path="/toolbox" element={<Toolbox />} />
-            <Route path="/toolbox/sprite-sheet-to-gif" element={<SpriteSheetToGif />} />
-            <Route path="/toolbox/json-formatter" element={<JsonFormatter />} />
-            <Route path="/toolbox/timestamp" element={<TimestampConverter />} />
-            <Route path="/toolbox/base64" element={<Base64Tool />} />
-            <Route path="/toolbox/color" element={<ColorConverter />} />
-            <Route path="/toolbox/text-counter" element={<TextCounter />} />
-            <Route path="/toolbox/password" element={<PasswordGenerator />} />
-          </Routes>
-        </Suspense>
-      </Layout>
-    </Router>
+              <Route path="/admin/articles" element={<ArticleManager />} />
+              <Route path="/games" element={<GameHub />} />
+              <Route path="/toolbox" element={<Toolbox />} />
+              <Route path="/toolbox/sprite-sheet-to-gif" element={<SpriteSheetToGif />} />
+              <Route path="/toolbox/json-formatter" element={<JsonFormatter />} />
+              <Route path="/toolbox/timestamp" element={<TimestampConverter />} />
+              <Route path="/toolbox/base64" element={<Base64Tool />} />
+              <Route path="/toolbox/color" element={<ColorConverter />} />
+              <Route path="/toolbox/text-counter" element={<TextCounter />} />
+              <Route path="/toolbox/password" element={<PasswordGenerator />} />
+            </Routes>
+          </Suspense>
+        </Layout>
+      </Router>
+    </ThemeProvider>
   )
 }
 
