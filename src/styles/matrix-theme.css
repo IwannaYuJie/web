@@ -1,0 +1,148 @@
+/* ============================================================
+   黑客帝国终端主题系统 (Matrix Terminal CLI Theme)
+   设计特点：
+   1. 纯黑底色 (#000000) + 荧光终端绿 (#00FF41) 字符流
+   2. 等宽代码字体 + 命令行窗口卡片 [>_ terminal]
+   3. 终端绿光 Glow 发光 + 闪烁打字光标
+   ============================================================ */
+
+[data-theme="matrix"] {
+  --paper: #000000;
+  --paper-2: #051408;
+  --ink: #00FF41;
+  --ink-soft: #00A32A;
+  --line: #003B00;
+
+  --o: #00FF41;       /* 终端绿 */
+  --sun: #39FF14;     /* 亮荧光绿 */
+  --berry: #00FF66;   /* 矩阵绿 */
+  --mint: #00FF41;    /* 核心绿 */
+  --vi: #008F11;      /* 琥珀深绿 */
+  --accent: var(--o);
+
+  /* 终端绿黑卡片 */
+  --k1-bg: #001A06; --k1-fg: #00FF41;
+  --k2-bg: #002409; --k2-fg: #39FF14;
+  --k3-bg: #001A06; --k3-fg: #00FF66;
+  --k4-bg: #002409; --k4-fg: #00FF41;
+
+  /* 绿光矩阵发光 */
+  --shadow-hard: 0 0 10px rgba(0, 255, 65, 0.4), 3px 3px 0 #003B00;
+  --shadow-hard-lg: 0 0 20px rgba(0, 255, 65, 0.6), 5px 5px 0 #00FF41;
+  --shadow-hard-sm: 0 0 6px rgba(0, 255, 65, 0.3), 2px 2px 0 #003B00;
+
+  --disp: 'Courier New', 'Space Grotesk', monospace;
+  --body: 'Courier New', 'PingFang SC', monospace;
+  --serif: 'Courier New', monospace;
+
+  --primary-color: var(--o);
+  --primary-hover: #39FF14;
+  --secondary-color: var(--sun);
+  --accent-color: var(--o);
+  --bg-color: var(--paper);
+  --surface-color: var(--paper-2);
+  --text-color: #00FF41;
+  --text-secondary: #00A32A;
+  --border-color: #00FF41;
+  --card-bg: var(--paper-2);
+  --card-hover: #08200C;
+}
+
+/* 纯黑背景 + 代码点阵字符底纹 */
+html[data-theme="matrix"] body,
+body[data-theme="matrix"] {
+  background-color: #000000 !important;
+  color: #00FF41 !important;
+  background-image:
+    linear-gradient(rgba(0, 255, 65, 0.06) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(0, 255, 65, 0.06) 1px, transparent 1px) !important;
+  background-size: 20px 20px !important;
+  background-attachment: fixed !important;
+}
+
+/* 强制全站等宽黑客字体 */
+[data-theme="matrix"] * {
+  font-family: 'Courier New', monospace !important;
+  text-shadow: 0 0 4px rgba(0, 255, 65, 0.5);
+}
+
+/* 导航栏终端化 */
+[data-theme="matrix"] .bnav {
+  background: rgba(0, 0, 0, 0.95) !important;
+  border-bottom: 2px solid #00FF41 !important;
+  box-shadow: 0 0 15px rgba(0, 255, 65, 0.3) !important;
+}
+
+[data-theme="matrix"] .bnav-logo {
+  color: #00FF41 !important;
+  letter-spacing: 2px;
+}
+
+[data-theme="matrix"] .bnav-logo::before {
+  content: 'root@cat:~# ';
+  color: #00A32A;
+  font-size: 14px;
+}
+
+[data-theme="matrix"] .bnav-links a {
+  border-radius: 2px !important;
+  border: 1px solid #00FF41 !important;
+  background: #000000 !important;
+  color: #00FF41 !important;
+}
+
+[data-theme="matrix"] .bnav-links a:hover,
+[data-theme="matrix"] .bnav-links a.on {
+  background: #00FF41 !important;
+  color: #000000 !important;
+  box-shadow: 0 0 12px #00FF41 !important;
+  text-shadow: none !important;
+}
+
+/* 终端窗口卡片 */
+[data-theme="matrix"] .ec,
+[data-theme="matrix"] .panel {
+  border-radius: 2px !important;
+  border: 1.8px solid #00FF41 !important;
+  background: #051408 !important;
+  color: #00FF41 !important;
+  box-shadow: 0 0 12px rgba(0, 255, 65, 0.3), 4px 4px 0 #003B00 !important;
+}
+
+[data-theme="matrix"] .ec:hover {
+  transform: translate(-3px, -3px) !important;
+  box-shadow: 0 0 20px rgba(0, 255, 65, 0.7), 6px 6px 0 #00FF41 !important;
+}
+
+/* 终端按钮 */
+[data-theme="matrix"] .btn,
+[data-theme="matrix"] .btn-primary {
+  border-radius: 2px !important;
+  border: 2px solid #00FF41 !important;
+  background: #000000 !important;
+  color: #00FF41 !important;
+  box-shadow: 0 0 10px rgba(0, 255, 65, 0.5) !important;
+  font-weight: 900;
+}
+
+[data-theme="matrix"] .btn:hover:not(:disabled) {
+  background: #00FF41 !important;
+  color: #000000 !important;
+  box-shadow: 0 0 20px #00FF41 !important;
+  text-shadow: none !important;
+}
+
+/* 跑马灯 Ticker */
+[data-theme="matrix"] .ticker {
+  background: #000000 !important;
+  color: #00FF41 !important;
+  border-bottom: 2px solid #00FF41 !important;
+}
+
+/* 贴纸 */
+[data-theme="matrix"] .sticker {
+  border-radius: 2px !important;
+  border: 1px solid #00FF41 !important;
+  background: #001A06 !important;
+  color: #00FF41 !important;
+}

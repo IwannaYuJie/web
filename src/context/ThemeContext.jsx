@@ -34,9 +34,30 @@ export const THEMES = [
   {
     id: 'y2k',
     name: '酸性千禧',
-    icon: '💿',
+    icon: '⚡',
     desc: '高饱和电光黄 · 新野兽派黑黄撞色',
     colors: ['#E6FF00', '#000000', '#7C3AED'],
+  },
+  {
+    id: 'matrix',
+    name: '黑客帝国',
+    icon: '🟢',
+    desc: '纯黑极客终端 · 荧光绿代码流',
+    colors: ['#000000', '#00FF41', '#008F11'],
+  },
+  {
+    id: 'bubble',
+    name: '多巴胺果冻',
+    icon: '🫧',
+    desc: '马卡龙粉紫渐变 · 40px气泡Q弹',
+    colors: ['#FFF0F5', '#FF6B81', '#70A1FF'],
+  },
+  {
+    id: 'blueprint',
+    name: '工业蓝图',
+    icon: '📐',
+    desc: 'CAD制图深蓝底 · 白色工程标尺',
+    colors: ['#0B3B60', '#E0F2FE', '#38BDF8'],
   },
 ]
 

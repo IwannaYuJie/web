@@ -2,6 +2,9 @@
 @import './styles/cyberpunk-theme.css';
 @import './styles/pixel-theme.css';
 @import './styles/y2k-theme.css';
+@import './styles/matrix-theme.css';
+@import './styles/bubble-theme.css';
+@import './styles/blueprint-theme.css';
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
