@@ -1,113 +1,167 @@
 /* ============================================================
-   千禧酸性主题系统 (Y2K Acid & Bubble Theme)
-   设计特点：镭射浅紫渐变 + 荧光酸性绿 + 30px 超大胶囊圆角 + 晶莹玻璃透光
+   酸性千禧主题系统 (Neo-Brutalism Acid Y2K Theme)
+   设计特点：
+   1. 高饱和酸性电光黄底色 (#E6FF00) + 纯黑高反差碰撞
+   2. 32px 巨型果冻胶囊圆角 + 潮流酸性新野兽派排版
+   3. 浮夸巨型阴影与酸性撞色
    ============================================================ */
 
 [data-theme="y2k"] {
-  --paper: #F6F0FE;
-  --paper-2: #EFE4FC;
-  --ink: #2E1065;
-  --ink-soft: #5B21B6;
-  --line: #DDD6FE;
+  /* 高饱和酸性电光黄 + 浓黑墨水 */
+  --paper: #E6FF00;
+  --paper-2: #D8F000;
+  --ink: #000000;
+  --ink-soft: #222222;
+  --line: #000000;
 
-  --o: #7C3AED;       /* 极光紫 */
-  --sun: #A3E635;     /* 酸性荧光绿 */
-  --berry: #F43F5E;   /* 泡泡糖粉 */
-  --mint: #06B6D4;    /* 镭射冰蓝 */
-  --vi: #D946EF;      /* 电子品红 */
+  --o: #000000;       /* 粗壮纯黑 */
+  --sun: #FFFFFF;     /* 高光纯白 */
+  --berry: #FF0055;   /* 荧光桃红 */
+  --mint: #00F0FF;    /* 镭射电光蓝 */
+  --vi: #7C3AED;      /* 极光紫 */
   --accent: var(--o);
 
-  /* 千禧马卡龙卡片 */
-  --k1-bg: #FCE7F3; --k1-fg: #BE185D;
-  --k2-bg: #ECFCCB; --k2-fg: #4D7C0F;
-  --k3-bg: #E0E7FF; --k3-fg: #4338CA;
-  --k4-bg: #CFFAFE; --k4-fg: #0E7490;
+  /* 高对比酸性卡片 */
+  --k1-bg: #FF0055; --k1-fg: #FFFFFF;  /* 荧光红底白字 */
+  --k2-bg: #FFFFFF; --k2-fg: #000000;  /* 纯白底黑字 */
+  --k3-bg: #00F0FF; --k3-fg: #000000;  /* 电光蓝底黑字 */
+  --k4-bg: #7C3AED; --k4-fg: #FFFFFF;  /* 极光紫底白字 */
 
-  /* 彩虹流光硬阴影 */
-  --shadow-hard: 4px 4px 0 #7C3AED;
-  --shadow-hard-lg: 8px 8px 0 #A3E635;
-  --shadow-hard-sm: 2.5px 2.5px 0 #7C3AED;
+  /* 强烈的纯黑硬阴影 */
+  --shadow-hard: 5px 5px 0 #000000;
+  --shadow-hard-lg: 9px 9px 0 #000000;
+  --shadow-hard-sm: 3px 3px 0 #000000;
 
   --disp: 'Space Grotesk', 'ZCOOL KuaiLe', sans-serif;
   --body: 'Space Grotesk', 'PingFang SC', sans-serif;
   --serif: 'Space Grotesk', sans-serif;
 
-  --primary-color: var(--o);
-  --primary-hover: #6D28D9;
-  --secondary-color: var(--sun);
-  --accent-color: var(--berry);
+  --primary-color: #000000;
+  --primary-hover: #FF0055;
+  --secondary-color: #00F0FF;
+  --accent-color: #FF0055;
   --bg-color: var(--paper);
   --surface-color: var(--paper-2);
   --text-color: var(--ink);
   --text-secondary: var(--ink-soft);
-  --border-color: var(--line);
-  --card-bg: var(--paper);
-  --card-hover: var(--paper-2);
+  --border-color: #000000;
+  --card-bg: #FFFFFF;
+  --card-hover: #FFFFFF;
 }
 
-/* 镭射浅紫光晕底色 */
+/* 画布底色：高饱和酸性电光黄 + 警示网格 */
 html[data-theme="y2k"] body,
 body[data-theme="y2k"] {
-  background-color: #F6F0FE !important;
-  color: var(--ink) !important;
+  background-color: #E6FF00 !important;
+  color: #000000 !important;
   background-image:
-    radial-gradient(circle at 10% 20%, rgba(163, 230, 53, 0.15) 0%, transparent 40%),
-    radial-gradient(circle at 90% 80%, rgba(217, 70, 239, 0.15) 0%, transparent 40%),
-    linear-gradient(rgba(124, 58, 237, 0.05) 1px, transparent 1px),
-    linear-gradient(90deg, rgba(124, 58, 237, 0.05) 1px, transparent 1px) !important;
-  background-size: 100% 100%, 100% 100%, 28px 28px, 28px 28px !important;
+    linear-gradient(rgba(0, 0, 0, 0.08) 1.5px, transparent 1.5px),
+    linear-gradient(90deg, rgba(0, 0, 0, 0.08) 1.5px, transparent 1.5px) !important;
+  background-size: 32px 32px !important;
   background-attachment: fixed !important;
 }
 
-/* 超大胶囊圆角 + 晶莹玻璃透光 */
-[data-theme="y2k"] .btn,
-[data-theme="y2k"] .ec,
-[data-theme="y2k"] .panel,
-[data-theme="y2k"] .sticker,
-[data-theme="y2k"] input,
-[data-theme="y2k"] textarea,
-[data-theme="y2k"] select {
-  border-radius: 28px !important;
-  border: 2.5px solid var(--ink) !important;
-  box-shadow: var(--shadow-hard) !important;
-}
-
-[data-theme="y2k"] .btn {
-  background: var(--sun) !important;
-  color: #2E1065 !important;
-  font-weight: 900 !important;
-}
-
-[data-theme="y2k"] .btn:hover:not(:disabled) {
-  transform: translate(-3px, -3px) scale(1.03) !important;
-  box-shadow: 7px 7px 0 #7C3AED !important;
-  background: var(--berry) !important;
-  color: #FFFFFF !important;
-}
-
-/* Hero 标题气泡渐变质感 */
-[data-theme="y2k"] .hero-grid h1 {
-  text-shadow: 4px 4px 0 #A3E635, 8px 8px 0 #7C3AED !important;
-}
-
-[data-theme="y2k"] .hero-grid h1 span:first-child { color: #7C3AED !important; }
-[data-theme="y2k"] .hero-grid h1 span:last-child { color: #F43F5E !important; }
-
 /* 导航栏 */
 [data-theme="y2k"] .bnav {
-  background: rgba(246, 240, 254, 0.85) !important;
-  backdrop-filter: blur(12px) !important;
-  border-bottom: 2.5px solid var(--ink) !important;
+  background: rgba(230, 255, 0, 0.95) !important;
+  border-bottom: 3.5px solid #000000 !important;
+  box-shadow: 0 5px 0 #000000 !important;
+}
+
+[data-theme="y2k"] .bnav-logo {
+  font-size: 26px !important;
+  font-weight: 900 !important;
+  color: #000000 !important;
+  text-transform: uppercase;
 }
 
 [data-theme="y2k"] .bnav-links a {
   border-radius: 999px !important;
-  border: 1.5px solid transparent;
+  border: 2.5px solid #000000 !important;
+  background: #FFFFFF !important;
+  color: #000000 !important;
+  font-weight: 900 !important;
+  box-shadow: 2px 2px 0 #000000 !important;
 }
 
+[data-theme="y2k"] .bnav-links a:hover,
 [data-theme="y2k"] .bnav-links a.on {
-  background: var(--sun) !important;
-  color: #2E1065 !important;
-  border-color: var(--ink) !important;
-  box-shadow: 2px 2px 0 var(--ink) !important;
+  background: #000000 !important;
+  color: #E6FF00 !important;
+  transform: translate(-3px, -3px) !important;
+  box-shadow: 5px 5px 0 #000000 !important;
+}
+
+/* 32px 超大果冻胶囊圆角卡片与面板 */
+[data-theme="y2k"] .ec,
+[data-theme="y2k"] .panel {
+  border-radius: 30px !important;
+  border: 3.5px solid #000000 !important;
+  box-shadow: 6px 6px 0 #000000 !important;
+  color: #000000 !important;
+}
+
+[data-theme="y2k"] .ec:hover {
+  transform: translate(-5px, -5px) scale(1.02) !important;
+  box-shadow: 10px 10px 0 #000000 !important;
+}
+
+[data-theme="y2k"] .ec.k1 { background: #FF0055 !important; color: #FFFFFF !important; }
+[data-theme="y2k"] .ec.k1 h3, [data-theme="y2k"] .ec.k1 p { color: #FFFFFF !important; }
+[data-theme="y2k"] .ec.k2 { background: #FFFFFF !important; color: #000000 !important; }
+[data-theme="y2k"] .ec.k3 { background: #00F0FF !important; color: #000000 !important; }
+[data-theme="y2k"] .ec.k4 { background: #7C3AED !important; color: #FFFFFF !important; }
+[data-theme="y2k"] .ec.k4 h3, [data-theme="y2k"] .ec.k4 p { color: #FFFFFF !important; }
+
+/* 巨型醒目按钮 */
+[data-theme="y2k"] .btn,
+[data-theme="y2k"] .btn-primary {
+  border-radius: 999px !important;
+  border: 3.5px solid #000000 !important;
+  background: #000000 !important;
+  color: #E6FF00 !important;
+  box-shadow: 5px 5px 0 #000000 !important;
+  font-weight: 900 !important;
+  font-size: 17px !important;
+}
+
+[data-theme="y2k"] .btn:hover:not(:disabled) {
+  background: #FF0055 !important;
+  color: #FFFFFF !important;
+  transform: translate(-3px, -3px) !important;
+  box-shadow: 8px 8px 0 #000000 !important;
+}
+
+/* Hero 标题新野兽派排版 */
+[data-theme="y2k"] .hero-grid h1 {
+  text-shadow: 5px 5px 0 #FFFFFF, 9px 9px 0 #000000 !important;
+  letter-spacing: -0.03em;
+}
+
+[data-theme="y2k"] .hero-grid h1 span:first-child { color: #000000 !important; }
+[data-theme="y2k"] .hero-grid h1 span:last-child { color: #FF0055 !important; }
+
+/* 贴纸 Stickers */
+[data-theme="y2k"] .sticker {
+  border-radius: 999px !important;
+  border: 2.5px solid #000000 !important;
+  background: #FFFFFF !important;
+  color: #000000 !important;
+  box-shadow: 3px 3px 0 #000000 !important;
+  font-weight: 900 !important;
+}
+
+/* 跑马灯 Ticker */
+[data-theme="y2k"] .ticker {
+  background: #000000 !important;
+  color: #E6FF00 !important;
+  border-bottom: 3.5px solid #000000 !important;
+  font-weight: 900 !important;
+}
+
+/* 页脚 */
+[data-theme="y2k"] .foot {
+  background: #D8F000 !important;
+  border-top: 3.5px solid #000000 !important;
+  color: #000000 !important;
 }

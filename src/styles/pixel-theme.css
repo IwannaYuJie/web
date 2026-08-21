@@ -1,62 +1,69 @@
 /* ============================================================
-   像素复古主题系统 (Retro Pixel 8-Bit Theme)
-   设计特点：8-Bit 游戏机米绿底 + 纯 0px 直角阶梯边框 + 立体像素投影
+   像素街机主题系统 (Retro GameBoy 8-Bit LCD Theme)
+   设计特点：
+   1. 经典 Nintendo GameBoy 灰绿液晶屏世界 (#9BBC0F / #0F380F)
+   2. LCD 液晶屏点阵颗粒底纹 + 8-Bit 像素硬切排版
+   3. 纯 0px 像素直角阶梯描边 + 立体方块投影
    ============================================================ */
 
 [data-theme="pixel"] {
-  --paper: #E2EBC8;
-  --paper-2: #D4DEB6;
-  --ink: #1B2B16;
-  --ink-soft: #445938;
-  --line: #BAC798;
+  /* GameBoy 四阶经典液晶灰绿调色盘 */
+  --paper: #9BBC0F;
+  --paper-2: #8BAC0F;
+  --ink: #0F380F;
+  --ink-soft: #306230;
+  --line: #8BAC0F;
 
-  --o: #2B7A0B;       /* 像素翠绿 */
-  --sun: #FFB703;     /* 金币黄 */
-  --berry: #D90429;   /* 像素心心红 */
-  --mint: #38B000;    /* 管道绿 */
-  --vi: #560BAD;      /* 像素暗紫 */
+  --o: #0F380F;       /* 浓墨液晶黑 */
+  --sun: #CADC9F;     /* 浅亮液晶绿 */
+  --berry: #990000;   /* 8-Bit 像素红 */
+  --mint: #306230;    /* 掌机深绿 */
+  --vi: #0F380F;      /* 纯像素黑 */
   --accent: var(--o);
 
-  /* 8-Bit 游戏卡片色彩 */
-  --k1-bg: #FFE3E3; --k1-fg: #D90429;
-  --k2-bg: #FEF3C7; --k2-fg: #B45309;
-  --k3-bg: #E0E7FF; --k3-fg: #4338CA;
-  --k4-bg: #D1FAE5; --k4-fg: #047857;
+  /* 掌机卡片配色 */
+  --k1-bg: #8BAC0F; --k1-fg: #0F380F;
+  --k2-bg: #CADC9F; --k2-fg: #0F380F;
+  --k3-bg: #8BAC0F; --k3-fg: #0F380F;
+  --k4-bg: #CADC9F; --k4-fg: #0F380F;
 
-  /* 立体阶梯像素阴影 */
-  --shadow-hard: 4px 4px 0 #1B2B16;
-  --shadow-hard-lg: 7px 7px 0 #1B2B16;
-  --shadow-hard-sm: 2px 2px 0 #1B2B16;
+  /* 8-Bit 纯直角立体阶梯投影 */
+  --shadow-hard: 4px 4px 0 #0F380F;
+  --shadow-hard-lg: 8px 8px 0 #0F380F;
+  --shadow-hard-sm: 2px 2px 0 #0F380F;
 
   --disp: 'ZCOOL KuaiLe', 'Courier New', monospace;
-  --body: 'ZCOOL KuaiLe', 'PingFang SC', sans-serif;
+  --body: 'ZCOOL KuaiLe', 'PingFang SC', monospace;
   --serif: 'ZCOOL KuaiLe', monospace;
 
   --primary-color: var(--o);
-  --primary-hover: #1E5806;
-  --secondary-color: var(--mint);
+  --primary-hover: #306230;
+  --secondary-color: var(--sun);
   --accent-color: var(--berry);
   --bg-color: var(--paper);
   --surface-color: var(--paper-2);
   --text-color: var(--ink);
   --text-secondary: var(--ink-soft);
   --border-color: var(--ink);
-  --card-bg: var(--paper);
-  --card-hover: var(--paper-2);
+  --card-bg: var(--paper-2);
+  --card-hover: var(--paper);
 }
 
-/* 像素画质背景网点 */
+/* ---------- 1. GameBoy LCD 液晶屏点阵底纹 ---------- */
 html[data-theme="pixel"] body,
 body[data-theme="pixel"] {
-  background-color: var(--paper) !important;
-  color: var(--ink) !important;
+  background-color: #9BBC0F !important;
+  color: #0F380F !important;
   background-image:
-    radial-gradient(rgba(27, 43, 22, 0.12) 1.5px, transparent 1.5px) !important;
-  background-size: 16px 16px !important;
+    radial-gradient(#8BAC0F 2px, transparent 2px),
+    radial-gradient(#8BAC0F 2px, #9BBC0F 2px) !important;
+  background-size: 8px 8px !important;
+  background-position: 0 0, 4px 4px !important;
   background-attachment: fixed !important;
 }
 
-/* 纯 0px 像素直角阶梯边框 */
+/* ---------- 2. 纯 0px 像素阶梯硬直角 ---------- */
+[data-theme="pixel"] *,
 [data-theme="pixel"] .btn,
 [data-theme="pixel"] .ec,
 [data-theme="pixel"] .panel,
@@ -68,39 +75,111 @@ body[data-theme="pixel"] {
 [data-theme="pixel"] select,
 [data-theme="pixel"] .bnav-links a {
   border-radius: 0px !important;
-  border: 3px solid #1B2B16 !important;
-  box-shadow: 4px 4px 0 #1B2B16 !important;
+  font-family: 'ZCOOL KuaiLe', 'Courier New', monospace !important;
 }
 
+/* 导航栏 */
 [data-theme="pixel"] .bnav {
-  border-bottom: 3px solid #1B2B16 !important;
-  background: var(--paper) !important;
+  background: #8BAC0F !important;
+  border-bottom: 3.5px solid #0F380F !important;
+  box-shadow: 0 4px 0 #0F380F !important;
 }
 
-/* 按钮像素悬停 */
-[data-theme="pixel"] .btn:hover:not(:disabled) {
-  transform: translate(-3px, -3px) !important;
-  box-shadow: 7px 7px 0 #1B2B16 !important;
-  background: var(--sun) !important;
-  color: #1B2B16 !important;
+[data-theme="pixel"] .bnav-logo {
+  color: #0F380F !important;
+  font-weight: 900 !important;
+  letter-spacing: 0.05em;
 }
 
-[data-theme="pixel"] .btn:active:not(:disabled) {
-  transform: translate(2px, 2px) !important;
-  box-shadow: 2px 2px 0 #1B2B16 !important;
+[data-theme="pixel"] .bnav-links a {
+  border: 2px solid #0F380F !important;
+  background: #9BBC0F !important;
+  color: #0F380F !important;
+  box-shadow: 2px 2px 0 #0F380F !important;
 }
 
-/* 卡片悬停 */
-[data-theme="pixel"] .ec:hover {
-  transform: translate(-4px, -4px) !important;
-  box-shadow: 8px 8px 0 #1B2B16 !important;
+[data-theme="pixel"] .bnav-links a:hover,
+[data-theme="pixel"] .bnav-links a.on {
+  background: #0F380F !important;
+  color: #9BBC0F !important;
+  transform: translate(-2px, -2px) !important;
+  box-shadow: 4px 4px 0 #0F380F !important;
 }
 
 /* Hero 标题立体像素 */
 [data-theme="pixel"] .hero-grid h1 {
-  text-shadow: 4px 4px 0 var(--sun), 8px 8px 0 #1B2B16 !important;
+  color: #0F380F !important;
+  text-shadow: 4px 4px 0 #CADC9F, 8px 8px 0 #0F380F !important;
+  letter-spacing: 0.08em;
+}
+
+[data-theme="pixel"] .hero-grid h1 span {
+  color: #0F380F !important;
+}
+
+/* 像素卡片与面板 */
+[data-theme="pixel"] .ec,
+[data-theme="pixel"] .panel {
+  border: 3.5px solid #0F380F !important;
+  background: #8BAC0F !important;
+  color: #0F380F !important;
+  box-shadow: 5px 5px 0 #0F380F !important;
+}
+
+[data-theme="pixel"] .ec:hover {
+  transform: translate(-4px, -4px) !important;
+  box-shadow: 9px 9px 0 #0F380F !important;
+  background: #CADC9F !important;
+}
+
+[data-theme="pixel"] .panel.dark {
+  background: #0F380F !important;
+  color: #9BBC0F !important;
+}
+
+/* 像素按键 */
+[data-theme="pixel"] .btn,
+[data-theme="pixel"] .btn-primary {
+  border: 3.5px solid #0F380F !important;
+  background: #0F380F !important;
+  color: #9BBC0F !important;
+  box-shadow: 4px 4px 0 #306230 !important;
+  font-weight: 900 !important;
   letter-spacing: 0.05em;
 }
 
-[data-theme="pixel"] .hero-grid h1 span:first-child { color: var(--o) !important; }
-[data-theme="pixel"] .hero-grid h1 span:last-child { color: var(--berry) !important; }
+[data-theme="pixel"] .btn:hover:not(:disabled) {
+  background: #CADC9F !important;
+  color: #0F380F !important;
+  transform: translate(-3px, -3px) !important;
+  box-shadow: 7px 7px 0 #0F380F !important;
+}
+
+[data-theme="pixel"] .btn:active:not(:disabled) {
+  transform: translate(2px, 2px) !important;
+  box-shadow: 1px 1px 0 #0F380F !important;
+}
+
+/* 跑马灯 Ticker */
+[data-theme="pixel"] .ticker {
+  background: #0F380F !important;
+  color: #9BBC0F !important;
+  border-bottom: 3.5px solid #0F380F !important;
+}
+
+/* 页脚 */
+[data-theme="pixel"] .foot {
+  background: #8BAC0F !important;
+  border-top: 3.5px solid #0F380F !important;
+  color: #0F380F !important;
+}
+
+/* 输入框 */
+[data-theme="pixel"] input,
+[data-theme="pixel"] textarea,
+[data-theme="pixel"] select {
+  border: 3px solid #0F380F !important;
+  background: #CADC9F !important;
+  color: #0F380F !important;
+  box-shadow: inset 2px 2px 0 #8BAC0F !important;
+}
