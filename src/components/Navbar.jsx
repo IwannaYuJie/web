@@ -1,7 +1,6 @@
 import { useState, useEffect, memo } from 'react'
 import { Link, useLocation } from 'react-router-dom'
 import { blogProfile } from '../data/blogProfile'
-import ThemeSelector from './ThemeSelector'
 import './Navbar.css'
 
 const NAV_LINKS = [
@@ -60,10 +59,6 @@ function Navbar() {
             ))}
           </nav>
 
-          <div className="bnav-theme-wrap hide-mobile">
-            <ThemeSelector />
-          </div>
-
           <button
             className="bnav-menu-btn"
             onClick={() => setIsMenuOpen(o => !o)}
@@ -76,9 +71,6 @@ function Navbar() {
 
       {isMenuOpen && (
         <div className="bnav-mobile">
-          <div className="bnav-mobile-theme">
-            <ThemeSelector isMobile={true} />
-          </div>
           <div className="bnav-mobile-links">
             {NAV_LINKS.map(link => {
               const active = isActiveLink(location.pathname, link.path)

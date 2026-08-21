@@ -7,17 +7,12 @@
     <meta name="description" content="橘猫小窝：随手记的技术笔记。Java、AI、自己折腾的小项目都丢在这，想到再写，更得很慢。" />
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Caveat:wght@600;700&family=Kalam:wght@700&family=Noto+Sans+SC:wght@400;500;700;900&family=Noto+Serif+SC:wght@600;700;900&family=Patrick+Hand&family=Space+Grotesk:wght@500;600;700&family=ZCOOL+KuaiLe&family=ZCOOL+QingKe+HuangYou&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Caveat:wght@600;700&family=Kalam:wght@700&family=Noto+Sans+SC:wght@400;500;700;900&family=Noto+Serif+SC:wght@600;700;900&family=Space+Grotesk:wght@500;600;700&display=swap" rel="stylesheet">
     <script>
       (function() {
         try {
-          var validThemes = ['paper', 'sketch', 'cyberpunk', 'pixel', 'y2k', 'matrix', 'bubble', 'blueprint'];
-          var saved = localStorage.getItem('cat_blog_theme_style');
-          if (validThemes.indexOf(saved) !== -1) {
-            document.documentElement.setAttribute('data-theme', saved);
-          } else {
-            document.documentElement.setAttribute('data-theme', 'paper');
-          }
+          document.documentElement.removeAttribute('data-theme');
+          localStorage.removeItem('cat_blog_theme_style');
         } catch (e) {}
       })();
     </script>
