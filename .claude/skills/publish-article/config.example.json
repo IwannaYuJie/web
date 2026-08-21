@@ -1,0 +1,4 @@
+{
+  "baseUrl": "https://jumaomaomaoju.cn",
+  "adminKey": "在这里填写文章管理密码（对应 Cloudflare 环境变量 ADMIN_KEY）"
+}

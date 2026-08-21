@@ -11,8 +11,9 @@
     <script>
       (function() {
         try {
+          var validThemes = ['paper', 'sketch', 'cyberpunk', 'pixel', 'y2k'];
           var saved = localStorage.getItem('cat_blog_theme_style');
-          if (saved === 'sketch' || saved === 'paper') {
+          if (validThemes.indexOf(saved) !== -1) {
             document.documentElement.setAttribute('data-theme', saved);
           } else {
             document.documentElement.setAttribute('data-theme', 'paper');

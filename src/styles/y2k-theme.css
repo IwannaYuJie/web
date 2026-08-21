@@ -1,0 +1,113 @@
+/* ============================================================
+   千禧酸性主题系统 (Y2K Acid & Bubble Theme)
+   设计特点：镭射浅紫渐变 + 荧光酸性绿 + 30px 超大胶囊圆角 + 晶莹玻璃透光
+   ============================================================ */
+
+[data-theme="y2k"] {
+  --paper: #F6F0FE;
+  --paper-2: #EFE4FC;
+  --ink: #2E1065;
+  --ink-soft: #5B21B6;
+  --line: #DDD6FE;
+
+  --o: #7C3AED;       /* 极光紫 */
+  --sun: #A3E635;     /* 酸性荧光绿 */
+  --berry: #F43F5E;   /* 泡泡糖粉 */
+  --mint: #06B6D4;    /* 镭射冰蓝 */
+  --vi: #D946EF;      /* 电子品红 */
+  --accent: var(--o);
+
+  /* 千禧马卡龙卡片 */
+  --k1-bg: #FCE7F3; --k1-fg: #BE185D;
+  --k2-bg: #ECFCCB; --k2-fg: #4D7C0F;
+  --k3-bg: #E0E7FF; --k3-fg: #4338CA;
+  --k4-bg: #CFFAFE; --k4-fg: #0E7490;
+
+  /* 彩虹流光硬阴影 */
+  --shadow-hard: 4px 4px 0 #7C3AED;
+  --shadow-hard-lg: 8px 8px 0 #A3E635;
+  --shadow-hard-sm: 2.5px 2.5px 0 #7C3AED;
+
+  --disp: 'Space Grotesk', 'ZCOOL KuaiLe', sans-serif;
+  --body: 'Space Grotesk', 'PingFang SC', sans-serif;
+  --serif: 'Space Grotesk', sans-serif;
+
+  --primary-color: var(--o);
+  --primary-hover: #6D28D9;
+  --secondary-color: var(--sun);
+  --accent-color: var(--berry);
+  --bg-color: var(--paper);
+  --surface-color: var(--paper-2);
+  --text-color: var(--ink);
+  --text-secondary: var(--ink-soft);
+  --border-color: var(--line);
+  --card-bg: var(--paper);
+  --card-hover: var(--paper-2);
+}
+
+/* 镭射浅紫光晕底色 */
+html[data-theme="y2k"] body,
+body[data-theme="y2k"] {
+  background-color: #F6F0FE !important;
+  color: var(--ink) !important;
+  background-image:
+    radial-gradient(circle at 10% 20%, rgba(163, 230, 53, 0.15) 0%, transparent 40%),
+    radial-gradient(circle at 90% 80%, rgba(217, 70, 239, 0.15) 0%, transparent 40%),
+    linear-gradient(rgba(124, 58, 237, 0.05) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(124, 58, 237, 0.05) 1px, transparent 1px) !important;
+  background-size: 100% 100%, 100% 100%, 28px 28px, 28px 28px !important;
+  background-attachment: fixed !important;
+}
+
+/* 超大胶囊圆角 + 晶莹玻璃透光 */
+[data-theme="y2k"] .btn,
+[data-theme="y2k"] .ec,
+[data-theme="y2k"] .panel,
+[data-theme="y2k"] .sticker,
+[data-theme="y2k"] input,
+[data-theme="y2k"] textarea,
+[data-theme="y2k"] select {
+  border-radius: 28px !important;
+  border: 2.5px solid var(--ink) !important;
+  box-shadow: var(--shadow-hard) !important;
+}
+
+[data-theme="y2k"] .btn {
+  background: var(--sun) !important;
+  color: #2E1065 !important;
+  font-weight: 900 !important;
+}
+
+[data-theme="y2k"] .btn:hover:not(:disabled) {
+  transform: translate(-3px, -3px) scale(1.03) !important;
+  box-shadow: 7px 7px 0 #7C3AED !important;
+  background: var(--berry) !important;
+  color: #FFFFFF !important;
+}
+
+/* Hero 标题气泡渐变质感 */
+[data-theme="y2k"] .hero-grid h1 {
+  text-shadow: 4px 4px 0 #A3E635, 8px 8px 0 #7C3AED !important;
+}
+
+[data-theme="y2k"] .hero-grid h1 span:first-child { color: #7C3AED !important; }
+[data-theme="y2k"] .hero-grid h1 span:last-child { color: #F43F5E !important; }
+
+/* 导航栏 */
+[data-theme="y2k"] .bnav {
+  background: rgba(246, 240, 254, 0.85) !important;
+  backdrop-filter: blur(12px) !important;
+  border-bottom: 2.5px solid var(--ink) !important;
+}
+
+[data-theme="y2k"] .bnav-links a {
+  border-radius: 999px !important;
+  border: 1.5px solid transparent;
+}
+
+[data-theme="y2k"] .bnav-links a.on {
+  background: var(--sun) !important;
+  color: #2E1065 !important;
+  border-color: var(--ink) !important;
+  box-shadow: 2px 2px 0 var(--ink) !important;
+}

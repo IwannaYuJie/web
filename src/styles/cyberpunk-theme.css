@@ -1,0 +1,150 @@
+/* ============================================================
+   赛博霓虹主题系统 (Cyberpunk Neon Theme)
+   设计特点：黑曜石暗夜 + 霓虹粉青发光 + 科技等宽字体 + 斜切角发光阴影
+   ============================================================ */
+
+[data-theme="cyberpunk"] {
+  --paper: #080C14;
+  --paper-2: #101726;
+  --ink: #00F0FF;
+  --ink-soft: #94A3B8;
+  --line: #1E293B;
+
+  --o: #FF007F;       /* 霓虹荧光粉 */
+  --sun: #FFE600;     /* 电子荧光黄 */
+  --berry: #FF0055;   /* 故障红 */
+  --mint: #00FF66;    /* 赛博矩阵绿 */
+  --vi: #B026FF;      /* 电子霓虹紫 */
+  --accent: var(--o);
+
+  /* 四色赛博卡片 */
+  --k1-bg: #1A0B1A; --k1-fg: #FF007F;
+  --k2-bg: #1A170B; --k2-fg: #FFE600;
+  --k3-bg: #0B171A; --k3-fg: #00F0FF;
+  --k4-bg: #0B1A10; --k4-fg: #00FF66;
+
+  /* 霓虹发光与硬阴影 */
+  --shadow-hard: 0 0 12px rgba(0, 240, 255, 0.4), 4px 4px 0 #FF007F;
+  --shadow-hard-lg: 0 0 20px rgba(255, 0, 127, 0.5), 6px 6px 0 #00F0FF;
+  --shadow-hard-sm: 0 0 8px rgba(0, 240, 255, 0.3), 2px 2px 0 #FF007F;
+
+  --disp: 'Space Grotesk', 'Courier New', monospace;
+  --body: 'Space Grotesk', 'PingFang SC', 'Noto Sans SC', sans-serif;
+  --serif: 'Space Grotesk', monospace;
+
+  --primary-color: var(--o);
+  --primary-hover: #FF3399;
+  --secondary-color: var(--ink);
+  --accent-color: var(--o);
+  --bg-color: var(--paper);
+  --surface-color: var(--paper-2);
+  --text-color: #F8FAFC;
+  --text-secondary: #94A3B8;
+  --border-color: #00F0FF;
+  --card-bg: var(--paper-2);
+  --card-hover: #162032;
+}
+
+/* 画布背景：黑曜石暗夜 + 极光电子网格 */
+html[data-theme="cyberpunk"] body,
+body[data-theme="cyberpunk"] {
+  background-color: var(--paper) !important;
+  color: #F8FAFC !important;
+  background-image:
+    linear-gradient(rgba(0, 240, 255, 0.08) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(0, 240, 255, 0.08) 1px, transparent 1px) !important;
+  background-size: 32px 32px !important;
+  background-attachment: fixed !important;
+}
+
+/* 导航栏 */
+[data-theme="cyberpunk"] .bnav {
+  background: rgba(8, 12, 20, 0.9) !important;
+  border-bottom: 2px solid #00F0FF !important;
+  box-shadow: 0 0 15px rgba(0, 240, 255, 0.3) !important;
+}
+
+[data-theme="cyberpunk"] .bnav-logo {
+  color: #00F0FF !important;
+  text-shadow: 0 0 10px rgba(0, 240, 255, 0.8) !important;
+}
+
+[data-theme="cyberpunk"] .bnav-links a {
+  border-radius: 4px !important;
+  border: 1px solid rgba(0, 240, 255, 0.3) !important;
+  color: #E2E8F0 !important;
+}
+
+[data-theme="cyberpunk"] .bnav-links a:hover,
+[data-theme="cyberpunk"] .bnav-links a.on {
+  background: #FF007F !important;
+  color: #FFFFFF !important;
+  box-shadow: 0 0 12px rgba(255, 0, 127, 0.8) !important;
+  border-color: #FF007F !important;
+}
+
+/* Hero 标题发光 */
+[data-theme="cyberpunk"] .hero-grid h1 {
+  text-shadow: 0 0 20px rgba(255, 0, 127, 0.8), 0 0 40px rgba(0, 240, 255, 0.6) !important;
+  letter-spacing: -0.02em;
+}
+
+[data-theme="cyberpunk"] .hero-grid h1 span:first-child { color: #00F0FF !important; }
+[data-theme="cyberpunk"] .hero-grid h1 span:last-child { color: #FF007F !important; }
+
+/* 赛博卡片与面板 */
+[data-theme="cyberpunk"] .ec,
+[data-theme="cyberpunk"] .panel {
+  border-radius: 6px !important;
+  border: 2px solid #00F0FF !important;
+  background: #101726 !important;
+  box-shadow: 0 0 12px rgba(0, 240, 255, 0.25), 4px 4px 0 #FF007F !important;
+  color: #F8FAFC !important;
+}
+
+[data-theme="cyberpunk"] .ec:hover {
+  transform: translate(-3px, -3px) !important;
+  box-shadow: 0 0 22px rgba(255, 0, 127, 0.6), 6px 6px 0 #00F0FF !important;
+  border-color: #FF007F !important;
+}
+
+[data-theme="cyberpunk"] .ec h3,
+[data-theme="cyberpunk"] .section-h h2 {
+  color: #00F0FF !important;
+  text-shadow: 0 0 8px rgba(0, 240, 255, 0.5);
+}
+
+/* 按钮 */
+[data-theme="cyberpunk"] .btn,
+[data-theme="cyberpunk"] .btn-primary {
+  border-radius: 4px !important;
+  background: #FF007F !important;
+  color: #FFFFFF !important;
+  border: 2px solid #00F0FF !important;
+  box-shadow: 0 0 14px rgba(255, 0, 127, 0.6) !important;
+  font-weight: 800;
+  text-transform: uppercase;
+}
+
+[data-theme="cyberpunk"] .btn:hover:not(:disabled) {
+  background: #00F0FF !important;
+  color: #080C14 !important;
+  box-shadow: 0 0 20px rgba(0, 240, 255, 0.9) !important;
+}
+
+[data-theme="cyberpunk"] .sticker {
+  border-radius: 4px !important;
+  border: 1.5px solid #00F0FF !important;
+  background: #0B171A !important;
+  color: #00F0FF !important;
+}
+
+[data-theme="cyberpunk"] input,
+[data-theme="cyberpunk"] textarea,
+[data-theme="cyberpunk"] select {
+  border-radius: 4px !important;
+  border: 2px solid #00F0FF !important;
+  background: #080C14 !important;
+  color: #00F0FF !important;
+  box-shadow: inset 0 0 8px rgba(0, 240, 255, 0.2) !important;
+}

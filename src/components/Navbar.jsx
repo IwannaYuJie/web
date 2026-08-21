@@ -1,7 +1,7 @@
 import { useState, useEffect, memo } from 'react'
 import { Link, useLocation } from 'react-router-dom'
 import { blogProfile } from '../data/blogProfile'
-import ThemeToggle from './ThemeToggle'
+import ThemeSelector from './ThemeSelector'
 import './Navbar.css'
 
 const NAV_LINKS = [
@@ -61,7 +61,7 @@ function Navbar() {
           </nav>
 
           <div className="bnav-theme-wrap hide-mobile">
-            <ThemeToggle />
+            <ThemeSelector />
           </div>
 
           <button
@@ -77,7 +77,7 @@ function Navbar() {
       {isMenuOpen && (
         <div className="bnav-mobile">
           <div className="bnav-mobile-theme">
-            <ThemeToggle />
+            <ThemeSelector isMobile={true} />
           </div>
           <div className="bnav-mobile-links">
             {NAV_LINKS.map(link => {

@@ -1,0 +1,106 @@
+/* ============================================================
+   像素复古主题系统 (Retro Pixel 8-Bit Theme)
+   设计特点：8-Bit 游戏机米绿底 + 纯 0px 直角阶梯边框 + 立体像素投影
+   ============================================================ */
+
+[data-theme="pixel"] {
+  --paper: #E2EBC8;
+  --paper-2: #D4DEB6;
+  --ink: #1B2B16;
+  --ink-soft: #445938;
+  --line: #BAC798;
+
+  --o: #2B7A0B;       /* 像素翠绿 */
+  --sun: #FFB703;     /* 金币黄 */
+  --berry: #D90429;   /* 像素心心红 */
+  --mint: #38B000;    /* 管道绿 */
+  --vi: #560BAD;      /* 像素暗紫 */
+  --accent: var(--o);
+
+  /* 8-Bit 游戏卡片色彩 */
+  --k1-bg: #FFE3E3; --k1-fg: #D90429;
+  --k2-bg: #FEF3C7; --k2-fg: #B45309;
+  --k3-bg: #E0E7FF; --k3-fg: #4338CA;
+  --k4-bg: #D1FAE5; --k4-fg: #047857;
+
+  /* 立体阶梯像素阴影 */
+  --shadow-hard: 4px 4px 0 #1B2B16;
+  --shadow-hard-lg: 7px 7px 0 #1B2B16;
+  --shadow-hard-sm: 2px 2px 0 #1B2B16;
+
+  --disp: 'ZCOOL KuaiLe', 'Courier New', monospace;
+  --body: 'ZCOOL KuaiLe', 'PingFang SC', sans-serif;
+  --serif: 'ZCOOL KuaiLe', monospace;
+
+  --primary-color: var(--o);
+  --primary-hover: #1E5806;
+  --secondary-color: var(--mint);
+  --accent-color: var(--berry);
+  --bg-color: var(--paper);
+  --surface-color: var(--paper-2);
+  --text-color: var(--ink);
+  --text-secondary: var(--ink-soft);
+  --border-color: var(--ink);
+  --card-bg: var(--paper);
+  --card-hover: var(--paper-2);
+}
+
+/* 像素画质背景网点 */
+html[data-theme="pixel"] body,
+body[data-theme="pixel"] {
+  background-color: var(--paper) !important;
+  color: var(--ink) !important;
+  background-image:
+    radial-gradient(rgba(27, 43, 22, 0.12) 1.5px, transparent 1.5px) !important;
+  background-size: 16px 16px !important;
+  background-attachment: fixed !important;
+}
+
+/* 纯 0px 像素直角阶梯边框 */
+[data-theme="pixel"] .btn,
+[data-theme="pixel"] .ec,
+[data-theme="pixel"] .panel,
+[data-theme="pixel"] .sticker,
+[data-theme="pixel"] .cat-chip,
+[data-theme="pixel"] .bnav-mk img,
+[data-theme="pixel"] input,
+[data-theme="pixel"] textarea,
+[data-theme="pixel"] select,
+[data-theme="pixel"] .bnav-links a {
+  border-radius: 0px !important;
+  border: 3px solid #1B2B16 !important;
+  box-shadow: 4px 4px 0 #1B2B16 !important;
+}
+
+[data-theme="pixel"] .bnav {
+  border-bottom: 3px solid #1B2B16 !important;
+  background: var(--paper) !important;
+}
+
+/* 按钮像素悬停 */
+[data-theme="pixel"] .btn:hover:not(:disabled) {
+  transform: translate(-3px, -3px) !important;
+  box-shadow: 7px 7px 0 #1B2B16 !important;
+  background: var(--sun) !important;
+  color: #1B2B16 !important;
+}
+
+[data-theme="pixel"] .btn:active:not(:disabled) {
+  transform: translate(2px, 2px) !important;
+  box-shadow: 2px 2px 0 #1B2B16 !important;
+}
+
+/* 卡片悬停 */
+[data-theme="pixel"] .ec:hover {
+  transform: translate(-4px, -4px) !important;
+  box-shadow: 8px 8px 0 #1B2B16 !important;
+}
+
+/* Hero 标题立体像素 */
+[data-theme="pixel"] .hero-grid h1 {
+  text-shadow: 4px 4px 0 var(--sun), 8px 8px 0 #1B2B16 !important;
+  letter-spacing: 0.05em;
+}
+
+[data-theme="pixel"] .hero-grid h1 span:first-child { color: var(--o) !important; }
+[data-theme="pixel"] .hero-grid h1 span:last-child { color: var(--berry) !important; }
