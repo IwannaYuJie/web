@@ -1,0 +1,349 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>超绝粗野派！— 06 新粗野主义与波普风</title>
+  <link rel="stylesheet" href="assets/common.css">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@700;800;900&family=Noto+Sans+SC:wght@700;900&display=swap" rel="stylesheet">
+  <style>
+    :root {
+      --neo-yellow: #ffdf00;
+      --neo-pink: #ff6b8b;
+      --neo-cyan: #4deeea;
+      --neo-purple: #9d4edd;
+      --neo-green: #74ee15;
+      --neo-black: #000000;
+      --neo-white: #ffffff;
+      --neo-border: 3px solid #000000;
+      --neo-shadow: 5px 5px 0px #000000;
+      --neo-shadow-lg: 8px 8px 0px #000000;
+      --font-neo: "Plus Jakarta Sans", "Noto Sans SC", sans-serif;
+    }
+
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+
+    body {
+      background-color: var(--neo-yellow);
+      font-family: var(--font-neo);
+      color: var(--neo-black);
+      padding: 30px 16px 80px;
+      line-height: 1.5;
+    }
+
+    .neo-container {
+      max-width: 1180px;
+      margin: 0 auto;
+    }
+
+    /* 顶部导航条 */
+    .neo-navbar {
+      background: var(--neo-white);
+      border: var(--neo-border);
+      box-shadow: var(--neo-shadow-lg);
+      padding: 18px 24px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 40px;
+      border-radius: 12px;
+    }
+
+    .neo-brand {
+      font-size: 24px;
+      font-weight: 900;
+      letter-spacing: -0.5px;
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+
+    .neo-nav-links {
+      display: flex;
+      gap: 16px;
+      list-style: none;
+    }
+
+    .neo-pill-btn {
+      display: inline-block;
+      padding: 8px 16px;
+      background: var(--neo-cyan);
+      border: 2px solid #000;
+      box-shadow: 3px 3px 0 #000;
+      color: #000;
+      text-decoration: none;
+      font-weight: 800;
+      font-size: 14px;
+      border-radius: 8px;
+      transition: all 0.15s ease;
+      cursor: pointer;
+    }
+    .neo-pill-btn:hover {
+      transform: translate(-2px, -2px);
+      box-shadow: 5px 5px 0 #000;
+      background: var(--neo-pink);
+      color: #fff;
+    }
+    .neo-pill-btn:active {
+      transform: translate(2px, 2px);
+      box-shadow: 1px 1px 0 #000;
+    }
+
+    /* 醒目 Hero */
+    .neo-hero {
+      background: var(--neo-pink);
+      border: var(--neo-border);
+      box-shadow: var(--neo-shadow-lg);
+      border-radius: 16px;
+      padding: 48px;
+      color: #fff;
+      position: relative;
+      margin-bottom: 40px;
+      overflow: hidden;
+    }
+
+    .sticker-badge {
+      display: inline-block;
+      padding: 6px 14px;
+      background: var(--neo-green);
+      color: #000;
+      border: 2px solid #000;
+      box-shadow: 3px 3px 0 #000;
+      font-weight: 900;
+      font-size: 14px;
+      transform: rotate(-3deg);
+      margin-bottom: 16px;
+      border-radius: 6px;
+    }
+
+    .neo-hero-title {
+      font-size: clamp(36px, 6vw, 68px);
+      font-weight: 900;
+      line-height: 1.1;
+      letter-spacing: -1.5px;
+      color: var(--neo-white);
+      text-shadow: 4px 4px 0 #000;
+      margin-bottom: 20px;
+    }
+
+    .neo-hero-desc {
+      font-size: 18px;
+      font-weight: 700;
+      color: #000;
+      background: var(--neo-white);
+      padding: 12px 18px;
+      border: 2px solid #000;
+      box-shadow: 4px 4px 0 #000;
+      display: inline-block;
+      border-radius: 8px;
+      max-width: 760px;
+    }
+
+    /* 主网格排版 */
+    .neo-grid {
+      display: grid;
+      grid-template-columns: 2fr 1fr;
+      gap: 36px;
+    }
+
+    /* 文章卡片 */
+    .neo-card {
+      background: var(--neo-white);
+      border: var(--neo-border);
+      box-shadow: var(--neo-shadow-lg);
+      border-radius: 14px;
+      padding: 36px;
+      margin-bottom: 30px;
+      transition: all 0.2s ease;
+      position: relative;
+    }
+    .neo-card:hover {
+      transform: translate(-3px, -3px);
+      box-shadow: 10px 10px 0px #000;
+    }
+
+    .neo-tag-row {
+      display: flex;
+      gap: 10px;
+      margin-bottom: 14px;
+    }
+    .neo-tag {
+      background: var(--neo-yellow);
+      border: 2px solid #000;
+      box-shadow: 2px 2px 0 #000;
+      padding: 3px 10px;
+      font-size: 12px;
+      font-weight: 900;
+      border-radius: 6px;
+    }
+
+    .neo-card-title {
+      font-size: 26px;
+      font-weight: 900;
+      margin-bottom: 14px;
+      line-height: 1.3;
+    }
+
+    .neo-card-body {
+      font-size: 15px;
+      font-weight: 600;
+      color: #333;
+      line-height: 1.7;
+      margin-bottom: 24px;
+    }
+
+    .neo-card-actions {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+
+    .clap-btn {
+      background: var(--neo-cyan);
+      border: 2px solid #000;
+      box-shadow: 3px 3px 0 #000;
+      padding: 6px 14px;
+      font-weight: 900;
+      cursor: pointer;
+      font-size: 14px;
+      border-radius: 6px;
+      transition: transform 0.1s;
+    }
+    .clap-btn:active {
+      transform: scale(0.92);
+    }
+
+    /* 侧边栏 */
+    .neo-sidebar-box {
+      background: var(--neo-cyan);
+      border: var(--neo-border);
+      box-shadow: var(--neo-shadow);
+      border-radius: 12px;
+      padding: 24px;
+      margin-bottom: 30px;
+    }
+    .neo-sidebar-box.purple {
+      background: #c084fc;
+      color: #fff;
+    }
+
+    .neo-box-title {
+      font-size: 18px;
+      font-weight: 900;
+      margin-bottom: 14px;
+      text-transform: uppercase;
+      border-bottom: 2px solid #000;
+      padding-bottom: 6px;
+    }
+
+    @media (max-width: 900px) {
+      .neo-grid {
+        grid-template-columns: 1fr;
+      }
+      .neo-navbar {
+        flex-direction: column;
+        gap: 16px;
+      }
+      .neo-hero {
+        padding: 24px;
+      }
+    }
+  </style>
+</head>
+<body>
+
+  <div class="neo-container">
+    <!-- 导航栏 -->
+    <nav class="neo-navbar">
+      <div class="neo-brand">
+        <span>💥</span>
+        <span>BRUTAL POP BLOG</span>
+      </div>
+      <ul class="neo-nav-links">
+        <li><a href="#" class="neo-pill-btn">🔥 热门文章</a></li>
+        <li><a href="#" class="neo-pill-btn">💡 灵感碎片</a></li>
+        <li><a href="#" class="neo-pill-btn">👾 个人简介</a></li>
+      </ul>
+    </nav>
+
+    <!-- 醒目 Hero -->
+    <header class="neo-hero">
+      <div class="sticker-badge">★ NEO-BRUTALISM 2026 ★</div>
+      <h1 class="neo-hero-title">告别无聊！<br>高饱和与硬投影的狂欢！</h1>
+      <div class="neo-hero-desc">
+        谁说技术博客必须一本正经？用最粗野的线条、最炸裂的色彩和最硬核的内容，记录每一个打破常规的奇思妙想！
+      </div>
+    </header>
+
+    <!-- 主体网格 -->
+    <div class="neo-grid">
+      <!-- 左侧文章 -->
+      <main>
+        <article class="neo-card">
+          <div class="neo-tag-row">
+            <span class="neo-tag">🔥 视觉潮流</span>
+            <span class="neo-tag">UI 设计</span>
+            <span class="neo-tag">2026-08-20</span>
+          </div>
+          <h2 class="neo-card-title">为什么新粗野主义（Neo-Brutalism）在 2026 再次引爆全网？</h2>
+          <p class="neo-card-body">
+            受够了千篇一律的灰白毛玻璃和圆角软阴影？新粗野主义用高反差纯黑边框、不加柔化的物理硬投影（Hard Offset Shadows）和活泼的波普高饱和色彩，重新唤醒了网页最初的生命力与幽默感！
+          </p>
+          <div class="neo-card-actions">
+            <a href="#" class="neo-pill-btn">阅读全文 ➔</a>
+            <button class="clap-btn" onclick="addClap(this)">👏 点赞 (42)</button>
+          </div>
+        </article>
+
+        <article class="neo-card">
+          <div class="neo-tag-row">
+            <span class="neo-tag" style="background:#ff6b8b; color:#fff;">⚡ 代码狂想</span>
+            <span class="neo-tag">性能优化</span>
+          </div>
+          <h2 class="neo-card-title">用 Rust 重构底层引擎：把性能压榨到极限的 10 个技巧</h2>
+          <p class="neo-card-body">
+            从零拷贝内存布局到 SIMD 指令集加速，分享我们在高并发场景下如何将响应延迟从 50ms 打到 2ms 的真实避坑经验。
+          </p>
+          <div class="neo-card-actions">
+            <a href="#" class="neo-pill-btn">阅读全文 ➔</a>
+            <button class="clap-btn" onclick="addClap(this)">👏 点赞 (89)</button>
+          </div>
+        </article>
+      </main>
+
+      <!-- 右侧边栏 -->
+      <aside>
+        <div class="neo-sidebar-box">
+          <div class="neo-box-title">👤 博主手记</div>
+          <p style="font-weight:700; font-size:14px;">
+            代码狂热分子 / 设计怪咖。喜欢折腾各种好玩、前卫又硬核的技术与视觉交互！
+          </p>
+        </div>
+
+        <div class="neo-sidebar-box purple">
+          <div class="neo-box-title" style="color:#000; border-color:#000;">🎯 正在进行的实验</div>
+          <ul style="padding-left:20px; font-weight:700; font-size:13px; color:#000; line-height:2;">
+            <li>多智能体协同框架开发</li>
+            <li>复古像素着色器渲染</li>
+            <li>硬核 WebGL 交互实验</li>
+          </ul>
+        </div>
+      </aside>
+    </div>
+  </div>
+
+  <script src="assets/nav-bar.js"></script>
+  <script>
+    function addClap(btn) {
+      let count = parseInt(btn.textContent.match(/\d+/)[0]) + 1;
+      btn.textContent = `👏 点赞 (${count})`;
+    }
+  </script>
+</body>
+</html>

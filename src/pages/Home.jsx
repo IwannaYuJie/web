@@ -206,6 +206,33 @@ function HomeSidebar({ cat, setCat, query, setQuery, categories, tags, articleCo
 
       <QuotePanel />
 
+      <Link
+        to="/creative"
+        className="panel"
+        style={{
+          background: 'var(--k1-bg)',
+          textDecoration: 'none',
+          display: 'block',
+          border: '2px solid var(--ink)',
+          borderRadius: 20,
+          boxShadow: 'var(--shadow-hard)',
+          padding: 16,
+          transition: 'all var(--transition-fast)',
+        }}
+      >
+        <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+          <span className="cat-chip" style={{ color: 'var(--o)' }}>🎨 创意矩阵</span>
+          <span style={{ fontSize: 12, fontWeight: 700, color: 'var(--ink-soft)' }}>23 款风格</span>
+        </div>
+        <div style={{ fontFamily: 'var(--serif)', fontWeight: 800, fontSize: 17, margin: '8px 0 4px', color: 'var(--ink)' }}>
+          排版与交互灵感工坊
+        </div>
+        <p style={{ fontSize: 12.5, color: 'var(--ink-soft)', lineHeight: 1.5, margin: 0 }}>
+          瑞士极简、赛博霓虹、Win95视窗、手账涂鸦、达芬奇手稿…
+        </p>
+        <div className="arrow" style={{ marginTop: 10, fontSize: 13, color: 'var(--o)' }}>去逛逛 ➔</div>
+      </Link>
+
       {tags.length > 0 && (
         <div className="panel">
           <div className="panel-h"># 热门标签</div>

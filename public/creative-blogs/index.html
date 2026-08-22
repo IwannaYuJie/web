@@ -1,0 +1,1028 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>16 款完全不同排版风格的个人博客设计矩阵 — 总览中心</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;600;700;800;900&family=Noto+Sans+SC:wght@400;500;700;900&display=swap" rel="stylesheet">
+  <style>
+    :root {
+      --bg: #0a0c12;
+      --card-bg: #121520;
+      --card-hover: #181d2c;
+      --border: rgba(255, 255, 255, 0.08);
+      --text: #f8fafc;
+      --text-muted: #94a3b8;
+      --primary: #6366f1;
+      --primary-glow: rgba(99, 102, 241, 0.4);
+      --font-main: "Plus Jakarta Sans", "Noto Sans SC", -apple-system, sans-serif;
+    }
+
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+
+    body {
+      background-color: var(--bg);
+      color: var(--text);
+      font-family: var(--font-main);
+      line-height: 1.6;
+      padding: 40px 20px 100px;
+      min-height: 100vh;
+      background-image: 
+        radial-gradient(circle at 15% 0%, rgba(99, 102, 241, 0.18) 0%, transparent 40%),
+        radial-gradient(circle at 85% 100%, rgba(236, 72, 153, 0.15) 0%, transparent 40%);
+    }
+
+    .hub-container {
+      max-width: 1380px;
+      margin: 0 auto;
+    }
+
+    /* 顶部 Hero */
+    .hub-header {
+      text-align: center;
+      margin-bottom: 50px;
+      padding: 20px 0;
+    }
+
+    .hub-badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      padding: 6px 18px;
+      background: rgba(99, 102, 241, 0.12);
+      border: 1px solid rgba(99, 102, 241, 0.3);
+      color: #818cf8;
+      border-radius: 999px;
+      font-size: 13px;
+      font-weight: 700;
+      margin-bottom: 20px;
+    }
+
+    .hub-title {
+      font-size: clamp(34px, 5.5vw, 60px);
+      font-weight: 900;
+      letter-spacing: -1.5px;
+      line-height: 1.15;
+      margin-bottom: 16px;
+      background: linear-gradient(135deg, #ffffff 40%, #94a3b8 100%);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+    }
+
+    .hub-desc {
+      font-size: 17px;
+      color: var(--text-muted);
+      max-width: 780px;
+      margin: 0 auto 30px;
+    }
+
+    /* 风格分类筛选标签 */
+    .filter-tabs {
+      display: flex;
+      justify-content: center;
+      gap: 10px;
+      flex-wrap: wrap;
+      margin-bottom: 40px;
+    }
+
+    .filter-btn {
+      background: rgba(255, 255, 255, 0.05);
+      border: 1px solid rgba(255, 255, 255, 0.08);
+      color: #94a3b8;
+      padding: 8px 20px;
+      border-radius: 999px;
+      font-size: 13px;
+      font-weight: 600;
+      cursor: pointer;
+      font-family: inherit;
+      transition: all 0.2s;
+    }
+    .filter-btn:hover {
+      background: rgba(255, 255, 255, 0.1);
+      color: #fff;
+    }
+    .filter-btn.active {
+      background: var(--primary);
+      color: #fff;
+      border-color: var(--primary);
+      box-shadow: 0 0 15px var(--primary-glow);
+    }
+
+    /* 16 款风格网格展示 */
+    .styles-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(380px, 1fr));
+      gap: 28px;
+    }
+
+    .style-card {
+      background: var(--card-bg);
+      border: 1px solid var(--border);
+      border-radius: 20px;
+      padding: 28px;
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
+      transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+      position: relative;
+      overflow: hidden;
+    }
+
+    .style-card:hover {
+      background: var(--card-hover);
+      border-color: rgba(255, 255, 255, 0.2);
+      transform: translateY(-4px);
+      box-shadow: 0 20px 40px rgba(0, 0, 0, 0.5);
+    }
+
+    .card-top {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 16px;
+    }
+
+    .style-number {
+      font-size: 12px;
+      font-weight: 800;
+      color: #64748b;
+      letter-spacing: 1.5px;
+    }
+
+    .category-chip {
+      font-size: 11px;
+      font-weight: 700;
+      padding: 3px 10px;
+      background: rgba(255, 255, 255, 0.06);
+      border-radius: 6px;
+      color: #cbd5e1;
+    }
+
+    .card-title {
+      font-size: 22px;
+      font-weight: 800;
+      margin-bottom: 10px;
+      color: #fff;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .card-desc {
+      font-size: 14px;
+      color: var(--text-muted);
+      line-height: 1.6;
+      margin-bottom: 18px;
+      flex: 1;
+    }
+
+    /* 色板展示 */
+    .palette-row {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      margin-bottom: 16px;
+    }
+    .palette-label {
+      font-size: 11px;
+      color: #64748b;
+      font-weight: 600;
+      margin-right: 4px;
+    }
+    .color-dot {
+      width: 18px;
+      height: 18px;
+      border-radius: 50%;
+      border: 1px solid rgba(255, 255, 255, 0.15);
+    }
+
+    /* 特性列表 */
+    .features-list {
+      font-size: 12px;
+      color: #cbd5e1;
+      margin-bottom: 24px;
+      padding: 12px 14px;
+      background: rgba(0, 0, 0, 0.3);
+      border-radius: 10px;
+      border: 1px solid rgba(255, 255, 255, 0.04);
+    }
+    .features-list div {
+      margin-bottom: 4px;
+      display: flex;
+      gap: 6px;
+    }
+    .features-list div:last-child {
+      margin-bottom: 0;
+    }
+
+    /* 卡片操作按钮 */
+    .card-actions {
+      display: flex;
+      gap: 12px;
+    }
+
+    .btn-primary {
+      flex: 1;
+      padding: 10px 16px;
+      background: var(--primary);
+      color: #fff;
+      text-decoration: none;
+      font-size: 13px;
+      font-weight: 700;
+      border-radius: 10px;
+      text-align: center;
+      transition: all 0.2s;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 6px;
+    }
+    .btn-primary:hover {
+      background: #4f46e5;
+      box-shadow: 0 0 15px var(--primary-glow);
+    }
+
+    .btn-preview {
+      padding: 10px 16px;
+      background: rgba(255, 255, 255, 0.08);
+      color: #fff;
+      border: 1px solid rgba(255, 255, 255, 0.12);
+      font-size: 13px;
+      font-weight: 600;
+      border-radius: 10px;
+      cursor: pointer;
+      transition: all 0.2s;
+      font-family: inherit;
+    }
+    .btn-preview:hover {
+      background: rgba(255, 255, 255, 0.16);
+    }
+
+    /* 实时预览模态窗 */
+    .preview-modal {
+      position: fixed;
+      inset: 0;
+      z-index: 100000;
+      background: rgba(0, 0, 0, 0.85);
+      backdrop-filter: blur(10px);
+      display: flex;
+      flex-direction: column;
+      padding: 20px;
+      opacity: 0;
+      pointer-events: none;
+      transition: opacity 0.25s ease;
+    }
+    .preview-modal.active {
+      opacity: 1;
+      pointer-events: auto;
+    }
+
+    .preview-header {
+      max-width: 1400px;
+      width: 100%;
+      margin: 0 auto 12px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      color: #fff;
+    }
+
+    .preview-iframe-wrapper {
+      max-width: 1400px;
+      width: 100%;
+      flex: 1;
+      margin: 0 auto;
+      background: #fff;
+      border-radius: 14px;
+      overflow: hidden;
+      box-shadow: 0 25px 60px rgba(0, 0, 0, 0.8);
+    }
+
+    .preview-iframe-wrapper iframe {
+      width: 100%;
+      height: 100%;
+      border: none;
+    }
+
+    .preview-close-btn {
+      background: rgba(255, 255, 255, 0.15);
+      border: none;
+      color: #fff;
+      padding: 8px 16px;
+      border-radius: 8px;
+      cursor: pointer;
+      font-weight: 700;
+      font-size: 13px;
+    }
+    .preview-close-btn:hover {
+      background: rgba(255, 255, 255, 0.3);
+    }
+
+    @media (max-width: 768px) {
+      .styles-grid {
+        grid-template-columns: 1fr;
+      }
+    }
+  </style>
+</head>
+<body>
+
+  <div class="hub-container">
+    <!-- 顶栏介绍 -->
+    <header class="hub-header">
+      <div class="hub-badge">
+        <span>✨</span>
+        <span>23 DISTINCT TYPOGRAPHY & INTERACTION PARADIGMS</span>
+      </div>
+      <h1 class="hub-title">23 款完全不同排版风格的个人博客矩阵</h1>
+      <p class="hub-desc">
+        涵盖瑞士极简、复古报刊、赛博终端、Win95 视窗、日式禅意、新粗野主义、双向链接知识花园、手账拼贴、中世纪泥金古籍、纯黑客命令行、80s 蒸汽波、CAD 建筑蓝图、独立时尚大画报、8-Bit 像素地牢、拟态毛玻璃、胶片暗房、二次元物语、美式美漫波普、航天局深空手册、维多利亚蒸汽朋克、黑胶唱片音乐志、皇家植物标本志与达芬奇发明手稿。
+      </p>
+
+      <!-- 分类过滤 -->
+      <div class="filter-tabs">
+        <button class="filter-btn active" onclick="filterCategory('all', this)">全部展示 (23款)</button>
+        <button class="filter-btn" onclick="filterCategory('minimal', this)">极简与秩序</button>
+        <button class="filter-btn" onclick="filterCategory('vintage', this)">复古与手作</button>
+        <button class="filter-btn" onclick="filterCategory('tech', this)">极客与科技</button>
+        <button class="filter-btn" onclick="filterCategory('art', this)">艺术与画报</button>
+      </div>
+    </header>
+
+    <!-- 卡片列表 (16 款) -->
+    <main class="styles-grid" id="stylesGrid">
+
+      <!-- 01 瑞士极简 -->
+      <div class="style-card" data-cat="minimal">
+        <div>
+          <div class="card-top">
+            <span class="style-number">STYLE 01</span>
+            <span class="category-chip">极简与秩序</span>
+          </div>
+          <h2 class="card-title">📐 瑞士国际主义极简风</h2>
+          <p class="card-desc">严格数学网格、非对称巨型无衬线排版、高反差黑白底与克莱因红点缀，展现纯粹的理性与秩序美感。</p>
+          <div class="palette-row">
+            <span class="palette-label">配色：</span>
+            <span class="color-dot" style="background:#f8f8f8;"></span>
+            <span class="color-dot" style="background:#0d0d0d;"></span>
+            <span class="color-dot" style="background:#ff3300;"></span>
+            <span class="color-dot" style="background:#757575;"></span>
+          </div>
+          <div class="features-list">
+            <div><span>•</span> <span>字体：Space Grotesk + Noto Sans</span></div>
+            <div><span>•</span> <span>特色：支持键盘 G 键切换真实辅助网格</span></div>
+          </div>
+        </div>
+        <div class="card-actions">
+          <a href="style-01-swiss.html" class="btn-primary">进入全屏体验 ➔</a>
+          <button class="btn-preview" onclick="openPreview('style-01-swiss.html', '01 瑞士国际主义极简风')">快速预览</button>
+        </div>
+      </div>
+
+      <!-- 02 复古报纸 -->
+      <div class="style-card" data-cat="vintage">
+        <div>
+          <div class="card-top">
+            <span class="style-number">STYLE 02</span>
+            <span class="category-chip">复古与手作</span>
+          </div>
+          <h2 class="card-title">📰 复古报纸与文学期刊</h2>
+          <p class="card-desc">经典报刊宽幅版面、多栏文字折行排版、首字下沉（Drop Caps）、双线粗细分隔符与泛黄纸张质感。</p>
+          <div class="palette-row">
+            <span class="palette-label">配色：</span>
+            <span class="color-dot" style="background:#f5efe3;"></span>
+            <span class="color-dot" style="background:#221f1d;"></span>
+            <span class="color-dot" style="background:#8c2d19;"></span>
+            <span class="color-dot" style="background:#d4c8b8;"></span>
+          </div>
+          <div class="features-list">
+            <div><span>•</span> <span>字体：Cinzel + 传统衬线宋体</span></div>
+            <div><span>•</span> <span>特色：头版头条、刊号与天气预报</span></div>
+          </div>
+        </div>
+        <div class="card-actions">
+          <a href="style-02-newspaper.html" class="btn-primary">进入全屏体验 ➔</a>
+          <button class="btn-preview" onclick="openPreview('style-02-newspaper.html', '02 复古报纸与文学期刊风')">快速预览</button>
+        </div>
+      </div>
+
+      <!-- 03 赛博朋克 -->
+      <div class="style-card" data-cat="tech">
+        <div>
+          <div class="card-top">
+            <span class="style-number">STYLE 03</span>
+            <span class="category-chip">极客与科技</span>
+          </div>
+          <h2 class="card-title">⚡ 赛博朋克终端霓虹</h2>
+          <p class="card-desc">深邃暗黑底色、霓虹发光青/洋红/荧光绿描边、HUD 遥测仪表盘与 CRT 微扫描线动效。</p>
+          <div class="palette-row">
+            <span class="palette-label">配色：</span>
+            <span class="color-dot" style="background:#090a10;"></span>
+            <span class="color-dot" style="background:#00f0ff;"></span>
+            <span class="color-dot" style="background:#ff0055;"></span>
+            <span class="color-dot" style="background:#fcee0a;"></span>
+          </div>
+          <div class="features-list">
+            <div><span>•</span> <span>字体：Share Tech Mono + Orbitron</span></div>
+            <div><span>•</span> <span>特色：CRT 扫描线与 HUD 状态仪表</span></div>
+          </div>
+        </div>
+        <div class="card-actions">
+          <a href="style-03-cyberpunk.html" class="btn-primary">进入全屏体验 ➔</a>
+          <button class="btn-preview" onclick="openPreview('style-03-cyberpunk.html', '03 赛博朋克终端霓虹风')">快速预览</button>
+        </div>
+      </div>
+
+      <!-- 04 90年代视窗系统 -->
+      <div class="style-card" data-cat="vintage">
+        <div>
+          <div class="card-top">
+            <span class="style-number">STYLE 04</span>
+            <span class="category-chip">复古与手作</span>
+          </div>
+          <h2 class="card-title">🪟 90年代复古视窗系统</h2>
+          <p class="card-desc">致敬 Win95/98 经典操作系统！斜面浮雕边框、桌面图标、可激活聚焦的视窗与任务栏开始菜单。</p>
+          <div class="palette-row">
+            <span class="palette-label">配色：</span>
+            <span class="color-dot" style="background:#008080;"></span>
+            <span class="color-dot" style="background:#c0c0c0;"></span>
+            <span class="color-dot" style="background:#000080;"></span>
+            <span class="color-dot" style="background:#ffffa5;"></span>
+          </div>
+          <div class="features-list">
+            <div><span>•</span> <span>交互：可点击桌面图标唤出多个视窗</span></div>
+            <div><span>•</span> <span>细节：真实走动的任务栏时钟与便签</span></div>
+          </div>
+        </div>
+        <div class="card-actions">
+          <a href="style-04-retro-os.html" class="btn-primary">进入全屏体验 ➔</a>
+          <button class="btn-preview" onclick="openPreview('style-04-retro-os.html', '04 复古视窗操作系统风')">快速预览</button>
+        </div>
+      </div>
+
+      <!-- 05 日式禅意 -->
+      <div class="style-card" data-cat="minimal">
+        <div>
+          <div class="card-top">
+            <span class="style-number">STYLE 05</span>
+            <span class="category-chip">极简与秩序</span>
+          </div>
+          <h2 class="card-title">🍵 日式禅意极简杂志</h2>
+          <p class="card-desc">大面积留白呼吸感、日式竖排书法美学与横排交错、低饱和素灰茶色调，营造静谧深沉的思考空间。</p>
+          <div class="palette-row">
+            <span class="palette-label">配色：</span>
+            <span class="color-dot" style="background:#f7f5f0;"></span>
+            <span class="color-dot" style="background:#2c2b29;"></span>
+            <span class="color-dot" style="background:#8c887b;"></span>
+            <span class="color-dot" style="background:#a35d46;"></span>
+          </div>
+          <div class="features-list">
+            <div><span>•</span> <span>字体：Shippori Mincho + 雅致宋体</span></div>
+            <div><span>•</span> <span>版式：日式竖排标语与朱砂印章</span></div>
+          </div>
+        </div>
+        <div class="card-actions">
+          <a href="style-05-zen.html" class="btn-primary">进入全屏体验 ➔</a>
+          <button class="btn-preview" onclick="openPreview('style-05-zen.html', '05 日式禅意极简杂志风')">快速预览</button>
+        </div>
+      </div>
+
+      <!-- 06 新粗野主义 -->
+      <div class="style-card" data-cat="art">
+        <div>
+          <div class="card-top">
+            <span class="style-number">STYLE 06</span>
+            <span class="category-chip">艺术与画报</span>
+          </div>
+          <h2 class="card-title">💥 新粗野主义与波普</h2>
+          <p class="card-desc">高饱和撞色、加粗 3px 黑色实线描边、3D 硬阴影偏移与贴纸 Badge，视觉冲击力十足且充满趣味。</p>
+          <div class="palette-row">
+            <span class="palette-label">配色：</span>
+            <span class="color-dot" style="background:#ffdf00;"></span>
+            <span class="color-dot" style="background:#ff6b8b;"></span>
+            <span class="color-dot" style="background:#4deeea;"></span>
+            <span class="color-dot" style="background:#000000;"></span>
+          </div>
+          <div class="features-list">
+            <div><span>•</span> <span>特色：3D 偏移硬投影与旋转贴纸</span></div>
+            <div><span>•</span> <span>交互：Q弹按键交互与动态点赞</span></div>
+          </div>
+        </div>
+        <div class="card-actions">
+          <a href="style-06-neobrutalism.html" class="btn-primary">进入全屏体验 ➔</a>
+          <button class="btn-preview" onclick="openPreview('style-06-neobrutalism.html', '06 新粗野主义与波普风')">快速预览</button>
+        </div>
+      </div>
+
+      <!-- 07 数字花园 (NEW) -->
+      <div class="style-card" data-cat="tech">
+        <div>
+          <div class="card-top">
+            <span class="style-number">STYLE 07</span>
+            <span class="category-chip">极客与科技</span>
+          </div>
+          <h2 class="card-title">🌱 数字花园与双向知识图谱</h2>
+          <p class="card-desc">致敬 Obsidian 与 Notion！双向关联链接 [[Link]]、三栏知识树、Canvas 力导向动态关系网络图谱。</p>
+          <div class="palette-row">
+            <span class="palette-label">配色：</span>
+            <span class="color-dot" style="background:#14161f;"></span>
+            <span class="color-dot" style="background:#7c3aed;"></span>
+            <span class="color-dot" style="background:#10b981;"></span>
+            <span class="color-dot" style="background:#a78bfa;"></span>
+          </div>
+          <div class="features-list">
+            <div><span>•</span> <span>图谱：动态 Canvas 知识节点物理力导向</span></div>
+            <div><span>•</span> <span>组件：双向链接反向 Backlinks 索引</span></div>
+          </div>
+        </div>
+        <div class="card-actions">
+          <a href="style-07-digital-garden.html" class="btn-primary">进入全屏体验 ➔</a>
+          <button class="btn-preview" onclick="openPreview('style-07-digital-garden.html', '07 数字花园双向知识图谱风')">快速预览</button>
+        </div>
+      </div>
+
+      <!-- 08 手账涂鸦 -->
+      <div class="style-card" data-cat="vintage">
+        <div>
+          <div class="card-top">
+            <span class="style-number">STYLE 08</span>
+            <span class="category-chip">复古与手作</span>
+          </div>
+          <h2 class="card-title">✂️ 手账涂鸦与拼贴手作</h2>
+          <p class="card-desc">和纸胶带（Washi Tape）、牛皮网格纸背景、拍立得照片卡片、荧光笔高亮划线与温馨手写字体。</p>
+          <div class="palette-row">
+            <span class="palette-label">配色：</span>
+            <span class="color-dot" style="background:#f4eee1;"></span>
+            <span class="color-dot" style="background:#fefdf9;"></span>
+            <span class="color-dot" style="background:#f472b6;"></span>
+            <span class="color-dot" style="background:#60a5fa;"></span>
+          </div>
+          <div class="features-list">
+            <div><span>•</span> <span>交互：点击页面任意位置盖上可爱贴纸！</span></div>
+            <div><span>•</span> <span>元素：和纸胶带斜贴、拍立得照片卡</span></div>
+          </div>
+        </div>
+        <div class="card-actions">
+          <a href="style-08-scrapbook.html" class="btn-primary">进入全屏体验 ➔</a>
+          <button class="btn-preview" onclick="openPreview('style-08-scrapbook.html', '08 手账涂鸦与拼贴手作风')">快速预览</button>
+        </div>
+      </div>
+
+      <!-- 09 中世纪手抄本 (NEW) -->
+      <div class="style-card" data-cat="art">
+        <div>
+          <div class="card-top">
+            <span class="style-number">STYLE 09</span>
+            <span class="category-chip">艺术与画报</span>
+          </div>
+          <h2 class="card-title">📜 中世纪羊皮纸泥金古籍</h2>
+          <p class="card-desc">泥金手抄本（Illuminated Codex）、哥特华丽首字母插画、古典木刻装饰与可交互按压的火漆蜡封印章。</p>
+          <div class="palette-row">
+            <span class="palette-label">配色：</span>
+            <span class="color-dot" style="background:#efe2c9;"></span>
+            <span class="color-dot" style="background:#2a1f14;"></span>
+            <span class="color-dot" style="background:#c59b27;"></span>
+            <span class="color-dot" style="background:#8b1e0f;"></span>
+          </div>
+          <div class="features-list">
+            <div><span>•</span> <span>交互：支持物理按压与重印的真实火漆印章</span></div>
+            <div><span>•</span> <span>视觉：泥金首字母与羊皮纸古卷边框</span></div>
+          </div>
+        </div>
+        <div class="card-actions">
+          <a href="style-09-medieval-codex.html" class="btn-primary">进入全屏体验 ➔</a>
+          <button class="btn-preview" onclick="openPreview('style-09-medieval-codex.html', '09 中世纪羊皮纸手抄本风')">快速预览</button>
+        </div>
+      </div>
+
+      <!-- 10 命令行终端 -->
+      <div class="style-card" data-cat="tech">
+        <div>
+          <div class="card-top">
+            <span class="style-number">STYLE 10</span>
+            <span class="category-chip">极客与科技</span>
+          </div>
+          <h2 class="card-title">💻 纯文本黑客命令行交互</h2>
+          <p class="card-desc">纯字符 CLI 控制台、ASCII 艺术字 Banner、支持真实输入 `help`、`ls`、`cat` 等命令交互！</p>
+          <div class="palette-row">
+            <span class="palette-label">配色：</span>
+            <span class="color-dot" style="background:#0c1015;"></span>
+            <span class="color-dot" style="background:#39ff14;"></span>
+            <span class="color-dot" style="background:#38bdf8;"></span>
+            <span class="color-dot" style="background:#a855f7;"></span>
+          </div>
+          <div class="features-list">
+            <div><span>•</span> <span>真实交互：可输入命令读取文件与清屏</span></div>
+            <div><span>•</span> <span>快捷：底部提供移动端一键快捷指令</span></div>
+          </div>
+        </div>
+        <div class="card-actions">
+          <a href="style-10-terminal.html" class="btn-primary">进入全屏体验 ➔</a>
+          <button class="btn-preview" onclick="openPreview('style-10-terminal.html', '10 纯文本黑客命令行交互风')">快速预览</button>
+        </div>
+      </div>
+
+      <!-- 11 蒸汽波合成器浪潮 (NEW) -->
+      <div class="style-card" data-cat="vintage">
+        <div>
+          <div class="card-top">
+            <span class="style-number">STYLE 11</span>
+            <span class="category-chip">复古与手作</span>
+          </div>
+          <h2 class="card-title">🌇 蒸汽波与 80s 合成器浪潮</h2>
+          <p class="card-desc">80年代复古未来主义！巨大线框霓虹夕阳、幻彩紫粉渐变与真实旋转的磁带 Mixtape 播放器。</p>
+          <div class="palette-row">
+            <span class="palette-label">配色：</span>
+            <span class="color-dot" style="background:#0d0221;"></span>
+            <span class="color-dot" style="background:#ff2a8d;"></span>
+            <span class="color-dot" style="background:#05d9e8;"></span>
+            <span class="color-dot" style="background:#ffea00;"></span>
+          </div>
+          <div class="features-list">
+            <div><span>•</span> <span>组件：带旋转磁带轮的复古播放器</span></div>
+            <div><span>•</span> <span>氛围：80s Outrun 霓虹地平线与光晕</span></div>
+          </div>
+        </div>
+        <div class="card-actions">
+          <a href="style-11-synthwave.html" class="btn-primary">进入全屏体验 ➔</a>
+          <button class="btn-preview" onclick="openPreview('style-11-synthwave.html', '11 蒸汽波与合成器浪潮风')">快速预览</button>
+        </div>
+      </div>
+
+      <!-- 12 CAD 建筑蓝图 (NEW) -->
+      <div class="style-card" data-cat="minimal">
+        <div>
+          <div class="card-top">
+            <span class="style-number">STYLE 12</span>
+            <span class="category-chip">极简与秩序</span>
+          </div>
+          <h2 class="card-title">📐 CAD 建筑工程蓝图制图</h2>
+          <p class="card-desc">深蓝晒图纸底色、精细毫米级网格、测绘尺寸标注箭头与真实工程图框 Title Block。</p>
+          <div class="palette-row">
+            <span class="palette-label">配色：</span>
+            <span class="color-dot" style="background:#0a2540;"></span>
+            <span class="color-dot" style="background:#ffffff;"></span>
+            <span class="color-dot" style="background:#38bdf8;"></span>
+            <span class="color-dot" style="background:#fde047;"></span>
+          </div>
+          <div class="features-list">
+            <div><span>•</span> <span>排版：标准工程测绘尺寸标注与公差</span></div>
+            <div><span>•</span> <span>图签：标准工程师签署与图纸版本管理</span></div>
+          </div>
+        </div>
+        <div class="card-actions">
+          <a href="style-12-blueprint.html" class="btn-primary">进入全屏体验 ➔</a>
+          <button class="btn-preview" onclick="openPreview('style-12-blueprint.html', '12 CAD 建筑工程蓝图制图风')">快速预览</button>
+        </div>
+      </div>
+
+      <!-- 13 高端时尚大画报 (NEW) -->
+      <div class="style-card" data-cat="art">
+        <div>
+          <div class="card-top">
+            <span class="style-number">STYLE 13</span>
+            <span class="category-chip">艺术与画报</span>
+          </div>
+          <h2 class="card-title">✨ 高端独立时尚大画报</h2>
+          <p class="card-desc">Bodoni 极繁主义大字号字体碰撞、勃艮第酒红配色、跨页破框艺术引言与独立杂志视觉张力。</p>
+          <div class="palette-row">
+            <span class="palette-label">配色：</span>
+            <span class="color-dot" style="background:#faf8f5;"></span>
+            <span class="color-dot" style="background:#121010;"></span>
+            <span class="color-dot" style="background:#6b1426;"></span>
+            <span class="color-dot" style="background:#c9a86a;"></span>
+          </div>
+          <div class="features-list">
+            <div><span>•</span> <span>字体：Bodoni Italic + Syne 极致碰撞</span></div>
+            <div><span>•</span> <span>版式：巨幅 Pull-Quote 跨页破框排版</span></div>
+          </div>
+        </div>
+        <div class="card-actions">
+          <a href="style-13-fashion.html" class="btn-primary">进入全屏体验 ➔</a>
+          <button class="btn-preview" onclick="openPreview('style-13-fashion.html', '13 高端独立时尚大画报风')">快速预览</button>
+        </div>
+      </div>
+
+      <!-- 14 8-Bit 像素地牢 (NEW) -->
+      <div class="style-card" data-cat="vintage">
+        <div>
+          <div class="card-top">
+            <span class="style-number">STYLE 14</span>
+            <span class="category-chip">复古与手作</span>
+          </div>
+          <h2 class="card-title">🎮 8-Bit 像素地牢冒险日志</h2>
+          <p class="card-desc">复古 RPG 游戏界面！血条/魔法值状态 HUD、可点击装备背包、主线任务日志式文章排版。</p>
+          <div class="palette-row">
+            <span class="palette-label">配色：</span>
+            <span class="color-dot" style="background:#11111b;"></span>
+            <span class="color-dot" style="background:#f38ba8;"></span>
+            <span class="color-dot" style="background:#89b4fa;"></span>
+            <span class="color-dot" style="background:#f9e2af;"></span>
+          </div>
+          <div class="features-list">
+            <div><span>•</span> <span>交互：可点击查看属性的 6 格道具背包</span></div>
+            <div><span>•</span> <span>视觉：双重像素硬边框与街机音画质感</span></div>
+          </div>
+        </div>
+        <div class="card-actions">
+          <a href="style-14-pixel-rpg.html" class="btn-primary">进入全屏体验 ➔</a>
+          <button class="btn-preview" onclick="openPreview('style-14-pixel-rpg.html', '14 8-Bit 像素地牢冒险日志风')">快速预览</button>
+        </div>
+      </div>
+
+      <!-- 15 拟态毛玻璃实验室 (NEW) -->
+      <div class="style-card" data-cat="tech">
+        <div>
+          <div class="card-top">
+            <span class="style-number">STYLE 15</span>
+            <span class="category-chip">极客与科技</span>
+          </div>
+          <h2 class="card-title">🔮 未来拟态毛玻璃实验室</h2>
+          <p class="card-desc">多层景深毛玻璃（Glassmorphism）、鼠标跟随移动的极光光斑流体、纯黑前沿实验室科技感。</p>
+          <div class="palette-row">
+            <span class="palette-label">配色：</span>
+            <span class="color-dot" style="background:#070913;"></span>
+            <span class="color-dot" style="background:#6366f1;"></span>
+            <span class="color-dot" style="background:#ec4899;"></span>
+            <span class="color-dot" style="background:#06b6d4;"></span>
+          </div>
+          <div class="features-list">
+            <div><span>•</span> <span>动效：鼠标悬浮跟随极光流体光晕</span></div>
+            <div><span>•</span> <span>质感：多层半透明磨砂玻璃高斯折射</span></div>
+          </div>
+        </div>
+        <div class="card-actions">
+          <a href="style-15-glassmorphism.html" class="btn-primary">进入全屏体验 ➔</a>
+          <button class="btn-preview" onclick="openPreview('style-15-glassmorphism.html', '15 未来拟态毛玻璃实验室风')">快速预览</button>
+        </div>
+      </div>
+
+      <!-- 16 胶片暗房影集 (NEW) -->
+      <div class="style-card" data-cat="art">
+        <div>
+          <div class="card-top">
+            <span class="style-number">STYLE 16</span>
+            <span class="category-chip">艺术与画报</span>
+          </div>
+          <h2 class="card-title">🎞️ 胶片暗房与拍立得影集</h2>
+          <p class="card-desc">35mm 胶卷底片齿孔带、暗房琥珀红灯呼吸动效、打字机等宽字体与单反摄影 EXIF 参数铭牌。</p>
+          <div class="palette-row">
+            <span class="palette-label">配色：</span>
+            <span class="color-dot" style="background:#09090b;"></span>
+            <span class="color-dot" style="background:#ef4444;"></span>
+            <span class="color-dot" style="background:#f97316;"></span>
+            <span class="color-dot" style="background:#e4e4e7;"></span>
+          </div>
+          <div class="features-list">
+            <div><span>•</span> <span>排版：真实 35mm 胶片上下齿孔横条</span></div>
+            <div><span>•</span> <span>铭牌：包含快门/光圈/胶卷型号的技术参数</span></div>
+          </div>
+        </div>
+        <div class="card-actions">
+          <a href="style-16-darkroom.html" class="btn-primary">进入全屏体验 ➔</a>
+          <button class="btn-preview" onclick="openPreview('style-16-darkroom.html', '16 胶片暗房与拍立得影集风')">快速预览</button>
+        </div>
+      </div>
+
+      <!-- 17 二次元日系萌系物语 (NEW) -->
+      <div class="style-card" data-cat="art">
+        <div>
+          <div class="card-top">
+            <span class="style-number">STYLE 17</span>
+            <span class="category-chip">二次元与画报</span>
+          </div>
+          <h2 class="card-title">🌸 二次元日系萌系物语</h2>
+          <p class="card-desc">全屏樱花落瓣动态漂浮、视觉小说 Galgame 台词气泡框、萌系看板娘悬浮立绘与追番电台小组件。</p>
+          <div class="palette-row">
+            <span class="palette-label">配色：</span>
+            <span class="color-dot" style="background:#fff0f5;"></span>
+            <span class="color-dot" style="background:#ff7597;"></span>
+            <span class="color-dot" style="background:#7cc6fe;"></span>
+            <span class="color-dot" style="background:#c084fc;"></span>
+          </div>
+          <div class="features-list">
+            <div><span>•</span> <span>动效：全屏樱花花瓣实时旋转飘落</span></div>
+            <div><span>•</span> <span>组件：视觉小说台词对话框与萌力点赞</span></div>
+          </div>
+        </div>
+        <div class="card-actions">
+          <a href="style-17-anime.html" class="btn-primary">进入全屏体验 ➔</a>
+          <button class="btn-preview" onclick="openPreview('style-17-anime.html', '17 二次元日系萌系物语风')">快速预览</button>
+        </div>
+      </div>
+
+      <!-- 18 美式复古美漫波普 (NEW) -->
+      <div class="style-card" data-cat="art">
+        <div>
+          <div class="card-top">
+            <span class="style-number">STYLE 18</span>
+            <span class="category-chip">艺术与画报</span>
+          </div>
+          <h2 class="card-title">💥 美式复古美漫与波普</h2>
+          <p class="card-desc">本·戴网点纸（Ben-Day Dots）、动态漫画分镜斜框、可点击拟声词特效（POW/ZAP）与波普艺术字。</p>
+          <div class="palette-row">
+            <span class="palette-label">配色：</span>
+            <span class="color-dot" style="background:#ffde00;"></span>
+            <span class="color-dot" style="background:#ff2a2a;"></span>
+            <span class="color-dot" style="background:#0066ff;"></span>
+            <span class="color-dot" style="background:#111111;"></span>
+          </div>
+          <div class="features-list">
+            <div><span>•</span> <span>特色：点击拟声词实时放大震颤互动</span></div>
+            <div><span>•</span> <span>排版：经典美漫英雄期刊对白气泡框</span></div>
+          </div>
+        </div>
+        <div class="card-actions">
+          <a href="style-18-comic.html" class="btn-primary">进入全屏体验 ➔</a>
+          <button class="btn-preview" onclick="openPreview('style-18-comic.html', '18 美式复古美漫与波普漫画风')">快速预览</button>
+        </div>
+      </div>
+
+      <!-- 19 航天局深空探索手册 (NEW) -->
+      <div class="style-card" data-cat="tech">
+        <div>
+          <div class="card-top">
+            <span class="style-number">STYLE 19</span>
+            <span class="category-chip">极客与科技</span>
+          </div>
+          <h2 class="card-title">🚀 航天局深空探索手册</h2>
+          <p class="card-desc">致敬 NASA 阿波罗/阿尔忒弥斯任务！飞行操作清单、遥测 HUD 数据流、地月转移轨道图与深空高反差黑金质感。</p>
+          <div class="palette-row">
+            <span class="palette-label">配色：</span>
+            <span class="color-dot" style="background:#0b0c10;"></span>
+            <span class="color-dot" style="background:#ffd166;"></span>
+            <span class="color-dot" style="background:#4cc9f0;"></span>
+            <span class="color-dot" style="background:#ef476f;"></span>
+          </div>
+          <div class="features-list">
+            <div><span>•</span> <span>排版：专业航天飞行清单与遥测时钟</span></div>
+            <div><span>•</span> <span>视觉：登月地表宇航员高清纪实大图</span></div>
+          </div>
+        </div>
+        <div class="card-actions">
+          <a href="style-19-space.html" class="btn-primary">进入全屏体验 ➔</a>
+          <button class="btn-preview" onclick="openPreview('style-19-space.html', '19 航天局深空探索飞行手册风')">快速预览</button>
+        </div>
+      </div>
+
+      <!-- 20 维多利亚机械档案馆 (NEW) -->
+      <div class="style-card" data-cat="vintage">
+        <div>
+          <div class="card-top">
+            <span class="style-number">STYLE 20</span>
+            <span class="category-chip">复古与手作</span>
+          </div>
+          <h2 class="card-title">⚙️ 维多利亚机械档案馆</h2>
+          <p class="card-desc">持续转动的黄铜齿轮机构、蒸汽压力计表盘、铆钉皮革装订与巴贝奇差分机发明专利档案。</p>
+          <div class="palette-row">
+            <span class="palette-label">配色：</span>
+            <span class="color-dot" style="background:#1f1a17;"></span>
+            <span class="color-dot" style="background:#c59b27;"></span>
+            <span class="color-dot" style="background:#b85d19;"></span>
+            <span class="color-dot" style="background:#f4ece1;"></span>
+          </div>
+          <div class="features-list">
+            <div><span>•</span> <span>交互：真实 CSS 机械齿轮啮合转动</span></div>
+            <div><span>•</span> <span>插图：维多利亚发明家黄铜实验室工坊</span></div>
+          </div>
+        </div>
+        <div class="card-actions">
+          <a href="style-20-steampunk.html" class="btn-primary">进入全屏体验 ➔</a>
+          <button class="btn-preview" onclick="openPreview('style-20-steampunk.html', '20 维多利亚蒸汽朋克机械风')">快速预览</button>
+        </div>
+      </div>
+
+      <!-- 21 复古黑胶唱片独立音乐志 (NEW) -->
+      <div class="style-card" data-cat="art">
+        <div>
+          <div class="card-top">
+            <span class="style-number">STYLE 21</span>
+            <span class="category-chip">艺术与画报</span>
+          </div>
+          <h2 class="card-title">📻 复古黑胶唱片音乐志</h2>
+          <p class="card-desc">33⅓ RPM 旋转黑胶唱片唱机、可点击起落唱针控制旋转、曲目时长印章与温暖爵士乐评排版。</p>
+          <div class="palette-row">
+            <span class="palette-label">配色：</span>
+            <span class="color-dot" style="background:#121212;"></span>
+            <span class="color-dot" style="background:#e69138;"></span>
+            <span class="color-dot" style="background:#cc3333;"></span>
+            <span class="color-dot" style="background:#f6f0ea;"></span>
+          </div>
+          <div class="features-list">
+            <div><span>•</span> <span>交互：可交互旋转/暂停黑胶唱盘机</span></div>
+            <div><span>•</span> <span>组件：发烧友唱片收藏架与音响参数</span></div>
+          </div>
+        </div>
+        <div class="card-actions">
+          <a href="style-21-vinyl.html" class="btn-primary">进入全屏体验 ➔</a>
+          <button class="btn-preview" onclick="openPreview('style-21-vinyl.html', '21 复古黑胶唱片与独立音乐志风')">快速预览</button>
+        </div>
+      </div>
+
+      <!-- 22 皇家植物标本志 (NEW) -->
+      <div class="style-card" data-cat="vintage">
+        <div>
+          <div class="card-top">
+            <span class="style-number">STYLE 22</span>
+            <span class="category-chip">复古与手作</span>
+          </div>
+          <h2 class="card-title">🌿 皇家自然植物标本志</h2>
+          <p class="card-desc">大英自然历史博物馆标本台纸装帧、压制植物蜡封标牌、林奈分类学拉丁文手记与典雅衬线字阶。</p>
+          <div class="palette-row">
+            <span class="palette-label">配色：</span>
+            <span class="color-dot" style="background:#ece5d8;"></span>
+            <span class="color-dot" style="background:#2d5a27;"></span>
+            <span class="color-dot" style="background:#8b3a2b;"></span>
+            <span class="color-dot" style="background:#2b2823;"></span>
+          </div>
+          <div class="features-list">
+            <div><span>•</span> <span>装帧：标本台纸加固角与采集地铭牌</span></div>
+            <div><span>•</span> <span>图版：19世纪高山蕨类植物彩色石版画</span></div>
+          </div>
+        </div>
+        <div class="card-actions">
+          <a href="style-22-botanical.html" class="btn-primary">进入全屏体验 ➔</a>
+          <button class="btn-preview" onclick="openPreview('style-22-botanical.html', '22 皇家自然植物标本志风')">快速预览</button>
+        </div>
+      </div>
+
+      <!-- 23 达芬奇文艺复兴手稿 (NEW) -->
+      <div class="style-card" data-cat="vintage">
+        <div>
+          <div class="card-top">
+            <span class="style-number">STYLE 23</span>
+            <span class="category-chip">复古与手作</span>
+          </div>
+          <h2 class="card-title">📜 达芬奇手稿与发明志</h2>
+          <p class="card-desc">文艺复兴棉纸墨迹、鸟类扑翼机械飞行草图、黄金分割几何比例与一键切换的「达芬奇镜面手稿解密」交互。</p>
+          <div class="palette-row">
+            <span class="palette-label">配色：</span>
+            <span class="color-dot" style="background:#f5eedb;"></span>
+            <span class="color-dot" style="background:#3b2a1a;"></span>
+            <span class="color-dot" style="background:#8c2d19;"></span>
+            <span class="color-dot" style="background:#2b1f14;"></span>
+          </div>
+          <div class="features-list">
+            <div><span>•</span> <span>黑科技：支持一键翻转镜面手抄字迹</span></div>
+            <div><span>•</span> <span>图纸：达芬奇仿生扑翼飞行器解剖手稿</span></div>
+          </div>
+        </div>
+        <div class="card-actions">
+          <a href="style-23-davinci.html" class="btn-primary">进入全屏体验 ➔</a>
+          <button class="btn-preview" onclick="openPreview('style-23-davinci.html', '23 达芬奇文艺复兴手稿发明志风')">快速预览</button>
+        </div>
+      </div>
+
+    </main>
+  </div>
+
+  <!-- 实时预览弹窗 -->
+  <div id="previewModal" class="preview-modal">
+    <div class="preview-header">
+      <div style="font-weight: 700; font-size: 16px;" id="previewTitle">实时快速预览</div>
+      <button class="preview-close-btn" onclick="closePreview()">✕ 关闭预览</button>
+    </div>
+    <div class="preview-iframe-wrapper">
+      <iframe id="previewIframe" src="about:blank"></iframe>
+    </div>
+  </div>
+
+  <script>
+    function filterCategory(cat, btn) {
+      document.querySelectorAll('.filter-btn').forEach(b => b.classList.remove('active'));
+      btn.classList.add('active');
+
+      const cards = document.querySelectorAll('.style-card');
+      cards.forEach(card => {
+        if (cat === 'all' || card.getAttribute('data-cat') === cat) {
+          card.style.display = 'flex';
+        } else {
+          card.style.display = 'none';
+        }
+      });
+    }
+
+    function openPreview(url, title) {
+      document.getElementById('previewTitle').textContent = `正在预览：${title}`;
+      document.getElementById('previewIframe').src = url;
+      document.getElementById('previewModal').classList.add('active');
+    }
+
+    function closePreview() {
+      document.getElementById('previewModal').classList.remove('active');
+      document.getElementById('previewIframe').src = 'about:blank';
+    }
+
+    // ESC 关闭预览
+    document.addEventListener('keydown', (e) => {
+      if (e.key === 'Escape') closePreview();
+    });
+  </script>
+</body>
+</html>

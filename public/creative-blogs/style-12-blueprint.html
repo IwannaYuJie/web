@@ -1,0 +1,277 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>DWG // 12 建筑工程蓝图制图风</title>
+  <link rel="stylesheet" href="assets/common.css">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Share+Tech+Mono&family=Noto+Sans+SC:wght@400;600;800&display=swap" rel="stylesheet">
+  <style>
+    :root {
+      --cad-blue: #0a2540;
+      --cad-grid-major: rgba(255, 255, 255, 0.15);
+      --cad-grid-minor: rgba(255, 255, 255, 0.05);
+      --cad-white: #ffffff;
+      --cad-cyan: #38bdf8;
+      --cad-yellow: #fde047;
+      --font-cad: "Share Tech Mono", monospace, "Noto Sans SC", sans-serif;
+    }
+
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+
+    body {
+      background-color: var(--cad-blue);
+      color: var(--cad-white);
+      font-family: var(--font-cad);
+      min-height: 100vh;
+      padding: 30px 20px 80px;
+      line-height: 1.7;
+      background-image: 
+        linear-gradient(var(--cad-grid-minor) 1px, transparent 1px),
+        linear-gradient(90deg, var(--cad-grid-minor) 1px, transparent 1px),
+        linear-gradient(var(--cad-grid-major) 1px, transparent 1px),
+        linear-gradient(90deg, var(--cad-grid-major) 1px, transparent 1px);
+      background-size: 20px 20px, 20px 20px, 100px 100px, 100px 100px;
+    }
+
+    .cad-sheet {
+      max-width: 1240px;
+      margin: 0 auto;
+      border: 2px solid var(--cad-white);
+      padding: 24px;
+      position: relative;
+      background: rgba(10, 37, 64, 0.85);
+      box-shadow: 0 0 30px rgba(0, 0, 0, 0.6);
+    }
+
+    /* 顶栏标尺 */
+    .cad-top-rule {
+      display: flex;
+      justify-content: space-between;
+      border-bottom: 1px solid var(--cad-white);
+      padding-bottom: 8px;
+      margin-bottom: 24px;
+      font-size: 11px;
+      color: var(--cad-cyan);
+    }
+
+    /* 标题区域 */
+    .cad-header {
+      margin-bottom: 36px;
+      border-bottom: 1px dashed var(--cad-cyan);
+      padding-bottom: 20px;
+    }
+
+    .cad-doc-code {
+      font-size: 12px;
+      color: var(--cad-yellow);
+      margin-bottom: 6px;
+    }
+
+    .cad-title {
+      font-size: clamp(28px, 4.5vw, 44px);
+      font-weight: 800;
+      letter-spacing: 1px;
+      line-height: 1.2;
+    }
+
+    /* 尺寸标注线 */
+    .dimension-line {
+      display: flex;
+      align-items: center;
+      margin: 16px 0;
+      color: var(--cad-cyan);
+      font-size: 11px;
+    }
+    .dim-arrow-left { border-right: 6px solid var(--cad-cyan); border-top: 3px solid transparent; border-bottom: 3px solid transparent; }
+    .dim-arrow-right { border-left: 6px solid var(--cad-cyan); border-top: 3px solid transparent; border-bottom: 3px solid transparent; }
+    .dim-line { flex: 1; height: 1px; background: var(--cad-cyan); }
+    .dim-text { padding: 0 8px; }
+
+    /* 主网格 */
+    .cad-grid {
+      display: grid;
+      grid-template-columns: 2fr 1fr;
+      gap: 30px;
+    }
+
+    /* 图纸卡片 */
+    .cad-module {
+      border: 1px solid var(--cad-white);
+      padding: 24px;
+      margin-bottom: 24px;
+      position: relative;
+    }
+
+    .cad-module::before {
+      content: "+";
+      position: absolute;
+      top: -8px;
+      left: -5px;
+      color: var(--cad-cyan);
+      font-size: 16px;
+      font-weight: bold;
+    }
+
+    .cad-mod-header {
+      font-size: 12px;
+      color: var(--cad-cyan);
+      border-bottom: 1px solid rgba(255, 255, 255, 0.2);
+      padding-bottom: 6px;
+      margin-bottom: 12px;
+      display: flex;
+      justify-content: space-between;
+    }
+
+    .cad-article-title {
+      font-size: 22px;
+      font-weight: 700;
+      margin-bottom: 12px;
+      color: #fff;
+    }
+
+    .cad-article-body {
+      font-size: 14px;
+      color: #cbd5e1;
+      line-height: 1.8;
+      margin-bottom: 16px;
+    }
+
+    /* 工程图签 Title Block */
+    .cad-title-block {
+      border: 2px solid var(--cad-white);
+      margin-top: 30px;
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      font-size: 11px;
+    }
+
+    .title-cell {
+      border-right: 1px solid var(--cad-white);
+      border-bottom: 1px solid var(--cad-white);
+      padding: 8px;
+    }
+    .title-cell:last-child {
+      border-right: none;
+    }
+    .title-cell strong {
+      display: block;
+      color: var(--cad-cyan);
+      margin-bottom: 2px;
+    }
+
+    @media (max-width: 860px) {
+      .cad-grid {
+        grid-template-columns: 1fr;
+      }
+      .cad-title-block {
+        grid-template-columns: 1fr 1fr;
+      }
+    }
+  </style>
+</head>
+<body>
+
+  <div class="cad-sheet">
+    <div class="cad-top-rule">
+      <span>📐 CAD SCALE: 1:100 // GRID: 20mm</span>
+      <span>TOLERANCE: ±0.05mm</span>
+      <span>STATUS: APPROVED FOR PUBLISH</span>
+    </div>
+
+    <!-- 标题 -->
+    <header class="cad-header">
+      <div class="cad-doc-code">DWG NO. 2026-ARCH-001 // SHEET 01 OF 01</div>
+      <h1 class="cad-title">系统架构测绘与工程制图手记</h1>
+    </header>
+
+    <!-- 尺寸标注 -->
+    <div class="dimension-line">
+      <div class="dim-arrow-left"></div>
+      <div class="dim-line"></div>
+      <span class="dim-text">SECTION A-A: CORE ARCHITECTURE (1200.00mm)</span>
+      <div class="dim-line"></div>
+      <div class="dim-arrow-right"></div>
+    </div>
+
+    <!-- 主图纸内容 -->
+    <div class="cad-grid">
+      <!-- 左侧图纸模块 -->
+      <main>
+        <section class="cad-module">
+          <div class="cad-mod-header">
+            <span>[DETAIL 01.A] // ISOMETRIC SCHEMATIC</span>
+            <span>REV: B.2</span>
+          </div>
+          <div style="margin: 10px 0 14px; border: 1px solid rgba(255,255,255,0.4); background: #002244;">
+            <img src="assets/images/blueprint_cad.jpg" alt="CAD 建筑等轴测立面工程图" style="width: 100%; height: auto; display: block;">
+            <div style="font-size: 10px; color: var(--cad-cyan); padding: 4px 8px; font-family: monospace;">
+              FIG 1.0 : STRUCTURAL GLASS PAVILION ISOMETRIC CAD BLUEPRINT (SCALE 1:100)
+            </div>
+          </div>
+          <h2 class="cad-article-title">高可用系统蓝图：微服务解耦与故障隔离拓扑</h2>
+          <p class="cad-article-body">
+            正如现代建筑利用伸缩缝与阻尼器吸收地震能量，软件架构中的断路器（Circuit Breaker）与背压机制（Backpressure）亦是为了在流量洪峰下保护核心承重墙不受损毁。
+          </p>
+          <div style="font-size: 12px; color: var(--cad-yellow);">▶ SPECS: RUST 1.82 · LINUX KERNEL 6.8 · ZERO-COPY IO</div>
+        </section>
+
+        <section class="cad-module">
+          <div class="cad-mod-header">
+            <span>[DETAIL 01.B] // STRUCTURAL CALCULATION</span>
+            <span>REV: A.0</span>
+          </div>
+          <h2 class="cad-article-title">数据管道应力分析：流计算状态存储的容量规划</h2>
+          <p class="cad-article-body">
+            推导每秒 50 万并发事件下的 RocksDB 写放大系数与 LSM-Tree 压实延迟数学模型，给出最优分层系数。
+          </p>
+        </section>
+      </main>
+
+      <!-- 右侧图纸规范 -->
+      <aside>
+        <div class="cad-module">
+          <div class="cad-mod-header">
+            <span>[GENERAL NOTES]</span>
+            <span>STANDARDS</span>
+          </div>
+          <div style="font-size: 12px; line-height: 1.8;">
+            1. 所有设计遵循 ISO 9001 软件质量规范。<br>
+            2. 未注公差尺寸按 IT12 级执行。<br>
+            3. 主笔工程师：CHIEF ARCHITECT。<br>
+            4. 材质：纯净代码与逻辑严密性。
+          </div>
+        </div>
+      </aside>
+    </div>
+
+    <!-- 底部工程图签 Title Block -->
+    <footer class="cad-title-block">
+      <div class="title-cell">
+        <strong>PROJECT:</strong>
+        ENGINEERING BLUEPRINT LOG
+      </div>
+      <div class="title-cell">
+        <strong>DESIGNER:</strong>
+        CHIEF ARCHITECT
+      </div>
+      <div class="title-cell">
+        <strong>DATE:</strong>
+        2026-08-22
+      </div>
+      <div class="title-cell">
+        <strong>SHEET:</strong>
+        1 OF 1 (DWG APPROVED)
+      </div>
+    </footer>
+  </div>
+
+  <script src="assets/nav-bar.js"></script>
+</body>
+</html>

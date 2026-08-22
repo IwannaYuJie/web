@@ -1,0 +1,357 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>33 RPM VINYL ZINE // 21 复古黑胶唱片与独立音乐志</title>
+  <link rel="stylesheet" href="assets/common.css">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=DM+Serif+Display:ital@0;1&family=Outfit:wght@400;600;800&family=Noto+Serif+SC:wght@400;600;900&display=swap" rel="stylesheet">
+  <style>
+    :root {
+      --vinyl-black: #121212;
+      --vinyl-cream: #f6f0ea;
+      --vinyl-amber: #e69138;
+      --vinyl-groove: #262626;
+      --vinyl-label-red: #cc3333;
+      --font-vinyl-title: 'DM Serif Display', 'Noto Serif SC', serif;
+      --font-vinyl-body: 'Outfit', 'Noto Serif SC', sans-serif;
+    }
+
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+
+    body {
+      background-color: var(--vinyl-black);
+      color: var(--vinyl-cream);
+      font-family: var(--font-vinyl-body);
+      line-height: 1.75;
+      padding-bottom: 100px;
+      /* 温暖木质与唱片纹理 */
+      background-image: 
+        radial-gradient(circle at 20% 30%, rgba(230, 145, 56, 0.15) 0%, transparent 50%),
+        radial-gradient(circle at 80% 70%, rgba(204, 51, 51, 0.1) 0%, transparent 50%);
+    }
+
+    .vinyl-wrapper {
+      max-width: 1200px;
+      margin: 0 auto;
+      padding: 28px 20px;
+    }
+
+    /* 刊头 */
+    .vinyl-masthead {
+      border-bottom: 1px solid rgba(255, 255, 255, 0.15);
+      padding-bottom: 20px;
+      margin-bottom: 36px;
+      display: flex;
+      justify-content: space-between;
+      align-items: flex-end;
+    }
+    .vinyl-logo {
+      font-family: var(--font-vinyl-title);
+      font-size: 32px;
+      letter-spacing: 1px;
+      color: #fff;
+    }
+    .vinyl-rpm-badge {
+      font-size: 11px;
+      color: var(--vinyl-amber);
+      border: 1px solid var(--vinyl-amber);
+      padding: 3px 10px;
+      border-radius: 20px;
+      letter-spacing: 2px;
+    }
+
+    /* 黑胶唱机 Hero 播放器大卡片 */
+    .turntable-hero-card {
+      background: #1c1a18;
+      border: 1px solid #332d29;
+      border-radius: 24px;
+      padding: 36px;
+      display: grid;
+      grid-template-columns: 1.2fr 1fr;
+      gap: 36px;
+      align-items: center;
+      margin-bottom: 48px;
+      box-shadow: 0 20px 50px rgba(0,0,0,0.6);
+      position: relative;
+    }
+
+    .turntable-visual-panel {
+      position: relative;
+      border-radius: 16px;
+      overflow: hidden;
+      box-shadow: 0 10px 30px rgba(0,0,0,0.8);
+    }
+    .turntable-visual-panel img {
+      width: 100%;
+      height: 340px;
+      object-fit: cover;
+      display: block;
+    }
+
+    /* 旋转唱片微组件 */
+    .spinning-lp-disc {
+      position: absolute;
+      top: 20px;
+      right: 20px;
+      width: 90px;
+      height: 90px;
+      border-radius: 50%;
+      background: radial-gradient(circle, #cc3333 22%, #111 23%, #222 30%, #111 35%, #222 45%, #111 60%, #222 75%, #111 100%);
+      box-shadow: 0 4px 15px rgba(0,0,0,0.9);
+      animation: spin-lp 4s linear infinite;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+    .spinning-lp-disc.paused {
+      animation-play-state: paused;
+    }
+    .lp-center-hole {
+      width: 10px;
+      height: 10px;
+      background: #000;
+      border-radius: 50%;
+      border: 1px solid #fff;
+    }
+    @keyframes spin-lp {
+      100% { transform: rotate(360deg); }
+    }
+
+    .hero-album-title {
+      font-family: var(--font-vinyl-title);
+      font-size: 34px;
+      color: #fff;
+      margin-bottom: 14px;
+      line-height: 1.2;
+    }
+    .hero-album-title span {
+      color: var(--vinyl-amber);
+    }
+
+    .liner-notes-p {
+      font-size: 14px;
+      color: #b8aba0;
+      line-height: 1.85;
+      margin-bottom: 20px;
+    }
+
+    .vinyl-play-btn {
+      display: inline-flex;
+      align-items: center;
+      gap: 10px;
+      background: var(--vinyl-amber);
+      color: #000;
+      font-weight: 800;
+      font-size: 13px;
+      padding: 10px 22px;
+      border-radius: 999px;
+      text-decoration: none;
+      transition: all 0.2s;
+      cursor: pointer;
+      border: none;
+    }
+    .vinyl-play-btn:hover {
+      background: #ffaa4d;
+      transform: scale(1.03);
+    }
+
+    /* 曲目列表 / 乐评文章网格 */
+    .tracklist-grid {
+      display: grid;
+      grid-template-columns: 2fr 1fr;
+      gap: 36px;
+    }
+
+    .track-post-card {
+      background: #181615;
+      border: 1px solid #2e2824;
+      border-radius: 16px;
+      padding: 30px;
+      margin-bottom: 28px;
+      transition: border-color 0.2s;
+    }
+    .track-post-card:hover {
+      border-color: var(--vinyl-amber);
+    }
+
+    .track-number-row {
+      display: flex;
+      justify-content: space-between;
+      font-size: 12px;
+      color: var(--vinyl-amber);
+      font-weight: 700;
+      margin-bottom: 10px;
+    }
+
+    .track-title {
+      font-family: var(--font-vinyl-title);
+      font-size: 24px;
+      color: #fff;
+      margin-bottom: 14px;
+    }
+
+    .track-body {
+      font-size: 14px;
+      color: #b5a99f;
+      line-height: 1.8;
+    }
+
+    /* 侧边歌单与黑胶唱片架 */
+    .crate-widget {
+      background: #181615;
+      border: 1px solid #2e2824;
+      border-radius: 16px;
+      padding: 24px;
+      margin-bottom: 28px;
+    }
+    .crate-heading {
+      font-family: var(--font-vinyl-title);
+      font-size: 18px;
+      color: var(--vinyl-amber);
+      border-bottom: 1px solid #332d29;
+      padding-bottom: 10px;
+      margin-bottom: 16px;
+    }
+
+    .vinyl-track-item {
+      display: flex;
+      justify-content: space-between;
+      padding: 8px 0;
+      border-bottom: 1px solid rgba(255,255,255,0.05);
+      font-size: 13px;
+      color: #ccc;
+    }
+    .vinyl-track-item:last-child { border-bottom: none; }
+
+    @media (max-width: 860px) {
+      .turntable-hero-card, .tracklist-grid {
+        grid-template-columns: 1fr;
+      }
+    }
+  </style>
+</head>
+<body>
+
+  <div class="vinyl-wrapper">
+    <!-- 顶栏 -->
+    <header class="vinyl-masthead">
+      <div>
+        <div class="vinyl-logo">SIDE A // THE VINYL CHRONICLES</div>
+        <div style="font-size: 12px; color: #887766;">独立音乐评论 · 黑胶唱片收藏 · 听觉美学札记</div>
+      </div>
+      <div class="vinyl-rpm-badge">STEREO 33⅓ RPM</div>
+    </header>
+
+    <!-- 黑胶唱机 Hero 封面卡片 -->
+    <section class="turntable-hero-card">
+      <div class="turntable-visual-panel">
+        <img src="assets/images/vinyl_turntable.jpg" alt="复古黑胶唱机与唱片架特写摄影">
+        <div class="spinning-lp-disc" id="lpDisc">
+          <div class="lp-center-hole"></div>
+        </div>
+      </div>
+      <div>
+        <div style="font-size: 11px; color: var(--vinyl-amber); letter-spacing: 2px; margin-bottom: 8px;">FEATURED RECORD // A-SIDE 01</div>
+        <h1 class="hero-album-title">
+          暖光、唱针与黑胶微响：<span>模拟时代的听觉温润感</span>
+        </h1>
+        <p class="liner-notes-p">
+          数字音频消除了底噪与机械抖晃，却也剥离了物理介质与时间共振的仪式感。当唱针缓缓滑入黑胶唱片的音轨，那一声微弱的爆豆声，正是音乐呼吸的起点。
+        </p>
+        <button class="vinyl-play-btn" onclick="toggleNeedle()">
+          <span id="playIcon">▶</span>
+          <span id="playText">PLAY ROTATING TURNTABLE</span>
+        </button>
+      </div>
+    </section>
+
+    <!-- 曲目随笔列表 -->
+    <div class="tracklist-grid">
+      <!-- 左侧曲目文章 -->
+      <main>
+        <article class="track-post-card">
+          <div class="track-number-row">
+            <span>TRACK 01 // MODERN JAZZ</span>
+            <span>DURATION: 08:42</span>
+          </div>
+          <h2 class="track-title">从 Miles Davis 到即兴重构：在代码中寻找爵士乐的自由节拍</h2>
+          <p class="track-body">
+            《Kind of Blue》之所以成为不朽神作，在于其突破了固定和弦进程的枷锁，赋予了每个声部自主对话的空间。正如优秀的微服务架构设计，不过度拘泥于死板的同步调用，而是以事件驱动的弹性节拍自由共鸣。
+          </p>
+        </article>
+
+        <article class="track-post-card">
+          <div class="track-number-row">
+            <span>TRACK 02 // AMBIENT & MINIMALISM</span>
+            <span>DURATION: 06:15</span>
+          </div>
+          <h2 class="track-title">Brian Eno 与环境音乐：不喧宾夺主的背景声音建筑学</h2>
+          <p class="track-body">
+            环境音乐旨在“既能引人专注沉浸，又能在不经意间完全融入周围空间”。优秀的 UI/UX 设计亦如是——最高的境界并非炫耀喧哗的交互，而是如呼吸般自然贴合心流。
+          </p>
+        </article>
+      </main>
+
+      <!-- 右侧黑胶唱片收藏架 -->
+      <aside>
+        <div class="crate-widget">
+          <div class="crate-heading">📻 ROTATION CRATE</div>
+          <div class="vinyl-track-item">
+            <span>Miles Davis - Blue in Green</span>
+            <span style="color:var(--vinyl-amber);">05:37</span>
+          </div>
+          <div class="vinyl-track-item">
+            <span>Bill Evans - Peace Piece</span>
+            <span style="color:var(--vinyl-amber);">06:42</span>
+          </div>
+          <div class="vinyl-track-item">
+            <span>John Coltrane - Naima</span>
+            <span style="color:var(--vinyl-amber);">04:24</span>
+          </div>
+          <div class="vinyl-track-item">
+            <span>Thelonious Monk - 'Round Midnight</span>
+            <span style="color:var(--vinyl-amber);">03:12</span>
+          </div>
+        </div>
+
+        <div class="crate-widget">
+          <div class="crate-heading">🎛️ AUDIOPHILE SPECS</div>
+          <div style="font-size: 13px; color: #a89d94; line-height: 2;">
+            <div>• 唱机: Linn Sondek LP12</div>
+            <div>• 唱头: Ortofon 2M Bronze</div>
+            <div>• 唱放: 纯甲类电子管放大器</div>
+            <div>• 扬声器: Tannoy Stirling GR</div>
+          </div>
+        </div>
+      </aside>
+    </div>
+  </div>
+
+  <script src="assets/nav-bar.js"></script>
+  <script>
+    let isPlaying = true;
+    function toggleNeedle() {
+      const disc = document.getElementById('lpDisc');
+      const icon = document.getElementById('playIcon');
+      const text = document.getElementById('playText');
+      isPlaying = !isPlaying;
+      if (isPlaying) {
+        disc.classList.remove('paused');
+        icon.textContent = '⏸';
+        text.textContent = 'PAUSE TURNTABLE';
+      } else {
+        disc.classList.add('paused');
+        icon.textContent = '▶';
+        text.textContent = 'PLAY ROTATING TURNTABLE';
+      }
+    }
+  </script>
+</body>
+</html>

@@ -1,0 +1,319 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>SYNTHWAVE 1984 // 11 蒸汽波与合成器浪潮风</title>
+  <link rel="stylesheet" href="assets/common.css">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=VT323&family=Orbitron:wght@700;900&family=Noto+Sans+SC:wght@400;700;900&display=swap" rel="stylesheet">
+  <style>
+    :root {
+      --synth-bg: #0d0221;
+      --synth-pink: #ff2a8d;
+      --synth-purple: #7925c7;
+      --synth-cyan: #05d9e8;
+      --synth-yellow: #ffea00;
+      --font-retro: "VT323", "Orbitron", monospace;
+    }
+
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+
+    body {
+      background-color: var(--synth-bg);
+      color: #fff;
+      font-family: "Noto Sans SC", sans-serif;
+      min-height: 100vh;
+      overflow-x: hidden;
+      position: relative;
+      padding-bottom: 120px;
+    }
+
+    /* 顶部导航 */
+    .synth-nav {
+      padding: 20px 30px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      border-bottom: 2px solid rgba(255, 42, 141, 0.4);
+      background: rgba(13, 2, 33, 0.85);
+      backdrop-filter: blur(10px);
+      position: sticky;
+      top: 0;
+      z-index: 100;
+    }
+
+    .synth-brand {
+      font-family: 'Orbitron', sans-serif;
+      font-size: 24px;
+      font-weight: 900;
+      background: linear-gradient(180deg, #fff 10%, var(--synth-pink) 60%, var(--synth-cyan) 100%);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      letter-spacing: 2px;
+      text-shadow: 0 0 20px rgba(255, 42, 141, 0.8);
+    }
+    .synth-brand span {
+      font-family: 'VT323', monospace;
+      font-size: 16px;
+      color: var(--synth-cyan);
+      -webkit-text-fill-color: var(--synth-cyan);
+      margin-left: 8px;
+    }
+
+    /* 80s 极光网格地平线与巨大霓虹夕阳 */
+    .synth-hero {
+      text-align: center;
+      padding: 60px 20px 40px;
+      position: relative;
+      overflow: hidden;
+    }
+
+    .synth-sun {
+      width: 200px;
+      height: 200px;
+      margin: 0 auto 30px;
+      border-radius: 50%;
+      background: linear-gradient(to bottom, #ffea00, #ff2a8d, #7925c7);
+      box-shadow: 0 0 60px rgba(255, 42, 141, 0.9);
+      position: relative;
+    }
+    .synth-sun::after {
+      content: "";
+      position: absolute;
+      inset: 0;
+      background: repeating-linear-gradient(to bottom, transparent 0px, transparent 12px, #0d0221 12px, #0d0221 16px);
+      border-radius: 50%;
+    }
+
+    .synth-hero-title {
+      font-family: 'Orbitron', sans-serif;
+      font-size: clamp(36px, 6vw, 64px);
+      font-weight: 900;
+      letter-spacing: 3px;
+      color: #fff;
+      text-shadow: 0 0 15px var(--synth-cyan), 0 0 30px var(--synth-pink);
+      margin-bottom: 12px;
+    }
+
+    .synth-hero-sub {
+      font-family: 'VT323', monospace;
+      font-size: 22px;
+      color: var(--synth-yellow);
+      letter-spacing: 3px;
+    }
+
+    /* 布局容器 */
+    .synth-container {
+      max-width: 1140px;
+      margin: 0 auto;
+      padding: 0 20px;
+      display: grid;
+      grid-template-columns: 2fr 1fr;
+      gap: 36px;
+      position: relative;
+      z-index: 10;
+    }
+
+    /* 霓虹文章卡片 */
+    .synth-card {
+      background: rgba(25, 10, 55, 0.7);
+      border: 1px solid rgba(255, 42, 141, 0.4);
+      border-radius: 12px;
+      padding: 32px;
+      margin-bottom: 30px;
+      box-shadow: 0 0 20px rgba(121, 37, 199, 0.3), inset 0 0 15px rgba(255, 42, 141, 0.1);
+      transition: all 0.3s ease;
+      position: relative;
+      overflow: hidden;
+    }
+    .synth-card:hover {
+      border-color: var(--synth-cyan);
+      box-shadow: 0 0 30px rgba(5, 217, 232, 0.5);
+      transform: translateY(-4px);
+    }
+
+    .synth-card-date {
+      font-family: 'VT323', monospace;
+      font-size: 18px;
+      color: var(--synth-cyan);
+      margin-bottom: 8px;
+      letter-spacing: 1px;
+    }
+
+    .synth-card-title {
+      font-size: 24px;
+      font-weight: 800;
+      color: #fff;
+      margin-bottom: 14px;
+      line-height: 1.35;
+    }
+    .synth-card-title:hover {
+      color: var(--synth-pink);
+    }
+
+    .synth-card-body {
+      font-size: 15px;
+      color: #cbd5e1;
+      line-height: 1.8;
+      margin-bottom: 20px;
+    }
+
+    .synth-btn {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      padding: 8px 20px;
+      background: linear-gradient(90deg, var(--synth-pink), var(--synth-purple));
+      color: #fff;
+      font-family: 'Orbitron', sans-serif;
+      font-size: 12px;
+      font-weight: 700;
+      text-decoration: none;
+      border-radius: 6px;
+      box-shadow: 0 0 15px rgba(255, 42, 141, 0.6);
+      transition: all 0.2s;
+    }
+    .synth-btn:hover {
+      box-shadow: 0 0 25px var(--synth-cyan);
+    }
+
+    /* 磁带播放器微组件 */
+    .cassette-box {
+      background: #190a37;
+      border: 2px solid var(--synth-yellow);
+      border-radius: 12px;
+      padding: 24px;
+      box-shadow: 0 0 20px rgba(255, 234, 0, 0.3);
+      text-align: center;
+      margin-bottom: 30px;
+    }
+
+    .cassette-body {
+      background: #0d0221;
+      border: 2px solid #331555;
+      border-radius: 8px;
+      padding: 16px;
+      margin-bottom: 16px;
+    }
+
+    .reels-row {
+      display: flex;
+      justify-content: space-around;
+      align-items: center;
+      margin: 12px 0;
+    }
+
+    .cassette-reel {
+      width: 42px;
+      height: 42px;
+      border-radius: 50%;
+      border: 4px dashed var(--synth-cyan);
+      animation: spin-reel 4s linear infinite;
+    }
+    .cassette-reel.paused {
+      animation-play-state: paused;
+    }
+    @keyframes spin-reel {
+      100% { transform: rotate(360deg); }
+    }
+
+    .tape-title {
+      font-family: 'VT323', monospace;
+      font-size: 20px;
+      color: var(--synth-yellow);
+    }
+
+    @media (max-width: 860px) {
+      .synth-container {
+        grid-template-columns: 1fr;
+      }
+    }
+  </style>
+</head>
+<body>
+
+  <!-- 顶栏 -->
+  <nav class="synth-nav">
+    <div class="synth-brand">
+      SYNTH // 1984 <span>[レトロフューチャー]</span>
+    </div>
+    <div style="font-family: 'VT323', monospace; font-size: 18px; color: var(--synth-cyan);">
+      TRACK: 08 // READY
+    </div>
+  </nav>
+
+  <!-- Hero 霓虹夕阳 -->
+  <header class="synth-hero">
+    <div class="synth-sun"></div>
+    <h1 class="synth-hero-title">OUTRUN // 赛博合成器浪潮</h1>
+    <p class="synth-hero-sub">DRIVING INTO THE INFINITE RETRO NEON HORIZON</p>
+  </header>
+
+  <!-- 内容容器 -->
+  <div class="synth-container">
+    <!-- 左侧文章 -->
+    <main>
+      <article class="synth-card">
+        <div class="synth-card-date">// 1984.08.22 :: RETRO_FILE_01</div>
+        <div style="margin: 12px 0 16px; border: 2px solid var(--synth-pink); box-shadow: 0 0 15px rgba(255,0,127,0.4); border-radius: 6px; overflow: hidden;">
+          <img src="assets/images/synthwave_sunset.jpg" alt="80s 复古合成器超跑与霓虹夕阳" style="width: 100%; height: 240px; object-fit: cover; display: block;">
+        </div>
+        <h2 class="synth-card-title">合成器浪潮美学：为什么 80 年代的复古未来主义令人无法抗拒？</h2>
+        <p class="synth-card-body">
+          从《银翼杀手》的霓虹夜雨到 Kavinsky 的强劲低音，Synthwave 捕捉了人类在个人电脑与电子乐器黎明期对未来的狂热幻想。那些紫粉色的网格地平线与模拟磁带杂音，是数字文明最浪漫的切片。
+        </p>
+        <a href="#" class="synth-btn">LISTEN & READ ➔</a>
+      </article>
+
+      <article class="synth-card">
+        <div class="synth-card-date">// 1984.08.16 :: RETRO_FILE_02</div>
+        <h2 class="synth-card-title">数字调频（FM）合成器与现代音频着色器技术</h2>
+        <p class="synth-card-body">
+          深入剖析 Yamaha DX7 的 6 算子算法，并探讨如何通过 WebAudio API 与 GLSL 片段着色器在网页端实时还原温润的模拟黑胶与磁带饱和感。
+        </p>
+        <a href="#" class="synth-btn">LISTEN & READ ➔</a>
+      </article>
+    </main>
+
+    <!-- 右侧磁带播放器 -->
+    <aside>
+      <div class="cassette-box">
+        <div class="tape-title">CASSETTE MIXTAPE VOL.1</div>
+        <div class="cassette-body">
+          <div style="font-size: 11px; color: var(--synth-pink); letter-spacing: 2px;">STEREO / CHROME EQ</div>
+          <div class="reels-row">
+            <div class="cassette-reel" id="reelLeft"></div>
+            <div style="font-family:'VT323'; font-size:24px; color:#fff;">SIDE A</div>
+            <div class="cassette-reel" id="reelRight"></div>
+          </div>
+          <div style="font-size: 13px; color: var(--synth-cyan);">Now Playing: Nightcall</div>
+        </div>
+        <button class="synth-btn" onclick="toggleTape(this)" style="width: 100%; justify-content: center;">⏸️ 暂停 / 播放磁带</button>
+      </div>
+    </aside>
+  </div>
+
+  <script src="assets/nav-bar.js"></script>
+  <script>
+    function toggleTape(btn) {
+      const r1 = document.getElementById('reelLeft');
+      const r2 = document.getElementById('reelRight');
+      if (r1.classList.contains('paused')) {
+        r1.classList.remove('paused');
+        r2.classList.remove('paused');
+        btn.textContent = '⏸️ 暂停磁带旋转';
+      } else {
+        r1.classList.add('paused');
+        r2.classList.add('paused');
+        btn.textContent = '▶️ 播放磁带旋转';
+      }
+    }
+  </script>
+</body>
+</html>

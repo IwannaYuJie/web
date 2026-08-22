@@ -1,0 +1,309 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>拼贴灵感手账 ✂️ — 08 手账涂鸦与拼贴手作风</title>
+  <link rel="stylesheet" href="assets/common.css">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Caveat:wght@600;700&family=ZCOOL+KuaiLe&family=Noto+Sans+SC:wght@400;600;800&display=swap" rel="stylesheet">
+  <style>
+    :root {
+      --craft-bg: #f4eee1;
+      --paper-cream: #fefdf9;
+      --ink-pencil: #3a332a;
+      --highlighter: rgba(255, 235, 59, 0.4);
+      --washi-pink: rgba(244, 114, 182, 0.65);
+      --washi-blue: rgba(96, 165, 250, 0.65);
+      --washi-yellow: rgba(251, 191, 36, 0.65);
+      --font-hand: "Caveat", "ZCOOL KuaiLe", cursive, "Noto Sans SC", sans-serif;
+    }
+
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+
+    body {
+      background-color: var(--craft-bg);
+      color: var(--ink-pencil);
+      font-family: var(--font-hand);
+      line-height: 1.8;
+      padding: 40px 16px 100px;
+      background-image: 
+        linear-gradient(rgba(0, 0, 0, 0.04) 1px, transparent 1px),
+        linear-gradient(90deg, rgba(0, 0, 0, 0.04) 1px, transparent 1px);
+      background-size: 20px 20px;
+    }
+
+    .scrapbook-canvas {
+      max-width: 1100px;
+      margin: 0 auto;
+      position: relative;
+    }
+
+    /* 手账刊头 */
+    .scrap-header {
+      text-align: center;
+      margin-bottom: 50px;
+      position: relative;
+    }
+
+    .scrap-title-card {
+      display: inline-block;
+      background: var(--paper-cream);
+      padding: 24px 50px;
+      box-shadow: 2px 4px 15px rgba(0, 0, 0, 0.08);
+      border-radius: 4px;
+      transform: rotate(-1deg);
+      position: relative;
+    }
+
+    /* 和纸胶带装饰 */
+    .washi-tape-top {
+      position: absolute;
+      top: -12px;
+      left: 35%;
+      width: 140px;
+      height: 28px;
+      background: var(--washi-pink);
+      transform: rotate(2deg);
+      box-shadow: 0 1px 3px rgba(0, 0, 0, 0.15);
+      opacity: 0.85;
+    }
+
+    .scrap-main-title {
+      font-size: clamp(32px, 5vw, 48px);
+      font-weight: 800;
+      color: #2e2820;
+      letter-spacing: 2px;
+    }
+
+    .scrap-subtitle {
+      font-size: 16px;
+      color: #786c5e;
+      margin-top: 4px;
+    }
+
+    /* 贴纸提示说明 */
+    .stamp-hint {
+      display: inline-block;
+      margin-top: 14px;
+      font-size: 13px;
+      background: #e2d9c8;
+      padding: 4px 12px;
+      border-radius: 20px;
+      color: #5d5244;
+    }
+
+    /* 拼贴网格流 */
+    .scrap-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 40px;
+    }
+
+    /* 手账卡片 */
+    .scrap-note {
+      background: var(--paper-cream);
+      padding: 36px 30px 30px;
+      border-radius: 2px;
+      box-shadow: 3px 6px 18px rgba(0, 0, 0, 0.07);
+      position: relative;
+      transition: transform 0.2s ease;
+    }
+    .scrap-note:hover {
+      transform: scale(1.01) rotate(0deg) !important;
+    }
+
+    .tape-corner {
+      position: absolute;
+      top: -10px;
+      width: 90px;
+      height: 24px;
+      box-shadow: 0 1px 2px rgba(0, 0, 0, 0.1);
+    }
+    .tape-left { left: 20px; transform: rotate(-6deg); }
+    .tape-right { right: 20px; transform: rotate(5deg); }
+
+    /* 拍立得照片卡 */
+    .polaroid-frame {
+      background: #fff;
+      padding: 12px 12px 28px;
+      box-shadow: 2px 4px 12px rgba(0, 0, 0, 0.12);
+      transform: rotate(2deg);
+      margin-bottom: 20px;
+      text-align: center;
+    }
+    .polaroid-photo {
+      height: 180px;
+      background: linear-gradient(135deg, #ffd3a5, #fd6585);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 40px;
+      border-radius: 2px;
+    }
+    .polaroid-caption {
+      margin-top: 10px;
+      font-size: 13px;
+      color: #555;
+      font-family: var(--font-hand);
+    }
+
+    .note-date {
+      font-size: 12px;
+      color: #928575;
+      margin-bottom: 8px;
+      letter-spacing: 1px;
+    }
+
+    .note-title {
+      font-size: 22px;
+      font-weight: 800;
+      margin-bottom: 12px;
+      line-height: 1.35;
+    }
+
+    .highlight-text {
+      background: linear-gradient(104deg, rgba(255, 235, 59, 0) 0.9%, rgba(255, 235, 59, 0.6) 2.4%, rgba(255, 235, 59, 0.4) 98%);
+      padding: 2px 4px;
+      border-radius: 2px;
+    }
+
+    .note-text {
+      font-size: 15px;
+      color: #4a4135;
+      line-height: 1.9;
+    }
+
+    /* 手绘标签贴 */
+    .hand-tags {
+      margin-top: 18px;
+      display: flex;
+      gap: 8px;
+      flex-wrap: wrap;
+    }
+    .hand-tag {
+      border: 1px dashed #a09280;
+      padding: 2px 8px;
+      font-size: 12px;
+      border-radius: 4px;
+    }
+
+    /* 点击盖章的小图章 */
+    .click-stamp {
+      position: absolute;
+      pointer-events: none;
+      font-size: 28px;
+      animation: stamp-pop 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275) forwards;
+      z-index: 1000;
+    }
+    @keyframes stamp-pop {
+      0% { transform: scale(0.2) rotate(-20deg); opacity: 0; }
+      70% { transform: scale(1.3) rotate(10deg); opacity: 1; }
+      100% { transform: scale(1) rotate(0deg); opacity: 0.9; }
+    }
+
+    @media (max-width: 800px) {
+      .scrap-grid {
+        grid-template-columns: 1fr;
+      }
+    }
+  </style>
+</head>
+<body onclick="createStamp(event)">
+
+  <div class="scrapbook-canvas">
+    <!-- 刊头 -->
+    <header class="scrap-header">
+      <div class="scrap-title-card">
+        <div class="washi-tape-top"></div>
+        <h1 class="scrap-main-title">拼 贴 灵 感 手 账</h1>
+        <p class="scrap-subtitle">✂️ 剪报 · 涂鸦 · 灵感碎片 · 手作手记</p>
+      </div>
+      <br>
+      <div class="stamp-hint">💡 试试在页面任意位置点击，可以盖上可爱小贴纸哦！</div>
+    </header>
+
+    <!-- 拼贴流 -->
+    <main class="scrap-grid">
+      <!-- 卡片 1 -->
+      <article class="scrap-note" style="transform: rotate(-1.5deg);">
+        <div class="tape-corner tape-left" style="background: var(--washi-blue);"></div>
+        <div class="note-date">📅 2026年 8月 19日 · 晴</div>
+        <h2 class="note-title"><span class="highlight-text">手写时代的浪漫：为什么我们要保留手工质感？</span></h2>
+        <p class="note-text">
+          在全自动化与 AI 飞速生成的时代，偶尔停下来用铅笔在粗糙的牛皮纸上划下一道不那么笔直的线条，反而有种令人安心的真实感。手账记录的不仅是信息，更是那一刻呼吸的节奏与纸张摩擦的微响。
+        </p>
+        <div class="hand-tags">
+          <span class="hand-tag">🌿 慢生活</span>
+          <span class="hand-tag">✏️ 手绘笔记</span>
+        </div>
+      </article>
+
+      <!-- 卡片 2 (带拍立得) -->
+      <article class="scrap-note" style="transform: rotate(1.8deg);">
+        <div class="tape-corner tape-right" style="background: var(--washi-yellow);"></div>
+        <div class="polaroid-frame">
+          <div class="polaroid-photo" style="height: 180px; padding: 0; overflow: hidden; background: none;">
+            <img src="assets/images/scrapbook_craft.jpg" alt="手工手账桌面与干花咖啡" style="width: 100%; height: 100%; object-fit: cover; display: block;">
+          </div>
+          <div class="polaroid-caption">今日书桌手作一角 · 标本与手账本</div>
+        </div>
+        <div class="note-date">📅 2026年 8月 14日 · 午后</div>
+        <h2 class="note-title">咖啡香里的代码重构</h2>
+        <p class="note-text">
+          把一个 2000 行的庞大控制器拆解成三个优雅纯粹的小函数。就像把杂乱的桌面整理得干干净净一样舒服！
+        </p>
+        <div class="hand-tags">
+          <span class="hand-tag">☕ 咖啡因</span>
+          <span class="hand-tag">💻 重构日常</span>
+        </div>
+      </article>
+
+      <!-- 卡片 3 -->
+      <article class="scrap-note" style="transform: rotate(1deg);">
+        <div class="tape-corner tape-left" style="background: var(--washi-pink);"></div>
+        <div class="note-date">📅 2026年 8月 08日 · 立秋</div>
+        <h2 class="note-title">给未来的自己写张明信片 💌</h2>
+        <p class="note-text">
+          “不要害怕去尝试那些看起来稀奇古怪的想法。最有趣的发明往往诞生于最不着边际的草稿纸边缘。”
+        </p>
+        <div class="hand-tags">
+          <span class="hand-tag">🌟 心情札记</span>
+        </div>
+      </article>
+
+      <!-- 卡片 4 (灵感清单) -->
+      <article class="scrap-note" style="transform: rotate(-2deg); background:#fff9e6;">
+        <div class="tape-corner tape-right" style="background: var(--washi-blue);"></div>
+        <div class="note-date">📌 灵感便签</div>
+        <h2 class="note-title">本周想要折腾的小玩意</h2>
+        <p class="note-text">
+          ☑ 搭建一个完全用 CSS 手绘的复古收音机<br>
+          ☑ 写完关于排版历史的小册子<br>
+          ☐ 去公园拍一组傍晚的胶片照片 📸
+        </p>
+      </article>
+    </main>
+  </div>
+
+  <script src="assets/nav-bar.js"></script>
+  <script>
+    const stamps = ["⭐", "✨", "🌸", "☕", "🐱", "📌", "🎨", "🍀", "💖"];
+    function createStamp(e) {
+      if (e.target.closest('.blog-switcher-trigger') || e.target.closest('.blog-switcher-modal')) return;
+      const stamp = document.createElement("div");
+      stamp.className = "click-stamp";
+      stamp.textContent = stamps[Math.floor(Math.random() * stamps.length)];
+      stamp.style.left = `${e.pageX - 15}px`;
+      stamp.style.top = `${e.pageY - 15}px`;
+      document.body.appendChild(stamp);
+      setTimeout(() => stamp.remove(), 4000);
+    }
+  </script>
+</body>
+</html>

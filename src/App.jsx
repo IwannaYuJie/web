@@ -10,6 +10,7 @@ const About = lazy(() => import('./pages/About'))
 
 const ArticleManager = lazy(() => import('./pages/ArticleManager'))
 const GameHub = lazy(() => import('./pages/GameHub'))
+const CreativeShowcase = lazy(() => import('./pages/CreativeShowcase'))
 
 const Toolbox = lazy(() => import('./pages/Toolbox'))
 const SpriteSheetToGif = lazy(() => import('./pages/tools/SpriteSheetToGif'))
@@ -45,6 +46,7 @@ function App() {
 
             <Route path="/admin/articles" element={<ArticleManager />} />
             <Route path="/games" element={<GameHub />} />
+            <Route path="/creative" element={<CreativeShowcase />} />
             <Route path="/toolbox" element={<Toolbox />} />
             <Route path="/toolbox/sprite-sheet-to-gif" element={<SpriteSheetToGif />} />
             <Route path="/toolbox/json-formatter" element={<JsonFormatter />} />

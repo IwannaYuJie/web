@@ -1,0 +1,315 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>STEAMPUNK ARCHIVE // 20 维多利亚蒸汽朋克黄铜机械风</title>
+  <link rel="stylesheet" href="assets/common.css">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Cinzel+Decorative:wght@700;900&family=IM+Fell+English:ital@0;1&family=Noto+Serif+SC:wght@600;700;900&display=swap" rel="stylesheet">
+  <style>
+    :root {
+      --brass-gold: #c59b27;
+      --copper-rust: #b85d19;
+      --iron-dark: #1f1a17;
+      --wood-mahogany: #2b1e16;
+      --steam-cream: #f4ece1;
+      --font-victorian: 'Cinzel Decorative', serif;
+      --font-steampunk-body: 'IM Fell English', 'Noto Serif SC', serif;
+    }
+
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+
+    body {
+      background-color: var(--iron-dark);
+      color: var(--steam-cream);
+      font-family: var(--font-steampunk-body);
+      line-height: 1.8;
+      padding-bottom: 100px;
+      /* 铜管与铆钉深色背景纹理 */
+      background-image: 
+        radial-gradient(circle at 50% 50%, rgba(184, 93, 25, 0.12) 0%, transparent 60%),
+        repeating-linear-gradient(0deg, rgba(0,0,0,0.3) 0px, rgba(0,0,0,0.3) 2px, transparent 2px, transparent 4px);
+    }
+
+    .steampunk-wrapper {
+      max-width: 1180px;
+      margin: 0 auto;
+      padding: 24px 20px;
+    }
+
+    /* 黄铜齿轮转动与压力计顶栏 */
+    .brass-navbar {
+      background: linear-gradient(180deg, #3d2c20, #221711);
+      border: 3px solid var(--brass-gold);
+      box-shadow: 0 0 20px rgba(197, 155, 39, 0.3), inset 0 0 15px rgba(0,0,0,0.8);
+      border-radius: 8px;
+      padding: 16px 28px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 36px;
+      position: relative;
+    }
+
+    .steampunk-brand {
+      display: flex;
+      align-items: center;
+      gap: 16px;
+    }
+
+    .brass-gear-icon {
+      width: 36px;
+      height: 36px;
+      animation: spin-gear 12s linear infinite;
+      font-size: 32px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+    @keyframes spin-gear {
+      100% { transform: rotate(360deg); }
+    }
+
+    .brand-title-steampunk {
+      font-family: var(--font-victorian);
+      font-size: 22px;
+      color: var(--brass-gold);
+      text-shadow: 2px 2px 4px #000;
+      letter-spacing: 2px;
+    }
+
+    .pressure-gauge-pill {
+      background: #140d09;
+      border: 2px solid var(--copper-rust);
+      border-radius: 20px;
+      padding: 4px 14px;
+      font-size: 12px;
+      color: #ff9e42;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    /* 机械工坊发明档案 Hero 卡片 */
+    .workshop-hero-card {
+      background: linear-gradient(135deg, #2e2017, #1c130d);
+      border: 3px solid var(--brass-gold);
+      box-shadow: 0 12px 35px rgba(0,0,0,0.7);
+      padding: 28px;
+      border-radius: 12px;
+      margin-bottom: 40px;
+      display: grid;
+      grid-template-columns: 1.3fr 1fr;
+      gap: 28px;
+      align-items: center;
+      position: relative;
+    }
+    .workshop-hero-card::after {
+      content: "⚙️ MECHANICAL ARCHIVE ⚙️";
+      position: absolute;
+      top: -12px;
+      left: 50%;
+      transform: translateX(-50%);
+      background: var(--brass-gold);
+      color: #111;
+      font-family: var(--font-victorian);
+      font-size: 11px;
+      padding: 2px 16px;
+      font-weight: 900;
+      letter-spacing: 2px;
+      border-radius: 4px;
+    }
+
+    .hero-workshop-img-box {
+      border: 2px solid var(--brass-gold);
+      box-shadow: inset 0 0 15px #000;
+      overflow: hidden;
+    }
+    .hero-workshop-img-box img {
+      width: 100%;
+      height: auto;
+      display: block;
+    }
+
+    .hero-workshop-desc {
+      font-size: 15px;
+      color: #e2d3c3;
+      line-height: 1.8;
+      margin-bottom: 20px;
+    }
+    .hero-victorian-heading {
+      font-family: var(--font-victorian);
+      font-size: 26px;
+      color: var(--brass-gold);
+      margin-bottom: 12px;
+      line-height: 1.3;
+    }
+
+    /* 黄铜档案日志主网格 */
+    .steampunk-grid {
+      display: grid;
+      grid-template-columns: 2fr 1fr;
+      gap: 32px;
+    }
+
+    .archive-card {
+      background: #241912;
+      border: 2px solid #5a3f2a;
+      border-left: 6px solid var(--brass-gold);
+      padding: 26px;
+      margin-bottom: 28px;
+      box-shadow: 0 8px 25px rgba(0,0,0,0.5);
+      position: relative;
+    }
+
+    .archive-folio-tag {
+      font-family: var(--font-victorian);
+      font-size: 12px;
+      color: var(--brass-gold);
+      margin-bottom: 8px;
+    }
+
+    .archive-title {
+      font-size: 22px;
+      font-weight: 700;
+      color: #ffdda1;
+      margin-bottom: 12px;
+      line-height: 1.35;
+    }
+
+    .archive-body {
+      font-size: 14px;
+      color: #c9b7a4;
+      line-height: 1.8;
+      margin-bottom: 18px;
+    }
+
+    .steampunk-btn {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      padding: 8px 18px;
+      background: linear-gradient(180deg, var(--brass-gold), #8a6810);
+      color: #1a1209;
+      font-family: var(--font-victorian);
+      font-size: 12px;
+      font-weight: 900;
+      text-decoration: none;
+      border-radius: 4px;
+      box-shadow: 0 4px 10px rgba(0,0,0,0.5);
+    }
+    .steampunk-btn:hover {
+      background: linear-gradient(180deg, #ffd700, #b8860b);
+      color: #000;
+    }
+
+    /* 侧边仪表盘挂件 */
+    .brass-widget {
+      background: #1c130d;
+      border: 2px solid #5a3f2a;
+      border-radius: 8px;
+      padding: 22px;
+      margin-bottom: 24px;
+    }
+    .widget-title-victorian {
+      font-family: var(--font-victorian);
+      font-size: 14px;
+      color: var(--brass-gold);
+      border-bottom: 1px dashed var(--brass-gold);
+      padding-bottom: 8px;
+      margin-bottom: 14px;
+      letter-spacing: 1px;
+    }
+
+    @media (max-width: 860px) {
+      .workshop-hero-card, .steampunk-grid {
+        grid-template-columns: 1fr;
+      }
+    }
+  </style>
+</head>
+<body>
+
+  <div class="steampunk-wrapper">
+    <!-- 顶栏导航 -->
+    <header class="brass-navbar">
+      <div class="steampunk-brand">
+        <div class="brass-gear-icon">⚙️</div>
+        <div class="brand-title-steampunk">CHRONO & STEAM // 维多利亚机械档案馆</div>
+      </div>
+      <div class="pressure-gauge-pill">
+        <span>💨 STEAM: <strong>140 PSI</strong></span>
+        <span>⚡ STATUS: <strong>OPERATIONAL</strong></span>
+      </div>
+    </header>
+
+    <!-- 发明档案工坊 Hero 卡片 -->
+    <section class="workshop-hero-card">
+      <div class="hero-workshop-img-box">
+        <img src="assets/images/steampunk_lab.jpg" alt="维多利亚蒸汽朋克黄铜工坊">
+      </div>
+      <div>
+        <h1 class="hero-victorian-heading">黄铜、齿轮与蒸汽的物理力学诗篇</h1>
+        <p class="hero-workshop-desc">
+          在差分机与发光真空管的微鸣声中，重温 19 世纪工业革命与蒸汽狂想的古典尊严。记录关于机械算法、自动化钟表机构与古典工程美学的发明笔记。
+        </p>
+        <a href="#" class="steampunk-btn">⚙️ 翻阅机械图卷 (FOLIO 01) ➔</a>
+      </div>
+    </section>
+
+    <!-- 档案日志列表 -->
+    <div class="steampunk-grid">
+      <!-- 左侧发明手记 -->
+      <main>
+        <article class="archive-card">
+          <div class="archive-folio-tag">FOLIO NO. 1888-A // DIFFERENCE ENGINE</div>
+          <h2 class="archive-title">重构巴贝奇差分机：在纯机械联动齿轮中看见算法的物理具象</h2>
+          <p class="archive-body">
+            每一个黄铜数字轮的进位，都是逻辑门在物理世界的咔哒回响。在电子晶体管问世之前，人类用最精密的钟表发条齿轮，叩开了通用自动计算的大门。
+          </p>
+          <a href="#" class="steampunk-btn">EXAMINE BLUEPRINTS ➔</a>
+        </article>
+
+        <article class="archive-card">
+          <div class="archive-folio-tag">FOLIO NO. 1892-C // VACUUM & STEAM</div>
+          <h2 class="archive-title">气动逻辑控制：利用蒸汽压力阀实现机械状态机运算</h2>
+          <p class="archive-body">
+            通过调节蒸汽喷嘴与双金属片热膨胀系数，构建完全不依赖电力的模拟稳压反馈回路。探索古典流体力学在现代系统容灾中的哲学启示。
+          </p>
+          <a href="#" class="steampunk-btn">EXAMINE BLUEPRINTS ➔</a>
+        </article>
+      </main>
+
+      <!-- 右侧仪表与发明目录 -->
+      <aside>
+        <div class="brass-widget">
+          <div class="widget-title-victorian">⚙️ WORKSHOP SPECIFICATIONS</div>
+          <div style="font-size:13px; color:#c9b7a4; line-height:2;">
+            <div>• 动力源: 三级膨胀立式蒸汽机</div>
+            <div>• 运算介质: 黄铜 48-齿 进位轮</div>
+            <div>• 润滑介质: 纯净鲸蜡油</div>
+            <div>• 精度公差: 1/1000 英寸</div>
+          </div>
+        </div>
+
+        <div class="brass-widget">
+          <div class="widget-title-victorian">📜 PATENT REPOSITORIES</div>
+          <div style="font-size:13px; color:#c9b7a4; line-height:2;">
+            <div>▶ 飞艇陀螺稳定仪 (No. 402)</div>
+            <div>▶ 气动电报管道中继站 (No. 618)</div>
+            <div>▶ 机械式加密密码圆筒 (No. 904)</div>
+          </div>
+        </div>
+      </aside>
+    </div>
+  </div>
+
+  <script src="assets/nav-bar.js"></script>
+</body>
+</html>

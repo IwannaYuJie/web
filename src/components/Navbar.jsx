@@ -7,9 +7,10 @@ const NAV_LINKS = [
   { path: '/', label: '首页' },
   { path: '/archive', label: '归档' },
   { path: '/tags', label: '标签' },
-  { path: '/about', label: '关于' },
-  { path: '/toolbox', label: '工具箱' },
+  { path: '/creative', label: '创意' },
   { path: '/games', label: '游戏' },
+  { path: '/toolbox', label: '工具箱' },
+  { path: '/about', label: '关于' },
   { path: '/admin/articles', label: '管理' },
 ]
 

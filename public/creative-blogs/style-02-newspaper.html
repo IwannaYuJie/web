@@ -1,0 +1,394 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>文渊时报 — 02 复古报纸与文学期刊风</title>
+  <link rel="stylesheet" href="assets/common.css">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@600;900&family=Noto+Serif+SC:wght@300;400;600;700;900&display=swap" rel="stylesheet">
+  <style>
+    :root {
+      --paper-bg: #f5efe3;
+      --paper-ink: #221f1d;
+      --paper-sub: #5a544c;
+      --paper-border: #221f1d;
+      --paper-rule: #d4c8b8;
+      --font-masthead: "Cinzel", "Noto Serif SC", serif;
+      --font-body: "Noto Serif SC", "Songti SC", "SimSun", serif;
+    }
+
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+
+    body {
+      background-color: var(--paper-bg);
+      color: var(--paper-ink);
+      font-family: var(--font-body);
+      line-height: 1.8;
+      background-image: radial-gradient(rgba(34, 31, 29, 0.04) 1px, transparent 0);
+      background-size: 24px 24px;
+      padding: 24px 16px;
+    }
+
+    .broadsheet-wrapper {
+      max-width: 1240px;
+      margin: 0 auto;
+      background: #fbf7ee;
+      padding: 40px;
+      box-shadow: 0 4px 25px rgba(0, 0, 0, 0.08), 0 0 0 1px rgba(0, 0, 0, 0.05);
+      border: 1px solid #e2d7c5;
+    }
+
+    /* 报头顶条 */
+    .masthead-topbar {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      border-top: 1px solid var(--paper-border);
+      border-bottom: 1px solid var(--paper-border);
+      padding: 6px 0;
+      font-size: 13px;
+      font-weight: 600;
+      letter-spacing: 1px;
+    }
+
+    /* 报纸巨幅刊头 */
+    .masthead-main {
+      text-align: center;
+      padding: 28px 0 16px;
+      position: relative;
+    }
+
+    .masthead-title {
+      font-family: var(--font-masthead);
+      font-size: clamp(36px, 7vw, 76px);
+      font-weight: 900;
+      letter-spacing: 6px;
+      line-height: 1.05;
+      margin-bottom: 8px;
+    }
+
+    .masthead-sub {
+      font-size: 14px;
+      letter-spacing: 4px;
+      text-transform: uppercase;
+      color: var(--paper-sub);
+    }
+
+    /* 粗细双线 */
+    .double-rule {
+      border: none;
+      border-top: 3px solid var(--paper-border);
+      border-bottom: 1px solid var(--paper-border);
+      height: 6px;
+      margin: 12px 0 24px;
+    }
+
+    .single-rule {
+      border: none;
+      border-top: 1px solid var(--paper-rule);
+      margin: 20px 0;
+    }
+
+    /* 头版布局网格 */
+    .front-page-grid {
+      display: grid;
+      grid-template-columns: 2fr 1fr;
+      gap: 36px;
+    }
+
+    /* 头条特稿 */
+    .lead-story {
+      border-right: 1px solid var(--paper-rule);
+      padding-right: 36px;
+    }
+
+    .story-kicker {
+      font-size: 13px;
+      font-weight: 700;
+      letter-spacing: 2px;
+      color: #8c2d19;
+      text-transform: uppercase;
+      margin-bottom: 6px;
+    }
+
+    .lead-title {
+      font-size: clamp(28px, 4vw, 42px);
+      font-weight: 900;
+      line-height: 1.25;
+      margin-bottom: 16px;
+      letter-spacing: -0.5px;
+    }
+
+    .lead-deck {
+      font-size: 18px;
+      color: var(--paper-sub);
+      font-style: italic;
+      margin-bottom: 24px;
+      line-height: 1.6;
+      border-left: 3px solid var(--paper-border);
+      padding-left: 14px;
+    }
+
+    .story-byline {
+      font-size: 12px;
+      font-weight: 600;
+      color: var(--paper-sub);
+      margin-bottom: 20px;
+      text-transform: uppercase;
+      letter-spacing: 1px;
+    }
+
+    /* 报纸多栏排版 */
+    .multi-column-text {
+      column-count: 2;
+      column-gap: 28px;
+      column-rule: 1px solid var(--paper-rule);
+      text-align: justify;
+      font-size: 15px;
+      line-height: 1.85;
+    }
+
+    /* 首字下沉 Drop Cap */
+    .drop-cap::first-letter {
+      font-family: var(--font-masthead);
+      float: left;
+      font-size: 58px;
+      line-height: 50px;
+      padding-top: 4px;
+      padding-right: 10px;
+      padding-bottom: 2px;
+      font-weight: 900;
+      color: var(--paper-ink);
+    }
+
+    /* 侧栏评论与副刊 */
+    .side-column {
+      display: flex;
+      flex-direction: column;
+      gap: 28px;
+    }
+
+    .woodcut-frame {
+      border: 1px solid var(--paper-border);
+      padding: 18px;
+      background: rgba(0, 0, 0, 0.02);
+      text-align: center;
+    }
+    .woodcut-quote {
+      font-size: 16px;
+      font-weight: 700;
+      line-height: 1.6;
+      margin-bottom: 8px;
+    }
+    .woodcut-author {
+      font-size: 12px;
+      color: var(--paper-sub);
+    }
+
+    .side-article {
+      border-bottom: 1px dashed var(--paper-rule);
+      padding-bottom: 20px;
+    }
+    .side-article:last-child {
+      border-bottom: none;
+    }
+
+    .side-title {
+      font-size: 20px;
+      font-weight: 800;
+      line-height: 1.3;
+      margin-bottom: 10px;
+    }
+    .side-title a {
+      color: inherit;
+      text-decoration: none;
+    }
+    .side-title a:hover {
+      text-decoration: underline;
+    }
+
+    .side-snippet {
+      font-size: 14px;
+      color: #444;
+      line-height: 1.7;
+    }
+
+    /* 底部三栏副刊区域 */
+    .supplement-grid {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 30px;
+      margin-top: 24px;
+    }
+
+    .supp-card {
+      border-top: 1px solid var(--paper-border);
+      padding-top: 16px;
+    }
+    .supp-section {
+      font-size: 11px;
+      font-weight: 900;
+      letter-spacing: 2px;
+      text-transform: uppercase;
+      margin-bottom: 8px;
+      color: #8c2d19;
+    }
+    .supp-title {
+      font-size: 18px;
+      font-weight: 800;
+      margin-bottom: 10px;
+      line-height: 1.35;
+    }
+    .supp-desc {
+      font-size: 14px;
+      color: #555;
+      line-height: 1.7;
+    }
+
+    /* 底部版权与版印 */
+    .newspaper-colophon {
+      margin-top: 36px;
+      padding-top: 20px;
+      border-top: 1px solid var(--paper-border);
+      text-align: center;
+      font-size: 12px;
+      color: var(--paper-sub);
+      letter-spacing: 1px;
+    }
+
+    @media (max-width: 900px) {
+      .broadsheet-wrapper {
+        padding: 20px 14px;
+      }
+      .front-page-grid {
+        grid-template-columns: 1fr;
+      }
+      .lead-story {
+        border-right: none;
+        padding-right: 0;
+        border-bottom: 1px solid var(--paper-rule);
+        padding-bottom: 28px;
+      }
+      .multi-column-text {
+        column-count: 1;
+      }
+      .supplement-grid {
+        grid-template-columns: 1fr;
+      }
+    }
+  </style>
+</head>
+<body>
+
+  <div class="broadsheet-wrapper">
+    <!-- 顶栏状态 -->
+    <div class="masthead-topbar">
+      <div>第 壹 卷 · 第 拾 贰 期</div>
+      <div>丙午年 · 庚申月 · 今日晴朗 · 适合深读</div>
+      <div>文学与独立手志 · 自由阅览</div>
+    </div>
+
+    <!-- 刊头 -->
+    <header class="masthead-main">
+      <div class="masthead-sub">THE CHRONICLE & ESSAY REVIEW</div>
+      <h1 class="masthead-title">文 淵 時 報</h1>
+      <div class="masthead-sub">文学 · 科技 · 哲思 · 独立出版</div>
+    </header>
+
+    <hr class="double-rule">
+
+    <!-- 主版面 -->
+    <div class="front-page-grid">
+      <!-- 左侧头条特稿 -->
+      <main class="lead-story">
+        <div class="story-kicker">【 头版特稿 · 深度观察 】</div>
+        <h2 class="lead-title">数字媒介时代的「深阅读挽歌」与重构指南</h2>
+        <div class="lead-deck">
+          “当我们习惯了被十五秒短视频和碎片信息流冲刷，我们是否还拥有构建万字宏大叙事与深度逻辑链条的定力？”
+        </div>
+        <div class="story-byline">本报主笔：特约观察员 · 发自数字书斋 · 约 2,800 字</div>
+
+        <!-- 19世纪木刻版画插图 -->
+        <div style="margin: 18px 0; border: 2px solid #2b261f; padding: 6px; background: #fffcf5;">
+          <img src="assets/images/newspaper_woodcut.jpg" alt="古籍图书馆学者木刻版画" style="width:100%; height:auto; display:block; filter: sepia(0.2) contrast(1.05);">
+          <div style="font-size: 11px; text-align: center; color: #6b6357; margin-top: 6px; font-style: italic;">
+            【图版一】古籍书斋中的伏案长思 · 19世纪铜版雕刻手艺复刻
+          </div>
+        </div>
+
+        <div class="multi-column-text drop-cap">
+          铅字印刷时代的报章，每一道油墨与纸张的凹凸都凝结着斟酌与克制。在排字工人的铅盘中，字符拥有重量、温度与物理摩擦阻力。而如今，指尖轻触屏幕即可生成海量字节，但信息的丰裕却往往伴随着意义的贫瘠。
+          <br><br>
+          重构深度阅读的核心，并不在于抵制现代数字终端，而在于为阅读者创造具有「仪式感」的静止空间。本博客之所以采用传统报纸的纵向分栏与衬线字阶，正是试图在喧嚣的数字世界中，为读者辟出一块呼吸平稳的文字飞地。
+          <br><br>
+          文字不仅是思想的容器，更是思维律动的投射。当我们重新学会凝视一段结构紧凑的段落，思维的深潜便在静默中发生。
+        </div>
+      </main>
+
+      <!-- 右侧副栏 -->
+      <aside class="side-column">
+        <!-- 名言框 -->
+        <div class="woodcut-frame">
+          <div class="woodcut-quote">“书籍与报章是人类灵魂的避风港，在那里，时间不再催促你奔跑。”</div>
+          <div class="woodcut-author">—— 随笔摘录 · 2026年夏</div>
+        </div>
+
+        <!-- 观察文章 1 -->
+        <div class="side-article">
+          <div class="story-kicker">【 技术前沿 】</div>
+          <h3 class="side-title"><a href="#">从自然语言到代码具象：大模型时代的编程美学演变</a></h3>
+          <p class="side-snippet">
+            编程语言曾是人与机器的晦涩协议，而今自然语言正成为最高阶的编译指令。我们正在见证人机交互范式的百年巨变。
+          </p>
+        </div>
+
+        <!-- 观察文章 2 -->
+        <div class="side-article">
+          <div class="story-kicker">【 读书札记 】</div>
+          <h3 class="side-title"><a href="#">重读博尔赫斯《沙之书》：无限与虚构的迷宫</a></h3>
+          <p class="side-snippet">
+            一本没有第一页也找不到最后一页的书，恰如我们在互联网中无限延伸的超链接海洋……
+          </p>
+        </div>
+      </aside>
+    </div>
+
+    <hr class="double-rule">
+
+    <!-- 底部三栏副刊 -->
+    <section class="supplement-grid">
+      <div class="supp-card">
+        <div class="supp-section">副刊 · 城市漫步</div>
+        <h4 class="supp-title">雨夜漫步：霓虹倒影下的声光切片</h4>
+        <p class="supp-desc">在雨水洗刷过的柏油路面上，车灯拉出长长的光带。记录下城市深夜里那些微小而真实的静谧瞬间。</p>
+      </div>
+
+      <div class="supp-card">
+        <div class="supp-section">副刊 · 器具志</div>
+        <h4 class="supp-title">机械键盘与敲击韵律：触觉的复兴</h4>
+        <p class="supp-desc">在触控屏泛滥的今天，我们为何依然迷恋段落轴清脆的反馈？关于物理触感与生产力的思考。</p>
+      </div>
+
+      <div class="supp-card">
+        <div class="supp-section">副刊 · 茶余杂谈</div>
+        <h4 class="supp-title">咖啡因、多巴胺与深夜灵感的交织</h4>
+        <p class="supp-desc">为什么大多数出色的架构设计与文学构思总是在凌晨两点破土而出？探寻心流状态的生物学秘密。</p>
+      </div>
+    </section>
+
+    <!-- 版印 -->
+    <footer class="newspaper-colophon">
+      <div>本刊独立编撰 · 排版灵感源自 19 世纪欧洲宽幅报刊与传统宋体木活字</div>
+      <div style="margin-top: 4px;">THE CHRONICLE &copy; 2026 · ALL THOUGHTS RESERVED</div>
+    </footer>
+  </div>
+
+  <script src="assets/nav-bar.js"></script>
+</body>
+</html>

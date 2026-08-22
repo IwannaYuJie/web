@@ -1,0 +1,346 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>guest@terminal:~$ // 10 纯文本黑客命令行交互风</title>
+  <link rel="stylesheet" href="assets/common.css">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Fira+Code:wght@400;500;700&display=swap" rel="stylesheet">
+  <style>
+    :root {
+      --term-bg: #0c1015;
+      --term-green: #39ff14;
+      --term-dim-green: #22c55e;
+      --term-yellow: #facc15;
+      --term-cyan: #38bdf8;
+      --term-white: #f8fafc;
+      --term-gray: #64748b;
+      --term-prompt: #a855f7;
+    }
+
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+
+    body {
+      background-color: var(--term-bg);
+      color: var(--term-green);
+      font-family: "Fira Code", monospace;
+      font-size: 14px;
+      line-height: 1.6;
+      padding: 24px 20px 100px;
+      min-height: 100vh;
+    }
+
+    .terminal-container {
+      max-width: 1000px;
+      margin: 0 auto;
+      background: #080b0e;
+      border: 1px solid #1e293b;
+      box-shadow: 0 10px 40px rgba(0, 0, 0, 0.8);
+      border-radius: 8px;
+      overflow: hidden;
+    }
+
+    /* 终端窗口顶栏 */
+    .terminal-header {
+      background: #161e27;
+      padding: 10px 16px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      border-bottom: 1px solid #1e293b;
+    }
+
+    .terminal-buttons {
+      display: flex;
+      gap: 8px;
+    }
+    .term-circle {
+      width: 12px;
+      height: 12px;
+      border-radius: 50%;
+    }
+    .circle-red { background: #ef4444; }
+    .circle-yellow { background: #eab308; }
+    .circle-green { background: #22c55e; }
+
+    .terminal-title {
+      color: var(--term-gray);
+      font-size: 12px;
+      font-weight: 600;
+    }
+
+    /* 终端主体输出区 */
+    .terminal-body {
+      padding: 24px;
+      min-height: 540px;
+    }
+
+    .ascii-banner {
+      color: var(--term-cyan);
+      font-size: 11px;
+      line-height: 1.15;
+      margin-bottom: 20px;
+      white-space: pre;
+      overflow-x: auto;
+    }
+
+    .output-line {
+      margin-bottom: 12px;
+    }
+    .output-line.system {
+      color: var(--term-gray);
+    }
+    .output-line.error {
+      color: #ef4444;
+    }
+    .output-line.article {
+      color: var(--term-white);
+      background: rgba(255, 255, 255, 0.03);
+      border-left: 2px solid var(--term-green);
+      padding: 12px 16px;
+      margin: 12px 0;
+    }
+
+    .cmd-history-item {
+      margin-bottom: 8px;
+    }
+
+    /* 命令行输入提示符 */
+    .input-line {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      margin-top: 16px;
+    }
+
+    .prompt-text {
+      color: var(--term-prompt);
+      font-weight: 700;
+      flex-shrink: 0;
+    }
+
+    .term-input {
+      flex: 1;
+      background: transparent;
+      border: none;
+      outline: none;
+      font-family: inherit;
+      font-size: 14px;
+      color: #fff;
+      caret-color: var(--term-green);
+    }
+
+    /* 快捷指令按键栏 */
+    .quick-cmd-bar {
+      margin-top: 20px;
+      padding-top: 14px;
+      border-top: 1px dashed #1e293b;
+      display: flex;
+      gap: 10px;
+      flex-wrap: wrap;
+      font-size: 12px;
+    }
+    .quick-cmd-btn {
+      background: #161e27;
+      border: 1px solid #334155;
+      color: var(--term-cyan);
+      padding: 4px 10px;
+      border-radius: 4px;
+      cursor: pointer;
+      font-family: inherit;
+    }
+    .quick-cmd-btn:hover {
+      background: var(--term-cyan);
+      color: #000;
+    }
+
+    .highlight-keyword { color: var(--term-yellow); font-weight: bold; }
+    .file-link { color: var(--term-cyan); text-decoration: underline; cursor: pointer; }
+  </style>
+</head>
+<body>
+
+  <div class="terminal-container">
+    <!-- 顶栏 -->
+    <div class="terminal-header">
+      <div class="terminal-buttons">
+        <div class="term-circle circle-red"></div>
+        <div class="term-circle circle-yellow"></div>
+        <div class="term-circle circle-green"></div>
+      </div>
+      <div class="terminal-title">guest@archlinux: ~/blog (bash 5.2)</div>
+      <div style="font-size: 11px; color: var(--term-gray);">UTF-8</div>
+    </div>
+
+    <!-- 终端内容区 -->
+    <div class="terminal-body" id="termBody">
+      <!-- ASCII Banner -->
+      <div class="ascii-banner">
+  ____  _____ _   _     ____ _     ___   ____  _     ___   ____ 
+ |  _ \| ____| \ | |   / ___| |   |_ _| | __ )| |   / _ \ / ___|
+ | |_) |  _| |  \| |  | |   | |    | |  |  _ \| |  | | | | |  _ 
+ |  __/| |___| |\  |  | |___| |___ | |  | |_) | |__| |_| | |_| |
+ |_|   |_____|_| \_|   \____|_____|___| |____/|_____\___/ \____|
+      </div>
+
+      <div class="output-line system">
+        [SYSTEM] Welcome to Interactive CLI Blog (v2.4.0-release)<br>
+        [SYSTEM] Type <span class="highlight-keyword">'help'</span> or <span class="highlight-keyword">'ls'</span> to view available posts and commands.<br>
+        [SYSTEM] Session started at: <span id="sessionTime"></span>
+      </div>
+
+      <!-- 输出日志容器 -->
+      <div id="commandOutput"></div>
+
+      <!-- 输入行 -->
+      <div class="input-line">
+        <span class="prompt-text">guest@dev:~/blog$</span>
+        <input type="text" id="cliInput" class="term-input" autofocus autocomplete="off" spellcheck="false" placeholder="输入命令...">
+      </div>
+
+      <!-- 快捷点击指令 -->
+      <div class="quick-cmd-bar">
+        <span style="color:var(--term-gray); align-self:center;">快捷指令:</span>
+        <button class="quick-cmd-btn" onclick="execCmd('help')">help</button>
+        <button class="quick-cmd-btn" onclick="execCmd('ls')">ls -la</button>
+        <button class="quick-cmd-btn" onclick="execCmd('cat 01_agents.md')">cat 01_agents.md</button>
+        <button class="quick-cmd-btn" onclick="execCmd('cat 02_kernel.md')">cat 02_kernel.md</button>
+        <button class="quick-cmd-btn" onclick="execCmd('about')">about</button>
+        <button class="quick-cmd-btn" onclick="execCmd('clear')">clear</button>
+      </div>
+    </div>
+  </div>
+
+  <script src="assets/nav-bar.js"></script>
+  <script>
+    document.getElementById('sessionTime').textContent = new Date().toLocaleString();
+
+    const articles = {
+      "01_agents.md": {
+        title: "01_agents.md // 自主智能体系统的协同协议与拓扑演进",
+        date: "2026-08-20",
+        content: `【摘要】\n在多智能体（Multi-Agent）系统中，传统的中心化 Master-Worker 架构在面临长链条推理与动态工具调度时容易形成通信瓶颈。\n\n【核心论点】\n1. 基于 Gossip 协议的去中心化子智能体协同能提升 40% 的容错率；\n2. 结构化日志上下文压缩（Context Token Distillation）是实现长任务自治的关键；\n3. 每一个 Agent 都应当拥有隔离的 Workspace 与权限边界。`
+      },
+      "02_kernel.md": {
+        title: "02_kernel.md // 深入 Linux eBPF：无侵入式微服务可观测性实践",
+        date: "2026-08-15",
+        content: `【摘要】\n探讨如何利用 eBPF 技术在内核空间直接捕获网络 socket 与系统调用，实现零代码侵入、纳秒级开销的分布式追踪架构。`
+      },
+      "03_terminal_zen.md": {
+        title: "03_terminal_zen.md // 终端美学：为什么纯文本拥有永恒的生命力？",
+        date: "2026-08-05",
+        content: `【摘要】\n从 1970 年代的 VT100 终端到如今的 Alacritty 与 WezTerm，字符界面剔除了所有视觉噪音，只留下人与代码之间最纯粹的对话。`
+      }
+    };
+
+    const cliInput = document.getElementById('cliInput');
+    const commandOutput = document.getElementById('commandOutput');
+
+    function appendOutput(cmd, resHtml) {
+      const item = document.createElement('div');
+      item.className = 'cmd-history-item';
+      item.innerHTML = `
+        <div style="color:var(--term-prompt); font-weight:bold;">guest@dev:~/blog$ <span style="color:#fff;">${cmd}</span></div>
+        <div style="margin-top:4px;">${resHtml}</div>
+      `;
+      commandOutput.appendChild(item);
+      window.scrollTo(0, document.body.scrollHeight);
+    }
+
+    function execCmd(rawCmd) {
+      const cmd = rawCmd.trim();
+      if (!cmd) return;
+
+      const parts = cmd.split(' ');
+      const action = parts[0].toLowerCase();
+      const arg = parts.slice(1).join(' ');
+
+      let output = '';
+
+      switch(action) {
+        case 'help':
+          output = `
+            <div><strong>可用命令列表：</strong></div>
+            <div style="padding-left:14px; color:#cbd5e1;">
+              <div>• <span class="highlight-keyword">ls</span> / <span class="highlight-keyword">dir</span> : 列出所有博客文章与文件</div>
+              <div>• <span class="highlight-keyword">cat &lt;filename&gt;</span> : 查看指定文章内容 (例: cat 01_agents.md)</div>
+              <div>• <span class="highlight-keyword">about</span> : 查看博主个人档案</div>
+              <div>• <span class="highlight-keyword">date</span> : 显示当前系统时区与时间</div>
+              <div>• <span class="highlight-keyword">clear</span> : 清屏</div>
+            </div>
+          `;
+          break;
+
+        case 'ls':
+        case 'dir':
+          output = `
+            <div style="color:var(--term-gray);">total 3 files, 1 directory</div>
+            <div style="color:var(--term-cyan);">drwxr-xr-x  2 dev dev 4096 Aug 21 .system/</div>
+            <div>-rw-r--r--  1 dev dev 1840 Aug 20 <span class="file-link" onclick="execCmd('cat 01_agents.md')">01_agents.md</span></div>
+            <div>-rw-r--r--  1 dev dev 1420 Aug 15 <span class="file-link" onclick="execCmd('cat 02_kernel.md')">02_kernel.md</span></div>
+            <div>-rw-r--r--  1 dev dev 1120 Aug 05 <span class="file-link" onclick="execCmd('cat 03_terminal_zen.md')">03_terminal_zen.md</span></div>
+            <div>-rwxr-xr-x  1 dev dev  512 Aug 21 <span class="file-link" onclick="execCmd('about')">about_author.sh</span>*</div>
+          `;
+          break;
+
+        case 'cat':
+          if (!arg) {
+            output = `<div class="output-line error">错误: 请指定文件名。用法: cat &lt;filename&gt;</div>`;
+          } else if (articles[arg]) {
+            const doc = articles[arg];
+            output = `
+              <div class="output-line article">
+                <div style="color:var(--term-yellow); font-weight:bold; margin-bottom:8px;">${doc.title}</div>
+                <div style="color:var(--term-gray); font-size:12px; margin-bottom:12px;">DATE: ${doc.date} | AUTHOR: System Architect</div>
+                <div style="white-space:pre-wrap; line-height:1.7;">${doc.content}</div>
+              </div>
+            `;
+          } else {
+            output = `<div class="output-line error">cat: ${arg}: 没有那个文件或目录</div>`;
+          }
+          break;
+
+        case 'about':
+          output = `
+            <div class="output-line article">
+              <div style="color:var(--term-cyan); font-weight:bold;">[USER BIO] System Architect</div>
+              <div style="margin-top:6px;">全栈系统架构师 / CLI 极客 / 算法与排版探索者。</div>
+              <div style="color:var(--term-gray); font-size:12px; margin-top:6px;">STACK: Rust, Go, Python, TypeScript, Linux Kernel, eBPF</div>
+            </div>
+          `;
+          break;
+
+        case 'date':
+          output = `<div>${new Date().toString()}</div>`;
+          break;
+
+        case 'clear':
+          commandOutput.innerHTML = '';
+          cliInput.value = '';
+          return;
+
+        default:
+          output = `<div class="output-line error">bash: ${action}: 未找到命令。键入 'help' 查看帮助。</div>`;
+      }
+
+      appendOutput(cmd, output);
+      cliInput.value = '';
+    }
+
+    cliInput.addEventListener('keydown', (e) => {
+      if (e.key === 'Enter') {
+        execCmd(cliInput.value);
+      }
+    });
+
+    // 默认展示 ls
+    execCmd('ls');
+  </script>
+</body>
+</html>

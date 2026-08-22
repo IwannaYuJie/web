@@ -1,0 +1,280 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>CODEX DA VINCI // 23 达芬奇文艺复兴手稿发明志</title>
+  <link rel="stylesheet" href="assets/common.css">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Italianno&family=Cinzel:wght@600;800;900&family=Noto+Serif+SC:wght@400;600;900&display=swap" rel="stylesheet">
+  <style>
+    :root {
+      --parchment-dark: #d8c29d;
+      --parchment-light: #f5eedb;
+      --sepia-ink: #3b2a1a;
+      --red-chalk: #8c2d19;
+      --border-ancient: #8a6a4b;
+      --font-renaissance-title: 'Cinzel', serif;
+      --font-mirror: 'Italianno', cursive, 'Noto Serif SC', serif;
+      --font-davinci-body: 'Noto Serif SC', serif;
+    }
+
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+
+    body {
+      background-color: #2b1f14;
+      color: var(--sepia-ink);
+      font-family: var(--font-davinci-body);
+      line-height: 1.85;
+      padding-bottom: 100px;
+    }
+
+    /* 手稿羊皮纸大卷轴画布 */
+    .codex-parchment-sheet {
+      max-width: 1180px;
+      margin: 30px auto;
+      background: var(--parchment-light);
+      border: 1px solid var(--border-ancient);
+      box-shadow: 0 15px 50px rgba(0,0,0,0.8), inset 0 0 80px rgba(138, 106, 75, 0.3);
+      padding: 40px 45px;
+      border-radius: 4px;
+      position: relative;
+    }
+
+    /* 达芬奇刊头 */
+    .davinci-header {
+      border-bottom: 2px solid var(--sepia-ink);
+      padding-bottom: 20px;
+      margin-bottom: 36px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+    .davinci-title {
+      font-family: var(--font-renaissance-title);
+      font-size: 32px;
+      font-weight: 900;
+      color: var(--sepia-ink);
+      letter-spacing: 2px;
+    }
+    .davinci-subtitle {
+      font-size: 13px;
+      color: var(--red-chalk);
+      font-style: italic;
+    }
+
+    /* 镜面解密切换按钮 */
+    .mirror-toggle-btn {
+      background: rgba(140, 45, 25, 0.1);
+      border: 2px solid var(--red-chalk);
+      color: var(--red-chalk);
+      font-family: var(--font-renaissance-title);
+      font-size: 12px;
+      font-weight: 800;
+      padding: 6px 16px;
+      cursor: pointer;
+      border-radius: 4px;
+      transition: all 0.2s;
+    }
+    .mirror-toggle-btn:hover {
+      background: var(--red-chalk);
+      color: #fff;
+    }
+
+    /* 机械扑翼翼展手稿 Hero 卡片 */
+    .ornithopter-hero-box {
+      border: 2px solid var(--border-ancient);
+      padding: 24px;
+      margin-bottom: 40px;
+      background: rgba(255, 255, 255, 0.4);
+      display: grid;
+      grid-template-columns: 1.4fr 1fr;
+      gap: 32px;
+      align-items: center;
+    }
+
+    .hero-sketch-frame {
+      border: 1px solid var(--border-ancient);
+      box-shadow: 0 4px 15px rgba(0,0,0,0.1);
+    }
+    .hero-sketch-frame img {
+      width: 100%;
+      height: auto;
+      display: block;
+    }
+
+    .sketch-latin-kicker {
+      font-family: var(--font-renaissance-title);
+      font-size: 12px;
+      color: var(--red-chalk);
+      letter-spacing: 2px;
+      margin-bottom: 8px;
+    }
+    .sketch-heading {
+      font-family: var(--font-renaissance-title);
+      font-size: 26px;
+      color: var(--sepia-ink);
+      line-height: 1.3;
+      margin-bottom: 14px;
+    }
+
+    /* 镜面手迹效果 */
+    .mirror-text {
+      transition: transform 0.3s ease;
+      display: block;
+    }
+    .mirror-active .mirror-text {
+      transform: scaleX(-1);
+    }
+
+    /* 手稿分栏 */
+    .codex-study-grid {
+      display: grid;
+      grid-template-columns: 2fr 1fr;
+      gap: 36px;
+    }
+
+    .study-entry {
+      border-bottom: 1px dashed var(--border-ancient);
+      padding-bottom: 28px;
+      margin-bottom: 28px;
+    }
+    .study-entry:last-child {
+      border-bottom: none;
+    }
+
+    .study-folio-num {
+      font-family: var(--font-renaissance-title);
+      font-size: 13px;
+      color: var(--red-chalk);
+      margin-bottom: 6px;
+    }
+    .study-title {
+      font-size: 22px;
+      font-weight: 700;
+      color: var(--sepia-ink);
+      margin-bottom: 12px;
+    }
+    .study-desc {
+      font-size: 15px;
+      color: #4a3625;
+      line-height: 1.85;
+    }
+
+    /* 侧边几何比例研究 */
+    .geometry-side-card {
+      border: 1px solid var(--border-ancient);
+      padding: 20px;
+      background: rgba(138, 106, 75, 0.08);
+      margin-bottom: 24px;
+    }
+    .side-title-ancient {
+      font-family: var(--font-renaissance-title);
+      font-size: 16px;
+      color: var(--sepia-ink);
+      border-bottom: 1px solid var(--border-ancient);
+      padding-bottom: 6px;
+      margin-bottom: 12px;
+    }
+
+    @media (max-width: 860px) {
+      .ornithopter-hero-box, .codex-study-grid {
+        grid-template-columns: 1fr;
+      }
+    }
+  </style>
+</head>
+<body>
+
+  <div class="codex-parchment-sheet" id="codexSheet">
+    <!-- 刊头 -->
+    <header class="davinci-header">
+      <div>
+        <div class="davinci-title">CODEX LEICESTER & FLIGHT // 达芬奇发明手稿</div>
+        <div class="davinci-subtitle">MECHANICA · ANATOMIA · PROPORTIO DIVINA · MMXXVI</div>
+      </div>
+      <button class="mirror-toggle-btn" onclick="toggleMirror()">
+        🔄 切换镜面手稿模式 (MIRROR SCRIPT)
+      </button>
+    </header>
+
+    <!-- 扑翼机构大草图 Hero -->
+    <section class="ornithopter-hero-box">
+      <div class="hero-sketch-frame">
+        <img src="assets/images/davinci_sketch.jpg" alt="达芬奇扑翼机构与人体比例手稿草图">
+      </div>
+      <div>
+        <div class="sketch-latin-kicker">STUDIA DE VOLATU AVIVM // 鸟类飞行力学</div>
+        <h1 class="sketch-heading">
+          模仿之翼：从解剖学骨骼肌理到飞行机械连杆
+        </h1>
+        <p class="study-desc">
+          <span class="mirror-text">
+            鸟类扑击空气的原理，正如桨叶划动流水。倘若人类能够利用杠杆与滑轮系统将胸肌力量放大十倍，人亦能乘着上升热气流翱翔于群峰之上。
+          </span>
+        </p>
+      </div>
+    </section>
+
+    <!-- 手稿文章研究 -->
+    <div class="codex-study-grid">
+      <!-- 左侧发明篇章 -->
+      <main>
+        <article class="study-entry">
+          <div class="study-folio-num">FOLIO 84-R // ALGORITHMIC GEOMETRY</div>
+          <h2 class="study-title">黄金分割与神圣比例：系统架构中的平衡美学</h2>
+          <p class="study-desc">
+            <span class="mirror-text">
+              无论在人体的维特鲁威比例中，还是在大教堂的拱顶跨度中，极度优美的数学比例往往天然伴随着极高的物理结构稳定性。现代软件工程中对高内聚、低耦合的追求，本质上是对系统内在神圣秩序的探寻。
+            </span>
+          </p>
+        </article>
+
+        <article class="study-entry">
+          <div class="study-folio-num">FOLIO 92-V // HYDRODYNAMICS & FLUIDS</div>
+          <h2 class="study-title">水流旋涡与湍流模拟：流计算管道的反压与阻力模型</h2>
+          <p class="study-desc">
+            <span class="mirror-text">
+              观察溪流绕过巨石产生的双螺旋涡流。阻力并非凭空消散，而是转化为更小尺度的微涡旋转。在分布式实时计算流中，背压缓冲区的构建正是模仿了河流回水湾的自然调节机制。
+            </span>
+          </p>
+        </article>
+      </main>
+
+      <!-- 右侧几何笔记 -->
+      <aside>
+        <div class="geometry-side-card">
+          <div class="side-title-ancient">📐 PROPORTIO ET GEOMETRIA</div>
+          <div style="font-size:13px; color:#5c432d; line-height:2;">
+            <div>• 黄金比例 (Phi): 1 : 1.618033</div>
+            <div>• 阿基米德螺线转角</div>
+            <div>• 凸轮与齿轮联动比: 3 : 1</div>
+            <div>• 墨水配方: 橡木瘿与硫酸亚铁</div>
+          </div>
+        </div>
+
+        <div class="geometry-side-card">
+          <div class="side-title-ancient">📜 CODICES IN VATICANO</div>
+          <div style="font-size:13px; color:#5c432d; line-height:2;">
+            <div>▶ 大西洋古抄本 (Codex Atlanticus)</div>
+            <div>▶ 鸟类飞行手稿 (Codex on the Flight)</div>
+            <div>▶ 马德里手稿 (Codex Madrid)</div>
+          </div>
+        </div>
+      </aside>
+    </div>
+  </div>
+
+  <script src="assets/nav-bar.js"></script>
+  <script>
+    function toggleMirror() {
+      document.getElementById('codexSheet').classList.toggle('mirror-active');
+    }
+  </script>
+</body>
+</html>

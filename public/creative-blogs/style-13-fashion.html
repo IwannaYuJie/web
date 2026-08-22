@@ -1,0 +1,213 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>HAUTE // 13 高端独立时尚大画报风</title>
+  <link rel="stylesheet" href="assets/common.css">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Bodoni+Moda:ital,opsz,wght@0,6..96,400;0,6..96,900;1,6..96,400;1,6..96,700&family=Syne:wght@700;800&family=Noto+Serif+SC:wght@400;600;900&display=swap" rel="stylesheet">
+  <style>
+    :root {
+      --fashion-ivory: #faf8f5;
+      --fashion-dark: #121010;
+      --fashion-burgundy: #6b1426;
+      --fashion-gold: #c9a86a;
+      --font-display: "Bodoni Moda", "Noto Serif SC", serif;
+      --font-sans: "Syne", sans-serif;
+    }
+
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+
+    body {
+      background-color: var(--fashion-ivory);
+      color: var(--fashion-dark);
+      font-family: var(--font-display);
+      line-height: 1.8;
+      padding: 0 0 100px;
+    }
+
+    /* 顶栏杂志刊名 */
+    .fashion-masthead {
+      border-bottom: 2px solid var(--fashion-dark);
+      padding: 24px 40px;
+      display: flex;
+      justify-content: space-between;
+      align-items: baseline;
+    }
+
+    .fashion-logo {
+      font-size: clamp(32px, 6vw, 64px);
+      font-weight: 900;
+      letter-spacing: 4px;
+      line-height: 1;
+    }
+
+    .fashion-issue {
+      font-family: var(--font-sans);
+      font-size: 12px;
+      font-weight: 800;
+      letter-spacing: 2px;
+      text-transform: uppercase;
+    }
+
+    /* 杂志封面级 Hero 跨页大图文 */
+    .fashion-hero-spread {
+      max-width: 1280px;
+      margin: 40px auto 70px;
+      padding: 0 30px;
+      display: grid;
+      grid-template-columns: 1.2fr 1fr;
+      gap: 50px;
+      align-items: center;
+    }
+
+    .hero-big-serif {
+      font-size: clamp(40px, 6vw, 76px);
+      font-style: italic;
+      font-weight: 900;
+      line-height: 1.05;
+      letter-spacing: -1px;
+      color: var(--fashion-burgundy);
+      margin-bottom: 24px;
+    }
+
+    .hero-editorial-p {
+      font-size: 18px;
+      line-height: 1.9;
+      color: #333;
+      border-left: 2px solid var(--fashion-burgundy);
+      padding-left: 20px;
+    }
+
+    .fashion-art-panel {
+      height: 420px;
+      background: linear-gradient(135deg, #2b1118, #0a0809);
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
+      padding: 30px;
+      color: #fff;
+      position: relative;
+    }
+
+    /* 破框引言 Pull Quote */
+    .fashion-pull-quote {
+      background: var(--fashion-burgundy);
+      color: #fff;
+      padding: 40px 60px;
+      margin: 60px 0;
+      font-size: clamp(22px, 3.5vw, 36px);
+      font-style: italic;
+      font-weight: 700;
+      text-align: center;
+      line-height: 1.4;
+      letter-spacing: 0.5px;
+    }
+
+    /* 杂志文章双栏排版 */
+    .fashion-articles-grid {
+      max-width: 1200px;
+      margin: 0 auto;
+      padding: 0 30px;
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 60px;
+    }
+
+    .fashion-post-card {
+      border-top: 1px solid var(--fashion-dark);
+      padding-top: 24px;
+      position: relative;
+    }
+
+    .post-category-tag {
+      font-family: var(--font-sans);
+      font-size: 11px;
+      font-weight: 800;
+      letter-spacing: 3px;
+      text-transform: uppercase;
+      color: var(--fashion-burgundy);
+      margin-bottom: 12px;
+    }
+
+    .post-main-title {
+      font-size: 30px;
+      font-weight: 900;
+      line-height: 1.25;
+      margin-bottom: 16px;
+    }
+
+    .post-body-text {
+      font-size: 15px;
+      color: #444;
+      line-height: 2;
+    }
+
+    @media (max-width: 860px) {
+      .fashion-hero-spread, .fashion-articles-grid {
+        grid-template-columns: 1fr;
+      }
+      .fashion-pull-quote {
+        padding: 30px 20px;
+      }
+    }
+  </style>
+</head>
+<body>
+
+  <!-- 刊头 -->
+  <header class="fashion-masthead">
+    <div class="fashion-logo">REVUE // STUDIO</div>
+    <div class="fashion-issue">AUTUMN / WINTER 2026 · ISSUE 08</div>
+  </header>
+
+  <!-- 封面大跨页 Hero -->
+  <section class="fashion-hero-spread">
+    <div>
+      <h1 class="hero-big-serif">The Architecture of Silence & Form.</h1>
+      <p class="hero-editorial-p">
+        “排版不仅是文字的载体，更是一种对视觉空间的统治力。当锋利的衬线体与沉静的留白相撞，思想的锋芒便呼之欲出。”
+      </p>
+    </div>
+    <div class="fashion-art-panel" style="padding: 0; overflow: hidden; position: relative;">
+      <img src="assets/images/fashion_editorial.jpg" alt="高定时装大片" style="width: 100%; height: 100%; object-fit: cover; min-height: 280px; display: block;">
+      <div style="position: absolute; bottom: 0; left: 0; right: 0; background: linear-gradient(0deg, rgba(0,0,0,0.85), transparent); padding: 18px 20px;">
+        <div style="font-family: 'Syne'; font-size: 11px; letter-spacing: 2px; color: var(--fashion-gold);">EDITORIAL SPREAD // ISSUE 08</div>
+        <div style="font-size: 18px; font-style: italic; font-weight: 800; color: #fff;">ARCHITECTURAL COUTURE</div>
+      </div>
+    </div>
+  </section>
+
+  <!-- 跨页巨幅破框引言 -->
+  <div class="fashion-pull-quote">
+    “真正的高级感，来自对冗余元素的残酷修剪与对核心节奏的极致掌控。”
+  </div>
+
+  <!-- 双栏杂志文章 -->
+  <main class="fashion-articles-grid">
+    <article class="fashion-post-card">
+      <div class="post-category-tag">HIGH COUTURE & TECH</div>
+      <h2 class="post-main-title">数字排版中的「高级感」究竟由什么决定？</h2>
+      <p class="post-body-text">
+        探讨 Bodoni 字体的高垂直对比笔画与 1960 年代意大利时装杂志排版对现代 Web 设计的深远启示。为何极致的字阶比例能够瞬间拉开视觉层次？
+      </p>
+    </article>
+
+    <article class="fashion-post-card">
+      <div class="post-category-tag">MODERN CRITIQUE</div>
+      <h2 class="post-main-title">在信息平庸化时代，重构你的个人叙事美学</h2>
+      <p class="post-body-text">
+        算法推送正在抹平所有个体的表达棱角。保持敏锐的审美自律，是用设计与文字对抗同质化浪潮的最好武器。
+      </p>
+    </article>
+  </main>
+
+  <script src="assets/nav-bar.js"></script>
+</body>
+</html>

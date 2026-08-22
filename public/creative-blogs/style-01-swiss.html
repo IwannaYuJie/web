@@ -1,0 +1,535 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>思考与秩序 — 01 瑞士国际主义极简风</title>
+  <link rel="stylesheet" href="assets/common.css">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;600;700&family=Noto+Sans+SC:wght@300;400;700;900&display=swap" rel="stylesheet">
+  <style>
+    :root {
+      --swiss-bg: #f8f8f8;
+      --swiss-black: #0d0d0d;
+      --swiss-red: #ff3300;
+      --swiss-border: #0d0d0d;
+      --swiss-gray: #757575;
+      --font-swiss: "Space Grotesk", "Noto Sans SC", -apple-system, sans-serif;
+    }
+
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+
+    body {
+      background-color: var(--swiss-bg);
+      color: var(--swiss-black);
+      font-family: var(--font-swiss);
+      line-height: 1.5;
+      -webkit-font-smoothing: antialiased;
+      position: relative;
+    }
+
+    /* 瑞士网格辅助线背景（可切换） */
+    .grid-lines-overlay {
+      position: fixed;
+      inset: 0;
+      pointer-events: none;
+      z-index: 999;
+      display: none;
+      background: repeating-linear-gradient(to right, rgba(255, 51, 0, 0.08) 0px, rgba(255, 51, 0, 0.08) 1px, transparent 1px, transparent 80px),
+                  repeating-linear-gradient(to bottom, rgba(255, 51, 0, 0.08) 0px, rgba(255, 51, 0, 0.08) 1px, transparent 1px, transparent 40px);
+    }
+    .grid-lines-overlay.show {
+      display: block;
+    }
+
+    /* 容器主网格 */
+    .swiss-container {
+      max-width: 1320px;
+      margin: 0 auto;
+      border-left: 2px solid var(--swiss-border);
+      border-right: 2px solid var(--swiss-border);
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+    }
+
+    /* 顶部标头栏 */
+    header {
+      border-bottom: 2px solid var(--swiss-border);
+      display: grid;
+      grid-template-columns: 2fr 1fr 1fr;
+    }
+
+    .header-col {
+      padding: 20px 24px;
+      border-right: 2px solid var(--swiss-border);
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
+    }
+    .header-col:last-child {
+      border-right: none;
+    }
+
+    .brand-logo {
+      font-size: 28px;
+      font-weight: 900;
+      letter-spacing: -1.5px;
+      text-transform: uppercase;
+      line-height: 1;
+    }
+
+    .meta-tag {
+      font-size: 12px;
+      font-weight: 700;
+      text-transform: uppercase;
+      color: var(--swiss-red);
+      letter-spacing: 0.5px;
+      margin-top: 4px;
+    }
+
+    .nav-links {
+      display: flex;
+      gap: 16px;
+      list-style: none;
+      font-weight: 700;
+      font-size: 13px;
+    }
+    .nav-links a {
+      color: var(--swiss-black);
+      text-decoration: none;
+      padding-bottom: 2px;
+      border-bottom: 2px solid transparent;
+      transition: all 0.2s;
+    }
+    .nav-links a:hover, .nav-links a.active {
+      border-bottom-color: var(--swiss-red);
+      color: var(--swiss-red);
+    }
+
+    .control-btn {
+      background: var(--swiss-black);
+      color: #fff;
+      border: none;
+      padding: 6px 12px;
+      font-size: 11px;
+      font-weight: 700;
+      cursor: pointer;
+      font-family: inherit;
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      align-self: flex-start;
+      margin-top: 10px;
+    }
+    .control-btn:hover {
+      background: var(--swiss-red);
+    }
+
+    /* 巨型海报 Hero 区域 */
+    .hero-section {
+      border-bottom: 2px solid var(--swiss-border);
+      padding: 60px 24px;
+      background: #fff;
+    }
+
+    .hero-coords {
+      font-size: 12px;
+      font-weight: 700;
+      color: var(--swiss-gray);
+      margin-bottom: 20px;
+      letter-spacing: 1px;
+    }
+
+    .hero-title {
+      font-size: clamp(40px, 7vw, 96px);
+      font-weight: 900;
+      line-height: 0.95;
+      letter-spacing: -3px;
+      text-transform: uppercase;
+      margin-bottom: 24px;
+    }
+
+    .hero-title span.accent {
+      color: var(--swiss-red);
+    }
+
+    .hero-desc {
+      font-size: 18px;
+      max-width: 680px;
+      font-weight: 400;
+      color: #333;
+      border-left: 3px solid var(--swiss-red);
+      padding-left: 16px;
+    }
+
+    /* 主体内容分栏网格 */
+    .content-grid {
+      display: grid;
+      grid-template-columns: 320px 1fr;
+      flex: 1;
+    }
+
+    /* 左侧边栏：索引与个人说明 */
+    .sidebar {
+      border-right: 2px solid var(--swiss-border);
+      background: #fafafa;
+    }
+
+    .sidebar-block {
+      padding: 24px;
+      border-bottom: 2px solid var(--swiss-border);
+    }
+
+    .sidebar-heading {
+      font-size: 12px;
+      font-weight: 900;
+      text-transform: uppercase;
+      letter-spacing: 1px;
+      margin-bottom: 16px;
+      color: var(--swiss-black);
+      display: flex;
+      justify-content: space-between;
+    }
+
+    .category-list {
+      list-style: none;
+    }
+    .category-list li {
+      margin-bottom: 10px;
+      display: flex;
+      justify-content: space-between;
+      font-size: 14px;
+      font-weight: 600;
+      cursor: pointer;
+      padding: 6px 8px;
+      border: 1px solid transparent;
+      transition: all 0.15s;
+    }
+    .category-list li:hover {
+      border-color: var(--swiss-black);
+      background: #fff;
+    }
+    .category-list li.active {
+      background: var(--swiss-black);
+      color: #fff;
+    }
+
+    .author-card {
+      font-size: 14px;
+      line-height: 1.6;
+    }
+    .author-card strong {
+      display: block;
+      font-size: 18px;
+      font-weight: 900;
+      margin-bottom: 4px;
+    }
+
+    /* 右侧主文章流 */
+    .articles-feed {
+      background: #fff;
+    }
+
+    .article-item {
+      border-bottom: 2px solid var(--swiss-border);
+      padding: 40px 36px;
+      transition: background-color 0.2s;
+    }
+    .article-item:hover {
+      background: #fafcff;
+    }
+
+    .article-meta {
+      display: flex;
+      align-items: center;
+      gap: 20px;
+      font-size: 12px;
+      font-weight: 700;
+      color: var(--swiss-gray);
+      margin-bottom: 12px;
+    }
+    .article-meta .tag {
+      background: var(--swiss-black);
+      color: #fff;
+      padding: 2px 8px;
+      text-transform: uppercase;
+    }
+    .article-meta .index-no {
+      color: var(--swiss-red);
+      font-size: 14px;
+    }
+
+    .article-title {
+      font-size: clamp(24px, 3.2vw, 36px);
+      font-weight: 900;
+      line-height: 1.15;
+      letter-spacing: -1px;
+      margin-bottom: 16px;
+      cursor: pointer;
+    }
+    .article-title:hover {
+      color: var(--swiss-red);
+    }
+
+    .article-summary {
+      font-size: 16px;
+      color: #444;
+      line-height: 1.65;
+      margin-bottom: 20px;
+      max-width: 780px;
+    }
+
+    .article-body-fold {
+      display: none;
+      padding: 20px;
+      background: var(--swiss-bg);
+      border: 1px solid var(--swiss-border);
+      margin-bottom: 20px;
+      font-size: 15px;
+      line-height: 1.7;
+    }
+    .article-body-fold.open {
+      display: block;
+    }
+
+    .read-more-btn {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      font-weight: 900;
+      font-size: 13px;
+      text-transform: uppercase;
+      color: var(--swiss-black);
+      background: transparent;
+      border: 2px solid var(--swiss-black);
+      padding: 8px 16px;
+      cursor: pointer;
+      transition: all 0.2s;
+    }
+    .read-more-btn:hover {
+      background: var(--swiss-red);
+      border-color: var(--swiss-red);
+      color: #fff;
+    }
+
+    /* 底部条 */
+    footer {
+      border-top: 2px solid var(--swiss-border);
+      padding: 24px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      background: var(--swiss-bg);
+      font-size: 12px;
+      font-weight: 700;
+    }
+
+    @media (max-width: 900px) {
+      header {
+        grid-template-columns: 1fr;
+      }
+      .header-col {
+        border-right: none;
+        border-bottom: 2px solid var(--swiss-border);
+      }
+      .header-col:last-child {
+        border-bottom: none;
+      }
+      .content-grid {
+        grid-template-columns: 1fr;
+      }
+      .sidebar {
+        border-right: none;
+        border-bottom: 2px solid var(--swiss-border);
+      }
+      .article-item {
+        padding: 24px 18px;
+      }
+    }
+  </style>
+</head>
+<body>
+
+  <!-- 辅助网格图层 -->
+  <div id="gridOverlay" class="grid-lines-overlay"></div>
+
+  <div class="swiss-container">
+    <!-- 顶部导航栏 -->
+    <header>
+      <div class="header-col">
+        <div class="brand-logo">DESIGN / FORM / LOGIC</div>
+        <div class="meta-tag">STYLE 01 · SWISS INTERNATIONAL TYPOGRAPHY</div>
+      </div>
+      <div class="header-col">
+        <ul class="nav-links">
+          <li><a href="#" class="active">文章 ARCHIVE</a></li>
+          <li><a href="#">手记 ESSAYS</a></li>
+          <li><a href="#">关于 ABOUT</a></li>
+        </ul>
+      </div>
+      <div class="header-col">
+        <div style="font-size: 11px; font-weight: 700;">GRID ALIGNMENT SYSTEM</div>
+        <button id="toggleGridBtn" class="control-btn">📏 显示/隐藏 瑞士排版网格</button>
+      </div>
+    </header>
+
+    <!-- 巨幅海报 Hero 标头 -->
+    <section class="hero-section">
+      <div class="hero-coords">SYS_GRID_INDEX: 47°22'N 8°32'E // ZÜRICH 1957 — 2026</div>
+      <h1 class="hero-title">
+        秩序、网格与<br><span class="accent">纯粹理性</span>设计.
+      </h1>
+      <p class="hero-desc">
+        这里是关于软件工程、系统架构与排版美学的思考记录。坚信结构决定认知，极度的理性构建无与伦比的优雅。
+      </p>
+    </section>
+
+    <!-- 内容主体分栏 -->
+    <div class="content-grid">
+      <!-- 左侧边栏 -->
+      <aside class="sidebar">
+        <div class="sidebar-block">
+          <div class="sidebar-heading">
+            <span>关于博主</span>
+            <span>01 / 04</span>
+          </div>
+          <div class="author-card">
+            <strong>SYSTEM ARCHITECT</strong>
+            <p>全栈架构师 / 数字排版研究者。热衷于现代 Web 交互与底层系统设计。</p>
+          </div>
+        </div>
+
+        <div class="sidebar-block">
+          <div class="sidebar-heading">
+            <span>专题分类</span>
+            <span>TOPICS</span>
+          </div>
+          <ul class="category-list">
+            <li class="active"><span>全部文章 (ALL)</span> <span>18</span></li>
+            <li><span>系统架构 (ARCH)</span> <span>07</span></li>
+            <li><span>交互设计 (DESIGN)</span> <span>06</span></li>
+            <li><span>哲学随笔 (PHILOSOPHY)</span> <span>05</span></li>
+          </ul>
+        </div>
+
+        <div class="sidebar-block">
+          <div class="sidebar-heading">
+            <span>排版规范</span>
+            <span>STANDARDS</span>
+          </div>
+          <div style="font-size: 12px; color: #555; line-height: 1.6;">
+            <div>• 字体：Space Grotesk + Noto Sans</div>
+            <div>• 比例系统：基于 8pt 栅格</div>
+            <div>• 色彩：#F8F8F8 / #0D0D0D / #FF3300</div>
+          </div>
+        </div>
+      </aside>
+
+      <!-- 右侧文章流 -->
+      <main class="articles-feed">
+        <!-- 文章 1 -->
+        <article class="article-item">
+          <div class="article-meta">
+            <span class="index-no">№ 001</span>
+            <span class="tag">系统架构</span>
+            <span>2026.08.20</span>
+            <span>阅读时长: 6 MIN</span>
+          </div>
+          <h2 class="article-title" onclick="toggleFold('fold-1')">为什么现代 Web 需要重新回归「网格纪律」？</h2>
+          <p class="article-summary">
+            在信息爆炸与无休止的动效堆砌中，瑞士国际主义平面设计为我们提供了一剂解药：通过清晰的数学网格和层级关系，使复杂数据变得一目了然且具有持久的力量。
+          </p>
+          <div id="fold-1" class="article-body-fold">
+            <p>
+              网格系统不仅是视觉对齐工具，更是一种组织思维的逻辑框架。1950年代约瑟夫·米勒-布罗克曼（Josef Müller-Brockmann）指出：“网格是一种意志的表达，它代表着对客观性与功能性的最高敬畏。”
+            </p>
+            <br>
+            <p>
+              在现代分布式系统的 UI 构建中，清晰的模块隔离与网格定界能够显著降低用户的认知负荷。当我们剔除所有多余的渐变与装饰，排版本身就是最强大的界面。
+            </p>
+          </div>
+          <button class="read-more-btn" onclick="toggleFold('fold-1')">展开 / 收起全文 <span>↓</span></button>
+        </article>
+
+        <!-- 文章 2 -->
+        <article class="article-item">
+          <div class="article-meta">
+            <span class="index-no">№ 002</span>
+            <span class="tag">交互设计</span>
+            <span>2026.08.15</span>
+            <span>阅读时长: 8 MIN</span>
+          </div>
+          <h2 class="article-title" onclick="toggleFold('fold-2')">从铅字印刷到像素流：排版字阶（Type Scales）的几何之美</h2>
+          <p class="article-summary">
+            探讨斐波那契数列、黄金比例与现代响应式字阶在屏幕排版中的落地实践，以及如何通过严格的字号梯次建立不容置疑的信息层级。
+          </p>
+          <div id="fold-2" class="article-body-fold">
+            <p>
+              传统排版使用 12pt, 14pt, 18pt, 24pt, 36pt 等经典铅字阶梯。在数字屏幕上，利用 1.25 (Major Third) 或 1.333 (Perfect Fourth) 比例可以建立高度统一的阅读韵律。
+            </p>
+          </div>
+          <button class="read-more-btn" onclick="toggleFold('fold-2')">展开 / 收起全文 <span>↓</span></button>
+        </article>
+
+        <!-- 文章 3 -->
+        <article class="article-item">
+          <div class="article-meta">
+            <span class="index-no">№ 003</span>
+            <span class="tag">哲学随笔</span>
+            <span>2026.08.02</span>
+            <span>阅读时长: 4 MIN</span>
+          </div>
+          <h2 class="article-title" onclick="toggleFold('fold-3')">少即是多（Less is More）：极简主义不是空无一物，而是恰到好处</h2>
+          <p class="article-summary">
+            极简绝非偷工减料，而是对核心价值的极度凝练与提纯。每一根线条都必须有存在的意义。
+          </p>
+          <div id="fold-3" class="article-body-fold">
+            <p>
+              当设计做到无法再删减任何一个元素而依然能完美表达意图时，真正的设计便诞生了。
+            </p>
+          </div>
+          <button class="read-more-btn" onclick="toggleFold('fold-3')">展开 / 收起全文 <span>↓</span></button>
+        </article>
+      </main>
+    </div>
+
+    <!-- 底部 -->
+    <footer>
+      <div>&copy; 2026 SWISS TYPOGRAPHY STUDIO. ALL RIGHTS RESERVED.</div>
+      <div>HELVETICA & SPACE GROTESK ACCREDITATION</div>
+    </footer>
+  </div>
+
+  <script src="assets/nav-bar.js"></script>
+  <script>
+    // 切换网格辅助线
+    const gridBtn = document.getElementById("toggleGridBtn");
+    const gridOverlay = document.getElementById("gridOverlay");
+    gridBtn.addEventListener("click", () => {
+      gridOverlay.classList.toggle("show");
+      gridBtn.textContent = gridOverlay.classList.contains("show") 
+        ? "📏 隐藏 瑞士排版网格 (ON)" 
+        : "📏 显示/隐藏 瑞士排版网格 (OFF)";
+    });
+
+    // 快捷键 G 切换网格
+    document.addEventListener("keydown", (e) => {
+      if (e.key === "g" || e.key === "G") {
+        gridBtn.click();
+      }
+    });
+
+    // 折叠展开文章
+    function toggleFold(id) {
+      const el = document.getElementById(id);
+      el.classList.toggle("open");
+    }
+  </script>
+</body>
+</html>

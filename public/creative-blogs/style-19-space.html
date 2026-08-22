@@ -1,0 +1,371 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>DEEP SPACE MISSION // 19 航天局深空探索飞行手册风</title>
+  <link rel="stylesheet" href="assets/common.css">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Space+Mono:ital,wght@0,400;0,700;1,400&family=Chakra+Petch:wght@500;700;800&family=Noto+Sans+SC:wght@400;500;700&display=swap" rel="stylesheet">
+  <style>
+    :root {
+      --space-black: #0b0c10;
+      --space-panel: #141821;
+      --space-border: #2e384d;
+      --space-gold: #ffd166;
+      --space-blue: #4cc9f0;
+      --space-red: #ef476f;
+      --space-white: #f8f9fa;
+      --font-telemetry: 'Space Mono', monospace;
+      --font-display: 'Chakra Petch', 'Noto Sans SC', sans-serif;
+    }
+
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+
+    body {
+      background-color: var(--space-black);
+      color: var(--space-white);
+      font-family: var(--font-telemetry);
+      line-height: 1.7;
+      padding-bottom: 100px;
+      /* 星空网格与遥测点阵 */
+      background-image: 
+        radial-gradient(rgba(76, 201, 240, 0.15) 1px, transparent 1px),
+        linear-gradient(to right, rgba(255, 255, 255, 0.02) 1px, transparent 1px),
+        linear-gradient(to bottom, rgba(255, 255, 255, 0.02) 1px, transparent 1px);
+      background-size: 30px 30px, 60px 60px, 60px 60px;
+    }
+
+    .mission-wrapper {
+      max-width: 1200px;
+      margin: 0 auto;
+      padding: 24px 20px;
+    }
+
+    /* 飞行任务顶栏遥测 HUD */
+    .telemetry-header {
+      background: var(--space-panel);
+      border: 1px solid var(--space-border);
+      border-left: 6px solid var(--space-gold);
+      padding: 16px 24px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 32px;
+      box-shadow: 0 8px 30px rgba(0,0,0,0.5);
+    }
+
+    .mission-badge {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+    }
+    .nasa-worm {
+      font-family: var(--font-display);
+      font-size: 24px;
+      font-weight: 800;
+      color: var(--space-red);
+      letter-spacing: 2px;
+    }
+    .flight-id {
+      font-size: 12px;
+      color: var(--space-gold);
+      background: rgba(255, 209, 102, 0.1);
+      padding: 2px 8px;
+      border: 1px solid var(--space-gold);
+    }
+
+    .mission-clock {
+      font-size: 13px;
+      color: var(--space-blue);
+      text-align: right;
+    }
+
+    /* 任务主手册封面 Hero 卡片 */
+    .flight-manual-hero {
+      border: 1px solid var(--space-border);
+      background: var(--space-panel);
+      display: grid;
+      grid-template-columns: 1.4fr 1fr;
+      margin-bottom: 40px;
+      overflow: hidden;
+      position: relative;
+    }
+    .hero-photo-box {
+      position: relative;
+      min-height: 380px;
+    }
+    .hero-photo-box img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      display: block;
+    }
+    .photo-telemetry-tag {
+      position: absolute;
+      bottom: 12px;
+      left: 12px;
+      background: rgba(0,0,0,0.75);
+      border: 1px solid var(--space-blue);
+      color: var(--space-blue);
+      font-size: 11px;
+      padding: 4px 8px;
+    }
+
+    .hero-manual-body {
+      padding: 36px 32px;
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
+    }
+
+    .checklist-tag {
+      font-size: 11px;
+      color: var(--space-gold);
+      letter-spacing: 2px;
+      margin-bottom: 10px;
+    }
+    .manual-heading {
+      font-family: var(--font-display);
+      font-size: 28px;
+      color: #fff;
+      margin-bottom: 16px;
+      line-height: 1.3;
+    }
+    .manual-heading span {
+      color: var(--space-blue);
+    }
+
+    .flight-checklist-item {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      font-size: 13px;
+      color: #94a3b8;
+      margin-bottom: 8px;
+    }
+    .flight-checklist-item input {
+      accent-color: var(--space-gold);
+    }
+
+    /* 任务日志主分栏 */
+    .mission-logs-grid {
+      display: grid;
+      grid-template-columns: 2fr 1fr;
+      gap: 32px;
+    }
+
+    .mission-log-card {
+      background: var(--space-panel);
+      border: 1px solid var(--space-border);
+      padding: 26px;
+      margin-bottom: 24px;
+      position: relative;
+    }
+    .mission-log-card::before {
+      content: "";
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 40px;
+      height: 2px;
+      background: var(--space-blue);
+    }
+
+    .log-meta-row {
+      display: flex;
+      justify-content: space-between;
+      font-size: 11px;
+      color: #64748b;
+      margin-bottom: 12px;
+      border-bottom: 1px dashed var(--space-border);
+      padding-bottom: 6px;
+    }
+
+    .log-title {
+      font-family: var(--font-display);
+      font-size: 20px;
+      color: #fff;
+      margin-bottom: 12px;
+      line-height: 1.4;
+    }
+    .log-title:hover {
+      color: var(--space-gold);
+    }
+
+    .log-content {
+      font-size: 13px;
+      color: #cbd5e1;
+      line-height: 1.8;
+      margin-bottom: 18px;
+    }
+
+    .telemetry-btn {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      font-size: 12px;
+      color: var(--space-black);
+      background: var(--space-blue);
+      font-weight: 700;
+      padding: 6px 14px;
+      text-decoration: none;
+    }
+    .telemetry-btn:hover {
+      background: var(--space-gold);
+    }
+
+    /* 侧边遥测小部件 */
+    .telemetry-widget {
+      background: var(--space-panel);
+      border: 1px solid var(--space-border);
+      padding: 20px;
+      margin-bottom: 24px;
+    }
+    .widget-heading {
+      font-size: 12px;
+      color: var(--space-gold);
+      border-bottom: 1px solid var(--space-border);
+      padding-bottom: 6px;
+      margin-bottom: 14px;
+      letter-spacing: 1px;
+    }
+
+    .telemetry-data-row {
+      display: flex;
+      justify-content: space-between;
+      font-size: 12px;
+      margin-bottom: 8px;
+    }
+    .telemetry-data-row span:last-child {
+      color: var(--space-blue);
+      font-weight: 700;
+    }
+
+    @media (max-width: 860px) {
+      .flight-manual-hero, .mission-logs-grid {
+        grid-template-columns: 1fr;
+      }
+    }
+  </style>
+</head>
+<body>
+
+  <div class="mission-wrapper">
+    <!-- 顶栏遥测 HUD -->
+    <header class="telemetry-header">
+      <div class="mission-badge">
+        <span class="nasa-worm">ARTEMIS-LOG</span>
+        <span class="flight-id">FLIGHT DOC // REV 9.4</span>
+      </div>
+      <div class="mission-clock">
+        <div>MET: <strong>+042:18:22</strong></div>
+        <div style="font-size:11px; color:#64748b;">ORBIT: LUNAR PERIAPSIS (112 KM)</div>
+      </div>
+    </header>
+
+    <!-- 飞行手册 Hero 封面 -->
+    <section class="flight-manual-hero">
+      <div class="hero-photo-box">
+        <img src="assets/images/space_mission.jpg" alt="宇航员登月与地球升起摄影">
+        <div class="photo-telemetry-tag">CAM 04 // SURFACE EXPLORATION [EVA-02]</div>
+      </div>
+      <div class="hero-manual-body">
+        <div>
+          <div class="checklist-tag">SECTION 01 :: DEEP SPACE FLIGHT PLAN</div>
+          <h1 class="manual-heading">
+            星海孤航：跨越三十八万公里的<span>地月转移轨道手记</span>
+          </h1>
+          <p style="font-size: 13px; color: #94a3b8; margin-bottom: 20px;">
+            在真空的绝对静默中，地球如同一颗悬浮在漆黑丝绒上的蓝色宝石。记录航天器姿态控制算法、抗辐射芯片容错架构以及人类在深空边疆的技术沉思。
+          </p>
+        </div>
+        <div>
+          <div style="font-size: 11px; color: var(--space-gold); margin-bottom: 8px;">CHECKLIST STATUS:</div>
+          <div class="flight-checklist-item">
+            <input type="checkbox" checked disabled>
+            <span>TLI (地月轨道转移脉冲点火) - COMPLETED</span>
+          </div>
+          <div class="flight-checklist-item">
+            <input type="checkbox" checked disabled>
+            <span>高增益 X-Band 天线阵列对地锁定 - LOCKED</span>
+          </div>
+          <div class="flight-checklist-item">
+            <input type="checkbox" checked disabled>
+            <span>生命维持系统氧分压平衡 - NOMINAL</span>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- 任务日志列表 -->
+    <div class="mission-logs-grid">
+      <!-- 左侧任务日志 -->
+      <main>
+        <article class="mission-log-card">
+          <div class="log-meta-row">
+            <span>ENTRY #01 · MISSION CRITICAL</span>
+            <span>DATE: 2026.08.20 · SYS: RAD-HARD RISC-V</span>
+          </div>
+          <h2 class="log-title">极端环境下的容错架构：航天级嵌入式系统的「三模冗余」实践</h2>
+          <p class="log-content">
+            宇宙高能重离子穿透芯片造成的单粒子翻转（SEU）是深空航行最大的隐形威胁。探讨如何通过三模冗余（TMR）投票机制与纠错内存（ECC）在纳秒级别自我修复计算状态。
+          </p>
+          <a href="#" class="telemetry-btn">READ FLIGHT TELEMETRY ➔</a>
+        </article>
+
+        <article class="mission-log-card">
+          <div class="log-meta-row">
+            <span>ENTRY #02 · NAVIGATION & ORBIT</span>
+            <span>DATE: 2026.08.14 · SYS: KALMAN FILTER</span>
+          </div>
+          <h2 class="log-title">星图匹配与自主导航：利用脉冲星信号建立宇宙深空 GPS</h2>
+          <p class="log-content">
+            当航天器飞离近地轨道，地面深空测控网（DSN）的单向延迟将达到数十分钟。通过观测 X 射线毫秒脉冲星自转周期，航天器得以在数千万公里外实现毫米级的自主定位。
+          </p>
+          <a href="#" class="telemetry-btn">READ FLIGHT TELEMETRY ➔</a>
+        </article>
+      </main>
+
+      <!-- 右侧飞行仪表板 -->
+      <aside>
+        <div class="telemetry-widget">
+          <div class="widget-heading">TELEMETRY DATA STREAM</div>
+          <div class="telemetry-data-row">
+            <span>VELOCITY:</span>
+            <span>1.62 km/s</span>
+          </div>
+          <div class="telemetry-data-row">
+            <span>ALTITUDE:</span>
+            <span>112.4 km</span>
+          </div>
+          <div class="telemetry-data-row">
+            <span>CABIN PRESSURE:</span>
+            <span>101.3 kPa</span>
+          </div>
+          <div class="telemetry-data-row">
+            <span>SOLAR ARRAY:</span>
+            <span>98.2% EFF</span>
+          </div>
+        </div>
+
+        <div class="telemetry-widget">
+          <div class="widget-heading">MISSION LOG ARCHIVE</div>
+          <div style="font-size:12px; color:#94a3b8; line-height:2;">
+            <div>📁 APOLLO LEGACY NOTES</div>
+            <div>📁 ARTEMIS HARDWARE SPECS</div>
+            <div>📁 MARS SAMPLE RETURN (MSR)</div>
+          </div>
+        </div>
+      </aside>
+    </div>
+  </div>
+
+  <script src="assets/nav-bar.js"></script>
+</body>
+</html>

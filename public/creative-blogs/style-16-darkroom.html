@@ -1,0 +1,220 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>DARKROOM // 16 胶片暗房与拍立得影集风</title>
+  <link rel="stylesheet" href="assets/common.css">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Courier+Prime:ital,wght@0,400;0,700;1,400&family=Special+Elite&family=Noto+Serif+SC:wght@400;600&display=swap" rel="stylesheet">
+  <style>
+    :root {
+      --dark-bg: #09090b;
+      --safelight-red: #ef4444;
+      --safelight-amber: #f97316;
+      --film-text: #e4e4e7;
+      --film-muted: #71717a;
+      --font-film: "Courier Prime", "Special Elite", monospace, "Noto Serif SC", serif;
+    }
+
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+
+    body {
+      background-color: var(--dark-bg);
+      color: var(--film-text);
+      font-family: var(--font-film);
+      line-height: 1.8;
+      padding: 30px 16px 100px;
+    }
+
+    .darkroom-layout {
+      max-width: 1100px;
+      margin: 0 auto;
+    }
+
+    /* 顶栏暗房红灯指示器 */
+    .safelight-header {
+      border-bottom: 1px solid #27272a;
+      padding-bottom: 20px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 40px;
+    }
+
+    .safelight-indicator {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      color: var(--safelight-red);
+      font-size: 12px;
+      font-weight: bold;
+      letter-spacing: 2px;
+    }
+    .red-bulb {
+      width: 10px;
+      height: 10px;
+      border-radius: 50%;
+      background: var(--safelight-red);
+      box-shadow: 0 0 12px var(--safelight-red);
+      animation: bulb-pulse 2s infinite;
+    }
+    @keyframes bulb-pulse {
+      0%, 100% { opacity: 1; transform: scale(1); }
+      50% { opacity: 0.6; transform: scale(0.85); }
+    }
+
+    /* 刊头 */
+    .film-title {
+      font-size: clamp(30px, 5vw, 50px);
+      font-weight: 700;
+      letter-spacing: 2px;
+      margin-bottom: 8px;
+      color: #fff;
+    }
+
+    /* 35mm 胶卷底片带 */
+    .film-strip {
+      background: #18181b;
+      border-top: 6px solid #000;
+      border-bottom: 6px solid #000;
+      padding: 24px 0;
+      margin: 40px 0;
+      position: relative;
+    }
+
+    /* 齿孔 Perforations */
+    .sprockets-top, .sprockets-bottom {
+      height: 16px;
+      background: repeating-linear-gradient(to right, #000 0px, #000 12px, transparent 12px, transparent 24px);
+      position: absolute;
+      width: 100%;
+      left: 0;
+    }
+    .sprockets-top { top: 4px; }
+    .sprockets-bottom { bottom: 4px; }
+
+    .film-frames-container {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 30px;
+      padding: 10px 30px;
+    }
+
+    .film-frame {
+      background: #09090b;
+      border: 1px solid #3f3f46;
+      padding: 20px;
+      position: relative;
+    }
+
+    .frame-number {
+      font-size: 11px;
+      color: var(--safelight-amber);
+      margin-bottom: 8px;
+      letter-spacing: 1.5px;
+    }
+
+    .frame-photo {
+      height: 180px;
+      background: radial-gradient(circle, #27272a, #09090b);
+      border: 1px solid #27272a;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 40px;
+      margin-bottom: 14px;
+      filter: sepia(0.3) contrast(1.2);
+    }
+
+    .frame-title {
+      font-size: 20px;
+      font-weight: 700;
+      color: #fff;
+      margin-bottom: 8px;
+    }
+
+    .frame-desc {
+      font-size: 13px;
+      color: #a1a1aa;
+      line-height: 1.7;
+      margin-bottom: 12px;
+    }
+
+    /* EXIF 铭牌 */
+    .exif-stamp {
+      font-size: 11px;
+      color: var(--film-muted);
+      border-top: 1px dashed #27272a;
+      padding-top: 8px;
+    }
+
+    @media (max-width: 768px) {
+      .film-frames-container {
+        grid-template-columns: 1fr;
+        padding: 10px;
+      }
+    }
+  </style>
+</head>
+<body>
+
+  <div class="darkroom-layout">
+    <!-- 顶栏红灯 -->
+    <header class="safelight-header">
+      <div>
+        <div class="film-title">DARKROOM // 胶片志</div>
+        <div style="font-size: 13px; color: var(--film-muted);">KODAK TRI-X 400 · 银盐摄影与静默手记</div>
+      </div>
+      <div class="safelight-indicator">
+        <span class="red-bulb"></span>
+        <span>SAFELIGHT ACTIVE [暗房显影中]</span>
+      </div>
+    </header>
+
+    <!-- 35mm 胶卷底片栏 -->
+    <section class="film-strip">
+      <div class="sprockets-top"></div>
+      
+      <div class="film-frames-container">
+        <!-- 画幅 1 -->
+        <article class="film-frame">
+          <div class="frame-number">▶ 24A // KODAK TX 400 // EXP.01</div>
+          <div style="margin: 12px 0 16px; border: 1px solid #333; overflow: hidden; border-radius: 4px;">
+            <img src="assets/images/darkroom_film.jpg" alt="巴黎雨夜黑白胶片摄影" style="width: 100%; height: 220px; object-fit: cover; display: block; filter: contrast(1.15) brightness(0.95);">
+          </div>
+          <h2 class="frame-title">银盐颗粒的物理质感：为什么在数字时代我们依然渴望杂音？</h2>
+          <p class="frame-desc">
+            高像素传感器消除了所有的噪点，却也常常抽离了画面的情绪温度。胶片乳剂中卤化银晶体的随机排列，恰如真实世界中充满未知的偶发之美。
+          </p>
+          <div class="exif-stamp">
+            EXIF: LEICA M6 · SUMMICRON 35mm F/2 · 1/125s · D-76 显影 9.5 MIN
+          </div>
+        </article>
+
+        <!-- 画幅 2 -->
+        <article class="film-frame">
+          <div class="frame-number">▶ 25A // KODAK TX 400 // EXP.02</div>
+          <div class="frame-photo">☕🕯️</div>
+          <h2 class="frame-title">暗房里的时间延宕：从曝光到显影的等待哲学</h2>
+          <p class="frame-desc">
+            在红色安全灯的微光中，看着白色的相纸在显影液中慢慢浮现出灰阶层次。这种无法被“Ctrl+Z”撤销的沉浸感，是快节奏生活最好的解毒剂。
+          </p>
+          <div class="exif-stamp">
+            EXIF: HASSELBLAD 500C/M · PLANAR 80mm F/2.8 · 1/60s · ILFORD MULTIGRADE
+          </div>
+        </article>
+      </div>
+
+      <div class="sprockets-bottom"></div>
+    </section>
+  </div>
+
+  <script src="assets/nav-bar.js"></script>
+</body>
+</html>

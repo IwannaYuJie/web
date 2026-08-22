@@ -1,0 +1,327 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>空山集 — 05 日式禅意极简杂志风</title>
+  <link rel="stylesheet" href="assets/common.css">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Shippori+Mincho:wght@400;600;800&family=Noto+Serif+SC:wght@300;400;600&display=swap" rel="stylesheet">
+  <style>
+    :root {
+      --zen-bg: #f7f5f0;
+      --zen-card-bg: #ffffff;
+      --zen-ink: #2c2b29;
+      --zen-muted: #8c887b;
+      --zen-border: #e8e4dc;
+      --zen-accent: #a35d46;
+      --font-zen: "Shippori Mincho", "Noto Serif SC", "Songti SC", serif;
+    }
+
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+
+    body {
+      background-color: var(--zen-bg);
+      color: var(--zen-ink);
+      font-family: var(--font-zen);
+      line-height: 2.1;
+      letter-spacing: 0.5px;
+      padding: 40px 20px 100px;
+      -webkit-font-smoothing: antialiased;
+      transition: background 0.4s ease;
+    }
+
+    .zen-wrapper {
+      max-width: 1080px;
+      margin: 0 auto;
+    }
+
+    /* 顶部简约导航 */
+    .zen-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: baseline;
+      padding-bottom: 30px;
+      border-bottom: 1px solid var(--zen-border);
+      margin-bottom: 60px;
+    }
+
+    .zen-brand {
+      font-size: 22px;
+      font-weight: 600;
+      letter-spacing: 4px;
+    }
+    .zen-brand span {
+      font-size: 13px;
+      color: var(--zen-muted);
+      font-weight: 400;
+      margin-left: 12px;
+      letter-spacing: 1px;
+    }
+
+    .zen-nav {
+      display: flex;
+      gap: 28px;
+      font-size: 14px;
+      list-style: none;
+    }
+    .zen-nav a {
+      color: var(--zen-muted);
+      text-decoration: none;
+      transition: color 0.3s;
+    }
+    .zen-nav a:hover, .zen-nav a.active {
+      color: var(--zen-ink);
+    }
+
+    /* 诗意主视觉与竖排书法美学 */
+    .zen-hero {
+      display: grid;
+      grid-template-columns: auto 1fr;
+      gap: 50px;
+      align-items: center;
+      margin-bottom: 80px;
+      padding: 40px 0;
+    }
+
+    .zen-vertical-title {
+      writing-mode: vertical-rl;
+      text-orientation: mixed;
+      font-size: clamp(32px, 5vw, 48px);
+      letter-spacing: 12px;
+      line-height: 1.6;
+      font-weight: 600;
+      color: var(--zen-ink);
+      border-left: 1px solid var(--zen-border);
+      padding-left: 20px;
+    }
+
+    .zen-hero-text {
+      font-size: 16px;
+      color: #55524c;
+      max-width: 620px;
+      line-height: 2.2;
+    }
+    .zen-hero-text .zen-seal {
+      display: inline-block;
+      width: 24px;
+      height: 24px;
+      line-height: 22px;
+      border: 1px solid var(--zen-accent);
+      color: var(--zen-accent);
+      text-align: center;
+      font-size: 11px;
+      margin-right: 8px;
+      vertical-align: middle;
+    }
+
+    /* 文章流（极度呼吸留白） */
+    .zen-posts {
+      display: flex;
+      flex-direction: column;
+      gap: 70px;
+    }
+
+    .zen-post-card {
+      background: var(--zen-card-bg);
+      border: 1px solid var(--zen-border);
+      padding: 48px 54px;
+      border-radius: 2px;
+      transition: all 0.35s ease;
+      position: relative;
+    }
+    .zen-post-card:hover {
+      box-shadow: 0 15px 35px rgba(0, 0, 0, 0.03);
+      transform: translateY(-2px);
+    }
+
+    .zen-post-meta {
+      font-size: 13px;
+      color: var(--zen-muted);
+      letter-spacing: 2px;
+      margin-bottom: 16px;
+      display: flex;
+      align-items: center;
+      gap: 12px;
+    }
+    .zen-post-meta .dot {
+      width: 4px;
+      height: 4px;
+      background: var(--zen-muted);
+      border-radius: 50%;
+    }
+
+    .zen-post-title {
+      font-size: 26px;
+      font-weight: 600;
+      letter-spacing: 1.5px;
+      margin-bottom: 20px;
+      line-height: 1.45;
+    }
+    .zen-post-title a {
+      color: var(--zen-ink);
+      text-decoration: none;
+      transition: color 0.2s;
+    }
+    .zen-post-title a:hover {
+      color: var(--zen-accent);
+    }
+
+    .zen-post-excerpt {
+      font-size: 16px;
+      color: #4a4740;
+      line-height: 2.2;
+      text-align: justify;
+    }
+
+    .zen-post-footer {
+      margin-top: 30px;
+      padding-top: 20px;
+      border-top: 1px solid #f0ece5;
+      display: flex;
+      justify-content: space-between;
+      font-size: 13px;
+      color: var(--zen-muted);
+    }
+
+    /* 底部禅意署名 */
+    .zen-footer {
+      margin-top: 100px;
+      text-align: center;
+      padding-top: 40px;
+      border-top: 1px solid var(--zen-border);
+      font-size: 13px;
+      color: var(--zen-muted);
+      letter-spacing: 2px;
+    }
+
+    @media (max-width: 768px) {
+      .zen-hero {
+        grid-template-columns: 1fr;
+        gap: 20px;
+      }
+      .zen-vertical-title {
+        writing-mode: horizontal-tb;
+        border-left: none;
+        border-bottom: 1px solid var(--zen-border);
+        padding-left: 0;
+        padding-bottom: 16px;
+        letter-spacing: 4px;
+      }
+      .zen-post-card {
+        padding: 30px 20px;
+      }
+    }
+  </style>
+</head>
+<body>
+
+  <div class="zen-wrapper">
+    <!-- 顶栏 -->
+    <header class="zen-header">
+      <div class="zen-brand">
+        空 山 集 <span>/ SORA NO SHI</span>
+      </div>
+      <ul class="zen-nav">
+        <li><a href="#" class="active">随笔</a></li>
+        <li><a href="#">读书</a></li>
+        <li><a href="#">摄影</a></li>
+        <li><a href="#">闲谈</a></li>
+      </ul>
+    </header>
+
+    <!-- 诗意 Hero -->
+    <section class="zen-hero">
+      <div class="zen-vertical-title">
+        万物静观皆自得
+      </div>
+      <div class="zen-hero-text">
+        <span class="zen-seal">印</span>
+        <strong>山水有清音，草木有真意。</strong><br>
+        这里记录日常中偶拾的灵光与沉静的思辨。不求宏阔喧腾，但求字句明净、心境澄澈。在留白中体会呼吸，在朴拙中触摸日常的温度。
+      </div>
+    </section>
+
+    <!-- 枯山水静谧意境摄影 -->
+    <div style="margin-bottom: 48px; border: 1px solid rgba(0,0,0,0.06); padding: 12px; background: #fff; box-shadow: 0 4px 20px rgba(0,0,0,0.03);">
+      <img src="assets/images/zen_garden.jpg" alt="京都枯山水庭院晨雾" style="width: 100%; height: 320px; object-fit: cover; display: block; filter: saturate(0.85) contrast(0.95);">
+      <div style="text-align: right; font-size: 11px; color: #888; margin-top: 8px; font-family: serif; letter-spacing: 2px;">
+        〔 枯山水 · 白砂流云 · 晨光微熹 〕
+      </div>
+    </div>
+
+    <!-- 文章流 -->
+    <main class="zen-posts">
+      <!-- 篇章 1 -->
+      <article class="zen-post-card">
+        <div class="zen-post-meta">
+          <span>庚申月 · 初秋</span>
+          <span class="dot"></span>
+          <span>手记</span>
+          <span class="dot"></span>
+          <span>四分钟静读</span>
+        </div>
+        <h2 class="zen-post-title"><a href="#">留白之美：从枯山水到现代极简生活方式的减法艺术</a></h2>
+        <div class="zen-post-excerpt">
+          枯山水庭院中，白砂为水，乱石作山。不着一滴真水，却见浩荡江湖。现代人的生活往往被过多无意义的待办事项与消费欲望填塞得水泄不通。学会在日程里留出无所事事的白昼，正如在乐章中留出震人心魄的休止符。
+        </div>
+        <div class="zen-post-footer">
+          <span>山人 笔</span>
+          <span>分享此篇 →</span>
+        </div>
+      </article>
+
+      <!-- 篇章 2 -->
+      <article class="zen-post-card">
+        <div class="zen-post-meta">
+          <span>未月 · 仲夏</span>
+          <span class="dot"></span>
+          <span>茶席随想</span>
+          <span class="dot"></span>
+          <span>六分钟静读</span>
+        </div>
+        <h2 class="zen-post-title"><a href="#">一期一会：在浮躁浪潮中守住一份专注的心流</a></h2>
+        <div class="zen-post-excerpt">
+          茶道中所讲的“一期一会”，意为每一次相遇都是此生仅有的一次。当我们在敲下每一行代码、构思每一次系统重构时，若能怀着敬畏与全神贯注的态度，工具与人便能达成物我两忘的谐调。
+        </div>
+        <div class="zen-post-footer">
+          <span>山人 笔</span>
+          <span>分享此篇 →</span>
+        </div>
+      </article>
+
+      <!-- 篇章 3 -->
+      <article class="zen-post-card">
+        <div class="zen-post-meta">
+          <span>午月 · 初夏</span>
+          <span class="dot"></span>
+          <span>自然笔记</span>
+          <span class="dot"></span>
+          <span>三分静读</span>
+        </div>
+        <h2 class="zen-post-title"><a href="#">听雨记：窗外檐溜声里的时间的重量</a></h2>
+        <div class="zen-post-excerpt">
+          连绵的夏雨洗尽了城市的铅尘。坐在木桌前，听雨水顺着瓦当滴落的声音，时间仿佛在此刻被拉得很长很长。
+        </div>
+        <div class="zen-post-footer">
+          <span>山人 笔</span>
+          <span>分享此篇 →</span>
+        </div>
+      </article>
+    </main>
+
+    <!-- 底部 -->
+    <footer class="zen-footer">
+      <div>空山不见人，但闻人语响。</div>
+      <div style="margin-top: 8px; font-size: 11px; opacity: 0.7;">&copy; 2026 WABI-SABI ZEN EDITORIAL · ALL RIGHTS RESERVED</div>
+    </footer>
+  </div>
+
+  <script src="assets/nav-bar.js"></script>
+</body>
+</html>

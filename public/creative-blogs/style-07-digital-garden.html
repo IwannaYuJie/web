@@ -1,0 +1,455 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>我的数字花园 🌱 — 07 双向链接知识图谱风</title>
+  <link rel="stylesheet" href="assets/common.css">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;500;700&display=swap" rel="stylesheet">
+  <style>
+    :root {
+      --garden-bg: #14161f;
+      --garden-sidebar: #10121a;
+      --garden-card: #1c1f2b;
+      --garden-border: #2a2e40;
+      --garden-text: #e2e8f0;
+      --garden-muted: #8492a6;
+      --garden-accent: #7c3aed;
+      --garden-link: #a78bfa;
+      --garden-green: #10b981;
+      --font-garden: "Inter", -apple-system, sans-serif;
+      --font-mono: "JetBrains Mono", monospace;
+    }
+
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+
+    body {
+      background-color: var(--garden-bg);
+      color: var(--garden-text);
+      font-family: var(--font-garden);
+      height: 100vh;
+      display: flex;
+      flex-direction: column;
+      overflow: hidden;
+    }
+
+    /* 顶部顶栏 */
+    .garden-header {
+      height: 48px;
+      background: var(--garden-sidebar);
+      border-bottom: 1px solid var(--garden-border);
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 0 20px;
+      font-size: 13px;
+      flex-shrink: 0;
+    }
+
+    .garden-brand {
+      font-weight: 700;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      color: #fff;
+    }
+
+    .vault-status {
+      display: flex;
+      align-items: center;
+      gap: 16px;
+      color: var(--garden-muted);
+    }
+    .vault-pill {
+      background: rgba(124, 58, 237, 0.2);
+      border: 1px solid rgba(124, 58, 237, 0.4);
+      color: var(--garden-link);
+      padding: 2px 8px;
+      border-radius: 4px;
+      font-size: 11px;
+      font-weight: 600;
+    }
+
+    /* 三栏布局 */
+    .garden-main-layout {
+      flex: 1;
+      display: grid;
+      grid-template-columns: 260px 1fr 280px;
+      overflow: hidden;
+    }
+
+    /* 左侧文件树 */
+    .garden-nav-tree {
+      background: var(--garden-sidebar);
+      border-right: 1px solid var(--garden-border);
+      padding: 16px;
+      overflow-y: auto;
+      font-size: 13px;
+    }
+
+    .tree-section-title {
+      font-size: 11px;
+      font-weight: 700;
+      color: var(--garden-muted);
+      text-transform: uppercase;
+      letter-spacing: 1px;
+      margin-bottom: 10px;
+      margin-top: 16px;
+    }
+    .tree-section-title:first-child { margin-top: 0; }
+
+    .tree-item {
+      padding: 6px 10px;
+      border-radius: 6px;
+      color: var(--garden-muted);
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      margin-bottom: 2px;
+      transition: all 0.15s;
+    }
+    .tree-item:hover {
+      background: rgba(255, 255, 255, 0.05);
+      color: var(--garden-text);
+    }
+    .tree-item.active {
+      background: rgba(124, 58, 237, 0.25);
+      color: #fff;
+      font-weight: 600;
+    }
+
+    /* 中间笔记核心内容区 */
+    .garden-content-area {
+      padding: 36px 48px;
+      overflow-y: auto;
+      line-height: 1.8;
+      max-width: 860px;
+      margin: 0 auto;
+      width: 100%;
+    }
+
+    .note-meta-header {
+      margin-bottom: 28px;
+      padding-bottom: 20px;
+      border-bottom: 1px solid var(--garden-border);
+    }
+
+    .note-title {
+      font-size: 32px;
+      font-weight: 800;
+      color: #fff;
+      margin-bottom: 12px;
+      letter-spacing: -0.5px;
+    }
+
+    .note-tags-row {
+      display: flex;
+      gap: 8px;
+      font-size: 12px;
+      color: var(--garden-muted);
+    }
+    .note-tag {
+      color: var(--garden-link);
+      background: rgba(167, 139, 250, 0.1);
+      padding: 2px 8px;
+      border-radius: 4px;
+    }
+
+    /* 双向链接与悬浮预览 */
+    .wiki-link {
+      color: var(--garden-link);
+      background: rgba(167, 139, 250, 0.12);
+      border-bottom: 1px dashed var(--garden-link);
+      padding: 0 4px;
+      border-radius: 3px;
+      text-decoration: none;
+      cursor: pointer;
+      position: relative;
+    }
+    .wiki-link:hover {
+      background: rgba(167, 139, 250, 0.25);
+    }
+
+    /* Callout 引用框 */
+    .garden-callout {
+      background: rgba(124, 58, 237, 0.08);
+      border-left: 4px solid var(--garden-accent);
+      padding: 16px 20px;
+      border-radius: 0 8px 8px 0;
+      margin: 24px 0;
+      font-size: 14px;
+    }
+    .garden-callout.tip {
+      background: rgba(16, 185, 129, 0.08);
+      border-left-color: var(--garden-green);
+    }
+    .callout-title {
+      font-weight: 700;
+      margin-bottom: 6px;
+      display: flex;
+      align-items: center;
+      gap: 6px;
+    }
+
+    /* 右侧：交互式关系图谱与反向链接 */
+    .garden-right-panel {
+      background: var(--garden-sidebar);
+      border-left: 1px solid var(--garden-border);
+      display: flex;
+      flex-direction: column;
+      overflow: hidden;
+    }
+
+    .graph-header {
+      padding: 12px 16px;
+      font-size: 12px;
+      font-weight: 700;
+      color: var(--garden-muted);
+      border-bottom: 1px solid var(--garden-border);
+      display: flex;
+      justify-content: space-between;
+    }
+
+    /* Canvas 图谱容器 */
+    .graph-canvas-container {
+      height: 240px;
+      position: relative;
+      background: #0d0f15;
+      border-bottom: 1px solid var(--garden-border);
+    }
+    #graphCanvas {
+      width: 100%;
+      height: 100%;
+    }
+
+    .backlinks-section {
+      flex: 1;
+      padding: 16px;
+      overflow-y: auto;
+    }
+    .backlink-item {
+      background: var(--garden-card);
+      border: 1px solid var(--garden-border);
+      border-radius: 6px;
+      padding: 10px;
+      margin-bottom: 8px;
+      font-size: 12px;
+      cursor: pointer;
+      transition: all 0.2s;
+    }
+    .backlink-item:hover {
+      border-color: var(--garden-link);
+    }
+    .backlink-title {
+      font-weight: 700;
+      color: #fff;
+      margin-bottom: 4px;
+    }
+    .backlink-snippet {
+      color: var(--garden-muted);
+      font-size: 11px;
+    }
+
+    @media (max-width: 960px) {
+      .garden-main-layout {
+        grid-template-columns: 1fr;
+      }
+      .garden-nav-tree, .garden-right-panel {
+        display: none;
+      }
+      .garden-content-area {
+        padding: 20px;
+      }
+    }
+  </style>
+</head>
+<body>
+
+  <!-- 顶部状态栏 -->
+  <header class="garden-header">
+    <div class="garden-brand">
+      <span>🌱</span>
+      <span>DIGITAL GARDEN // 双向链接知识花园</span>
+    </div>
+    <div class="vault-status">
+      <span>Vault: <strong>Main Brain (84 Notes)</strong></span>
+      <span class="vault-pill">Live Graph Active</span>
+    </div>
+  </header>
+
+  <!-- 三栏主体 -->
+  <div class="garden-main-layout">
+    <!-- 左侧：目录树 -->
+    <aside class="garden-nav-tree">
+      <div class="tree-section-title">📁 核心知识图谱</div>
+      <div class="tree-item active" onclick="loadNote('agents')"><span>📄</span> 自主智能体拓扑.md</div>
+      <div class="tree-item" onclick="loadNote('zettel')"><span>📄</span> 卡片盒笔记与心智模型.md</div>
+      <div class="tree-item" onclick="loadNote('rust')"><span>📄</span> Rust 零开销抽象实践.md</div>
+
+      <div class="tree-section-title">📁 架构随笔 (ESSAYS)</div>
+      <div class="tree-item" onclick="loadNote('distributed')"><span>📄</span> 分布式系统的确定性边界.md</div>
+      <div class="tree-item" onclick="loadNote('type')"><span>📄</span> 数字排版与信息几何学.md</div>
+
+      <div class="tree-section-title">🏷️ 热门标签云</div>
+      <div style="display: flex; gap: 6px; flex-wrap: wrap; margin-top: 8px;">
+        <span class="note-tag">#Agent</span>
+        <span class="note-tag">#Obsidian</span>
+        <span class="note-tag">#Rust</span>
+        <span class="note-tag">#Typography</span>
+      </div>
+    </aside>
+
+    <!-- 中间：笔记正文 -->
+    <main class="garden-content-area" id="noteBody">
+      <div class="note-meta-header">
+        <h1 class="note-title">自主智能体系统的协同协议与网状拓扑演进</h1>
+        <div class="note-tags-row">
+          <span>📅 最后更新: 2026-08-22</span>
+          <span>•</span>
+          <span class="note-tag">#AI_Agents</span>
+          <span class="note-tag">#Distributed_System</span>
+          <span>• 8 分钟阅读</span>
+        </div>
+      </div>
+
+      <p>
+        在传统的软件工程中，系统模块之间的通信依赖于严格定义的 API 与契约。然而，随着具备工具调用与环境感知能力的 <span class="wiki-link" title="点击查看双向关联笔记">[[自主智能体 (Autonomous Agents)]]</span> 的普及，软件协同的范式正在从“静态函数调用”迁移至“目标导向的多智能体博弈与协商”。
+      </p>
+
+      <div class="garden-callout">
+        <div class="callout-title">💡 核心洞见 (Core Insight)</div>
+        每一个 Agent 不应被视为单纯的代码执行器，而应当拥有独立的 <strong>Workspace 边界</strong>、<strong>记忆压缩机制</strong> 以及与其他 Agent 异步通信的 <strong>消息总线</strong>。
+      </div>
+
+      <h2 style="font-size:20px; font-weight:700; margin:24px 0 12px; color:#fff;">双向网状拓扑的优势</h2>
+      <p>
+        当我们引入类似 <span class="wiki-link" title="卡片盒笔记法">[[卡片盒笔记思想 (Zettelkasten)]]</span> 的网状连接时，Agent 之间的依赖不再是脆弱的单链条，而是具备自我修复能力的网状图谱。一旦某一节点推理受阻，依赖 <span class="wiki-link">[[Gossip 协议]]</span> 的临近节点能够迅速接管上下文。
+      </p>
+
+      <div class="garden-callout tip">
+        <div class="callout-title" style="color:var(--garden-green);">⚡ 性能基准</div>
+        在 16 节点并发测试中，去中心化图谱拓扑相比传统的 Master-Worker 架构，在长链路故障时的自愈速度提升了 <strong>42.8%</strong>。
+      </div>
+
+      <h3 style="font-size:16px; font-weight:700; margin:20px 0 8px; color:#fff;">近期行动清单</h3>
+      <ul style="padding-left:20px; color:#cbd5e1; line-height:2;">
+        <li>☑ 完成 Agent 消息事件总线重构</li>
+        <li>☑ 引入 Token 上下文蒸馏压缩器</li>
+        <li>☐ 在 <span class="wiki-link">[[Rust 底层运行时]]</span> 中实现零拷贝反序列化</li>
+      </ul>
+    </main>
+
+    <!-- 右侧：关系图谱与反向链接 -->
+    <aside class="garden-right-panel">
+      <div class="graph-header">
+        <span>INTERACTIVE GRAPH VIEW</span>
+        <span>● 实时物理力导向</span>
+      </div>
+      <!-- 关系图谱 Canvas -->
+      <div class="graph-canvas-container">
+        <canvas id="graphCanvas"></canvas>
+      </div>
+
+      <!-- 反向链接面板 -->
+      <div class="backlinks-section">
+        <div style="font-size: 11px; font-weight: 700; color: var(--garden-muted); margin-bottom: 10px; text-transform: uppercase;">
+          BACKLINKS (引用了本笔记的 3 篇内容)
+        </div>
+        <div class="backlink-item">
+          <div class="backlink-title">卡片盒笔记与心智模型</div>
+          <div class="backlink-snippet">“...在探讨知识网状连接时，可参考 [[自主智能体系统的协同协议]] 中的分布式图谱设计...”</div>
+        </div>
+        <div class="backlink-item">
+          <div class="backlink-title">分布式系统的确定性边界</div>
+          <div class="backlink-snippet">“...Agent 间 Gossip 协议的消息传递保证了最终一致性...”</div>
+        </div>
+        <div class="backlink-item">
+          <div class="backlink-title">2026 技术架构全景展望</div>
+          <div class="backlink-snippet">“...多智能体协同正在成为下一代操作系统的核心调度原语...”</div>
+        </div>
+      </div>
+    </aside>
+  </div>
+
+  <script src="assets/nav-bar.js"></script>
+  <script>
+    // 简易力导向知识图谱 Canvas 绘制
+    const canvas = document.getElementById('graphCanvas');
+    const ctx = canvas.getContext('2d');
+    
+    function resizeCanvas() {
+      canvas.width = canvas.parentElement.clientWidth;
+      canvas.height = canvas.parentElement.clientHeight;
+    }
+    window.addEventListener('resize', resizeCanvas);
+    resizeCanvas();
+
+    const nodes = [
+      { id: 'Agent', x: 80, y: 100, r: 8, color: '#a78bfa', label: 'AI Agent' },
+      { id: 'Graph', x: 140, y: 60, r: 6, color: '#7c3aed', label: '知识图谱' },
+      { id: 'Zettel', x: 180, y: 130, r: 7, color: '#10b981', label: '卡片盒' },
+      { id: 'Rust', x: 60, y: 180, r: 6, color: '#f59e0b', label: 'Rust' },
+      { id: 'Distributed', x: 220, y: 80, r: 5, color: '#60a5fa', label: '分布式' }
+    ];
+
+    const links = [
+      { from: 0, to: 1 },
+      { from: 0, to: 2 },
+      { from: 0, to: 3 },
+      { from: 1, to: 4 },
+      { from: 2, to: 4 }
+    ];
+
+    function drawGraph() {
+      ctx.clearRect(0, 0, canvas.width, canvas.height);
+
+      // 绘制连线
+      ctx.strokeStyle = 'rgba(255, 255, 255, 0.15)';
+      ctx.lineWidth = 1;
+      links.forEach(l => {
+        const n1 = nodes[l.from];
+        const n2 = nodes[l.to];
+        ctx.beginPath();
+        ctx.moveTo(n1.x, n1.y);
+        ctx.lineTo(n2.x, n2.y);
+        ctx.stroke();
+      });
+
+      // 绘制节点
+      nodes.forEach(n => {
+        ctx.beginPath();
+        ctx.arc(n.x, n.y, n.r, 0, Math.PI * 2);
+        ctx.fillStyle = n.color;
+        ctx.fill();
+        ctx.shadowColor = n.color;
+        ctx.shadowBlur = 8;
+
+        // 标签文字
+        ctx.fillStyle = '#cbd5e1';
+        ctx.font = '10px Inter';
+        ctx.fillText(n.label, n.x + 10, n.y + 4);
+      });
+      ctx.shadowBlur = 0;
+    }
+
+    // 简单轻微摆动动画
+    let angle = 0;
+    function animate() {
+      angle += 0.02;
+      nodes[0].x += Math.sin(angle) * 0.3;
+      nodes[0].y += Math.cos(angle) * 0.3;
+      nodes[1].x -= Math.sin(angle * 0.8) * 0.2;
+      drawGraph();
+      requestAnimationFrame(animate);
+    }
+    animate();
+  </script>
+</body>
+</html>

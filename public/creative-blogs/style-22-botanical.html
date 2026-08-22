@@ -1,0 +1,284 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>HERBARIUM FOLIO // 22 皇家自然历史博物馆植物标本志</title>
+  <link rel="stylesheet" href="assets/common.css">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,500;0,700;1,400;1,700&family=Playfair+Display:ital,wght@0,700;1,400&family=Noto+Serif+SC:wght@400;600;900&display=swap" rel="stylesheet">
+  <style>
+    :root {
+      --herb-bg: #ece5d8;
+      --herb-paper: #fbf8f1;
+      --herb-ink: #2b2823;
+      --herb-green: #2d5a27;
+      --herb-rust: #8b3a2b;
+      --herb-border: #d5c8b5;
+      --font-botanical-title: 'Playfair Display', 'Noto Serif SC', serif;
+      --font-botanical-body: 'Cormorant Garamond', 'Noto Serif SC', serif;
+    }
+
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+
+    body {
+      background-color: var(--herb-bg);
+      color: var(--herb-ink);
+      font-family: var(--font-botanical-body);
+      font-size: 19px;
+      line-height: 1.8;
+      padding-bottom: 100px;
+      /* 麻布装帧与标本台纸质感 */
+      background-image: 
+        radial-gradient(circle at 10% 10%, rgba(45, 90, 39, 0.05) 0%, transparent 40%),
+        repeating-linear-gradient(45deg, rgba(0,0,0,0.015) 0px, rgba(0,0,0,0.015) 1px, transparent 1px, transparent 8px);
+    }
+
+    .herb-wrapper {
+      max-width: 1160px;
+      margin: 0 auto;
+      padding: 30px 20px;
+    }
+
+    /* 博物馆档案刊头 */
+    .museum-header {
+      border-bottom: 2px solid var(--herb-ink);
+      padding-bottom: 16px;
+      margin-bottom: 36px;
+      text-align: center;
+    }
+    .museum-subtitle {
+      font-size: 13px;
+      letter-spacing: 4px;
+      color: var(--herb-green);
+      font-weight: 700;
+      text-transform: uppercase;
+    }
+    .museum-title {
+      font-family: var(--font-botanical-title);
+      font-size: 38px;
+      color: var(--herb-ink);
+      letter-spacing: 1px;
+      margin: 6px 0;
+    }
+
+    /* 植物标本大图板 Hero 卡片 */
+    .specimen-hero-plate {
+      background: var(--herb-paper);
+      border: 1px solid var(--herb-border);
+      box-shadow: 0 10px 30px rgba(0,0,0,0.08);
+      padding: 32px;
+      margin-bottom: 48px;
+      display: grid;
+      grid-template-columns: 1.2fr 1fr;
+      gap: 36px;
+      align-items: center;
+      position: relative;
+    }
+
+    .specimen-img-frame {
+      border: 1px solid var(--herb-border);
+      padding: 10px;
+      background: #fff;
+      box-shadow: 0 4px 15px rgba(0,0,0,0.05);
+    }
+    .specimen-img-frame img {
+      width: 100%;
+      height: auto;
+      display: block;
+    }
+
+    .taxonomy-tag {
+      font-size: 13px;
+      color: var(--herb-green);
+      font-style: italic;
+      font-weight: 700;
+      margin-bottom: 8px;
+    }
+    .hero-herb-title {
+      font-family: var(--font-botanical-title);
+      font-size: 32px;
+      color: var(--herb-ink);
+      line-height: 1.25;
+      margin-bottom: 16px;
+    }
+    .hero-herb-p {
+      font-size: 18px;
+      color: #555047;
+      line-height: 1.75;
+      margin-bottom: 20px;
+    }
+
+    .specimen-label-box {
+      border: 1px dashed var(--herb-border);
+      padding: 12px 16px;
+      background: rgba(45, 90, 39, 0.04);
+      font-size: 14px;
+      color: #4a443c;
+    }
+
+    /* 标本集文章列表 */
+    .herb-posts-grid {
+      display: grid;
+      grid-template-columns: 2fr 1fr;
+      gap: 36px;
+    }
+
+    .herb-card {
+      background: var(--herb-paper);
+      border: 1px solid var(--herb-border);
+      padding: 32px;
+      margin-bottom: 30px;
+      box-shadow: 0 6px 20px rgba(0,0,0,0.04);
+    }
+
+    .herb-card-meta {
+      font-size: 13px;
+      color: var(--herb-rust);
+      font-style: italic;
+      border-bottom: 1px solid var(--herb-border);
+      padding-bottom: 8px;
+      margin-bottom: 14px;
+    }
+
+    .herb-card-title {
+      font-family: var(--font-botanical-title);
+      font-size: 26px;
+      color: var(--herb-ink);
+      margin-bottom: 14px;
+      line-height: 1.3;
+    }
+
+    .herb-card-body {
+      font-size: 18px;
+      color: #443e36;
+      line-height: 1.8;
+    }
+
+    /* 侧边标本分类抽屉 */
+    .herb-drawer-widget {
+      background: var(--herb-paper);
+      border: 1px solid var(--herb-border);
+      padding: 24px;
+      margin-bottom: 28px;
+    }
+    .drawer-title {
+      font-family: var(--font-botanical-title);
+      font-size: 20px;
+      color: var(--herb-green);
+      border-bottom: 1px solid var(--herb-border);
+      padding-bottom: 8px;
+      margin-bottom: 16px;
+    }
+
+    .drawer-item {
+      display: flex;
+      justify-content: space-between;
+      padding: 6px 0;
+      font-size: 15px;
+      border-bottom: 1px dotted rgba(0,0,0,0.1);
+    }
+
+    @media (max-width: 860px) {
+      .specimen-hero-plate, .herb-posts-grid {
+        grid-template-columns: 1fr;
+      }
+    }
+  </style>
+</head>
+<body>
+
+  <div class="herb-wrapper">
+    <!-- 顶栏 -->
+    <header class="museum-header">
+      <div class="museum-subtitle">ROYAL BOTANIC SOCIETY // HERBARIUM COLLECTION</div>
+      <h1 class="museum-title">皇家自然历史标本与植物志</h1>
+      <div style="font-size: 14px; color: #73695b; font-style: italic;">
+        观察、采集、压制与沉思 · 自然哲学与科学考察手记
+      </div>
+    </header>
+
+    <!-- 标本大图板 Hero -->
+    <section class="specimen-hero-plate">
+      <div class="specimen-img-frame">
+        <img src="assets/images/botanical_folio.jpg" alt="高山蕨类与野生兰花植物标本图板">
+      </div>
+      <div>
+        <div class="taxonomy-tag">FLORA ALPINA BRITANNICA · PLATE 47</div>
+        <h1 class="hero-herb-title">
+          高山隐花植物的生长几何：从蕨叶脉络到自然算法
+        </h1>
+        <p class="hero-herb-p">
+          一片蕨类的羽状复叶，正是大自然最精妙的分形算法。无论放大多少倍数，局部的分支结构都与整体保持着严密的自相似性。在山林与苔原的静默中，生命早已写就了最高效的几何语言。
+        </p>
+        <div class="specimen-label-box">
+          <strong>标本编号：</strong>SPECIMEN NO. 1294<br>
+          <strong>采集地：</strong>苏格兰高地（海拔 3800 英尺）<br>
+          <strong>状态：</strong>纯手工蜡封压制 · 保存完好
+        </div>
+      </div>
+    </section>
+
+    <!-- 标本志文章网格 -->
+    <div class="herb-posts-grid">
+      <!-- 左侧手记 -->
+      <main>
+        <article class="herb-card">
+          <div class="herb-card-meta">FOLIO 01 · FIELD OBSERVATION · 2026.08</div>
+          <h2 class="herb-card-title">达尔文的藤蔓与向性运动：植物的慢速计算网络</h2>
+          <p class="herb-card-body">
+            植物虽然没有中枢神经系统，但根系与菌丝构成的地下共生网络（Mycelium Network），正以生长素和钙离子脉冲的形式传递着养分与危险预警。这正是大自然运行了亿万年的分布式共识协议。
+          </p>
+        </article>
+
+        <article class="herb-card">
+          <div class="herb-card-meta">FOLIO 02 · BOTANICAL TAXONOMY · 2026.07</div>
+          <h2 class="herb-card-title">林奈双名法：人类如何用词语锚定纷繁的生命万象</h2>
+          <p class="herb-card-body">
+            属名与种加词的结合，不仅是植物学分类的基石，更是人类认知体系对混沌大自然的理性驯服。正如代码中清晰的命名空间与类型系统，准确的命名是理解与建构世界的第一步。
+          </p>
+        </article>
+      </main>
+
+      <!-- 右侧分类抽屉 -->
+      <aside>
+        <div class="herb-drawer-widget">
+          <div class="drawer-title">🌿 HERBARIUM INDEX</div>
+          <div class="drawer-item">
+            <span>Pteridophyta (蕨类门)</span>
+            <span style="color:var(--herb-green); font-style:italic;">18 Spec.</span>
+          </div>
+          <div class="drawer-item">
+            <span>Orchidaceae (兰科)</span>
+            <span style="color:var(--herb-green); font-style:italic;">24 Spec.</span>
+          </div>
+          <div class="drawer-item">
+            <span>Bryophyta (苔藓门)</span>
+            <span style="color:var(--herb-green); font-style:italic;">12 Spec.</span>
+          </div>
+          <div class="drawer-item">
+            <span>Gymnospermae (裸子植物)</span>
+            <span style="color:var(--herb-green); font-style:italic;">09 Spec.</span>
+          </div>
+        </div>
+
+        <div class="herb-drawer-widget">
+          <div class="drawer-title">📜 FIELD EQUIPMENT</div>
+          <div style="font-size: 15px; color: #5a5348; line-height: 2;">
+            <div>• 植物采集箱 (Vasculum)</div>
+            <div>• 黄铜放大镜 (10x 放大率)</div>
+            <div>• 吸水棉纸与木制压标板</div>
+          </div>
+        </div>
+      </aside>
+    </div>
+  </div>
+
+  <script src="assets/nav-bar.js"></script>
+</body>
+</html>
