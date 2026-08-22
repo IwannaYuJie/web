@@ -3,12 +3,26 @@ import { Link } from 'react-router-dom'
 import { CREATIVE_BLOGS, CATEGORIES } from '../../data/creativeBlogsData'
 import './HomeCreativeSection.css'
 
+// 辅助函数：从数组中随机挑选 n 个不重复项
+function getRandomSample(items, count = 3) {
+  if (!items || items.length === 0) {
+    return []
+  }
+  if (items.length <= count) {
+    return [...items]
+  }
+  const shuffled = [...items].sort(() => 0.5 - Math.random())
+  return shuffled.slice(0, count)
+}
+
 function HomeCreativeSection() {
   const [activeCategory, setActiveCategory] = useState('all')
+  const [randomSeed, setRandomSeed] = useState(0) // 用于触发换一批
   const [previewItem, setPreviewItem] = useState(null)
   const [viewportMode, setViewportMode] = useState('desktop') // 'desktop' | 'tablet' | 'mobile'
   const [toastMessage, setToastMessage] = useState('')
   const [iframeKey, setIframeKey] = useState(0)
+  const [isRefreshing, setIsRefreshing] = useState(false)
 
   // 轻提示自动淡出
   const showToast = useCallback((msg) => {
@@ -38,15 +52,31 @@ function HomeCreativeSection() {
     [showToast],
   )
 
-  // 根据分类过滤风格列表
-  const displayedBlogs = useMemo(() => {
+  // 当前分类下的所有博客列表
+  const categoryBlogs = useMemo(() => {
     if (activeCategory === 'all') {
       return CREATIVE_BLOGS
     }
     return CREATIVE_BLOGS.filter(b => b.category === activeCategory)
   }, [activeCategory])
 
-  // 随机漫游
+  // 首页精简展示：仅随机挑选 3 款展示，篇幅克制精巧
+  const displayedBlogs = useMemo(() => {
+    // 依赖 randomSeed 触发重新洗牌
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+    const _ = randomSeed
+    return getRandomSample(categoryBlogs, 3)
+  }, [categoryBlogs, randomSeed])
+
+  // 换一批精选
+  const handleShuffle = useCallback(() => {
+    setIsRefreshing(true)
+    setRandomSeed(s => s + 1)
+    showToast('🎲 已换一批精选风格')
+    setTimeout(() => setIsRefreshing(false), 400)
+  }, [showToast])
+
+  // 随机漫游直接打开预览
   const handleRandomRoam = useCallback(() => {
     const randomIndex = Math.floor(Math.random() * CREATIVE_BLOGS.length)
     const randomBlog = CREATIVE_BLOGS[randomIndex]
@@ -102,34 +132,43 @@ function HomeCreativeSection() {
 
   return (
     <section className="home-creative-showcase-section" aria-label="创意工坊排版风格展厅">
-      {/* 顶部标题与说明 */}
+      {/* 顶部标题与行动按钮 */}
       <div className="home-creative-header">
         <div className="home-creative-title-wrap">
           <div className="home-creative-badge">
             <span className="badge-spark">✨</span>
-            <span>23 DISTINCT TYPOGRAPHY PARADIGMS</span>
+            <span>23 款独立排版流派 · 随机精选</span>
           </div>
           <h2 className="home-creative-title">
             <span>🎨 创意工坊 · </span>
-            <span className="title-highlight">23 款独立排版风格矩阵</span>
+            <span className="title-highlight">排版灵感矩阵</span>
           </h2>
           <p className="home-creative-subtitle">
-            每一款都是完全不同的视觉排版范式与独立交互逻辑。包含瑞士极简、复古报刊、赛博终端、Win95视窗、日式禅意、新粗野主义、中世纪古籍、80s蒸汽波、达芬奇手稿等，100% 独立可交互玩耍！
+            涵盖瑞士极简、复古报刊、赛博终端、Win95视窗、日式禅意、新粗野主义、达芬奇手稿等 23 款独立风格，支持免离开即刻试玩。
           </p>
         </div>
 
         <div className="home-creative-actions">
           <button
             type="button"
+            className={`home-btn-shuffle ${isRefreshing ? 'spinning' : ''}`}
+            onClick={handleShuffle}
+            title="换一批随机精选风格"
+          >
+            <span className="btn-icon-spin">🎲</span>
+            <span>换一批</span>
+          </button>
+          <button
+            type="button"
             className="home-btn-roam"
             onClick={handleRandomRoam}
             title="随机挑一款风格进入交互试玩"
           >
-            <span>🎲</span>
-            <span>随机漫游一个</span>
+            <span>⚡</span>
+            <span>随机试玩</span>
           </button>
-          <Link to="/creative" className="home-btn-all" title="查看创意工坊完整展厅">
-            <span>探索全部 23 款</span>
+          <Link to="/creative" className="home-btn-all" title="查看创意工坊全部 23 款完整展厅">
+            <span>全部 23 款</span>
             <span className="btn-arrow">➔</span>
           </Link>
         </div>
@@ -150,7 +189,10 @@ function HomeCreativeSection() {
                 key={cat.key}
                 type="button"
                 className={`home-tab-pill ${isActive ? 'active' : ''}`}
-                onClick={() => setActiveCategory(cat.key)}
+                onClick={() => {
+                  setActiveCategory(cat.key)
+                  setRandomSeed(s => s + 1)
+                }}
               >
                 <span className="tab-icon">{cat.icon}</span>
                 <span className="tab-label">{cat.label}</span>
@@ -161,8 +203,8 @@ function HomeCreativeSection() {
         </div>
       </div>
 
-      {/* 风格卡片网格展区 */}
-      <div className="home-creative-cards-grid">
+      {/* 风格卡片精简网格展区 (固定精选 3 张卡片，克制紧凑) */}
+      <div className={`home-creative-cards-grid ${isRefreshing ? 'fade-out' : 'fade-in'}`}>
         {displayedBlogs.map(blog => (
           <article key={blog.id} className="home-creative-card">
             {/* 卡片顶部图片与快速预览遮罩 */}
@@ -227,21 +269,12 @@ function HomeCreativeSection() {
                 </div>
               </div>
 
-              {/* 特性亮点 */}
+              {/* 特性亮点 (精选 1 条核心亮点) */}
               <div className="home-card-features">
-                {blog.features.slice(0, 2).map((feat, idx) => (
-                  <div key={idx} className="feature-item">
-                    <span className="feature-dot">•</span>
-                    <span>{feat}</span>
-                  </div>
-                ))}
-              </div>
-
-              {/* 标签列表 */}
-              <div className="home-card-tags">
-                {blog.tags.map(tag => (
-                  <span key={tag} className="home-card-tag-pill">#{tag}</span>
-                ))}
+                <div className="feature-item">
+                  <span className="feature-dot">•</span>
+                  <span>{blog.features[0]}</span>
+                </div>
               </div>
             </div>
 
@@ -270,21 +303,6 @@ function HomeCreativeSection() {
             </div>
           </article>
         ))}
-      </div>
-
-      {/* 底部全景特性与直达横幅 */}
-      <div className="home-creative-bottom-banner">
-        <div className="bottom-banner-info">
-          <div className="banner-badge">💡 创意与排版实验室</div>
-          <div className="banner-title">想探索更多排版可能？</div>
-          <p className="banner-text">
-            23 款独立设计的单页博客，涵盖从极简理性到复古浪漫的各种设计范式，支持全屏沉浸式漫游、色彩拾取与视窗模拟。
-          </p>
-        </div>
-        <Link to="/creative" className="btn-banner-go">
-          <span>进入完整创意工坊</span>
-          <span className="btn-arrow">➔</span>
-        </Link>
       </div>
 
       {/* 沉浸式内嵌快速预览 Modal */}
