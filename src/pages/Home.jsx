@@ -1,6 +1,7 @@
 import { useEffect, useMemo, useState } from 'react'
 import { Link, useNavigate } from 'react-router-dom'
 import Pagination from '../components/Pagination'
+import HomeCreativeSection from '../components/home/HomeCreativeSection'
 import { CAT_QUOTES, HOME_PAGE_SIZE } from '../constants/home'
 import { useArticlesData, useBackToTop } from '../hooks'
 import { filterArticles, getArticleCategories, paginateArticles, sortArticles } from '../utils/articleFilters'
@@ -308,6 +309,8 @@ function Home() {
     <div className="wrap" style={{ paddingBottom: 48 }}>
       <Hero stats={stats} cover={featuredArticles[0]} />
       <FeaturedRow featured={featuredArticles} />
+
+      <HomeCreativeSection />
 
       <div className="home-main" style={{ display: 'grid', gridTemplateColumns: '1fr 340px', gap: 28 }}>
         <div id="articles">
