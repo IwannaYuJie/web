@@ -101,7 +101,7 @@ fi
 
 log "checking origin/$branch"
 run_as_deployer git -C "$repo_dir" fetch --prune --depth=1 \
-    origin "refs/heads/$branch:refs/remotes/origin/$branch"
+    origin "+refs/heads/$branch:refs/remotes/origin/$branch"
 
 remote_commit=$(run_as_deployer git -C "$repo_dir" rev-parse "refs/remotes/origin/$branch")
 if [[ ! "$remote_commit" =~ ^[0-9a-f]{40}$ ]]; then
