@@ -72,3 +72,4 @@ cat /var/lib/orange-cat-blog-deploy/deployed-commit
 - `.env`、管理员密钥、文章快照和服务器备份都不提交到 Git。
 - API 端口保持 loopback，不在主机防火墙或 OCI 安全列表额外开放。
 - 写操作继续要求 `X-Admin-Key`；无效密钥应返回 HTTP 401。
+- 橘猫域名使用 `X-Frame-Options: SAMEORIGIN`：外部网站不能嵌入，本站 `/creative` 可以加载同域快速预览。
