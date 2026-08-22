@@ -1,0 +1,27 @@
+[Unit]
+Description=Deploy Orange Cat Blog from GitHub main
+After=network-online.target
+Wants=network-online.target
+
+[Service]
+Type=oneshot
+ExecStart=/usr/local/sbin/orange-cat-blog-deploy
+TimeoutStartSec=20min
+Nice=10
+IOSchedulingClass=idle
+UMask=0022
+NoNewPrivileges=true
+PrivateTmp=true
+PrivateDevices=true
+ProtectHome=true
+ProtectSystem=strict
+ProtectKernelTunables=true
+ProtectKernelModules=true
+ProtectKernelLogs=true
+ProtectControlGroups=true
+ProtectClock=true
+RestrictSUIDSGID=true
+LockPersonality=true
+RestrictAddressFamilies=AF_UNIX AF_INET AF_INET6
+ReadWritePaths=/opt/orange-cat-blog /var/lib/orange-cat-blog-deploy
+

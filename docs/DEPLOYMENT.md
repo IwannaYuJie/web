@@ -23,18 +23,29 @@ API_HOST=127.0.0.1
 API_PORT=8361
 ```
 
-## 发布流程
+## 自动发布流程
 
-1. 运行 `npm run lint`、`npm test`、`npm run typecheck`、`npm run build`。
-2. 上传新 release 到 `/opt/orange-cat-blog/releases/<timestamp>`。
-3. 不用构建产物覆盖 `/var/lib/orange-cat-blog/articles.json`。
-4. 将 `/opt/orange-cat-blog/current` 原子切换到新 release。
-5. 重启 `orange-cat-blog.service`，验证并重载 Caddy。
-6. 检查 `/healthz`、`/api/articles`、首页、文章详情、管理后台和所有深层路由。
+1. `orange-cat-blog-deploy.timer` 每分钟检查公开 GitHub 仓库的 `main`。
+2. 发现新提交后，`orange-cat-deploy` 低权限账号在隔离工作目录运行 `npm ci`、lint、测试、类型检查和构建。
+3. 所有门禁通过后，将新 release 写入 `/opt/orange-cat-blog/releases/<timestamp>-<commit>`。
+4. `/opt/orange-cat-blog/current` 原子切换到新 release，并重启 `orange-cat-blog.service`。
+5. 本机 `/healthz` 失败时自动切回上一个 release；构建失败时完全不触碰当前版本。
+6. 运行时文章数据始终保留在 `/var/lib/orange-cat-blog/articles.json`，不会被 Git 构建产物覆盖。
+
+自动发布只跟踪 GitHub `main`，不自动删除历史 release。运行状态可用以下命令查看：
+
+```text
+systemctl status orange-cat-blog-deploy.timer
+journalctl -u orange-cat-blog-deploy.service
+cat /var/lib/orange-cat-blog-deploy/deployed-commit
+```
 
 服务器配置模板位于：
 
 - `deploy/orange-cat-blog.service`
+- `deploy/auto-deploy.sh`
+- `deploy/orange-cat-blog-deploy.service`
+- `deploy/orange-cat-blog-deploy.timer`
 - `deploy/orange-cat-blog-backup.service`
 - `deploy/orange-cat-blog-backup.timer`
 - `deploy/backup-articles.sh`
@@ -50,6 +61,7 @@ API_PORT=8361
 ## 回滚
 
 - 应用：把 `/opt/orange-cat-blog/current` 指回上一个 release，重启 API 并重载 Caddy。
+- 自动发布：先停用 `orange-cat-blog-deploy.timer`，再执行应用回滚；重新启用前确认 GitHub `main` 已修复，否则定时器会再次发布该提交。
 - 数据：先停止写入，再从 `articles.json.previous` 或每日备份恢复。
 - 域名：将 Cloudflare Pages 自定义域名重新绑定到 `web` 项目；观察期内保留 Pages 与 KV。
 

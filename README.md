@@ -1,6 +1,6 @@
 # 橘猫小窝 - 个人博客
 
-橘猫小窝是一个基于 **Vite + React + Node.js + Caddy** 的个人博客项目。生产站运行在甲骨文 VPS，Cloudflare 负责 DNS、代理和缓存；原 Cloudflare Pages 项目仅作为迁移观察期内的回滚副本。它不只是文章列表，还包含个人档案、文章归档、标签索引、文章管理、工具箱和小游戏，适合长期维护个人技术内容和项目记录。
+橘猫小窝是一个基于 **Vite + React + Node.js + Caddy** 的个人博客项目。生产站运行在甲骨文 VPS，Cloudflare 负责 DNS、代理和缓存；原 Cloudflare Pages 项目仅作为迁移观察期内的回滚副本。它不只是文章列表，还包含个人档案、文章归档、标签索引、文章管理、创意工坊、工具箱和小游戏，适合长期维护个人技术内容和项目记录。
 
 ## 项目定位
 
@@ -54,6 +54,7 @@
 
 ### 其他入口
 
+- `/creative-showcase`：创意工坊，集中展示 23 套独立博客排版方案及其完整预览。
 - `/toolbox`：实用工具箱。
 - `/games`：小游戏中心。
 
@@ -169,11 +170,12 @@ npm run start:api
 
 ### 甲骨文 VPS（当前生产）
 
-1. 本地完成 lint、测试、类型检查和构建。
-2. 将版本上传到 `/opt/orange-cat-blog/releases/<timestamp>`。
-3. 原子切换 `/opt/orange-cat-blog/current` 并重启 `orange-cat-blog.service`。
-4. Caddy 为正式域名提供 HTTPS、静态站点与 `/api/*` 反代。
-5. `orange-cat-blog-backup.timer` 每日备份文章数据。
+1. `orange-cat-blog-deploy.timer` 每分钟检查 GitHub `main` 是否有新提交。
+2. 新提交使用独立低权限账号安装依赖，并依次通过 lint、测试、类型检查和构建。
+3. 通过后写入 `/opt/orange-cat-blog/releases/<timestamp>-<commit>`，原子切换 `current` 并重启 API。
+4. 构建或健康检查失败时保留当前线上版本；切换后失败会自动指回上一个 release。
+5. Caddy 为正式域名提供 HTTPS、静态站点与 `/api/*` 反代；文章数据独立保存在 `/var/lib/orange-cat-blog`。
+6. `orange-cat-blog-backup.timer` 每日备份文章数据。
 
 当前正式地址是 `https://jumaomaomaoju.cn`；原 Pages 回滚地址是 `https://web-b0b.pages.dev`。
 

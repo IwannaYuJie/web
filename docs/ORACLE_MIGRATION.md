@@ -35,12 +35,15 @@
 
 ## 发布流程
 
-1. 本地执行 `npm run lint`、`npm test`、`npm run typecheck` 和 `npm run build`。
-2. 将新版本上传到 `/opt/orange-cat-blog/releases/<timestamp>`。
-3. 检查服务器端文章数据文件和环境变量，不用构建产物覆盖运行时数据。
-4. 将 `/opt/orange-cat-blog/current` 原子切换到新版本。
-5. 重启 `orange-cat-blog.service`，重载 Caddy。
-6. 验证 `/healthz`、`/api/articles`、首页、文章详情、管理后台和深层链接刷新。
+2026-08-23 起，甲骨文由 `orange-cat-blog-deploy.timer` 每分钟检查 GitHub `main`：
+
+1. 新提交在 `orange-cat-deploy` 低权限账号下安装依赖并完成 lint、测试、类型检查和构建。
+2. 门禁通过后生成带提交号的 release，并原子切换 `/opt/orange-cat-blog/current`。
+3. 重启 `orange-cat-blog.service` 后检查本机 `/healthz`；失败时自动回滚到上一个 release。
+4. 正式域名健康检查作为发布后验证；Cloudflare 或外网单点异常不会覆盖本机已通过的回滚判断。
+5. 文章数据、环境变量和管理员密钥都在 release 之外，自动发布不会覆盖它们。
+
+构建失败只记入 `orange-cat-blog-deploy.service` 日志，线上继续运行原版本。历史 release 暂不自动清理。
 
 ## 数据迁移记录
 
