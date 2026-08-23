@@ -3,19 +3,32 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>HAUTE // 13 高端独立时尚大画报风</title>
+  <title>REVUE // STUDIO · ISSUE 08 | 沉默、结构与个人风格</title>
   <link rel="stylesheet" href="assets/common.css">
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Bodoni+Moda:ital,opsz,wght@0,6..96,400;0,6..96,900;1,6..96,400;1,6..96,700&family=Syne:wght@700;800&family=Noto+Serif+SC:wght@400;600;900&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Bodoni+Moda:ital,opsz,wght@0,6..96,400;0,6..96,600;0,6..96,800;0,6..96,900;1,6..96,400;1,6..96,700;1,6..96,900&family=Syne:wght@500;700;800&family=Noto+Serif+SC:wght@300;400;600;900&display=swap" rel="stylesheet">
   <style>
     :root {
-      --fashion-ivory: #faf8f5;
-      --fashion-dark: #121010;
-      --fashion-burgundy: #6b1426;
-      --fashion-gold: #c9a86a;
-      --font-display: "Bodoni Moda", "Noto Serif SC", serif;
-      --font-sans: "Syne", sans-serif;
+      --fashion-bg: #f8f6f0;
+      --fashion-paper: #ffffff;
+      --fashion-dark: #110e0e;
+      --fashion-subtle: #5e5754;
+      --fashion-border: #1a1615;
+      --fashion-line-light: #dfd8cc;
+      --fashion-burgundy: #6e1324;
+      --fashion-burgundy-soft: #8a1d32;
+      --fashion-gold: #c29d60;
+      --fashion-charcoal: #252020;
+      --fashion-sand: #eee8db;
+      --fashion-darkroom-bg: #090808;
+      --fashion-darkroom-text: #f0eae1;
+      --fashion-darkroom-accent: #e5405e;
+
+      --font-serif: "Bodoni Moda", "Noto Serif SC", "Songti SC", serif;
+      --font-sans: "Syne", "Helvetica Neue", -apple-system, sans-serif;
+      --font-chinese-body: "Noto Serif SC", "Songti SC", serif;
+      --transition-smooth: 0.45s cubic-bezier(0.16, 1, 0.3, 1);
     }
 
     * {
@@ -25,231 +38,1360 @@
     }
 
     body {
-      background-color: var(--fashion-ivory);
+      background-color: var(--fashion-bg);
       color: var(--fashion-dark);
-      font-family: var(--font-display);
-      line-height: 1.8;
-      padding: 0 0 100px;
+      font-family: var(--font-serif);
+      line-height: 1.85;
+      letter-spacing: 0.01em;
+      text-rendering: optimizeLegibility;
+      -webkit-font-smoothing: antialiased;
+      transition: background-color 0.5s ease, color 0.5s ease;
+      overflow-x: hidden;
     }
 
-    /* 顶栏杂志刊名 */
-    .fashion-masthead {
-      border-bottom: 2px solid var(--fashion-dark);
-      padding: 24px 40px;
+    /* 暗房模式 */
+    body.darkroom-mode {
+      --fashion-bg: var(--fashion-darkroom-bg);
+      --fashion-paper: #141212;
+      --fashion-dark: var(--fashion-darkroom-text);
+      --fashion-subtle: #aba09b;
+      --fashion-border: #443c3a;
+      --fashion-line-light: #2b2524;
+      --fashion-sand: #1d1918;
+    }
+
+    /* 顶部通栏刊号与走马灯条 */
+    .fashion-ticker-bar {
+      border-bottom: 1px solid var(--fashion-border);
+      padding: 8px 30px;
+      font-family: var(--font-sans);
+      font-size: 11px;
+      font-weight: 700;
+      letter-spacing: 0.22em;
+      text-transform: uppercase;
       display: flex;
       justify-content: space-between;
-      align-items: baseline;
+      align-items: center;
+      background: var(--fashion-sand);
+      color: var(--fashion-dark);
+      transition: background-color 0.4s ease, border-color 0.4s ease;
     }
 
-    .fashion-logo {
-      font-size: clamp(32px, 6vw, 64px);
-      font-weight: 900;
-      letter-spacing: 4px;
-      line-height: 1;
-    }
-
-    .fashion-issue {
-      font-family: var(--font-sans);
-      font-size: 12px;
-      font-weight: 800;
-      letter-spacing: 2px;
-      text-transform: uppercase;
-    }
-
-    /* 杂志封面级 Hero 跨页大图文 */
-    .fashion-hero-spread {
-      max-width: 1280px;
-      margin: 40px auto 70px;
-      padding: 0 30px;
-      display: grid;
-      grid-template-columns: 1.2fr 1fr;
-      gap: 50px;
+    .ticker-left {
+      display: flex;
+      gap: 20px;
       align-items: center;
     }
 
-    .hero-big-serif {
-      font-size: clamp(40px, 6vw, 76px);
-      font-style: italic;
-      font-weight: 900;
-      line-height: 1.05;
-      letter-spacing: -1px;
-      color: var(--fashion-burgundy);
-      margin-bottom: 24px;
-    }
-
-    .hero-editorial-p {
-      font-size: 18px;
-      line-height: 1.9;
-      color: #333;
-      border-left: 2px solid var(--fashion-burgundy);
-      padding-left: 20px;
-    }
-
-    .fashion-art-panel {
-      height: 420px;
-      background: linear-gradient(135deg, #2b1118, #0a0809);
-      display: flex;
-      flex-direction: column;
-      justify-content: space-between;
-      padding: 30px;
-      color: #fff;
-      position: relative;
-    }
-
-    /* 破框引言 Pull Quote */
-    .fashion-pull-quote {
+    .ticker-pill {
       background: var(--fashion-burgundy);
       color: #fff;
-      padding: 40px 60px;
-      margin: 60px 0;
-      font-size: clamp(22px, 3.5vw, 36px);
-      font-style: italic;
-      font-weight: 700;
+      padding: 2px 8px;
+      border-radius: 2px;
+      font-size: 10px;
+      letter-spacing: 0.15em;
+    }
+
+    /* 巨幅主刊头 */
+    .fashion-masthead-hero {
+      border-bottom: 2px solid var(--fashion-border);
+      padding: 35px 30px 25px;
       text-align: center;
-      line-height: 1.4;
-      letter-spacing: 0.5px;
-    }
-
-    /* 杂志文章双栏排版 */
-    .fashion-articles-grid {
-      max-width: 1200px;
-      margin: 0 auto;
-      padding: 0 30px;
-      display: grid;
-      grid-template-columns: 1fr 1fr;
-      gap: 60px;
-    }
-
-    .fashion-post-card {
-      border-top: 1px solid var(--fashion-dark);
-      padding-top: 24px;
       position: relative;
+      max-width: 1400px;
+      margin: 0 auto;
     }
 
-    .post-category-tag {
+    .masthead-top-sub {
+      font-family: var(--font-sans);
+      font-size: 12px;
+      letter-spacing: 0.4em;
+      text-transform: uppercase;
+      color: var(--fashion-burgundy);
+      margin-bottom: 10px;
+      font-weight: 800;
+    }
+
+    body.darkroom-mode .masthead-top-sub {
+      color: var(--fashion-darkroom-accent);
+    }
+
+    .fashion-title-large {
+      font-size: clamp(48px, 11vw, 136px);
+      font-weight: 900;
+      letter-spacing: 0.04em;
+      line-height: 0.88;
+      text-transform: uppercase;
+      margin: 0 0 16px;
+      transform: scaleY(1.06);
+    }
+
+    .masthead-meta-row {
+      display: grid;
+      grid-template-columns: 1fr auto 1fr;
+      align-items: center;
+      gap: 24px;
+      padding-top: 14px;
+      border-top: 1px solid var(--fashion-line-light);
+      font-family: var(--font-sans);
+      font-size: 11px;
+      letter-spacing: 0.2em;
+      text-transform: uppercase;
+      color: var(--fashion-subtle);
+    }
+
+    .meta-center-theme {
+      font-family: var(--font-chinese-body);
+      font-size: 15px;
+      font-weight: 600;
+      letter-spacing: 0.15em;
+      color: var(--fashion-dark);
+      font-style: italic;
+    }
+
+    /* 快捷跨页导览浮层/交互栏 */
+    .editorial-control-deck {
+      position: sticky;
+      top: 56px;
+      z-index: 80;
+      background: rgba(248, 246, 240, 0.94);
+      backdrop-filter: blur(12px);
+      border-bottom: 1px solid var(--fashion-border);
+      padding: 12px 30px;
+      transition: background-color 0.4s ease, border-color 0.4s ease;
+    }
+
+    body.darkroom-mode .editorial-control-deck {
+      background: rgba(14, 12, 12, 0.94);
+    }
+
+    .deck-container {
+      max-width: 1400px;
+      margin: 0 auto;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      gap: 16px;
+      flex-wrap: wrap;
+    }
+
+    .deck-nav-links {
+      display: flex;
+      gap: 20px;
+      list-style: none;
+      font-family: var(--font-sans);
+      font-size: 12px;
+      font-weight: 700;
+      letter-spacing: 0.12em;
+      text-transform: uppercase;
+    }
+
+    .deck-nav-links a {
+      color: var(--fashion-subtle);
+      text-decoration: none;
+      transition: color 0.2s ease;
+      position: relative;
+      padding-bottom: 4px;
+    }
+
+    .deck-nav-links a:hover,
+    .deck-nav-links a.active {
+      color: var(--fashion-burgundy);
+    }
+
+    body.darkroom-mode .deck-nav-links a:hover,
+    body.darkroom-mode .deck-nav-links a.active {
+      color: var(--fashion-darkroom-accent);
+    }
+
+    .deck-buttons {
+      display: flex;
+      gap: 12px;
+      align-items: center;
+    }
+
+    .mag-btn {
       font-family: var(--font-sans);
       font-size: 11px;
       font-weight: 800;
-      letter-spacing: 3px;
+      letter-spacing: 0.18em;
+      text-transform: uppercase;
+      padding: 7px 16px;
+      background: transparent;
+      border: 1px solid var(--fashion-border);
+      color: var(--fashion-dark);
+      cursor: pointer;
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      transition: all 0.25s ease;
+    }
+
+    .mag-btn:hover {
+      background: var(--fashion-dark);
+      color: var(--fashion-bg);
+    }
+
+    .mag-btn.active-primary {
+      background: var(--fashion-burgundy);
+      border-color: var(--fashion-burgundy);
+      color: #ffffff;
+    }
+
+    body.darkroom-mode .mag-btn.active-primary {
+      background: var(--fashion-darkroom-accent);
+      border-color: var(--fashion-darkroom-accent);
+      color: #000;
+    }
+
+    /* 主要容器约束 */
+    .mag-wrapper {
+      max-width: 1400px;
+      margin: 0 auto;
+      padding: 40px 30px;
+    }
+
+    /* 主叙事双跨页布局 (Cover Spread) */
+    .lead-narrative-spread {
+      display: grid;
+      grid-template-columns: 1.15fr 0.85fr;
+      gap: 50px;
+      align-items: stretch;
+      margin-bottom: 70px;
+    }
+
+    .narrative-visual-col {
+      position: relative;
+      background: #000;
+      overflow: hidden;
+      min-height: 600px;
+      display: flex;
+      flex-direction: column;
+      justify-content: flex-end;
+      border: 1px solid var(--fashion-border);
+    }
+
+    .visual-plate-img {
+      position: absolute;
+      inset: 0;
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      object-position: center top;
+      filter: grayscale(20%) contrast(108%);
+      transition: transform 0.8s var(--transition-smooth), filter 0.6s ease;
+    }
+
+    .narrative-visual-col:hover .visual-plate-img {
+      transform: scale(1.03);
+      filter: grayscale(0%) contrast(115%);
+    }
+
+    .visual-overlay-notes {
+      position: relative;
+      z-index: 2;
+      background: linear-gradient(0deg, rgba(10, 8, 8, 0.95) 0%, rgba(10, 8, 8, 0.75) 60%, transparent 100%);
+      padding: 35px;
+      color: #fff;
+    }
+
+    .visual-plate-stamp {
+      font-family: var(--font-sans);
+      font-size: 10px;
+      font-weight: 800;
+      letter-spacing: 0.3em;
+      color: var(--fashion-gold);
+      margin-bottom: 8px;
+    }
+
+    .visual-plate-title {
+      font-size: clamp(24px, 3vw, 36px);
+      line-height: 1.15;
+      font-style: italic;
+      font-weight: 900;
+      margin-bottom: 12px;
+      color: #ffffff;
+    }
+
+    .visual-plate-desc {
+      font-size: 13.5px;
+      line-height: 1.7;
+      color: #d1c8c1;
+      max-width: 580px;
+      font-family: var(--font-chinese-body);
+    }
+
+    /* 造型悬浮标注图层（专属交互） */
+    .styling-notes-drawer {
+      position: absolute;
+      inset: 0;
+      background: rgba(14, 11, 12, 0.93);
+      backdrop-filter: blur(8px);
+      z-index: 10;
+      padding: 40px;
+      color: #fff;
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
+      opacity: 0;
+      pointer-events: none;
+      transform: translateY(20px);
+      transition: all 0.4s var(--transition-smooth);
+    }
+
+    .styling-notes-drawer.open {
+      opacity: 1;
+      pointer-events: auto;
+      transform: translateY(0);
+    }
+
+    .notes-drawer-head {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      border-bottom: 1px solid #332d2c;
+      padding-bottom: 15px;
+    }
+
+    .notes-drawer-title {
+      font-size: 20px;
+      font-weight: 800;
+      letter-spacing: 0.08em;
+      color: var(--fashion-gold);
+    }
+
+    .drawer-close-btn {
+      background: transparent;
+      border: 1px solid #665b57;
+      color: #fff;
+      padding: 6px 14px;
+      font-family: var(--font-sans);
+      font-size: 11px;
+      cursor: pointer;
+      letter-spacing: 0.15em;
+      text-transform: uppercase;
+      transition: 0.2s;
+    }
+
+    .drawer-close-btn:hover {
+      background: #fff;
+      color: #000;
+    }
+
+    .notes-spec-list {
+      display: grid;
+      gap: 16px;
+      margin: 25px 0;
+      list-style: none;
+    }
+
+    .notes-spec-item {
+      border-left: 2px solid var(--fashion-gold);
+      padding-left: 14px;
+    }
+
+    .spec-item-label {
+      font-family: var(--font-sans);
+      font-size: 11px;
+      letter-spacing: 0.2em;
+      text-transform: uppercase;
+      color: #9e938c;
+      margin-bottom: 4px;
+    }
+
+    .spec-item-val {
+      font-family: var(--font-chinese-body);
+      font-size: 14px;
+      line-height: 1.6;
+      color: #f1ebe5;
+    }
+
+    /* 主叙事文字栏 */
+    .narrative-text-col {
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
+    }
+
+    .editorial-foreword-box {
+      border-bottom: 1px solid var(--fashion-border);
+      padding-bottom: 30px;
+      margin-bottom: 30px;
+    }
+
+    .section-eyebrow {
+      font-family: var(--font-sans);
+      font-size: 11px;
+      font-weight: 800;
+      letter-spacing: 0.3em;
       text-transform: uppercase;
       color: var(--fashion-burgundy);
       margin-bottom: 12px;
+      display: block;
     }
 
-    .post-main-title {
-      font-size: 30px;
+    body.darkroom-mode .section-eyebrow {
+      color: var(--fashion-darkroom-accent);
+    }
+
+    .main-narrative-h1 {
+      font-size: clamp(34px, 4.5vw, 56px);
       font-weight: 900;
+      line-height: 1.05;
+      margin-bottom: 20px;
+      letter-spacing: -0.02em;
+    }
+
+    .editorial-lead-quote {
+      font-family: var(--font-chinese-body);
+      font-size: 18px;
+      font-style: italic;
+      line-height: 1.75;
+      color: var(--fashion-burgundy);
+      border-left: 3px solid var(--fashion-burgundy);
+      padding-left: 18px;
+      margin-bottom: 24px;
+    }
+
+    body.darkroom-mode .editorial-lead-quote {
+      color: #e9b3be;
+      border-color: var(--fashion-darkroom-accent);
+    }
+
+    .narrative-body-text {
+      font-size: 15px;
+      line-height: 2;
+      color: var(--fashion-dark);
+      text-align: justify;
+      margin-bottom: 20px;
+    }
+
+    /* 材质与幕后札记折叠/切换卡片 */
+    .narrative-tabs-box {
+      background: var(--fashion-paper);
+      border: 1px solid var(--fashion-border);
+      padding: 24px;
+      margin-top: 20px;
+    }
+
+    .tabs-header {
+      display: flex;
+      gap: 12px;
+      border-bottom: 1px solid var(--fashion-line-light);
+      padding-bottom: 12px;
+      margin-bottom: 16px;
+    }
+
+    .tab-btn {
+      background: transparent;
+      border: none;
+      font-family: var(--font-sans);
+      font-size: 11px;
+      font-weight: 800;
+      letter-spacing: 0.16em;
+      text-transform: uppercase;
+      color: var(--fashion-subtle);
+      cursor: pointer;
+      padding-bottom: 4px;
+      position: relative;
+    }
+
+    .tab-btn.active {
+      color: var(--fashion-burgundy);
+    }
+
+    body.darkroom-mode .tab-btn.active {
+      color: var(--fashion-darkroom-accent);
+    }
+
+    .tab-btn.active::after {
+      content: "";
+      position: absolute;
+      bottom: -13px;
+      left: 0;
+      right: 0;
+      height: 2px;
+      background: var(--fashion-burgundy);
+    }
+
+    body.darkroom-mode .tab-btn.active::after {
+      background: var(--fashion-darkroom-accent);
+    }
+
+    .tab-pane {
+      display: none;
+      font-size: 13.5px;
+      line-height: 1.8;
+      color: var(--fashion-dark);
+    }
+
+    .tab-pane.active {
+      display: block;
+      animation: fadeIn 0.3s ease;
+    }
+
+    @keyframes fadeIn {
+      from { opacity: 0; transform: translateY(4px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+
+    /* 破框巨型引言带 (Pull Quote Spread Banner) */
+    .fashion-pull-banner {
+      background: var(--fashion-burgundy);
+      color: #ffffff;
+      padding: 60px 40px;
+      margin: 50px 0 80px;
+      text-align: center;
+      position: relative;
+      overflow: hidden;
+    }
+
+    body.darkroom-mode .fashion-pull-banner {
+      background: #3b0914;
+      border-top: 1px solid var(--fashion-border);
+      border-bottom: 1px solid var(--fashion-border);
+    }
+
+    .banner-quote-zh {
+      font-size: clamp(24px, 3.8vw, 42px);
+      font-weight: 800;
+      line-height: 1.35;
+      font-style: italic;
+      max-width: 960px;
+      margin: 0 auto 16px;
+      letter-spacing: 0.04em;
+    }
+
+    .banner-quote-en {
+      font-family: var(--font-sans);
+      font-size: 13px;
+      letter-spacing: 0.28em;
+      text-transform: uppercase;
+      opacity: 0.85;
+      font-weight: 500;
+    }
+
+    /* 次级栏目三列排版 */
+    .sub-columns-section {
+      margin-bottom: 80px;
+    }
+
+    .section-headline-bar {
+      display: flex;
+      justify-content: space-between;
+      align-items: flex-end;
+      border-bottom: 2px solid var(--fashion-border);
+      padding-bottom: 14px;
+      margin-bottom: 40px;
+    }
+
+    .section-title-big {
+      font-size: clamp(28px, 4vw, 44px);
+      font-weight: 900;
+      text-transform: uppercase;
+      letter-spacing: -0.01em;
+      line-height: 1;
+    }
+
+    .section-counter {
+      font-family: var(--font-sans);
+      font-size: 12px;
+      letter-spacing: 0.2em;
+      font-weight: 800;
+      color: var(--fashion-burgundy);
+    }
+
+    .sub-columns-grid {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 36px;
+    }
+
+    .column-editorial-card {
+      border-top: 3px solid var(--fashion-border);
+      padding-top: 24px;
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
+      position: relative;
+      transition: transform 0.35s ease;
+    }
+
+    .column-editorial-card:hover {
+      transform: translateY(-6px);
+    }
+
+    .column-cat-pill {
+      font-family: var(--font-sans);
+      font-size: 10px;
+      font-weight: 800;
+      letter-spacing: 0.25em;
+      text-transform: uppercase;
+      color: var(--fashion-burgundy);
+      margin-bottom: 14px;
+    }
+
+    body.darkroom-mode .column-cat-pill {
+      color: var(--fashion-darkroom-accent);
+    }
+
+    .column-title {
+      font-size: 24px;
+      font-weight: 800;
       line-height: 1.25;
       margin-bottom: 16px;
     }
 
-    .post-body-text {
-      font-size: 15px;
-      color: #444;
-      line-height: 2;
+    .column-desc {
+      font-size: 14.5px;
+      line-height: 1.95;
+      color: var(--fashion-subtle);
+      margin-bottom: 24px;
     }
 
-    @media (max-width: 860px) {
-      .fashion-hero-spread, .fashion-articles-grid {
+    .column-spec-box {
+      background: var(--fashion-paper);
+      border: 1px solid var(--fashion-line-light);
+      padding: 16px;
+      font-size: 12.5px;
+      line-height: 1.7;
+    }
+
+    .spec-key {
+      font-family: var(--font-sans);
+      font-size: 10px;
+      font-weight: 800;
+      letter-spacing: 0.15em;
+      text-transform: uppercase;
+      color: var(--fashion-gold);
+      display: block;
+      margin-bottom: 4px;
+    }
+
+    /* 资料模块：本期目录、材质色卡、摄影参数、关键词 */
+    .fashion-dossier-grid {
+      display: grid;
+      grid-template-columns: 1.2fr 1fr;
+      gap: 40px;
+      background: var(--fashion-paper);
+      border: 1px solid var(--fashion-border);
+      padding: 40px;
+      margin-bottom: 80px;
+    }
+
+    .dossier-left-pane {
+      border-right: 1px solid var(--fashion-line-light);
+      padding-right: 40px;
+    }
+
+    .dossier-sub-head {
+      font-size: 22px;
+      font-weight: 900;
+      letter-spacing: 0.05em;
+      margin-bottom: 24px;
+      text-transform: uppercase;
+      border-bottom: 1px solid var(--fashion-border);
+      padding-bottom: 10px;
+    }
+
+    /* 目录列表 */
+    .curated-index-list {
+      list-style: none;
+      display: grid;
+      gap: 16px;
+    }
+
+    .index-list-item {
+      display: grid;
+      grid-template-columns: 48px 1fr auto;
+      gap: 12px;
+      align-items: baseline;
+      border-bottom: 1px dashed var(--fashion-line-light);
+      padding-bottom: 10px;
+    }
+
+    .index-num {
+      font-family: var(--font-sans);
+      font-size: 12px;
+      font-weight: 800;
+      color: var(--fashion-burgundy);
+    }
+
+    body.darkroom-mode .index-num {
+      color: var(--fashion-darkroom-accent);
+    }
+
+    .index-title {
+      font-size: 14.5px;
+      font-weight: 600;
+    }
+
+    .index-page {
+      font-family: var(--font-sans);
+      font-size: 11px;
+      letter-spacing: 0.15em;
+      color: var(--fashion-subtle);
+    }
+
+    /* 材质色卡 Swatches */
+    .swatch-group {
+      margin-top: 30px;
+    }
+
+    .swatches-bar {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 12px;
+      margin-top: 14px;
+    }
+
+    .swatch-card {
+      border: 1px solid var(--fashion-line-light);
+      padding: 10px;
+      background: var(--fashion-bg);
+      text-align: center;
+    }
+
+    .swatch-color-box {
+      height: 46px;
+      margin-bottom: 8px;
+      border: 1px solid rgba(0,0,0,0.1);
+    }
+
+    .swatch-name {
+      font-family: var(--font-sans);
+      font-size: 10px;
+      font-weight: 700;
+      letter-spacing: 0.1em;
+      text-transform: uppercase;
+    }
+
+    .swatch-meta {
+      font-size: 11px;
+      color: var(--fashion-subtle);
+    }
+
+    /* 摄影参数与关键词 */
+    .camera-tech-table {
+      width: 100%;
+      border-collapse: collapse;
+      font-size: 13px;
+      margin-bottom: 30px;
+    }
+
+    .camera-tech-table tr {
+      border-bottom: 1px solid var(--fashion-line-light);
+    }
+
+    .camera-tech-table td {
+      padding: 10px 0;
+    }
+
+    .camera-tech-table td:first-child {
+      font-family: var(--font-sans);
+      font-weight: 700;
+      font-size: 11px;
+      letter-spacing: 0.15em;
+      color: var(--fashion-subtle);
+      width: 40%;
+      text-transform: uppercase;
+    }
+
+    .camera-tech-table td:last-child {
+      font-family: var(--font-chinese-body);
+      font-weight: 600;
+      text-align: right;
+    }
+
+    .keywords-cloud {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 8px;
+      margin-top: 14px;
+    }
+
+    .keyword-tag {
+      background: var(--fashion-sand);
+      color: var(--fashion-dark);
+      font-family: var(--font-sans);
+      font-size: 11px;
+      font-weight: 700;
+      letter-spacing: 0.12em;
+      padding: 6px 14px;
+      border: 1px solid var(--fashion-border);
+    }
+
+    /* 封底宣言与收尾 (Back Cover Spread) */
+    .backcover-manifesto {
+      border: 2px solid var(--fashion-border);
+      background: var(--fashion-charcoal);
+      color: #ffffff;
+      padding: 70px 40px;
+      text-align: center;
+      position: relative;
+      margin-bottom: 40px;
+    }
+
+    .backcover-tagline {
+      font-family: var(--font-sans);
+      font-size: 12px;
+      letter-spacing: 0.4em;
+      color: var(--fashion-gold);
+      text-transform: uppercase;
+      margin-bottom: 20px;
+      font-weight: 800;
+    }
+
+    .backcover-quote-final {
+      font-size: clamp(26px, 4.2vw, 48px);
+      font-weight: 900;
+      line-height: 1.25;
+      max-width: 900px;
+      margin: 0 auto 24px;
+      letter-spacing: 0.02em;
+    }
+
+    .backcover-sub-manifesto {
+      font-size: 15px;
+      line-height: 1.9;
+      color: #c9bfb8;
+      max-width: 680px;
+      margin: 0 auto 40px;
+    }
+
+    .backcover-stamp-row {
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      gap: 30px;
+      font-family: var(--font-sans);
+      font-size: 11px;
+      letter-spacing: 0.25em;
+      text-transform: uppercase;
+      border-top: 1px solid #443c3a;
+      padding-top: 24px;
+      color: #9e938c;
+      flex-wrap: wrap;
+    }
+
+    /* 响应式适配 */
+    @media (max-width: 1024px) {
+      .lead-narrative-spread {
         grid-template-columns: 1fr;
+        gap: 40px;
       }
-      .fashion-pull-quote {
-        padding: 30px 20px;
+      .narrative-visual-col {
+        min-height: 480px;
+      }
+      .sub-columns-grid {
+        grid-template-columns: 1fr;
+        gap: 30px;
+      }
+      .fashion-dossier-grid {
+        grid-template-columns: 1fr;
+        gap: 30px;
+      }
+      .dossier-left-pane {
+        border-right: none;
+        border-bottom: 1px solid var(--fashion-line-light);
+        padding-right: 0;
+        padding-bottom: 30px;
+      }
+    }
+
+    @media (max-width: 768px) {
+      .fashion-ticker-bar {
+        font-size: 9px;
+        padding: 6px 16px;
+      }
+      .masthead-meta-row {
+        grid-template-columns: 1fr;
+        text-align: center;
+        gap: 8px;
+      }
+      .editorial-control-deck {
+        padding: 10px 16px;
+      }
+      .deck-container {
+        flex-direction: column;
+        align-items: flex-start;
+      }
+      .deck-nav-links {
+        overflow-x: auto;
+        width: 100%;
+        padding-bottom: 6px;
+        white-space: nowrap;
+      }
+      .mag-wrapper {
+        padding: 24px 16px;
+      }
+      .fashion-pull-banner {
+        padding: 40px 20px;
+        margin: 40px 0;
+      }
+      .swatches-bar {
+        grid-template-columns: 1fr 1fr;
+      }
+      .backcover-manifesto {
+        padding: 40px 20px;
+      }
+    }
+
+    /* 减弱动效偏好 */
+    @media (prefers-reduced-motion: reduce) {
+      *, ::before, ::after {
+        animation-duration: 0.01ms !important;
+        animation-iteration-count: 1 !important;
+        transition-duration: 0.01ms !important;
+        scroll-behavior: auto !important;
       }
     }
   </style>
 </head>
 <body>
 
-  <!-- 刊头 -->
-  <header class="fashion-masthead">
-    <div class="fashion-logo">REVUE // STUDIO</div>
-    <div class="fashion-issue">AUTUMN / WINTER 2026 · ISSUE 08</div>
+  <!-- 刊号状态走马灯 -->
+  <aside class="fashion-ticker-bar" aria-label="刊物出刊状态">
+    <div class="ticker-left">
+      <span class="ticker-pill">INDEPENDENT PRINT</span>
+      <span>PARIS · MILAN · TOKYO · SHANGHAI</span>
+    </div>
+    <div>ISSUE NO. 08 / ARCHIVAL EDITION</div>
+  </aside>
+
+  <!-- 杂志主刊头 -->
+  <header class="fashion-masthead-hero">
+    <div class="masthead-top-sub">INTERNATIONAL JOURNAL OF SARTORIAL ARCHITECTURE</div>
+    <div class="fashion-title-large">REVUE // STUDIO</div>
+    <div class="masthead-meta-row">
+      <div>VOL. 08 · AUTUMN / WINTER 2026</div>
+      <div class="meta-center-theme">“沉默、结构与个人风格”</div>
+      <div>LIMITED PHYSICAL CIRCULATION</div>
+    </div>
   </header>
 
-  <!-- 封面大跨页 Hero -->
-  <section class="fashion-hero-spread">
-    <div>
-      <h1 class="hero-big-serif">The Architecture of Silence & Form.</h1>
-      <p class="hero-editorial-p">
-        “排版不仅是文字的载体，更是一种对视觉空间的统治力。当锋利的衬线体与沉静的留白相撞，思想的锋芒便呼之欲出。”
-      </p>
-    </div>
-    <div class="fashion-art-panel" style="padding: 0; overflow: hidden; position: relative;">
-      <img src="assets/images/fashion_editorial.jpg" alt="高定时装大片" style="width: 100%; height: 100%; object-fit: cover; min-height: 280px; display: block;">
-      <div style="position: absolute; bottom: 0; left: 0; right: 0; background: linear-gradient(0deg, rgba(0,0,0,0.85), transparent); padding: 18px 20px;">
-        <div style="font-family: 'Syne'; font-size: 11px; letter-spacing: 2px; color: var(--fashion-gold);">EDITORIAL SPREAD // ISSUE 08</div>
-        <div style="font-size: 18px; font-style: italic; font-weight: 800; color: #fff;">ARCHITECTURAL COUTURE</div>
+  <!-- 专属互动控制台与跨页导航 -->
+  <nav class="editorial-control-deck" aria-label="画报跨页与暗房交互控制">
+    <div class="deck-container">
+      <ul class="deck-nav-links">
+        <li><a href="#main-narrative" class="active">主叙事：沉默的建筑</a></li>
+        <li><a href="#sub-columns">次级专栏</a></li>
+        <li><a href="#dossier">资料模块与色卡</a></li>
+        <li><a href="#manifesto">封底宣言</a></li>
+      </ul>
+      <div class="deck-buttons">
+        <button type="button" class="mag-btn" id="toggle-notes-btn" aria-expanded="false" aria-controls="styling-drawer">
+          <span class="btn-text">查看造型注释</span>
+        </button>
+        <button type="button" class="mag-btn" id="next-spread-btn">
+          翻到下一跨页 ↓
+        </button>
+        <button type="button" class="mag-btn" id="darkroom-btn" aria-pressed="false">
+          进入幕后暗房
+        </button>
       </div>
     </div>
-  </section>
+  </nav>
 
-  <!-- 跨页巨幅破框引言 -->
-  <div class="fashion-pull-quote">
-    “真正的高级感，来自对冗余元素的残酷修剪与对核心节奏的极致掌控。”
-  </div>
+  <main class="mag-wrapper">
 
-  <!-- 双栏杂志文章 -->
-  <main class="fashion-articles-grid">
-    <article class="fashion-post-card">
-      <div class="post-category-tag">HIGH COUTURE & TECH</div>
-      <h2 class="post-main-title">数字排版中的「高级感」究竟由什么决定？</h2>
-      <p class="post-body-text">
-        探讨 Bodoni 字体的高垂直对比笔画与 1960 年代意大利时装杂志排版对现代 Web 设计的深远启示。为何极致的字阶比例能够瞬间拉开视觉层次？
+    <!-- 主叙事大跨页 -->
+    <section id="main-narrative" class="lead-narrative-spread" aria-labelledby="main-narrative-title">
+      
+      <!-- 视觉主片与交互抽屉 -->
+      <div class="narrative-visual-col" id="lead-visual-plate">
+        <img src="assets/images/fashion_editorial.jpg" alt="高级定制黑色建筑感羊毛廓形大衣造型" class="visual-plate-img">
+        
+        <!-- 默认底部说明 -->
+        <div class="visual-overlay-notes">
+          <div class="visual-plate-stamp">PLATE NO. 01 // ARCHITECTURAL COUTURE</div>
+          <h2 class="visual-plate-title">The Architecture of Silence</h2>
+          <p class="visual-plate-desc">
+            重磅剪裁双面羊绒与极度收缩的几何肩线。在喧嚣的信息洪流里，黑色不是颜色的缺席，而是所有光的凝聚与沉默的威严。
+          </p>
+        </div>
+
+        <!-- 造型解析抽屉 (交互呼出) -->
+        <div class="styling-notes-drawer" id="styling-drawer" aria-hidden="true">
+          <div class="notes-drawer-head">
+            <div class="notes-drawer-title">STYLING SPECIFICATION / 造型解析</div>
+            <button type="button" class="drawer-close-btn" id="close-notes-btn">收起注释，回到画面 ✕</button>
+          </div>
+          <ul class="notes-spec-list">
+            <li class="notes-spec-item">
+              <div class="spec-item-label">COAT / 外套结构</div>
+              <div class="spec-item-val">无领单排暗扣双面羊绒长大衣，内置马毛衬硬质垫肩，肩线前倾 4.5 度构建建筑重力平衡。</div>
+            </li>
+            <li class="notes-spec-item">
+              <div class="spec-item-label">FABRIC / 面料克重</div>
+              <div class="spec-item-val">850g/m² 托斯卡纳纯黑粗纺羊毛，表面经纳米微炭化抗反光雾面处理。</div>
+            </li>
+            <li class="notes-spec-item">
+              <div class="spec-item-label">INNER / 内搭与配饰</div>
+              <div class="spec-item-val">高领极细美利奴羊毛针织衫，搭配哑光氧化银质胸针与手工雕刻黑曜石袖口。</div>
+            </li>
+            <li class="notes-spec-item">
+              <div class="spec-item-label">PHILOSOPHY / 造型哲学</div>
+              <div class="spec-item-val">剥离一切不必要的商标与金属外露，让身体与空间在完全静默的黑度中完成对话。</div>
+            </li>
+          </ul>
+          <div style="font-family: var(--font-sans); font-size: 10px; letter-spacing: 0.25em; color: #776e68;">
+            REVUE // STUDIO ARCHIVE REF: #2026-FASH-08A
+          </div>
+        </div>
+
+      </div>
+
+      <!-- 编辑前言与主叙事文本 -->
+      <article class="narrative-text-col">
+        <div class="editorial-foreword-box">
+          <span class="section-eyebrow">EDITORIAL FOREWORD // 编辑前言</span>
+          <h1 class="main-narrative-h1" id="main-narrative-title">《沉默的建筑》</h1>
+          <p class="editorial-lead-quote">
+            “当全世界都在用最刺眼的霓虹与高频的算法争夺每一秒注意力时，真正的奢侈，是对安静的完全支配权。”
+          </p>
+          <p class="narrative-body-text">
+            在第八期《REVUE // STUDIO》中，我们拒绝将时尚理解为每季循环的消费狂欢，而是将其视为一种穿戴在身体上的微缩建筑学。如同彼得·卒姆托用粗糙的混凝土和光线构筑修道院，一件经过精准计算的衣服，本质上也是为穿着者筑起的一座移动庇护所。
+          </p>
+          <p class="narrative-body-text">
+            线条的直率、克重的坠感、接缝处的暗影，构成了个人风格中最坚固的骨架。我们深入探讨面料的纤维记忆与人造光源的交界，寻找那些在漫长时间冲刷下依然锐利的设计原点。
+          </p>
+        </div>
+
+        <!-- 材质说明与幕后札记折叠面板 -->
+        <div class="narrative-tabs-box">
+          <div class="tabs-header" role="tablist">
+            <button type="button" class="tab-btn active" role="tab" aria-selected="true" data-tab="tab-materials">材质与工艺说明</button>
+            <button type="button" class="tab-btn" role="tab" aria-selected="false" data-tab="tab-notes">幕后札记与暗房笔记</button>
+          </div>
+          
+          <div class="tab-pane active" id="tab-materials" role="tabpanel">
+            <p><strong>材质说明：</strong>本组大片拍摄所用织物均选用未经化学增光处理的天然原纱。从苏格兰粗花呢到日本高密织造棉麻，所有边缘均采用手工盲缝滚边。结构内部舍弃化纤黏合衬，回归全麻衬手工假缝，确保衣物在自然悬垂时呈现出不可复制的有机折痕。</p>
+          </div>
+          
+          <div class="tab-pane" id="tab-notes" role="tabpanel">
+            <p><strong>幕后札记：</strong>拍摄于巴黎北郊废弃的野兽派混凝土水塔内完成。摄影团队放弃了大功率闪光灯矩阵，仅使用两盏钨丝聚光灯与大面积漫反射黑旗，捕捉织物纤维与混凝土粗糙肌理之间的明暗张力。胶片采用 Kodak Tri-X 400 迫冲至 1600，强化颗粒质感。</p>
+          </div>
+        </div>
+
+      </article>
+
+    </section>
+
+    <!-- 跨页巨幅破框引言 -->
+    <section class="fashion-pull-banner" aria-label="主编核心引言">
+      <blockquote class="banner-quote-zh">
+        “一件衣服的最高境界，不是让别人看懂你花了多少钱，而是让整个空间因你的存在而沉静下来。”
+      </blockquote>
+      <div class="banner-quote-en">
+        THE PINNACLE OF FORM IS NOT NOISE, BUT THE WEIGHT OF STILLNESS.
+      </div>
+    </section>
+
+    <!-- 次级栏目三列排版 -->
+    <section id="sub-columns" class="sub-columns-section" aria-labelledby="sub-cols-title">
+      <div class="section-headline-bar">
+        <div>
+          <span class="section-eyebrow">ESSAYS & CRITICISM // 专栏与深度文论</span>
+          <h2 class="section-title-big" id="sub-cols-title">次级栏目：结构剖析</h2>
+        </div>
+        <div class="section-counter">THREE EDITORIAL PERSPECTIVES</div>
+      </div>
+
+      <div class="sub-columns-grid">
+        
+        <!-- 专栏 1 -->
+        <article class="column-editorial-card">
+          <div>
+            <div class="column-cat-pill">VISUAL RHYTHM // 视觉节奏</div>
+            <h3 class="column-title">《一件衣服如何建立视觉节奏》</h3>
+            <p class="column-desc">
+              探讨衣襟重叠的毫米级公差、下摆摆动频率与走动步幅之间的黄金分割比。衣服不是静态标本，它是随身体呼吸起伏的动态韵律发生器。
+            </p>
+          </div>
+          <div class="column-spec-box">
+            <span class="spec-key">RHYTHM METRICS // 节奏指标</span>
+            衣长与腿部比例锁定 1:1.618，暗门襟重叠宽度 6.5cm，下摆在行走时形成 1.2Hz 阻尼摆动。
+          </div>
+        </article>
+
+        <!-- 专栏 2 -->
+        <article class="column-editorial-card">
+          <div>
+            <div class="column-cat-pill">TIMELESS CAPSULE // 长期单品</div>
+            <h3 class="column-title">《反潮流衣橱的五件长期单品》</h3>
+            <p class="column-desc">
+              在快时尚年产万款的虚妄中，我们筛选出五件能够经受十年洗礼的锚定物：重磅结构大衣、白棉衬衫、直筒羊毛西裤、马缰革腰带与切尔西靴。
+            </p>
+          </div>
+          <div class="column-spec-box">
+            <span class="spec-key">LIFESPAN CRITERIA // 留存基准</span>
+            无明显季度印记、可更换五金件、纯天然长绒纤维、经磨损后能形成迷人铜绿质感。
+          </div>
+        </article>
+
+        <!-- 专栏 3 -->
+        <article class="column-editorial-card">
+          <div>
+            <div class="column-cat-pill">LIGHT & SILHOUETTE // 光影雕刻</div>
+            <h3 class="column-title">《光影像剪裁一样塑造轮廓》</h3>
+            <p class="column-desc">
+              借鉴文艺复兴明暗对照法（Chiaroscuro）与现代主义硬边绘画，分析侧光如何剥离多余褶皱，令羊绒与皮革在阴影中凸显刀锋般的轮廓线。
+            </p>
+          </div>
+          <div class="column-spec-box">
+            <span class="spec-key">OPTICAL RATIO // 光比解析</span>
+            主副光反差比 8:1，45 度硬质侧逆光勾勒肩锋边缘，暗部利用黑丝绒完全吸收反光。
+          </div>
+        </article>
+
+      </div>
+    </section>
+
+    <!-- 资料模块：本期目录、编辑精选、材质色卡、摄影参数与关键词 -->
+    <section id="dossier" class="fashion-dossier-grid" aria-labelledby="dossier-heading">
+      
+      <!-- 左栏：本期目录与色卡 -->
+      <div class="dossier-left-pane">
+        <h3 class="dossier-sub-head" id="dossier-heading">TABLE OF CONTENTS // 本期目录</h3>
+        
+        <ul class="curated-index-list">
+          <li class="index-list-item">
+            <span class="index-num">P.04</span>
+            <span class="index-title">EDIT'S NOTE / 沉默作为一种美学抵抗</span>
+            <span class="index-page">FOREWORD</span>
+          </li>
+          <li class="index-list-item">
+            <span class="index-num">P.18</span>
+            <span class="index-title">COVER SPREAD / 沉默的建筑：2026 秋冬高定大片</span>
+            <span class="index-page">EDITORIAL</span>
+          </li>
+          <li class="index-list-item">
+            <span class="index-num">P.42</span>
+            <span class="index-title">ANATOMY / 一件衣服如何建立视觉节奏与动态步频</span>
+            <span class="index-page">ESSAY</span>
+          </li>
+          <li class="index-list-item">
+            <span class="index-num">P.68</span>
+            <span class="index-title">ARCHIVAL WARDROBE / 反潮流衣橱的五件长期单品</span>
+            <span class="index-page">CURATION</span>
+          </li>
+          <li class="index-list-item">
+            <span class="index-num">P.94</span>
+            <span class="index-title">DARKROOM CHRONICLES / 光影像剪裁一样塑造轮廓</span>
+            <span class="index-page">THEORY</span>
+          </li>
+        </ul>
+
+        <!-- 材质色卡 Swatches -->
+        <div class="swatch-group">
+          <div style="font-family: var(--font-sans); font-size: 11px; font-weight: 800; letter-spacing: 0.2em; text-transform: uppercase; color: var(--fashion-burgundy); margin-bottom: 8px;">
+            MATERIAL PALETTE // 本期材质色卡
+          </div>
+          <div class="swatches-bar">
+            <div class="swatch-card">
+              <div class="swatch-color-box" style="background: #121010;"></div>
+              <div class="swatch-name">NOIR TOTAL</div>
+              <div class="swatch-meta">炭化粗纺</div>
+            </div>
+            <div class="swatch-card">
+              <div class="swatch-color-box" style="background: #6e1324;"></div>
+              <div class="swatch-name">BURGUNDY</div>
+              <div class="swatch-meta">丝绒酒红</div>
+            </div>
+            <div class="swatch-card">
+              <div class="swatch-color-box" style="background: #c29d60;"></div>
+              <div class="swatch-name">RAW BRASS</div>
+              <div class="swatch-meta">哑光原铜</div>
+            </div>
+            <div class="swatch-card">
+              <div class="swatch-color-box" style="background: #eee8db;"></div>
+              <div class="swatch-name">ECRU IVORY</div>
+              <div class="swatch-meta">未漂白亚麻</div>
+            </div>
+          </div>
+        </div>
+
+      </div>
+
+      <!-- 右栏：摄影参数与本期关键词 -->
+      <div class="dossier-right-pane">
+        <h3 class="dossier-sub-head">CAMERA & STUDIO TECH // 摄影参数</h3>
+        
+        <table class="camera-tech-table">
+          <tbody>
+            <tr>
+              <td>CAMERA SYSTEM</td>
+              <td>Hasselblad H6D-100c Medium Format</td>
+            </tr>
+            <tr>
+              <td>LENS SPECS</td>
+              <td>HC 2,2/100mm Prime @ f/8.0</td>
+            </tr>
+            <tr>
+              <td>LIGHTING SETUP</td>
+              <td>Broncolor Para 133FB + 2x Hard Grids</td>
+            </tr>
+            <tr>
+              <td>EXPOSURE / ISO</td>
+              <td>1/160s · ISO 64 · 5600K Tuned</td>
+            </tr>
+            <tr>
+              <td>POST COLOR PROFILE</td>
+              <td>Studio ProB&W High-Contrast v4</td>
+            </tr>
+          </tbody>
+        </table>
+
+        <!-- 本期关键词 -->
+        <div>
+          <div style="font-family: var(--font-sans); font-size: 11px; font-weight: 800; letter-spacing: 0.2em; text-transform: uppercase; color: var(--fashion-burgundy); margin-bottom: 8px;">
+            KEYWORD INDEX // 本期关键词
+          </div>
+          <div class="keywords-cloud">
+            <span class="keyword-tag">#结构重力</span>
+            <span class="keyword-tag">#全麻衬手工假缝</span>
+            <span class="keyword-tag">#明暗对照法</span>
+            <span class="keyword-tag">#克制留白</span>
+            <span class="keyword-tag">#抗周期单品</span>
+            <span class="keyword-tag">#未修饰纯黑</span>
+            <span class="keyword-tag">#视觉节奏</span>
+          </div>
+        </div>
+
+      </div>
+
+    </section>
+
+    <!-- 封底宣言与收尾 (Back Cover Spread) -->
+    <footer id="manifesto" class="backcover-manifesto" aria-label="封底宣言">
+      <div class="backcover-tagline">BACK COVER MANIFESTO // 封底宣言</div>
+      <h2 class="backcover-quote-final">
+        “风格不是追上每一次更新，<br>而是知道什么值得留下。”
+      </h2>
+      <p class="backcover-sub-manifesto">
+        STYLE IS NOT ABOUT CHASING EVERY SEASONAL REVISION, BUT KNOWING WITH ABSOLUTE CONVICTION WHAT DESERVES TO ENDURE.
       </p>
-    </article>
+      <div class="backcover-stamp-row">
+        <span>REVUE // STUDIO</span>
+        <span>ISSUE 08 ARCHIVE</span>
+        <span>PRINTED ON HEAVYWEIGHT TEXTURED VELLUM</span>
+        <span>ALL RIGHTS RESERVED 2026</span>
+      </div>
+    </footer>
 
-    <article class="fashion-post-card">
-      <div class="post-category-tag">MODERN CRITIQUE</div>
-      <h2 class="post-main-title">在信息平庸化时代，重构你的个人叙事美学</h2>
-      <p class="post-body-text">
-        算法推送正在抹平所有个体的表达棱角。保持敏锐的审美自律，是用设计与文字对抗同质化浪潮的最好武器。
-      </p>
-    </article>
-
-    <!-- 文章 3 -->
-    <article class="fashion-post-card">
-      <div class="post-category-tag">PHOTOGRAPHY & LIGHT</div>
-      <h2 class="post-main-title">光影的建筑感：赫尔穆特·牛顿到数字 CGI 的质感演变</h2>
-      <p class="post-body-text">
-        高反差明暗交界线（Chiaroscuro）与冷暖色温冲突。在数字 Web 界面中，精细调试的渐变光源能够为 2D 卡片注入雕塑般的硬朗质感。
-      </p>
-    </article>
-
-    <!-- 文章 4 -->
-    <article class="fashion-post-card">
-      <div class="post-category-tag">DECONSTRUCTION</div>
-      <h2 class="post-main-title">解构主义剪裁：马吉拉的粗线缝线对软件架构的隐喻</h2>
-      <p class="post-body-text">
-        将内衬与走线完全外露，赋予未完成感以极致的先锋美。在系统设计中，敢于暴露清晰的数据流转骨架，远胜于用过度包装掩盖混乱。
-      </p>
-    </article>
   </main>
 
-  <style>
-    .fashion-art-panel img {
-      transition: transform 0.6s cubic-bezier(0.16, 1, 0.3, 1), filter 0.6s ease;
-    }
-    .fashion-art-panel:hover img {
-      transform: scale(1.06);
-      filter: contrast(1.05) brightness(1.05);
-    }
-    .fashion-post-card {
-      transition: transform 0.4s cubic-bezier(0.16, 1, 0.3, 1), border-color 0.4s ease;
-    }
-    .fashion-post-card:hover {
-      transform: translateY(-6px);
-      border-color: var(--fashion-burgundy);
-    }
-    .fashion-pull-quote {
-      transition: letter-spacing 0.4s ease, color 0.4s ease;
-    }
-    .fashion-pull-quote:hover {
-      letter-spacing: 0.05em;
-      color: var(--fashion-burgundy);
-    }
-  </style>
-
+  <!-- 引入公共导航底栏 -->
   <script src="assets/nav-bar.js"></script>
+
+  <!-- 专属画报交互脚本 -->
+  <script>
+    document.addEventListener('DOMContentLoaded', () => {
+      // 1. 查看造型注释 / 抽屉交互
+      const toggleNotesBtn = document.getElementById('toggle-notes-btn');
+      const closeNotesBtn = document.getElementById('close-notes-btn');
+      const drawer = document.getElementById('styling-drawer');
+
+      function openDrawer() {
+        drawer.classList.add('open');
+        drawer.setAttribute('aria-hidden', 'false');
+        toggleNotesBtn.setAttribute('aria-expanded', 'true');
+        toggleNotesBtn.querySelector('.btn-text').textContent = '收起造型注释';
+        toggleNotesBtn.classList.add('active-primary');
+      }
+
+      function closeDrawer() {
+        drawer.classList.remove('open');
+        drawer.setAttribute('aria-hidden', 'true');
+        toggleNotesBtn.setAttribute('aria-expanded', 'false');
+        toggleNotesBtn.querySelector('.btn-text').textContent = '查看造型注释';
+        toggleNotesBtn.classList.remove('active-primary');
+      }
+
+      toggleNotesBtn?.addEventListener('click', () => {
+        if (drawer.classList.contains('open')) {
+          closeDrawer();
+        } else {
+          openDrawer();
+        }
+      });
+
+      closeNotesBtn?.addEventListener('click', closeDrawer);
+
+      // 2. 翻到下一跨页平滑滚动
+      const nextSpreadBtn = document.getElementById('next-spread-btn');
+      const spreads = ['main-narrative', 'sub-columns', 'dossier', 'manifesto'];
+      
+      nextSpreadBtn?.addEventListener('click', () => {
+        const scrollPos = window.scrollY + 120;
+        let nextTarget = spreads[0];
+
+        for (let i = 0; i < spreads.length; i++) {
+          const el = document.getElementById(spreads[i]);
+          if (el && el.offsetTop > scrollPos) {
+            nextTarget = spreads[i];
+            break;
+          }
+          if (i === spreads.length - 1) {
+            nextTarget = spreads[0];
+          }
+        }
+
+        const targetElement = document.getElementById(nextTarget);
+        if (targetElement) {
+          targetElement.scrollIntoView({ behavior: 'smooth' });
+        }
+      });
+
+      // 3. 进入幕后暗房模式切换
+      const darkroomBtn = document.getElementById('darkroom-btn');
+      darkroomBtn?.addEventListener('click', () => {
+        const isDark = document.body.classList.toggle('darkroom-mode');
+        darkroomBtn.setAttribute('aria-pressed', isDark ? 'true' : 'false');
+        darkroomBtn.classList.toggle('active-primary', isDark);
+        darkroomBtn.textContent = isDark ? '退出暗房模式 ☀' : '进入幕后暗房 ☾';
+      });
+
+      // 4. 折叠面板 Tab 切换
+      const tabButtons = document.querySelectorAll('.tab-btn');
+      tabButtons.forEach(btn => {
+        btn.addEventListener('click', () => {
+          const targetId = btn.dataset.tab;
+          
+          tabButtons.forEach(b => {
+            b.classList.remove('active');
+            b.setAttribute('aria-selected', 'false');
+          });
+          document.querySelectorAll('.tab-pane').forEach(pane => {
+            pane.classList.remove('active');
+          });
+
+          btn.classList.add('active');
+          btn.setAttribute('aria-selected', 'true');
+          const targetPane = document.getElementById(targetId);
+          if (targetPane) {
+            targetPane.classList.add('active');
+          }
+        });
+      });
+
+      // 5. 跨页导航高亮联动
+      const navLinks = document.querySelectorAll('.deck-nav-links a');
+      window.addEventListener('scroll', () => {
+        const fromTop = window.scrollY + 180;
+        spreads.forEach(id => {
+          const section = document.getElementById(id);
+          if (section) {
+            if (section.offsetTop <= fromTop && section.offsetTop + section.offsetHeight > fromTop) {
+              navLinks.forEach(link => {
+                link.classList.toggle('active', link.getAttribute('href') === `#${id}`);
+              });
+            }
+          }
+        });
+      }, { passive: true });
+    });
+  </script>
 </body>
 </html>

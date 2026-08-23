@@ -3,24 +3,34 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>超绝粗野派！— 06 新粗野主义与波普风</title>
+  <title>LOUD NOTES / 拒绝无聊月报 — 06 新粗野主义与波普</title>
   <link rel="stylesheet" href="assets/common.css">
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@700;800;900&family=Noto+Sans+SC:wght@700;900&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:ital,wght@0,700;0,800;0,900;1,900&family=Noto+Sans+SC:wght@600;700;800;900&family=Space+Mono:ital,wght@0,700;1,700&display=swap" rel="stylesheet">
   <style>
     :root {
-      --neo-yellow: #ffdf00;
-      --neo-pink: #ff6b8b;
-      --neo-cyan: #4deeea;
-      --neo-purple: #9d4edd;
-      --neo-green: #74ee15;
-      --neo-black: #000000;
-      --neo-white: #ffffff;
-      --neo-border: 3px solid #000000;
-      --neo-shadow: 5px 5px 0px #000000;
-      --neo-shadow-lg: 8px 8px 0px #000000;
-      --font-neo: "Plus Jakarta Sans", "Noto Sans SC", sans-serif;
+      --bg-sun: #FFE713;
+      --pop-pink: #FF3B81;
+      --pop-cyan: #00F0FF;
+      --pop-lime: #52FF00;
+      --pop-purple: #9B51E0;
+      --pop-orange: #FF6600;
+      --ink-black: #0B0B0B;
+      --canvas-white: #FFFFFF;
+      --card-cream: #FFFDF0;
+
+      --stroke-thicc: 4px solid var(--ink-black);
+      --stroke-mid: 3px solid var(--ink-black);
+      --stroke-slim: 2px solid var(--ink-black);
+
+      --shadow-hard: 6px 6px 0px var(--ink-black);
+      --shadow-huge: 10px 10px 0px var(--ink-black);
+      --shadow-insane: 14px 14px 0px var(--ink-black);
+      --shadow-pressed: 2px 2px 0px var(--ink-black);
+
+      --font-display: "Plus Jakarta Sans", "Noto Sans SC", -apple-system, sans-serif;
+      --font-mono: "Space Mono", monospace;
     }
 
     * {
@@ -30,366 +40,978 @@
     }
 
     body {
-      background-color: var(--neo-yellow);
-      font-family: var(--font-neo);
-      color: var(--neo-black);
-      padding: 30px 16px 80px;
+      background-color: var(--bg-sun);
+      background-image: 
+        radial-gradient(var(--ink-black) 12%, transparent 13%),
+        radial-gradient(var(--ink-black) 12%, transparent 13%);
+      background-size: 24px 24px;
+      background-position: 0 0, 12px 12px;
+      color: var(--ink-black);
+      font-family: var(--font-display);
       line-height: 1.5;
+      padding: 24px 16px 100px;
+      min-height: 100vh;
+      overflow-x: hidden;
+      -webkit-font-smoothing: antialiased;
     }
 
-    .neo-container {
-      max-width: 1180px;
+    .neo-wrapper {
+      max-width: 1240px;
       margin: 0 auto;
-    }
-
-    /* 顶部导航条 */
-    .neo-navbar {
-      background: var(--neo-white);
-      border: var(--neo-border);
-      box-shadow: var(--neo-shadow-lg);
-      padding: 18px 24px;
       display: flex;
-      justify-content: space-between;
-      align-items: center;
-      margin-bottom: 40px;
-      border-radius: 12px;
-    }
-
-    .neo-brand {
-      font-size: 24px;
-      font-weight: 900;
-      letter-spacing: -0.5px;
-      display: flex;
-      align-items: center;
-      gap: 10px;
-    }
-
-    .neo-nav-links {
-      display: flex;
-      gap: 16px;
-      list-style: none;
-    }
-
-    .neo-pill-btn {
-      display: inline-block;
-      padding: 8px 16px;
-      background: var(--neo-cyan);
-      border: 2px solid #000;
-      box-shadow: 3px 3px 0 #000;
-      color: #000;
-      text-decoration: none;
-      font-weight: 800;
-      font-size: 14px;
-      border-radius: 8px;
-      transition: all 0.15s ease;
-      cursor: pointer;
-    }
-    .neo-pill-btn:hover {
-      transform: translate(-2px, -2px);
-      box-shadow: 5px 5px 0 #000;
-      background: var(--neo-pink);
-      color: #fff;
-    }
-    .neo-pill-btn:active {
-      transform: translate(2px, 2px);
-      box-shadow: 1px 1px 0 #000;
-    }
-
-    /* 醒目 Hero */
-    .neo-hero {
-      background: var(--neo-pink);
-      border: var(--neo-border);
-      box-shadow: var(--neo-shadow-lg);
-      border-radius: 16px;
-      padding: 48px;
-      color: #fff;
-      position: relative;
-      margin-bottom: 40px;
-      overflow: hidden;
-    }
-
-    .sticker-badge {
-      display: inline-block;
-      padding: 6px 14px;
-      background: var(--neo-green);
-      color: #000;
-      border: 2px solid #000;
-      box-shadow: 3px 3px 0 #000;
-      font-weight: 900;
-      font-size: 14px;
-      transform: rotate(-3deg);
-      margin-bottom: 16px;
-      border-radius: 6px;
-    }
-
-    .neo-hero-title {
-      font-size: clamp(36px, 6vw, 68px);
-      font-weight: 900;
-      line-height: 1.1;
-      letter-spacing: -1.5px;
-      color: var(--neo-white);
-      text-shadow: 4px 4px 0 #000;
-      margin-bottom: 20px;
-    }
-
-    .neo-hero-desc {
-      font-size: 18px;
-      font-weight: 700;
-      color: #000;
-      background: var(--neo-white);
-      padding: 12px 18px;
-      border: 2px solid #000;
-      box-shadow: 4px 4px 0 #000;
-      display: inline-block;
-      border-radius: 8px;
-      max-width: 760px;
-    }
-
-    /* 主网格排版 */
-    .neo-grid {
-      display: grid;
-      grid-template-columns: 2fr 1fr;
+      flex-direction: column;
       gap: 36px;
     }
 
-    /* 文章卡片 */
-    .neo-card {
-      background: var(--neo-white);
-      border: var(--neo-border);
-      box-shadow: var(--neo-shadow-lg);
-      border-radius: 14px;
-      padding: 36px;
-      margin-bottom: 30px;
-      transition: all 0.2s ease;
+    /* 走字标语顶条 */
+    .ticker-bar {
+      background: var(--ink-black);
+      color: var(--bg-sun);
+      border: var(--stroke-thicc);
+      box-shadow: var(--shadow-hard);
+      padding: 10px 0;
+      overflow: hidden;
+      white-space: nowrap;
+      font-family: var(--font-mono);
+      font-size: 14px;
+      font-weight: 700;
+      letter-spacing: 1px;
+      text-transform: uppercase;
+    }
+    .ticker-track {
+      display: inline-flex;
+      gap: 32px;
+      animation: tickerRun 25s linear infinite;
+    }
+    @keyframes tickerRun {
+      0% { transform: translateX(0); }
+      100% { transform: translateX(-50%); }
+    }
+
+    /* 刊头 MASTHEAD */
+    .neo-masthead {
+      background: var(--canvas-white);
+      border: var(--stroke-thicc);
+      box-shadow: var(--shadow-huge);
+      padding: 24px 32px;
+      display: grid;
+      grid-template-columns: auto 1fr auto;
+      align-items: center;
+      gap: 24px;
       position: relative;
     }
-    .neo-card:hover {
-      transform: translate(-3px, -3px);
-      box-shadow: 10px 10px 0px #000;
+    .masthead-badge {
+      background: var(--pop-pink);
+      color: var(--canvas-white);
+      border: var(--stroke-mid);
+      box-shadow: var(--shadow-hard);
+      padding: 12px 18px;
+      font-weight: 900;
+      font-size: 20px;
+      transform: rotate(-3deg);
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+    }
+    .masthead-titles {
+      display: flex;
+      flex-direction: column;
+    }
+    .masthead-main {
+      font-size: clamp(28px, 4.5vw, 44px);
+      font-weight: 900;
+      line-height: 1;
+      letter-spacing: -1.5px;
+      text-transform: uppercase;
+    }
+    .masthead-sub {
+      font-size: 15px;
+      font-weight: 800;
+      color: #333;
+      margin-top: 4px;
+    }
+    .masthead-status {
+      display: flex;
+      gap: 12px;
+      flex-wrap: wrap;
+    }
+    .tag-stamp {
+      background: var(--pop-lime);
+      border: var(--stroke-slim);
+      box-shadow: 3px 3px 0 var(--ink-black);
+      padding: 6px 12px;
+      font-family: var(--font-mono);
+      font-size: 13px;
+      font-weight: 700;
     }
 
-    .neo-tag-row {
-      display: flex;
-      gap: 10px;
-      margin-bottom: 14px;
+    /* 巨型主叙事 HERO */
+    .hero-manifesto {
+      background: var(--card-cream);
+      border: var(--stroke-thicc);
+      box-shadow: var(--shadow-insane);
+      padding: 44px;
+      position: relative;
+      overflow: hidden;
     }
-    .neo-tag {
-      background: var(--neo-yellow);
-      border: 2px solid #000;
-      box-shadow: 2px 2px 0 #000;
-      padding: 3px 10px;
+    .hero-manifesto::before {
+      content: "MANIFESTO";
+      position: absolute;
+      right: -20px;
+      bottom: -30px;
+      font-size: 110px;
+      font-weight: 900;
+      color: rgba(0, 0, 0, 0.05);
+      font-family: var(--font-mono);
+      user-select: none;
+      pointer-events: none;
+      z-index: 0;
+    }
+    .hero-header {
+      position: relative;
+      z-index: 1;
+      margin-bottom: 32px;
+      border-bottom: var(--stroke-thicc);
+      padding-bottom: 24px;
+    }
+    .hero-kicker {
+      display: inline-block;
+      background: var(--pop-cyan);
+      border: var(--stroke-mid);
+      box-shadow: 4px 4px 0 var(--ink-black);
+      padding: 6px 16px;
+      font-size: 14px;
+      font-weight: 900;
+      margin-bottom: 16px;
+      transform: rotate(1deg);
+    }
+    .hero-title {
+      font-size: clamp(34px, 5.5vw, 64px);
+      font-weight: 900;
+      line-height: 1.08;
+      letter-spacing: -2px;
+      text-shadow: 3px 3px 0 var(--pop-pink);
+    }
+    .hero-lead {
+      font-size: 18px;
+      font-weight: 700;
+      line-height: 1.6;
+      margin-top: 16px;
+      max-width: 960px;
+      background: var(--bg-sun);
+      padding: 12px 18px;
+      border: var(--stroke-slim);
+      box-shadow: 3px 3px 0 var(--ink-black);
+    }
+
+    /* 五条反无聊宣言 */
+    .manifesto-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
+      gap: 20px;
+      position: relative;
+      z-index: 1;
+    }
+    .manifesto-card {
+      background: var(--canvas-white);
+      border: var(--stroke-mid);
+      box-shadow: var(--shadow-hard);
+      padding: 24px;
+      transition: transform 0.15s ease, box-shadow 0.15s ease;
+      position: relative;
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
+    }
+    .manifesto-card:hover {
+      transform: translate(-3px, -3px);
+      box-shadow: 9px 9px 0 var(--ink-black);
+    }
+    .manifesto-card.squished {
+      transform: scale(0.97) translateY(4px) !important;
+      box-shadow: var(--shadow-pressed) !important;
+      background: #FFE3F1 !important;
+    }
+    .manifesto-num {
+      display: inline-block;
+      font-family: var(--font-mono);
+      font-size: 14px;
+      font-weight: 900;
+      background: var(--ink-black);
+      color: var(--canvas-white);
+      padding: 3px 8px;
+      margin-bottom: 12px;
+      align-self: flex-start;
+    }
+    .manifesto-card-title {
+      font-size: 21px;
+      font-weight: 900;
+      line-height: 1.25;
+      margin-bottom: 10px;
+    }
+    .manifesto-card-p {
+      font-size: 14px;
+      font-weight: 600;
+      color: #222;
+      line-height: 1.6;
+    }
+    .squish-btn {
+      margin-top: 14px;
+      align-self: flex-start;
+      background: var(--pop-cyan);
+      border: var(--stroke-slim);
+      box-shadow: 2px 2px 0 var(--ink-black);
+      padding: 5px 12px;
+      font-family: var(--font-mono);
       font-size: 12px;
       font-weight: 900;
-      border-radius: 6px;
+      cursor: pointer;
+      transition: all 0.1s;
+    }
+    .squish-btn:active {
+      transform: translate(2px, 2px);
+      box-shadow: none;
     }
 
-    .neo-card-title {
-      font-size: 26px;
+    /* 3 个次级栏目布局 */
+    .sub-columns-layout {
+      display: grid;
+      grid-template-columns: 1fr 1fr 1.2fr;
+      gap: 28px;
+      align-items: stretch;
+    }
+
+    .column-box {
+      border: var(--stroke-thicc);
+      box-shadow: var(--shadow-huge);
+      padding: 30px 24px;
+      display: flex;
+      flex-direction: column;
+      position: relative;
+    }
+
+    /* 栏目1: 把按钮做得像真的按钮 */
+    .column-box.btn-lab {
+      background: var(--pop-cyan);
+    }
+    .column-box.btn-lab .col-head {
+      border-bottom: var(--stroke-thicc);
+      padding-bottom: 14px;
+      margin-bottom: 20px;
+    }
+    .col-title {
+      font-size: 24px;
       font-weight: 900;
-      margin-bottom: 14px;
-      line-height: 1.3;
+      line-height: 1.15;
+    }
+    .btn-showroom {
+      display: flex;
+      flex-direction: column;
+      gap: 16px;
+      margin-top: 12px;
+      flex: 1;
+    }
+    .real-btn {
+      width: 100%;
+      padding: 16px 20px;
+      font-family: var(--font-display);
+      font-size: 16px;
+      font-weight: 900;
+      text-align: center;
+      border: var(--stroke-thicc);
+      box-shadow: var(--shadow-hard);
+      cursor: pointer;
+      user-select: none;
+      transition: all 0.08s ease;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 10px;
+    }
+    .real-btn.pink {
+      background: var(--pop-pink);
+      color: #FFF;
+    }
+    .real-btn.lime {
+      background: var(--pop-lime);
+      color: #000;
+    }
+    .real-btn.black {
+      background: var(--ink-black);
+      color: var(--bg-sun);
+    }
+    .real-btn:hover {
+      transform: translate(-2px, -2px);
+      box-shadow: 8px 8px 0 var(--ink-black);
+    }
+    .real-btn:active {
+      transform: translate(4px, 4px) !important;
+      box-shadow: var(--shadow-pressed) !important;
+    }
+    .btn-feedback {
+      margin-top: 14px;
+      background: var(--canvas-white);
+      border: var(--stroke-slim);
+      padding: 10px;
+      font-family: var(--font-mono);
+      font-size: 13px;
+      font-weight: 700;
+      text-align: center;
+      min-height: 42px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
     }
 
-    .neo-card-body {
+    /* 栏目2: 不完美网格挑战 */
+    .column-box.grid-challenge {
+      background: var(--pop-lime);
+    }
+    .grid-challenge-wall {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 12px;
+      margin-top: 16px;
+      flex: 1;
+    }
+    .skew-tile {
+      background: var(--canvas-white);
+      border: var(--stroke-mid);
+      box-shadow: 4px 4px 0 var(--ink-black);
+      padding: 14px;
+      font-size: 13px;
+      font-weight: 800;
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
+      transition: all 0.2s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+      cursor: pointer;
+    }
+    .skew-tile:nth-child(1) { transform: rotate(-2.5deg); }
+    .skew-tile:nth-child(2) { transform: rotate(3deg) translateY(-6px); background: #FFF480; }
+    .skew-tile:nth-child(3) { transform: rotate(2deg); background: #E0C3FC; }
+    .skew-tile:nth-child(4) { transform: rotate(-3.5deg) translateY(4px); }
+    .skew-tile:hover {
+      transform: scale(1.08) rotate(0deg);
+      box-shadow: 6px 6px 0 var(--ink-black);
+      z-index: 5;
+    }
+
+    /* 栏目3: 一周失败作品墙 */
+    .column-box.fail-wall {
+      background: var(--pop-purple);
+      color: var(--canvas-white);
+    }
+    .fail-items {
+      display: flex;
+      flex-direction: column;
+      gap: 14px;
+      margin-top: 16px;
+      flex: 1;
+    }
+    .fail-item {
+      background: var(--card-cream);
+      color: var(--ink-black);
+      border: var(--stroke-mid);
+      box-shadow: var(--shadow-hard);
+      padding: 14px;
+      position: relative;
+    }
+    .fail-tag {
+      position: absolute;
+      top: -10px;
+      right: 12px;
+      background: var(--pop-orange);
+      color: #FFF;
+      border: var(--stroke-slim);
+      font-size: 11px;
+      font-weight: 900;
+      padding: 2px 8px;
+      text-transform: uppercase;
+    }
+    .fail-title {
       font-size: 15px;
+      font-weight: 900;
+      margin-bottom: 4px;
+    }
+    .fail-desc {
+      font-size: 13px;
       font-weight: 600;
       color: #333;
-      line-height: 1.7;
-      margin-bottom: 24px;
+      line-height: 1.4;
     }
-
-    .neo-card-actions {
+    .fail-action-bar {
+      margin-top: 14px;
       display: flex;
       justify-content: space-between;
       align-items: center;
+      background: rgba(0,0,0,0.3);
+      padding: 10px 14px;
+      border: var(--stroke-slim);
     }
-
-    .clap-btn {
-      background: var(--neo-cyan);
-      border: 2px solid #000;
-      box-shadow: 3px 3px 0 #000;
-      padding: 6px 14px;
+    .fail-post-btn {
+      background: var(--bg-sun);
+      color: var(--ink-black);
+      border: var(--stroke-slim);
+      box-shadow: 3px 3px 0 var(--ink-black);
+      padding: 6px 12px;
+      font-size: 12px;
       font-weight: 900;
       cursor: pointer;
-      font-size: 14px;
-      border-radius: 6px;
-      transition: transform 0.1s;
-    }
-    .clap-btn:active {
-      transform: scale(0.92);
     }
 
-    /* 侧边栏 */
-    .neo-sidebar-box {
-      background: var(--neo-cyan);
-      border: var(--neo-border);
-      box-shadow: var(--neo-shadow);
-      border-radius: 12px;
-      padding: 24px;
+    /* 资料模块：夸张柱状图投票 */
+    .poll-section {
+      background: var(--canvas-white);
+      border: var(--stroke-thicc);
+      box-shadow: var(--shadow-insane);
+      padding: 40px;
+    }
+    .poll-header-wrap {
+      display: flex;
+      justify-content: space-between;
+      align-items: flex-end;
+      flex-wrap: wrap;
+      gap: 16px;
+      border-bottom: var(--stroke-thicc);
+      padding-bottom: 20px;
       margin-bottom: 30px;
     }
-    .neo-sidebar-box.purple {
-      background: #c084fc;
-      color: #fff;
+    .poll-title {
+      font-size: clamp(26px, 3.8vw, 38px);
+      font-weight: 900;
+      line-height: 1.1;
+    }
+    .poll-badge-live {
+      background: var(--pop-pink);
+      color: #FFF;
+      border: var(--stroke-mid);
+      box-shadow: 4px 4px 0 var(--ink-black);
+      padding: 8px 16px;
+      font-family: var(--font-mono);
+      font-size: 14px;
+      font-weight: 900;
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+    }
+    .pulse-dot {
+      width: 10px;
+      height: 10px;
+      background: var(--pop-lime);
+      border-radius: 50%;
+      border: 1px solid #000;
+      animation: pulseAnim 1.2s infinite alternate;
+    }
+    @keyframes pulseAnim {
+      from { transform: scale(0.8); opacity: 0.6; }
+      to { transform: scale(1.3); opacity: 1; }
     }
 
-    .neo-box-title {
+    .poll-arena {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 24px;
+      align-items: end;
+      margin-bottom: 32px;
+      padding: 20px 10px 0;
+      border-bottom: var(--stroke-thicc);
+    }
+    .poll-col {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 14px;
+    }
+    .poll-bar-container {
+      width: 100%;
+      height: 280px;
+      background: #F0F0F0;
+      border: var(--stroke-mid);
+      box-shadow: var(--shadow-hard);
+      position: relative;
+      display: flex;
+      align-items: flex-end;
+      overflow: hidden;
+    }
+    .poll-bar-fill {
+      width: 100%;
+      background: var(--pop-cyan);
+      border-top: var(--stroke-mid);
+      transition: height 0.4s cubic-bezier(0.34, 1.56, 0.64, 1);
+      position: relative;
+    }
+    .col-1 .poll-bar-fill { background: var(--pop-pink); }
+    .col-2 .poll-bar-fill { background: var(--bg-sun); }
+    .col-3 .poll-bar-fill { background: var(--pop-lime); }
+
+    .poll-count-label {
+      position: absolute;
+      top: -38px;
+      left: 50%;
+      transform: translateX(-50%);
+      background: var(--ink-black);
+      color: #FFF;
+      padding: 3px 10px;
+      font-family: var(--font-mono);
+      font-size: 16px;
+      font-weight: 900;
+      border: var(--stroke-slim);
+      white-space: nowrap;
+    }
+    .poll-opt-name {
       font-size: 18px;
       font-weight: 900;
-      margin-bottom: 14px;
-      text-transform: uppercase;
-      border-bottom: 2px solid #000;
-      padding-bottom: 6px;
+      text-align: center;
+    }
+    .poll-vote-btn {
+      width: 100%;
+      padding: 12px;
+      font-family: var(--font-display);
+      font-size: 15px;
+      font-weight: 900;
+      border: var(--stroke-mid);
+      box-shadow: 4px 4px 0 var(--ink-black);
+      cursor: pointer;
+      background: var(--canvas-white);
+      transition: all 0.1s ease;
+    }
+    .poll-vote-btn:hover {
+      background: var(--pop-orange);
+      color: #FFF;
+      transform: translate(-2px, -2px);
+      box-shadow: 6px 6px 0 var(--ink-black);
+    }
+    .poll-vote-btn:active {
+      transform: translate(2px, 2px);
+      box-shadow: var(--shadow-pressed);
     }
 
-    @media (max-width: 900px) {
-      .neo-grid {
+    .poll-footer-note {
+      background: #F6F6F6;
+      border: var(--stroke-slim);
+      padding: 14px 20px;
+      font-family: var(--font-mono);
+      font-size: 13px;
+      font-weight: 700;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      flex-wrap: wrap;
+      gap: 10px;
+    }
+
+    /* 收尾：可撕式便签 */
+    .tear-off-section {
+      background: #FF5E36;
+      border: var(--stroke-thicc);
+      box-shadow: var(--shadow-huge);
+      padding: 40px 32px;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      text-align: center;
+      position: relative;
+    }
+    .tear-note-paper {
+      background: var(--bg-sun);
+      color: var(--ink-black);
+      border: var(--stroke-thicc);
+      box-shadow: var(--shadow-insane);
+      padding: 36px 40px;
+      max-width: 780px;
+      width: 100%;
+      position: relative;
+      transform: rotate(-1deg);
+    }
+    .tear-perforation {
+      position: absolute;
+      top: -12px;
+      left: 10px;
+      right: 10px;
+      border-top: 4px dashed var(--ink-black);
+    }
+    .tear-note-title {
+      font-size: clamp(24px, 4vw, 40px);
+      font-weight: 900;
+      line-height: 1.2;
+      margin-bottom: 16px;
+      letter-spacing: -1px;
+    }
+    .tear-note-body {
+      font-size: 16px;
+      font-weight: 700;
+      line-height: 1.7;
+      margin-bottom: 24px;
+    }
+    .tear-action-row {
+      display: flex;
+      justify-content: center;
+      gap: 16px;
+      flex-wrap: wrap;
+    }
+    .tear-btn {
+      background: var(--pop-pink);
+      color: #FFF;
+      border: var(--stroke-mid);
+      box-shadow: var(--shadow-hard);
+      padding: 14px 28px;
+      font-size: 16px;
+      font-weight: 900;
+      cursor: pointer;
+      text-decoration: none;
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      transition: all 0.12s;
+    }
+    .tear-btn:hover {
+      transform: translate(-3px, -3px);
+      box-shadow: 9px 9px 0 var(--ink-black);
+      background: #FF0055;
+    }
+    .tear-btn:active {
+      transform: translate(3px, 3px);
+      box-shadow: var(--shadow-pressed);
+    }
+    .tear-status-text {
+      margin-top: 16px;
+      font-family: var(--font-mono);
+      font-size: 13px;
+      font-weight: 700;
+      color: var(--ink-black);
+    }
+
+    /* 纸屑动画 Canvas */
+    #confettiCanvas {
+      position: fixed;
+      inset: 0;
+      pointer-events: none;
+      z-index: 99999;
+    }
+
+    /* 响应式调整 */
+    @media (max-width: 1024px) {
+      .sub-columns-layout {
         grid-template-columns: 1fr;
       }
-      .neo-navbar {
-        flex-direction: column;
-        gap: 16px;
+    }
+
+    @media (max-width: 768px) {
+      body {
+        padding: 16px 12px 80px;
       }
-      .neo-hero {
-        padding: 24px;
+      .neo-masthead {
+        grid-template-columns: 1fr;
+        text-align: left;
+        padding: 20px;
+      }
+      .hero-manifesto {
+        padding: 24px 18px;
+      }
+      .poll-arena {
+        grid-template-columns: 1fr;
+        gap: 28px;
+        height: auto;
+      }
+      .poll-bar-container {
+        height: 180px;
+      }
+      .poll-section {
+        padding: 24px 18px;
+      }
+      .tear-note-paper {
+        padding: 24px 18px;
+      }
+    }
+
+    @media (prefers-reduced-motion: reduce) {
+      .ticker-track {
+        animation: none !important;
+      }
+      * {
+        transition-duration: 0.01ms !important;
+        animation-duration: 0.01ms !important;
       }
     }
   </style>
 </head>
 <body>
 
-  <div class="neo-container">
-    <!-- 导航栏 -->
-    <nav class="neo-navbar">
-      <div class="neo-brand">
-        <span>💥</span>
-        <span>BRUTAL POP BLOG</span>
-      </div>
-      <ul class="neo-nav-links">
-        <li><a href="#" class="neo-pill-btn">🔥 热门文章</a></li>
-        <li><a href="#" class="neo-pill-btn">💡 灵感碎片</a></li>
-        <li><a href="#" class="neo-pill-btn">👾 个人简介</a></li>
-      </ul>
-    </nav>
+  <!-- 顶部彩色纸屑系统 -->
+  <canvas id="confettiCanvas" aria-hidden="true"></canvas>
 
-    <!-- 醒目 Hero -->
-    <header class="neo-hero">
-      <div class="sticker-badge">★ NEO-BRUTALISM 2026 ★</div>
-      <h1 class="neo-hero-title">告别无聊！<br>高饱和与硬投影的狂欢！</h1>
-      <div class="neo-hero-desc">
-        谁说技术博客必须一本正经？用最粗野的线条、最炸裂的色彩和最硬核的内容，记录每一个打破常规的奇思妙想！
+  <div class="neo-wrapper">
+
+    <!-- 跑马灯顶条 -->
+    <div class="ticker-bar" aria-label="实时滚动标语">
+      <div class="ticker-track">
+        <span>⚡ LOUD NOTES ISSUE #06 / 2026</span>
+        <span>💥 拒绝平庸灰白与毛玻璃虚无</span>
+        <span>🔥 纯黑硬边框 + 物理硬投影 + 绝对对比度</span>
+        <span>👾 把按钮做回能按下去的机械开关</span>
+        <span>⚡ LOUD NOTES ISSUE #06 / 2026</span>
+        <span>💥 拒绝平庸灰白与毛玻璃虚无</span>
+        <span>🔥 纯黑硬边框 + 物理硬投影 + 绝对对比度</span>
+        <span>👾 把按钮做回能按下去的机械开关</span>
+      </div>
+    </div>
+
+    <!-- 刊头 MASTHEAD -->
+    <header class="neo-masthead" role="banner">
+      <div class="masthead-badge">
+        <span>💥</span>
+        <span>VOL.06</span>
+      </div>
+      <div class="masthead-titles">
+        <h1 class="masthead-main">LOUD NOTES / 拒绝无聊月报</h1>
+        <p class="masthead-sub">语气直接、好玩、有主见的前端与视觉反叛手册</p>
+      </div>
+      <div class="masthead-status">
+        <span class="tag-stamp">🔴 LIVE DESIGN FEED</span>
+        <span class="tag-stamp" style="background:var(--pop-cyan);">⚡ 06 / 30 BRUTAL</span>
       </div>
     </header>
 
-    <!-- 主体网格 -->
-    <div class="neo-grid">
-      <!-- 左侧文章 -->
-      <main>
-        <article class="neo-card">
-          <div class="neo-tag-row">
-            <span class="neo-tag">🔥 视觉潮流</span>
-            <span class="neo-tag">UI 设计</span>
-            <span class="neo-tag">2026-08-20</span>
+    <!-- 主叙事：《所有卡片都圆角之后，我们还能怎么表达》 -->
+    <main class="hero-manifesto" id="main-content">
+      <div class="hero-header">
+        <span class="hero-kicker">🔥 封面重磅主叙事</span>
+        <h2 class="hero-title">《所有卡片都圆角之后，<br>我们还能怎么表达》</h2>
+        <div class="hero-lead">
+          当全网的设计系统都在用 16px 圆角、0.05 不透明度的模糊阴影和毫无情绪的莫兰迪灰时，网页正在沦为千篇一律的塑料包装盒。新粗野主义（Neo-Brutalism）与波普不是为了复古，而是为了抢回被“过度规训”的表达欲——用五条反无聊宣言，把网页从死气沉沉的样板间里解救出来！
+        </div>
+      </div>
+
+      <!-- 五条反无聊宣言 -->
+      <div class="manifesto-grid">
+        <article class="manifesto-card" id="card-1">
+          <div>
+            <span class="manifesto-num">DECLARATION #01</span>
+            <h3 class="manifesto-card-title">硬投影必须像实体砖块一样干脆</h3>
+            <p class="manifesto-card-p">
+              放弃那些看不清光源在哪里的 24px 漫反射柔焦软阴影。纯黑、5px~10px 偏移、0 模糊半径的硬边阴影，让每一个卡片和按钮像物理世界里真实存在的积木，掷地有声。
+            </p>
           </div>
-          <h2 class="neo-card-title">为什么新粗野主义（Neo-Brutalism）在 2026 再次引爆全网？</h2>
-          <p class="neo-card-body">
-            受够了千篇一律的灰白毛玻璃和圆角软阴影？新粗野主义用高反差纯黑边框、不加柔化的物理硬投影（Hard Offset Shadows）和活泼的波普高饱和色彩，重新唤醒了网页最初的生命力与幽默感！
-          </p>
-          <div class="neo-card-actions">
-            <a href="#" class="neo-pill-btn">阅读全文 ➔</a>
-            <button class="clap-btn" onclick="addClap(this)">👏 点赞 (42)</button>
-          </div>
+          <button class="squish-btn" onclick="squishCard('card-1', this)" aria-label="压扁卡片 1">这张卡被你压扁了 💥</button>
         </article>
 
-        <article class="neo-card">
-          <div class="neo-tag-row">
-            <span class="neo-tag" style="background:#ff6b8b; color:#fff;">⚡ 代码狂想</span>
-            <span class="neo-tag">性能优化</span>
+        <article class="manifesto-card" id="card-2">
+          <div>
+            <span class="manifesto-num">DECLARATION #02</span>
+            <h3 class="manifesto-card-title">高饱和色彩拒绝唯唯诺诺的低调</h3>
+            <p class="manifesto-card-p">
+              波普黄（#FFE713）、电光粉（#FF3B81）与荧光绿（#52FF00）并置！色彩不是为了迎合安全的中庸评分，而是为了在 0.3 秒内唤醒读者的视神经与好奇心。
+            </p>
           </div>
-          <h2 class="neo-card-title">用 Rust 重构底层引擎：把性能压榨到极限的 10 个技巧</h2>
-          <p class="neo-card-body">
-            从零拷贝内存布局到 SIMD 指令集加速，分享我们在高并发场景下如何将响应延迟从 50ms 打到 2ms 的真实避坑经验。
-          </p>
-          <div class="neo-card-actions">
-            <a href="#" class="neo-pill-btn">阅读全文 ➔</a>
-            <button class="clap-btn" onclick="addClap(this)">👏 点赞 (89)</button>
-          </div>
+          <button class="squish-btn" onclick="squishCard('card-2', this)" aria-label="压扁卡片 2">这张卡被你压扁了 💥</button>
         </article>
 
-        <!-- 文章 3 -->
-        <article class="neo-card">
-          <div class="neo-tag-row">
-            <span class="neo-tag" style="background:#74ee15; color:#000;">🎨 设计先锋</span>
-            <span class="neo-tag">排版哲学</span>
+        <article class="manifesto-card" id="card-3">
+          <div>
+            <span class="manifesto-num">DECLARATION #03</span>
+            <h3 class="manifesto-card-title">允许倾斜与不完美网格呼吸</h3>
+            <p class="manifesto-card-p">
+              微小旋转（-2deg / +3deg）和错位排版不是代码失控，而是手作的温度与刊物的脾气。完美对称是机器的产物，有机的错落才是活人的派对。
+            </p>
           </div>
-          <h2 class="neo-card-title">反直觉网格与硬投影：后现代 Web 如何打破过度规整的教条</h2>
-          <p class="neo-card-body">
-            为什么微小旋转（-2deg）、巨大未修饰的粗体字阶和纯黑 5px 偏移物理硬阴影，比千篇一律的灰白扁平化更能激发用户的探索欲？
-          </p>
-          <div class="neo-card-actions">
-            <a href="#" class="neo-pill-btn">阅读全文 ➔</a>
-            <button class="clap-btn" onclick="addClap(this)">👏 点赞 (136)</button>
-          </div>
+          <button class="squish-btn" onclick="squishCard('card-3', this)" aria-label="压扁卡片 3">这张卡被你压扁了 💥</button>
         </article>
 
-        <!-- 文章 4 -->
-        <article class="neo-card">
-          <div class="neo-tag-row">
-            <span class="neo-tag" style="background:#4deeea; color:#000;">🚀 前端极客</span>
-            <span class="neo-tag">CSS 魔法</span>
+        <article class="manifesto-card" id="card-4">
+          <div>
+            <span class="manifesto-num">DECLARATION #04</span>
+            <h3 class="manifesto-card-title">字阶拉大到让人无法视而不见</h3>
+            <p class="manifesto-card-p">
+              重要的事情用 64px 黑体砸在屏幕中央！拒绝在副标题里塞满空洞的专业黑话，把观点写得像街头海报一样直截了当。
+            </p>
           </div>
-          <h2 class="neo-card-title">纯 CSS 视差滚轴与机械开关：告别笨重的 JavaScript 依赖</h2>
-          <p class="neo-card-body">
-            利用 CSS `:has()` 伪类、`@container` 容器查询与原生弹性变换，以 0kb 的 JS 开销实现充满弹力与物理打击感的界面。
-          </p>
-          <div class="neo-card-actions">
-            <a href="#" class="neo-pill-btn">阅读全文 ➔</a>
-            <button class="clap-btn" onclick="addClap(this)">👏 点赞 (72)</button>
-          </div>
+          <button class="squish-btn" onclick="squishCard('card-4', this)" aria-label="压扁卡片 4">这张卡被你压扁了 💥</button>
         </article>
-      </main>
 
-      <!-- 右侧边栏 -->
-      <aside>
-        <div class="neo-sidebar-box">
-          <div class="neo-box-title">👤 博主手记</div>
-          <p style="font-weight:700; font-size:14px;">
-            代码狂热分子 / 设计怪咖。喜欢折腾各种好玩、前卫又硬核的技术与视觉交互！
-          </p>
+        <article class="manifesto-card" id="card-5" style="grid-column: 1 / -1;">
+          <div>
+            <span class="manifesto-num">DECLARATION #05</span>
+            <h3 class="manifesto-card-title">交互要具备机械打击的反馈感与爽快度</h3>
+            <p class="manifesto-card-p">
+              按下按钮时要向下右方真实位移 4px 并吃掉阴影！点击必须有触觉一般的代偿回馈。前端不是画静态切图，而是制造一个充满弹力和力学反馈的数字游乐场。
+            </p>
+          </div>
+          <button class="squish-btn" onclick="squishCard('card-5', this)" aria-label="压扁卡片 5">这张卡被你压扁了 💥</button>
+        </article>
+      </div>
+    </main>
+
+    <!-- 次级栏目 3 栏 -->
+    <section class="sub-columns-layout" aria-label="次级专栏矩阵">
+      
+      <!-- 次级 1: 把按钮做得像真的按钮 -->
+      <div class="column-box btn-lab">
+        <div class="col-head">
+          <span class="tag-stamp" style="background:#FFF;">LAB 01</span>
+          <h3 class="col-title" style="margin-top:8px;">把按钮做得像真的按钮</h3>
+        </div>
+        <p style="font-size:14px; font-weight:700; margin-bottom:14px;">
+          拒绝只有透明度变化的幽灵按钮！试试这些带有扎实键程与硬核力学反馈的波普开关：
+        </p>
+        <div class="btn-showroom">
+          <button class="real-btn pink" onclick="triggerBtnLab(this, '💥 狠狠按了一下！力学反馈已触发！')" aria-label="狠狠按一下粉色按钮">
+            <span>🔥 狠狠按一下</span>
+          </button>
+          <button class="real-btn lime" onclick="triggerBtnLab(this, '⚡ 机械轴体下沉 4px，手感极佳！')" aria-label="狠狠按一下荧光绿按钮">
+            <span>👾 狠狠按一下</span>
+          </button>
+          <button class="real-btn black" onclick="triggerBtnLab(this, '🚀 纯黑高反差按压，回弹拉满！')" aria-label="狠狠按一下纯黑按钮">
+            <span>💥 狠狠按一下</span>
+          </button>
+        </div>
+        <div class="btn-feedback" id="btnLabFeedback" aria-live="polite">
+          👈 随意点击上方任意按钮查看打击状态
+        </div>
+      </div>
+
+      <!-- 次级 2: 不完美网格挑战 -->
+      <div class="column-box grid-challenge">
+        <div class="col-head" style="border-bottom: var(--stroke-thicc); padding-bottom:14px; margin-bottom:14px;">
+          <span class="tag-stamp" style="background:#FFF;">EXP 02</span>
+          <h3 class="col-title" style="margin-top:8px;">不完美网格挑战</h3>
+        </div>
+        <p style="font-size:14px; font-weight:700;">
+          打破 12 栏绝对对齐的无聊秩序，鼠标悬停试试摆正这些微倾斜的图元贴纸：
+        </p>
+        <div class="grid-challenge-wall">
+          <div class="skew-tile" onclick="shakeTile(this)" tabindex="0" role="button" aria-label="角度偏转贴纸 A">
+            <span>📐 -2.5° 旋转</span>
+            <small style="font-family:var(--font-mono); font-size:11px;">CSS: transform</small>
+          </div>
+          <div class="skew-tile" onclick="shakeTile(this)" tabindex="0" role="button" aria-label="角度偏转贴纸 B">
+            <span>⚡ +3.0° 错位</span>
+            <small style="font-family:var(--font-mono); font-size:11px;">打破平庸对齐</small>
+          </div>
+          <div class="skew-tile" onclick="shakeTile(this)" tabindex="0" role="button" aria-label="角度偏转贴纸 C">
+            <span>🎨 局部破格</span>
+            <small style="font-family:var(--font-mono); font-size:11px;">视线自然锚点</small>
+          </div>
+          <div class="skew-tile" onclick="shakeTile(this)" tabindex="0" role="button" aria-label="角度偏转贴纸 D">
+            <span>💥 -3.5° 弹力</span>
+            <small style="font-family:var(--font-mono); font-size:11px;">点我剧烈摇晃</small>
+          </div>
+        </div>
+      </div>
+
+      <!-- 次级 3: 一周失败作品墙 -->
+      <div class="column-box fail-wall">
+        <div class="col-head" style="border-bottom: var(--stroke-thicc); padding-bottom:14px;">
+          <span class="tag-stamp" style="background:var(--bg-sun); color:#000;">ARCHIVE 03</span>
+          <h3 class="col-title" style="margin-top:8px;">一周失败作品墙</h3>
+        </div>
+        <p style="font-size:13px; font-weight:700; margin-top:10px; color:#FFE600;">
+          “完美的设计往往最先被遗忘，失败作品也值得贴上墙！”
+        </p>
+        <div class="fail-items" id="failItemsWrap">
+          <div class="fail-item">
+            <span class="fail-tag">CRASH #01</span>
+            <h4 class="fail-title">过度弥散的渐变球</h4>
+            <p class="fail-desc">卡顿了 3 个移动端 GPU，颜色糊成泥浆色，已果断就地火化。</p>
+          </div>
+          <div class="fail-item">
+            <span class="fail-tag">CRASH #02</span>
+            <h4 class="fail-title">看不清字的 8px 超轻灰细体</h4>
+            <p class="fail-desc">自以为极简高级，用户必须掏出放大镜阅读，反人类典范。</p>
+          </div>
+        </div>
+        <div class="fail-action-bar">
+          <span style="font-size:12px; font-weight:700; font-family:var(--font-mono);" id="failCounterText">当前展览: 2 件车祸现场</span>
+          <button class="fail-post-btn" onclick="postMoreFail()" aria-label="投递并贴上新的失败作品">贴上更多失败 📌</button>
+        </div>
+      </div>
+
+    </section>
+
+    <!-- 资料模块：夸张柱状图投票 -->
+    <section class="poll-section" aria-labelledby="pollHeading">
+      <div class="poll-header-wrap">
+        <div>
+          <span class="tag-stamp" style="background:var(--bg-sun); margin-bottom:10px; display:inline-block;">DATA & VOICE</span>
+          <h3 class="poll-title" id="pollHeading">设计投票：你最受够了哪种无聊？</h3>
+        </div>
+        <div class="poll-badge-live">
+          <span class="pulse-dot"></span>
+          <span>现场互动数据 (LIVE POLL)</span>
+        </div>
+      </div>
+
+      <!-- 夸张柱状图 -->
+      <div class="poll-arena">
+        
+        <!-- 选项 1 -->
+        <div class="poll-col col-1">
+          <div class="poll-bar-container">
+            <div class="poll-bar-fill" id="barFill1" style="height: 74%;">
+              <span class="poll-count-label" id="countLabel1">74% (1,482 票)</span>
+            </div>
+          </div>
+          <div class="poll-opt-name">💥 更大标题<br><span style="font-size:13px; font-weight:600; color:#666;">字号不够大等于没说</span></div>
+          <button class="poll-vote-btn" onclick="castVote(1)" aria-label="投给更大的字">投给更大的字 🗳️</button>
         </div>
 
-        <div class="neo-sidebar-box purple">
-          <div class="neo-box-title" style="color:#000; border-color:#000;">🎯 正在进行的实验</div>
-          <ul style="padding-left:20px; font-weight:700; font-size:13px; color:#000; line-height:2;">
-            <li>多智能体协同框架开发</li>
-            <li>复古像素着色器渲染</li>
-            <li>硬核 WebGL 交互实验</li>
-          </ul>
+        <!-- 选项 2 -->
+        <div class="poll-col col-2">
+          <div class="poll-bar-container">
+            <div class="poll-bar-fill" id="barFill2" style="height: 61%;">
+              <span class="poll-count-label" id="countLabel2">61% (1,220 票)</span>
+            </div>
+          </div>
+          <div class="poll-opt-name">🧱 更硬阴影<br><span style="font-size:13px; font-weight:600; color:#666;">给每个容器焊上纯黑边</span></div>
+          <button class="poll-vote-btn" onclick="castVote(2)" aria-label="投给更硬阴影">投给更硬阴影 🗳️</button>
         </div>
-      </aside>
-    </div>
+
+        <!-- 选项 3 -->
+        <div class="poll-col col-3">
+          <div class="poll-bar-container">
+            <div class="poll-bar-fill" id="barFill3" style="height: 88%;">
+              <span class="poll-count-label" id="countLabel3">88% (1,760 票)</span>
+            </div>
+          </div>
+          <div class="poll-opt-name">⚡ 更少废话<br><span style="font-size:13px; font-weight:600; color:#666;">拒绝空洞的方法论套话</span></div>
+          <button class="poll-vote-btn" onclick="castVote(3)" aria-label="投给更少废话">投给更少废话 🗳️</button>
+        </div>
+
+      </div>
+
+      <div class="poll-footer-note">
+        <span>📊 统计规则：每点击一次即时累加样本量，无限制狂按测试</span>
+        <span id="totalVotesText">总有效投票数：4,462 票</span>
+      </div>
+    </section>
+
+    <!-- 收尾区：可撕式便签 -->
+    <footer class="tear-off-section" role="contentinfo">
+      <div class="tear-note-paper" id="tearNote">
+        <div class="tear-perforation"></div>
+        <span class="tag-stamp" style="background:var(--pop-pink); color:#FFF; margin-bottom:14px; display:inline-block;">⚡ 撕下带走</span>
+        <h3 class="tear-note-title">“明天继续做一个有脾气的页面”</h3>
+        <p class="tear-note-body">
+          代码是你的刻刀，浏览器是你的墙面。别把青春浪费在唯唯诺诺的千篇一律上。敢于用撞色、敢于用粗线条、敢于保留未修饰的野性生命力！
+        </p>
+        <div class="tear-action-row">
+          <button class="tear-btn" onclick="ripNotePaper(this)" aria-label="撕下这张便签">
+            <span>✂️ 撕下这张便签</span>
+          </button>
+          <a href="../creative-matrix/matrix.html" class="tear-btn" style="background:var(--ink-black); color:var(--bg-sun);" aria-label="返回创意矩阵总览">
+            <span>🍱 返回 30 款矩阵总览</span>
+          </a>
+        </div>
+        <div class="tear-status-text" id="tearStatus">📍 便签完好贴在墙上（点击可撕下并喷射彩屑）</div>
+      </div>
+    </footer>
+
   </div>
 
-  <!-- 五彩纸屑 Canvas -->
-  <canvas id="confettiCanvas" style="position: fixed; inset: 0; pointer-events: none; z-index: 99999;"></canvas>
-
-  <style>
-    .neo-pill-btn:active, .clap-btn:active {
-      transform: translate(3px, 3px) scale(0.96) !important;
-      box-shadow: 2px 2px 0px #000 !important;
-    }
-  </style>
-
+  <!-- 全局交互与公共导航适配脚本 -->
   <script src="assets/nav-bar.js"></script>
   <script>
-    function addClap(btn) {
-      let count = parseInt(btn.textContent.match(/\d+/)[0]) + 1;
-      btn.textContent = `👏 点赞 (${count}) 🎉`;
-      const rect = btn.getBoundingClientRect();
-      burstConfetti(rect.left + rect.width / 2, rect.top);
-    }
-
-    // 彩色五彩纸屑粒子喷发
+    // 1. 纸屑系统
     const canvas = document.getElementById('confettiCanvas');
     const ctx = canvas.getContext('2d');
     let w = canvas.width = window.innerWidth;
@@ -401,33 +1023,33 @@
     });
 
     const particles = [];
-    const colors = ['#ffdf00', '#ff6b8b', '#4deeea', '#9d4edd', '#74ee15', '#000000'];
+    const colors = ['#FFE713', '#FF3B81', '#00F0FF', '#52FF00', '#9B51E0', '#FF6600', '#0B0B0B'];
 
-    function burstConfetti(x, y) {
-      for (let i = 0; i < 35; i++) {
+    function burstConfetti(x, y, count = 40) {
+      for (let i = 0; i < count; i++) {
         particles.push({
           x: x,
           y: y,
-          vx: (Math.random() - 0.5) * 12,
-          vy: -(Math.random() * 10 + 4),
-          size: 6 + Math.random() * 6,
+          vx: (Math.random() - 0.5) * 14,
+          vy: -(Math.random() * 12 + 5),
+          size: 7 + Math.random() * 7,
           color: colors[Math.floor(Math.random() * colors.length)],
           rot: Math.random() * 360,
-          rotSpeed: (Math.random() - 0.5) * 15,
+          rotSpeed: (Math.random() - 0.5) * 18,
           life: 1
         });
       }
     }
 
-    function loop() {
+    function animLoop() {
       ctx.clearRect(0, 0, w, h);
       for (let i = particles.length - 1; i >= 0; i--) {
         const p = particles[i];
         p.x += p.vx;
         p.y += p.vy;
-        p.vy += 0.35; // 重力
+        p.vy += 0.38; // 重力
         p.rot += p.rotSpeed;
-        p.life -= 0.015;
+        p.life -= 0.016;
 
         if (p.life <= 0 || p.y > h) {
           particles.splice(i, 1);
@@ -438,18 +1060,113 @@
         ctx.translate(p.x, p.y);
         ctx.rotate((p.rot * Math.PI) / 180);
         ctx.fillStyle = p.color;
-        ctx.globalAlpha = p.life;
+        ctx.globalAlpha = Math.max(p.life, 0);
         ctx.fillRect(-p.size / 2, -p.size / 2, p.size, p.size);
         ctx.restore();
       }
-      requestAnimationFrame(loop);
+      requestAnimationFrame(animLoop);
     }
-    loop();
+    animLoop();
 
-    window.addEventListener('click', (e) => {
-      if (e.target.closest('.blog-switcher-trigger') || e.target.closest('.blog-switcher-modal')) return;
-      if (Math.random() < 0.3) burstConfetti(e.clientX, e.clientY);
-    });
+    // 2. 压扁卡片交互
+    function squishCard(cardId, btn) {
+      const card = document.getElementById(cardId);
+      card.classList.toggle('squished');
+      const isSquished = card.classList.contains('squished');
+      btn.textContent = isSquished ? '这张卡被你压扁了 💥 (已变形)' : '狠狠压一下 💥';
+      const rect = btn.getBoundingClientRect();
+      burstConfetti(rect.left + rect.width / 2, rect.top, 25);
+    }
+
+    // 3. 按钮实验室
+    function triggerBtnLab(btn, msg) {
+      const fb = document.getElementById('btnLabFeedback');
+      fb.textContent = msg;
+      const rect = btn.getBoundingClientRect();
+      burstConfetti(rect.left + rect.width / 2, rect.top + rect.height / 2, 20);
+    }
+
+    // 4. 网格摇晃
+    function shakeTile(tile) {
+      tile.style.transform = `scale(1.12) rotate(${(Math.random() - 0.5) * 16}deg)`;
+      setTimeout(() => {
+        tile.style.transform = '';
+      }, 500);
+      const rect = tile.getBoundingClientRect();
+      burstConfetti(rect.left + rect.width / 2, rect.top + rect.height / 2, 15);
+    }
+
+    // 5. 失败作品墙添加
+    const failPool = [
+      { tag: 'BUG #03', title: '全屏 3D 金属球着色器', desc: '手机直接化身暖手宝，耗尽了用户最后的 10% 电量。' },
+      { tag: 'BUG #04', title: '无提示的纯手势隐藏导航', desc: '测试人员找了 20 分钟没找到返回主页，已被无情下线。' },
+      { tag: 'BUG #05', title: '自动播放的重低音 Synthwave', desc: '在安静的图书馆里响彻云霄，作者连夜逃离地球。' }
+    ];
+    let failIdx = 0;
+    function postMoreFail() {
+      if (failIdx >= failPool.length) {
+        alert('失败作品池已掏空！你已经看完了所有精彩车祸现场！');
+        return;
+      }
+      const wrap = document.getElementById('failItemsWrap');
+      const item = failPool[failIdx];
+      const div = document.createElement('div');
+      div.className = 'fail-item';
+      div.innerHTML = `
+        <span class="fail-tag" style="background:#FF3B81;">${item.tag}</span>
+        <h4 class="fail-title">${item.title}</h4>
+        <p class="fail-desc">${item.desc}</p>
+      `;
+      wrap.appendChild(div);
+      failIdx++;
+      document.getElementById('failCounterText').textContent = `当前展览: ${2 + failIdx} 件车祸现场`;
+      const rect = wrap.getBoundingClientRect();
+      burstConfetti(rect.left + rect.width / 2, rect.bottom, 30);
+    }
+
+    // 6. 投票系统
+    let votes = [1482, 1220, 1760];
+    function castVote(optIndex) {
+      votes[optIndex - 1] += 48; // 每次夸张增长
+      const total = votes.reduce((a, b) => a + b, 0);
+      
+      for (let i = 1; i <= 3; i++) {
+        const pct = Math.round((votes[i - 1] / total) * 100);
+        const bar = document.getElementById(`barFill${i}`);
+        const label = document.getElementById(`countLabel${i}`);
+        bar.style.height = `${Math.min(pct * 1.1 + 10, 96)}%`;
+        label.textContent = `${pct}% (${votes[i - 1].toLocaleString()} 票)`;
+      }
+
+      document.getElementById('totalVotesText').textContent = `总有效投票数：${total.toLocaleString()} 票`;
+      
+      const bar = document.getElementById(`barFill${optIndex}`);
+      const rect = bar.getBoundingClientRect();
+      burstConfetti(rect.left + rect.width / 2, rect.top, 35);
+    }
+
+    // 7. 可撕式便签
+    let isRipped = false;
+    function ripNotePaper(btn) {
+      const note = document.getElementById('tearNote');
+      const status = document.getElementById('tearStatus');
+      isRipped = !isRipped;
+
+      if (isRipped) {
+        note.style.transform = 'translateY(16px) rotate(3deg) scale(0.98)';
+        note.style.borderTop = '4px dashed var(--ink-black)';
+        btn.innerHTML = '<span>📎 重新贴回墙面</span>';
+        status.innerHTML = '🎉 <strong>便签已被撕下带走！</strong>“明天继续做一个有脾气的页面！”';
+        status.style.color = '#FFF';
+        const rect = note.getBoundingClientRect();
+        burstConfetti(rect.left + rect.width / 2, rect.top + 30, 60);
+      } else {
+        note.style.transform = 'rotate(-1deg)';
+        btn.innerHTML = '<span>✂️ 撕下这张便签</span>';
+        status.innerHTML = '📍 便签完好贴在墙上（点击可撕下并喷射彩屑）';
+        status.style.color = 'var(--ink-black)';
+      }
+    }
   </script>
 </body>
 </html>

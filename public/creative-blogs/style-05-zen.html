@@ -3,20 +3,25 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>空山集 — 05 日式禅意极简杂志风</title>
+  <title>空山集 · 一期一会 — 05 日式禅意极简杂志</title>
   <link rel="stylesheet" href="assets/common.css">
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Shippori+Mincho:wght@400;600;800&family=Noto+Serif+SC:wght@300;400;600&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Shippori+Mincho:wght@400;600;800&family=Noto+Serif+SC:wght@300;400;600;700&family=Cinzel:wght@400;600&display=swap" rel="stylesheet">
   <style>
     :root {
-      --zen-bg: #f7f5f0;
-      --zen-card-bg: #ffffff;
-      --zen-ink: #2c2b29;
-      --zen-muted: #8c887b;
-      --zen-border: #e8e4dc;
-      --zen-accent: #a35d46;
-      --font-zen: "Shippori Mincho", "Noto Serif SC", "Songti SC", serif;
+      --zen-bg: #f8f6f0;
+      --zen-paper: #fcfbfa;
+      --zen-ink: #2b2824;
+      --zen-text-sub: #5c574e;
+      --zen-muted: #8d877b;
+      --zen-line: #e3ded5;
+      --zen-line-soft: #ece8df;
+      --zen-vermilion: #b9402d;
+      --zen-vermilion-soft: rgba(185, 64, 45, 0.08);
+      --zen-stone: #47433c;
+      --font-serif: "Shippori Mincho", "Noto Serif SC", "Source Han Serif SC", "Songti SC", serif;
+      --font-en: "Cinzel", serif;
     }
 
     * {
@@ -28,360 +33,953 @@
     body {
       background-color: var(--zen-bg);
       color: var(--zen-ink);
-      font-family: var(--font-zen);
+      font-family: var(--font-serif);
       line-height: 2.1;
-      letter-spacing: 0.5px;
-      padding: 40px 20px 100px;
+      letter-spacing: 0.04em;
       -webkit-font-smoothing: antialiased;
-      transition: background 0.4s ease;
+      overflow-x: hidden;
+      position: relative;
     }
 
-    .zen-wrapper {
-      max-width: 1080px;
+    /* 纸本质感网底 */
+    body::before {
+      content: "";
+      position: fixed;
+      inset: 0;
+      background-image: 
+        radial-gradient(rgba(43, 40, 36, 0.025) 1px, transparent 1px),
+        linear-gradient(to right, rgba(227, 222, 213, 0.25) 1px, transparent 1px);
+      background-size: 24px 24px, 120px 120px;
+      pointer-events: none;
+      z-index: 0;
+    }
+
+    .zen-container {
+      max-width: 1040px;
       margin: 0 auto;
+      padding: 40px 24px 120px;
+      position: relative;
+      z-index: 1;
     }
 
-    /* 顶部简约导航 */
-    .zen-header {
+    /* 刊头 */
+    .zen-masthead {
       display: flex;
       justify-content: space-between;
-      align-items: baseline;
-      padding-bottom: 30px;
-      border-bottom: 1px solid var(--zen-border);
+      align-items: flex-start;
+      border-bottom: 1px solid var(--zen-line);
+      padding-bottom: 24px;
       margin-bottom: 60px;
     }
 
-    .zen-brand {
-      font-size: 22px;
-      font-weight: 600;
-      letter-spacing: 4px;
-    }
-    .zen-brand span {
-      font-size: 13px;
-      color: var(--zen-muted);
-      font-weight: 400;
-      margin-left: 12px;
-      letter-spacing: 1px;
-    }
-
-    .zen-nav {
-      display: flex;
-      gap: 28px;
-      font-size: 14px;
-      list-style: none;
-    }
-    .zen-nav a {
-      color: var(--zen-muted);
-      text-decoration: none;
-      transition: color 0.3s;
-    }
-    .zen-nav a:hover, .zen-nav a.active {
-      color: var(--zen-ink);
-    }
-
-    /* 诗意主视觉与竖排书法美学 */
-    .zen-hero {
-      display: grid;
-      grid-template-columns: auto 1fr;
-      gap: 50px;
-      align-items: center;
-      margin-bottom: 80px;
-      padding: 40px 0;
-    }
-
-    .zen-vertical-title {
-      writing-mode: vertical-rl;
-      text-orientation: mixed;
-      font-size: clamp(32px, 5vw, 48px);
-      letter-spacing: 12px;
-      line-height: 1.6;
-      font-weight: 600;
-      color: var(--zen-ink);
-      border-left: 1px solid var(--zen-border);
-      padding-left: 20px;
-    }
-
-    .zen-hero-text {
-      font-size: 16px;
-      color: #55524c;
-      max-width: 620px;
-      line-height: 2.2;
-    }
-    .zen-hero-text .zen-seal {
-      display: inline-block;
-      width: 24px;
-      height: 24px;
-      line-height: 22px;
-      border: 1px solid var(--zen-accent);
-      color: var(--zen-accent);
-      text-align: center;
-      font-size: 11px;
-      margin-right: 8px;
-      vertical-align: middle;
-    }
-
-    /* 文章流（极度呼吸留白） */
-    .zen-posts {
+    .zen-masthead-title {
       display: flex;
       flex-direction: column;
-      gap: 70px;
+      gap: 6px;
     }
 
-    .zen-post-card {
-      background: var(--zen-card-bg);
-      border: 1px solid var(--zen-border);
-      padding: 48px 54px;
-      border-radius: 2px;
-      transition: all 0.35s ease;
+    .zen-journal-tag {
+      font-family: var(--font-en);
+      font-size: 11px;
+      letter-spacing: 0.35em;
+      color: var(--zen-muted);
+      text-transform: uppercase;
+    }
+
+    .zen-title-text {
+      font-size: 24px;
+      font-weight: 600;
+      letter-spacing: 0.2em;
+      color: var(--zen-ink);
+    }
+
+    .zen-title-text small {
+      font-size: 13px;
+      font-weight: 400;
+      color: var(--zen-muted);
+      margin-left: 12px;
+      letter-spacing: 0.15em;
+    }
+
+    .zen-masthead-meta {
+      text-align: right;
+      font-size: 12px;
+      color: var(--zen-muted);
+      line-height: 1.8;
+      letter-spacing: 0.15em;
+    }
+
+    /* 极简首屏：把速度放下，才看得见细节 */
+    .zen-prologue {
+      min-height: 60vh;
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      align-items: center;
+      text-align: center;
       position: relative;
-    }
-    .zen-post-card:hover {
-      box-shadow: 0 15px 35px rgba(0, 0, 0, 0.03);
-      transform: translateY(-2px);
+      margin-bottom: 80px;
+      border-bottom: 1px solid var(--zen-line);
+      padding: 40px 0 80px;
     }
 
-    .zen-post-meta {
+    .zen-seal-top {
+      width: 46px;
+      height: 46px;
+      border: 1.5px solid var(--zen-vermilion);
+      color: var(--zen-vermilion);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 13px;
+      line-height: 1.1;
+      font-weight: 600;
+      letter-spacing: 2px;
+      padding-left: 2px;
+      margin-bottom: 40px;
+      border-radius: 2px;
+      box-shadow: 0 0 0 3px var(--zen-bg), 0 0 0 4px rgba(185, 64, 45, 0.2);
+    }
+
+    .zen-hero-quote {
+      font-size: clamp(26px, 4.2vw, 42px);
+      font-weight: 400;
+      letter-spacing: 0.3em;
+      color: var(--zen-ink);
+      line-height: 1.8;
+      margin-bottom: 30px;
+      max-width: 720px;
+    }
+
+    .zen-hero-footnote {
       font-size: 13px;
       color: var(--zen-muted);
-      letter-spacing: 2px;
-      margin-bottom: 16px;
+      letter-spacing: 0.25em;
+      text-transform: uppercase;
+      display: flex;
+      align-items: center;
+      gap: 16px;
+    }
+
+    .zen-hero-footnote::before,
+    .zen-hero-footnote::after {
+      content: "";
+      display: inline-block;
+      width: 30px;
+      height: 1px;
+      background-color: var(--zen-line);
+    }
+
+    /* 主叙事排版 */
+    .zen-main-narrative {
+      margin-bottom: 90px;
+      background: var(--zen-paper);
+      border: 1px solid var(--zen-line);
+      padding: 60px 50px;
+      position: relative;
+      box-shadow: 0 10px 40px rgba(0, 0, 0, 0.02);
+    }
+
+    .zen-narrative-header {
+      border-bottom: 1px solid var(--zen-line);
+      padding-bottom: 36px;
+      margin-bottom: 44px;
+      display: flex;
+      justify-content: space-between;
+      align-items: flex-end;
+      flex-wrap: wrap;
+      gap: 20px;
+    }
+
+    .zen-narrative-badge {
+      font-size: 12px;
+      color: var(--zen-vermilion);
+      letter-spacing: 0.2em;
+      margin-bottom: 12px;
+      display: block;
+    }
+
+    .zen-narrative-title {
+      font-size: clamp(24px, 3.2vw, 34px);
+      font-weight: 600;
+      letter-spacing: 0.12em;
+      color: var(--zen-ink);
+      line-height: 1.5;
+    }
+
+    .zen-narrative-meta {
+      font-size: 12px;
+      color: var(--zen-muted);
+      letter-spacing: 0.15em;
+      text-align: right;
+    }
+
+    .zen-triad-grid {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 36px;
+      margin-top: 30px;
+    }
+
+    .zen-triad-col {
+      display: flex;
+      flex-direction: column;
+      position: relative;
+    }
+
+    .zen-triad-col:not(:last-child)::after {
+      content: "";
+      position: absolute;
+      right: -18px;
+      top: 10px;
+      bottom: 10px;
+      width: 1px;
+      background-color: var(--zen-line-soft);
+    }
+
+    .zen-epoch-head {
       display: flex;
       align-items: center;
       gap: 12px;
-    }
-    .zen-post-meta .dot {
-      width: 4px;
-      height: 4px;
-      background: var(--zen-muted);
-      border-radius: 50%;
-    }
-
-    .zen-post-title {
-      font-size: 26px;
-      font-weight: 600;
-      letter-spacing: 1.5px;
       margin-bottom: 20px;
-      line-height: 1.45;
-    }
-    .zen-post-title a {
-      color: var(--zen-ink);
-      text-decoration: none;
-      transition: color 0.2s;
-    }
-    .zen-post-title a:hover {
-      color: var(--zen-accent);
+      padding-bottom: 12px;
+      border-bottom: 1px dashed var(--zen-line);
     }
 
-    .zen-post-excerpt {
-      font-size: 16px;
-      color: #4a4740;
-      line-height: 2.2;
+    .zen-epoch-char {
+      width: 32px;
+      height: 32px;
+      border: 1px solid var(--zen-stone);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 15px;
+      font-weight: 600;
+      color: var(--zen-stone);
+    }
+
+    .zen-epoch-title {
+      font-size: 15px;
+      font-weight: 600;
+      color: var(--zen-ink);
+      letter-spacing: 0.1em;
+    }
+
+    .zen-epoch-sub {
+      font-size: 11px;
+      color: var(--zen-muted);
+      letter-spacing: 0.1em;
+    }
+
+    .zen-epoch-body {
+      font-size: 14.5px;
+      color: var(--zen-text-sub);
+      line-height: 2.1;
       text-align: justify;
     }
 
-    .zen-post-footer {
-      margin-top: 30px;
-      padding-top: 20px;
-      border-top: 1px solid #f0ece5;
-      display: flex;
-      justify-content: space-between;
-      font-size: 13px;
-      color: var(--zen-muted);
+    .zen-epoch-body p + p {
+      margin-top: 14px;
     }
 
-    /* 底部禅意署名 */
-    .zen-footer {
-      margin-top: 100px;
-      text-align: center;
-      padding-top: 40px;
-      border-top: 1px solid var(--zen-border);
-      font-size: 13px;
+    /* 资料模块：季候簿 + 朱砂日期印 */
+    .zen-season-ledger {
+      border: 1px solid var(--zen-line);
+      background: var(--zen-paper);
+      padding: 36px 40px;
+      margin-bottom: 90px;
+      display: grid;
+      grid-template-columns: 200px 1fr auto;
+      gap: 40px;
+      align-items: center;
+    }
+
+    .zen-ledger-title {
+      border-right: 1px solid var(--zen-line);
+      padding-right: 24px;
+    }
+
+    .zen-ledger-title h3 {
+      font-size: 18px;
+      font-weight: 600;
+      letter-spacing: 0.18em;
+      color: var(--zen-ink);
+      margin-bottom: 6px;
+    }
+
+    .zen-ledger-title span {
+      font-size: 12px;
       color: var(--zen-muted);
+      letter-spacing: 0.12em;
+    }
+
+    .zen-ledger-items {
+      display: grid;
+      grid-template-columns: repeat(5, 1fr);
+      gap: 16px;
+    }
+
+    .zen-ledger-unit {
+      font-size: 12px;
+      line-height: 1.6;
+    }
+
+    .zen-ledger-unit .k {
+      color: var(--zen-muted);
+      display: block;
+      font-size: 11px;
+      margin-bottom: 4px;
+    }
+
+    .zen-ledger-unit .v {
+      color: var(--zen-ink);
+      font-weight: 600;
+      font-size: 13.5px;
+      letter-spacing: 0.05em;
+    }
+
+    .zen-cinnabar-seal {
+      width: 76px;
+      height: 76px;
+      border: 2px solid var(--zen-vermilion);
+      padding: 4px;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      color: var(--zen-vermilion);
+      text-align: center;
+      position: relative;
+      transform: rotate(-1.5deg);
+      border-radius: 3px;
+      box-shadow: inset 0 0 0 1px rgba(185, 64, 45, 0.3);
+      user-select: none;
+    }
+
+    .zen-seal-inner-top {
+      font-size: 9px;
+      letter-spacing: 1px;
+      border-bottom: 1px solid rgba(185, 64, 45, 0.4);
+      padding-bottom: 2px;
+      width: 100%;
+    }
+
+    .zen-seal-inner-mid {
+      font-size: 14px;
+      font-weight: 700;
+      line-height: 1.2;
+      margin: 3px 0;
       letter-spacing: 2px;
     }
 
-    @media (max-width: 768px) {
-      .zen-hero {
+    .zen-seal-inner-bot {
+      font-size: 8px;
+      letter-spacing: 1px;
+    }
+
+    /* 次级栏目：三栏排版 */
+    .zen-secondary-section {
+      margin-bottom: 90px;
+    }
+
+    .zen-section-divider {
+      display: flex;
+      align-items: center;
+      gap: 20px;
+      margin-bottom: 36px;
+    }
+
+    .zen-section-divider span {
+      font-size: 12px;
+      letter-spacing: 0.25em;
+      color: var(--zen-muted);
+      text-transform: uppercase;
+      white-space: nowrap;
+    }
+
+    .zen-section-divider hr {
+      flex: 1;
+      border: none;
+      height: 1px;
+      background-color: var(--zen-line);
+    }
+
+    .zen-secondary-grid {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 30px;
+    }
+
+    .zen-sec-col {
+      background: var(--zen-paper);
+      border: 1px solid var(--zen-line);
+      padding: 36px 30px;
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
+      transition: transform 0.3s ease, box-shadow 0.3s ease;
+    }
+
+    .zen-sec-col:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 12px 30px rgba(0, 0, 0, 0.03);
+    }
+
+    .zen-sec-idx {
+      font-family: var(--font-en);
+      font-size: 12px;
+      color: var(--zen-muted);
+      letter-spacing: 0.2em;
+      margin-bottom: 12px;
+    }
+
+    .zen-sec-title {
+      font-size: 18px;
+      font-weight: 600;
+      color: var(--zen-ink);
+      margin-bottom: 16px;
+      letter-spacing: 0.08em;
+      line-height: 1.5;
+    }
+
+    .zen-sec-text {
+      font-size: 14px;
+      color: var(--zen-text-sub);
+      line-height: 2.1;
+      text-align: justify;
+      margin-bottom: 24px;
+      flex: 1;
+    }
+
+    .zen-sec-foot {
+      font-size: 12px;
+      color: var(--zen-muted);
+      border-top: 1px dashed var(--zen-line);
+      padding-top: 14px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+
+    /* 专属交互模块：短札留白与袖珍签 */
+    .zen-interactive-chamber {
+      border: 1px solid var(--zen-line);
+      background: var(--zen-paper);
+      padding: 44px;
+      margin-bottom: 90px;
+      position: relative;
+    }
+
+    .zen-chamber-header {
+      text-align: center;
+      max-width: 600px;
+      margin: 0 auto 30px;
+    }
+
+    .zen-chamber-header h3 {
+      font-size: 20px;
+      font-weight: 600;
+      letter-spacing: 0.2em;
+      color: var(--zen-ink);
+      margin-bottom: 8px;
+    }
+
+    .zen-chamber-header p {
+      font-size: 13px;
+      color: var(--zen-muted);
+      letter-spacing: 0.1em;
+    }
+
+    .zen-chamber-controls {
+      display: flex;
+      justify-content: center;
+      gap: 16px;
+      flex-wrap: wrap;
+      margin-bottom: 30px;
+    }
+
+    .zen-btn {
+      background: transparent;
+      border: 1px solid var(--zen-line);
+      padding: 10px 22px;
+      font-family: var(--font-serif);
+      font-size: 13px;
+      letter-spacing: 0.12em;
+      color: var(--zen-stone);
+      cursor: pointer;
+      border-radius: 2px;
+      transition: all 0.25s ease;
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .zen-btn:hover {
+      border-color: var(--zen-ink);
+      color: var(--zen-ink);
+      background: #f4efe6;
+    }
+
+    .zen-btn:focus-visible {
+      outline: 2px solid var(--zen-vermilion);
+      outline-offset: 2px;
+    }
+
+    .zen-tanzaku-scroll {
+      background: #faf7f0;
+      border: 1px solid var(--zen-line-soft);
+      padding: 30px;
+      max-width: 680px;
+      margin: 0 auto;
+      transition: all 0.4s ease;
+      position: relative;
+    }
+
+    .zen-tanzaku-scroll.collapsed {
+      opacity: 0.35;
+      filter: grayscale(0.5);
+      transform: scale(0.98);
+      pointer-events: none;
+    }
+
+    .zen-scroll-quote {
+      font-size: 16px;
+      line-height: 2.2;
+      color: var(--zen-ink);
+      text-align: center;
+      font-weight: 400;
+      letter-spacing: 0.1em;
+      min-height: 70px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+
+    .zen-status-toast {
+      text-align: center;
+      margin-top: 18px;
+      font-size: 12px;
+      color: var(--zen-vermilion);
+      letter-spacing: 0.15em;
+      opacity: 0;
+      transform: translateY(4px);
+      transition: all 0.3s ease;
+      min-height: 20px;
+    }
+
+    .zen-status-toast.show {
+      opacity: 1;
+      transform: translateY(0);
+    }
+
+    /* 收尾区：三行短札 */
+    .zen-epilogue-box {
+      border-top: 1px solid var(--zen-line);
+      padding: 80px 20px 40px;
+      text-align: center;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+    }
+
+    .zen-three-lines {
+      display: flex;
+      flex-direction: column;
+      gap: 16px;
+      font-size: 18px;
+      letter-spacing: 0.28em;
+      color: var(--zen-ink);
+      font-weight: 400;
+      margin-bottom: 40px;
+    }
+
+    .zen-epilogue-tag {
+      font-family: var(--font-en);
+      font-size: 11px;
+      letter-spacing: 0.4em;
+      color: var(--zen-muted);
+      text-transform: uppercase;
+      margin-top: 20px;
+    }
+
+    /* 庭院意境图展示条 */
+    .zen-gallery-strip {
+      margin-bottom: 80px;
+      border: 1px solid var(--zen-line);
+      background: var(--zen-paper);
+      padding: 14px;
+    }
+
+    .zen-gallery-strip img {
+      width: 100%;
+      height: 380px;
+      object-fit: cover;
+      display: block;
+      filter: saturate(0.8) contrast(0.95);
+      transition: filter 0.5s ease;
+    }
+
+    .zen-gallery-strip:hover img {
+      filter: saturate(0.9) contrast(1);
+    }
+
+    .zen-gallery-caption {
+      margin-top: 10px;
+      display: flex;
+      justify-content: space-between;
+      font-size: 12px;
+      color: var(--zen-muted);
+      letter-spacing: 0.12em;
+      padding: 0 4px;
+    }
+
+    /* 响应式断点 */
+    @media (max-width: 960px) {
+      .zen-triad-grid {
         grid-template-columns: 1fr;
-        gap: 20px;
+        gap: 40px;
       }
-      .zen-vertical-title {
-        writing-mode: horizontal-tb;
-        border-left: none;
-        border-bottom: 1px solid var(--zen-border);
-        padding-left: 0;
+      .zen-triad-col:not(:last-child)::after {
+        display: none;
+      }
+      .zen-triad-col:not(:last-child) {
+        border-bottom: 1px dashed var(--zen-line-soft);
+        padding-bottom: 30px;
+      }
+      .zen-season-ledger {
+        grid-template-columns: 1fr auto;
+        gap: 24px;
+      }
+      .zen-ledger-title {
+        grid-column: 1 / -1;
+        border-right: none;
+        border-bottom: 1px solid var(--zen-line);
         padding-bottom: 16px;
-        letter-spacing: 4px;
       }
-      .zen-post-card {
+      .zen-ledger-items {
+        grid-template-columns: repeat(3, 1fr);
+      }
+      .zen-secondary-grid {
+        grid-template-columns: 1fr;
+        gap: 24px;
+      }
+    }
+
+    @media (max-width: 640px) {
+      .zen-container {
+        padding: 24px 16px 80px;
+      }
+      .zen-main-narrative {
         padding: 30px 20px;
+      }
+      .zen-season-ledger {
+        grid-template-columns: 1fr;
+        padding: 24px 18px;
+        text-align: center;
+      }
+      .zen-cinnabar-seal {
+        margin: 10px auto 0;
+      }
+      .zen-ledger-items {
+        grid-template-columns: repeat(2, 1fr);
+        text-align: left;
+      }
+      .zen-gallery-strip img {
+        height: 240px;
+      }
+      .zen-interactive-chamber {
+        padding: 24px 16px;
+      }
+      .zen-hero-quote {
+        letter-spacing: 0.15em;
+        font-size: 22px;
+      }
+      .zen-three-lines {
+        font-size: 15px;
+        letter-spacing: 0.15em;
+      }
+    }
+
+    @media (prefers-reduced-motion: reduce) {
+      * {
+        animation: none !important;
+        transition: none !important;
       }
     }
   </style>
 </head>
 <body>
 
-  <div class="zen-wrapper">
-    <!-- 顶栏 -->
-    <header class="zen-header">
-      <div class="zen-brand">
-        空 山 集 <span>/ SORA NO SHI</span>
+  <div class="zen-container">
+    <!-- 刊头 -->
+    <header class="zen-masthead" role="banner">
+      <div class="zen-masthead-title">
+        <span class="zen-journal-tag">KARA-YAMA COLLECTION · VOL. 05</span>
+        <h1 class="zen-title-text">空山集 <small>一期一会</small></h1>
       </div>
-      <ul class="zen-nav">
-        <li><a href="#" class="active">随笔</a></li>
-        <li><a href="#">读书</a></li>
-        <li><a href="#">摄影</a></li>
-        <li><a href="#">闲谈</a></li>
-      </ul>
+      <div class="zen-masthead-meta">
+        <div>令和八年 · 谷雨</div>
+        <div>纸本第零五号 · 极简专刊</div>
+      </div>
     </header>
 
-    <!-- 诗意 Hero -->
-    <section class="zen-hero">
-      <div class="zen-vertical-title">
-        万物静观皆自得
+    <!-- 首屏：把速度放下，才看得见细节 -->
+    <section class="zen-prologue" aria-label="卷首语">
+      <div class="zen-seal-top" aria-hidden="true">空山</div>
+      <h2 class="zen-hero-quote">“把速度放下，才看得见细节”</h2>
+      <div class="zen-hero-footnote">Slowing down reveals the subtle</div>
+    </section>
+
+    <!-- 苔庭主意象画幅 -->
+    <figure class="zen-gallery-strip">
+      <img src="assets/images/zen_garden.jpg" alt="京都苔庭与枯山水白砂晨光" loading="lazy">
+      <figcaption class="zen-gallery-caption">
+        <span>〔 京都大德寺 · 龙源院苔庭 〕</span>
+        <span>白砂流线 / 雨后苍翠 / 晨钟</span>
+      </figcaption>
+    </figure>
+
+    <!-- 主叙事：《雨后苔庭与一段刚刚好的代码》 -->
+    <article class="zen-main-narrative" aria-label="主叙事">
+      <header class="zen-narrative-header">
+        <div>
+          <span class="zen-narrative-badge">卷首特辑 · 主叙事</span>
+          <h2 class="zen-narrative-title">《雨后苔庭与一段刚刚好的代码》</h2>
+        </div>
+        <div class="zen-narrative-meta">
+          <span>文 / 砚川</span><br>
+          <span>耗时八分钟静读</span>
+        </div>
+      </header>
+
+      <div class="zen-triad-grid">
+        <!-- 晨 · 观察 -->
+        <section class="zen-triad-col" aria-label="晨：观察">
+          <div class="zen-epoch-head">
+            <div class="zen-epoch-char">晨</div>
+            <div>
+              <div class="zen-epoch-title">晨 · 见苔生露</div>
+              <div class="zen-epoch-sub">06:40 / 露气与边界</div>
+            </div>
+          </div>
+          <div class="zen-epoch-body">
+            <p>清晨五点半，宿雨初歇。庭院角落的青苔吸饱了整夜的水汽，呈现出一种近乎沉静的苍绿。蹲在檐下细看，水珠悬在纤细的苔尖，没有多余的晃动，也没有试图溢向石板的野心。</p>
+            <p>我们总以为写程序如筑高楼，要罗列纷繁的依赖与冗余的防御。但真正耐得住时光摩挲的设计，往往只在关键路径上保留几滴晨露般的凝练逻辑。自然从不堆砌装饰，一切生发皆有其节制。</p>
+          </div>
+        </section>
+
+        <!-- 昼 · 删减 -->
+        <section class="zen-triad-col" aria-label="昼：删减">
+          <div class="zen-epoch-head">
+            <div class="zen-epoch-char">昼</div>
+            <div>
+              <div class="zen-epoch-title">昼 · 刀笔削繁</div>
+              <div class="zen-epoch-sub">13:15 / 删去的四百行</div>
+            </div>
+          </div>
+          <div class="zen-epoch-body">
+            <p>午后的阳光穿过障子纸，在桌面上投下斑驳的光影。对着重构了一周的调度核心，我按下退格键，毫不犹豫地抹去了自以为聪明的预加载缓存与层层嵌套的状态分发。</p>
+            <p>删去四百余行之后，整个模块只剩下三组清晰的纯函数。代码在屏幕上舒展如同修剪后的盆景：去其杂枝，方见主干之气韵。所谓刚好的代码，不是无法再添加，而是再无可删。</p>
+          </div>
+        </section>
+
+        <!-- 暮 · 复盘 -->
+        <section class="zen-triad-col" aria-label="暮：复盘">
+          <div class="zen-epoch-head">
+            <div class="zen-epoch-char">暮</div>
+            <div>
+              <div class="zen-epoch-title">暮 · 檐铎余响</div>
+              <div class="zen-epoch-sub">18:50 / 收敛与敬畏</div>
+            </div>
+          </div>
+          <div class="zen-epoch-body">
+            <p>暮色从远山漫过来，暮钟与铜铎声在谷中回荡。合上笔记本电脑，屏幕暗下的瞬间映出窗外的山形。这一天没有创造令人惊叹的庞大系统，仅仅理顺了一个数据管道的流向。</p>
+            <p>但这种自律的收敛让人心安。在日落之时，能确信系统里每一个状态都有据可循，每一个指针都有落处，便是一次对工程与时间的真诚交代。安静，是最高的可靠性。</p>
+          </div>
+        </section>
       </div>
-      <div class="zen-hero-text">
-        <span class="zen-seal">印</span>
-        <strong>山水有清音，草木有真意。</strong><br>
-        这里记录日常中偶拾的灵光与沉静的思辨。不求宏阔喧腾，但求字句明净、心境澄澈。在留白中体会呼吸，在朴拙中触摸日常的温度。
+    </article>
+
+    <!-- 资料模块：季候簿 + 朱砂日期印 -->
+    <section class="zen-season-ledger" aria-label="季候簿资料模块">
+      <div class="zen-ledger-title">
+        <h3>空山季候簿</h3>
+        <span>SEASONAL RECORD</span>
+      </div>
+
+      <div class="zen-ledger-items">
+        <div class="zen-ledger-unit">
+          <span class="k">风候</span>
+          <span class="v">微风 · 东南 1.8m/s</span>
+        </div>
+        <div class="zen-ledger-unit">
+          <span class="k">雨水</span>
+          <span class="v">晨雨 12mm · 适度</span>
+        </div>
+        <div class="zen-ledger-unit">
+          <span class="k">煎茶</span>
+          <span class="v">宇治煎茶 · 初摘</span>
+        </div>
+        <div class="zen-ledger-unit">
+          <span class="k">水温</span>
+          <span class="v">八十二度 · 柔和</span>
+        </div>
+        <div class="zen-ledger-unit">
+          <span class="k">静读</span>
+          <span class="v">已阅二十四页</span>
+        </div>
+      </div>
+
+      <div class="zen-cinnabar-seal" aria-label="朱砂印章：谷雨月廿日">
+        <div class="zen-seal-inner-top">空山草堂</div>
+        <div class="zen-seal-inner-mid">谷雨印</div>
+        <div class="zen-seal-inner-bot">拾贰年春</div>
       </div>
     </section>
 
-    <!-- 枯山水静谧意境摄影 -->
-    <div style="margin-bottom: 48px; border: 1px solid rgba(0,0,0,0.06); padding: 12px; background: #fff; box-shadow: 0 4px 20px rgba(0,0,0,0.03);">
-      <img src="assets/images/zen_garden.jpg" alt="京都枯山水庭院晨雾" style="width: 100%; height: 320px; object-fit: cover; display: block; filter: saturate(0.85) contrast(0.95);">
-      <div style="text-align: right; font-size: 11px; color: #888; margin-top: 8px; font-family: serif; letter-spacing: 2px;">
-        〔 枯山水 · 白砂流云 · 晨光微熹 〕
+    <!-- 次级栏目：3 个小篇章 -->
+    <section class="zen-secondary-section" aria-label="次级专栏">
+      <div class="zen-section-divider">
+        <span>COLUMN / 次级栏目</span>
+        <hr>
       </div>
-    </div>
 
-    <!-- 文章流 -->
-    <main class="zen-posts">
-      <!-- 篇章 1 -->
-      <article class="zen-post-card">
-        <div class="zen-post-meta">
-          <span>庚申月 · 初秋</span>
-          <span class="dot"></span>
-          <span>手记</span>
-          <span class="dot"></span>
-          <span>四分钟静读</span>
-        </div>
-        <h2 class="zen-post-title"><a href="#">留白之美：从枯山水到现代极简生活方式的减法艺术</a></h2>
-        <div class="zen-post-excerpt">
-          枯山水庭院中，白砂为水，乱石作山。不着一滴真水，却见浩荡江湖。现代人的生活往往被过多无意义的待办事项与消费欲望填塞得水泄不通。学会在日程里留出无所事事的白昼，正如在乐章中留出震人心魄的休止符。
-        </div>
-        <div class="zen-post-footer">
-          <span>山人 笔</span>
-          <span>分享此篇 →</span>
-        </div>
-      </article>
+      <div class="zen-secondary-grid">
+        <!-- 栏目 1 -->
+        <article class="zen-sec-col">
+          <div>
+            <div class="zen-sec-idx">NO. 01 / TIME</div>
+            <h3 class="zen-sec-title">《一盏茶的等待时间》</h3>
+            <p class="zen-sec-text">
+              水沸之后不能立即注入紫砂壶，需在公道杯中稍作停留，待热浪退去微烈的一瞬。编写异步接口亦如是：过度追求零毫秒的并发吞吐，往往忽视了下游系统的消化节奏。适度留出缓冲与背压，系统才不会在湍急中崩裂。
+            </p>
+          </div>
+          <div class="zen-sec-foot">
+            <span>茶道与系统节流</span>
+            <span>四分读完</span>
+          </div>
+        </article>
 
-      <!-- 篇章 2 -->
-      <article class="zen-post-card">
-        <div class="zen-post-meta">
-          <span>未月 · 仲夏</span>
-          <span class="dot"></span>
-          <span>茶席随想</span>
-          <span class="dot"></span>
-          <span>六分钟静读</span>
-        </div>
-        <h2 class="zen-post-title"><a href="#">一期一会：在浮躁浪潮中守住一份专注的心流</a></h2>
-        <div class="zen-post-excerpt">
-          茶道中所讲的“一期一会”，意为每一次相遇都是此生仅有的一次。当我们在敲下每一行代码、构思每一次系统重构时，若能怀着敬畏与全神贯注的态度，工具与人便能达成物我两忘的谐调。
-        </div>
-        <div class="zen-post-footer">
-          <span>山人 笔</span>
-          <span>分享此篇 →</span>
-        </div>
-      </article>
+        <!-- 栏目 2 -->
+        <article class="zen-sec-col">
+          <div>
+            <div class="zen-sec-idx">NO. 02 / SPACE</div>
+            <h3 class="zen-sec-title">《木窗投下的四种灰》</h3>
+            <p class="zen-sec-text">
+              晨曦之灰泛白，正午之灰偏冷，傍晚之灰渐近焦茶，夜雨之灰透着靛蓝。界面中何必使用刺目的纯黑与纯白？在浅褐、灰瓦与素练之间建立细微的明度阶梯，眼眸便不再受高对比度的灼伤，文字也能安静落脚。
+            </p>
+          </div>
+          <div class="zen-sec-foot">
+            <span>色彩与感官舒适</span>
+            <span>三分读完</span>
+          </div>
+        </article>
 
-      <!-- 篇章 3 -->
-      <article class="zen-post-card">
-        <div class="zen-post-meta">
-          <span>午月 · 初夏</span>
-          <span class="dot"></span>
-          <span>自然笔记</span>
-          <span class="dot"></span>
-          <span>三分静读</span>
-        </div>
-        <h2 class="zen-post-title"><a href="#">听雨记：窗外檐溜声里的时间的重量</a></h2>
-        <div class="zen-post-excerpt">
-          连绵的夏雨洗尽了城市的铅尘。坐在木桌前，听雨水顺着瓦当滴落的声音，时间仿佛在此刻被拉得很长很长。
-        </div>
-        <div class="zen-post-footer">
-          <span>山人 笔</span>
-          <span>分享此篇 →</span>
-        </div>
-      </article>
+        <!-- 栏目 3 -->
+        <article class="zen-sec-col">
+          <div>
+            <div class="zen-sec-idx">NO. 03 / ACTION</div>
+            <h3 class="zen-sec-title">《今日只完成一件事》</h3>
+            <p class="zen-sec-text">
+              翻开待办清单，往往列满二十余条琐细要求。然而真正影响深远的，往往只是把一个关键的数据校验逻辑做透、或将一段混乱的文档理清。把剩余十九件事退回草稿箱，今日只做好一件事，心便不再被无谓的焦虑撕碎。
+            </p>
+          </div>
+          <div class="zen-sec-foot">
+            <span>专注与减法工作流</span>
+            <span>五分读完</span>
+          </div>
+        </article>
+      </div>
+    </section>
 
-      <!-- 篇章 4 -->
-      <article class="zen-post-card">
-        <div class="zen-post-meta">
-          <span>辰月 · 暮春</span>
-          <span class="dot"></span>
-          <span>美学析理</span>
-          <span class="dot"></span>
-          <span>八分钟静读</span>
-        </div>
-        <h2 class="zen-post-title"><a href="#">侘寂（Wabi-Sabi）：在不完整、无常与残缺中发现万物的本真</a></h2>
-        <div class="zen-post-excerpt">
-          金缮修复的茶碗，将裂痕用纯金描摹，反而让破碎成为了器物最独特的荣光。在软件工程与人机交互中，追求绝对零缺陷的“无菌设计”往往带来冰冷与疏离，而适度的物理阻尼感与温润的错误反馈，才能让数字界面充满有机的温度。
-        </div>
-        <div class="zen-post-footer">
-          <span>山人 笔</span>
-          <span>分享此篇 →</span>
-        </div>
-      </article>
+    <!-- 专属主题交互模块 -->
+    <section class="zen-interactive-chamber" aria-label="主题互动微札">
+      <div class="zen-chamber-header">
+        <h3>袖珍签 · 案头拾语</h3>
+        <p>在留白中沉淀片刻思绪，抽取一则今日的心流短札</p>
+      </div>
 
-      <!-- 篇章 5 -->
-      <article class="zen-post-card">
-        <div class="zen-post-meta">
-          <span>寅月 · 早春</span>
-          <span class="dot"></span>
-          <span>茶室与代码</span>
-          <span class="dot"></span>
-          <span>七分钟静读</span>
-        </div>
-        <h2 class="zen-post-title"><a href="#">千利休茶道七则与现代系统架构的微妙互文</a></h2>
-        <div class="zen-post-excerpt">
-          “茶要浓淡适中，炭要适于烧水，夏宜凉爽，冬宜温暖，提前备好器物，以防下雨备好雨具，于一同入席的客人互相关怀。”千利休所立下的七则茶道戒律，若对应至分布式高可用系统设计，正是最朴素的降级熔断、负载均衡与容灾冗余之道。
-        </div>
-        <div class="zen-post-footer">
-          <span>山人 笔</span>
-          <span>分享此篇 →</span>
-        </div>
-      </article>
+      <div class="zen-chamber-controls">
+        <button id="btnExpand" class="zen-btn" aria-label="展开一则短札">
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 5v14M5 12h14"/></svg>
+          展开一则短札
+        </button>
+        <button id="btnFold" class="zen-btn" aria-label="暂时收起，让页面留白">
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M5 12h14"/></svg>
+          暂时收起，让页面留白
+        </button>
+      </div>
 
-      <!-- 四季俳句与枯山水交互板 -->
-      <div style="background: var(--zen-card-bg); border: 1px solid var(--zen-border); padding: 36px; margin: 40px 0; border-radius: 4px; text-align: center; box-shadow: 0 4px 20px rgba(0,0,0,0.03);">
-        <div style="font-size: 12px; color: var(--zen-accent); letter-spacing: 3px; margin-bottom: 12px;">【 四 時 俳 句 · 心 流 共 振 】</div>
-        <div id="haikuText" style="font-size: 20px; line-height: 2; margin: 20px 0; font-weight: 600; color: var(--zen-ink);">
-          古池や　蛙飛びこむ　水の音<br>
-          <span style="font-size: 15px; color: var(--zen-muted); font-weight: 400;">古池冷凄凄，青蛙跃入响清音。 —— 松尾芭蕉</span>
-        </div>
-        <div style="display: flex; justify-content: center; gap: 14px; margin-top: 24px;">
-          <button onclick="switchHaiku('spring')" style="background:none; border:1px solid var(--zen-border); padding:6px 16px; font-family:inherit; font-size:13px; cursor:pointer; border-radius:2px;">🌸 春 · 樱</button>
-          <button onclick="switchHaiku('summer')" style="background:none; border:1px solid var(--zen-border); padding:6px 16px; font-family:inherit; font-size:13px; cursor:pointer; border-radius:2px;">🎋 夏 · 蝉</button>
-          <button onclick="switchHaiku('autumn')" style="background:none; border:1px solid var(--zen-border); padding:6px 16px; font-family:inherit; font-size:13px; cursor:pointer; border-radius:2px;">🍂 秋 · 月</button>
-          <button onclick="switchHaiku('winter')" style="background:none; border:1px solid var(--zen-border); padding:6px 16px; font-family:inherit; font-size:13px; cursor:pointer; border-radius:2px;">❄️ 冬 · 雪</button>
+      <div id="tanzakuCard" class="zen-tanzaku-scroll" role="region" aria-live="polite">
+        <div id="tanzakuText" class="zen-scroll-quote">
+          “物之哀者，见落樱而惜春；码之简者，除冗杂而自明。”
         </div>
       </div>
-    </main>
 
-    <!-- 底部 -->
-    <footer class="zen-footer">
-      <div>空山不见人，但闻人语响。返景入深林，复照青苔上。</div>
-      <div style="margin-top: 8px; font-size: 11px; opacity: 0.7;">&copy; 2026 WABI-SABI ZEN EDITORIAL · ALL RIGHTS RESERVED</div>
+      <div id="zenToast" class="zen-status-toast" aria-live="polite"></div>
+    </section>
+
+    <!-- 收尾区：三行短札 -->
+    <footer class="zen-epilogue-box" role="contentinfo">
+      <div class="zen-three-lines">
+        <div>未完成，也可以停笔。</div>
+        <div>留一处空白，给明天继续。</div>
+        <div>山仍在那里。</div>
+      </div>
+      <div class="zen-epilogue-tag">SORA NO SHI · PEACEFUL MIND · 2026</div>
     </footer>
   </div>
 
-  <!-- 禅意落叶与枯山水涟漪 Canvas -->
+  <!-- 水波微粒 Canvas 背景 -->
   <canvas id="zenCanvas" style="position: fixed; inset: 0; pointer-events: none; z-index: 99;"></canvas>
 
   <script src="assets/nav-bar.js"></script>
   <script>
+    // 案头短札签库
+    const tanzakuQuotes = [
+      "“物之哀者，见落樱而惜春；码之简者，除冗杂而自明。”",
+      "“把速度放下，水滴才能映出整座山峦。”",
+      "“删掉第四百行代码时，呼吸终于顺畅了起来。”",
+      "“一盏茶凉的时间，足以让过热的思路重新结晶。”",
+      "“不着一字，尽得风流；不设多余抽象，方显架构骨架。”",
+      "“今日只完成一件事，余下的交给明天的山风。”"
+    ];
+
+    let quoteIndex = 0;
+    const tanzakuCard = document.getElementById('tanzakuCard');
+    const tanzakuText = document.getElementById('tanzakuText');
+    const zenToast = document.getElementById('zenToast');
+    const btnExpand = document.getElementById('btnExpand');
+    const btnFold = document.getElementById('btnFold');
+
+    function showToast(msg) {
+      zenToast.textContent = msg;
+      zenToast.classList.add('show');
+      setTimeout(() => {
+        zenToast.classList.remove('show');
+      }, 3200);
+    }
+
+    btnExpand.addEventListener('click', () => {
+      tanzakuCard.classList.remove('collapsed');
+      quoteIndex = (quoteIndex + 1) % tanzakuQuotes.length;
+      tanzakuText.style.opacity = 0;
+      setTimeout(() => {
+        tanzakuText.textContent = tanzakuQuotes[quoteIndex];
+        tanzakuText.style.opacity = 1;
+      }, 200);
+      showToast("今日之句已收入袖珍签");
+    });
+
+    btnFold.addEventListener('click', () => {
+      tanzakuCard.classList.add('collapsed');
+      showToast("已暂时收起，让页面留白");
+    });
+
+    // 禅意水波涟漪与淡墨微粒
     (function() {
       const canvas = document.getElementById('zenCanvas');
+      if (!canvas) return;
       const ctx = canvas.getContext('2d');
       let w, h;
 
@@ -392,103 +990,84 @@
       window.addEventListener('resize', resize);
       resize();
 
-      // 竹叶飘落微粒
-      const leaves = Array.from({ length: 18 }, () => ({
+      const ripples = [];
+      const petals = Array.from({ length: 14 }, () => ({
         x: Math.random() * w,
         y: Math.random() * h,
-        size: 10 + Math.random() * 12,
-        speedY: 0.4 + Math.random() * 0.7,
-        speedX: Math.random() * 0.5 - 0.25,
+        size: 8 + Math.random() * 8,
+        speedY: 0.3 + Math.random() * 0.4,
+        speedX: Math.random() * 0.4 - 0.2,
         rotation: Math.random() * Math.PI * 2,
-        rotSpeed: (Math.random() - 0.5) * 0.02,
-        opacity: 0.15 + Math.random() * 0.25
+        rotSpeed: (Math.random() - 0.5) * 0.015,
+        opacity: 0.12 + Math.random() * 0.15
       }));
 
-      // 点击水波涟漪
-      const ripples = [];
       window.addEventListener('click', (e) => {
+        // 避免点击功能性按钮时过度干扰
         ripples.push({
           x: e.clientX,
           y: e.clientY,
-          radius: 2,
-          maxRadius: 60 + Math.random() * 30,
-          opacity: 0.4,
-          speed: 1.5
+          r: 2,
+          maxR: 50 + Math.random() * 25,
+          alpha: 0.35,
+          speed: 1.2
         });
       });
 
-      function animate() {
+      function render() {
         ctx.clearRect(0, 0, w, h);
 
-        // 绘制水波涟漪
+        // 涟漪
         for (let i = ripples.length - 1; i >= 0; i--) {
-          const r = ripples[i];
-          r.radius += r.speed;
-          r.opacity -= 0.008;
+          const rip = ripples[i];
+          rip.r += rip.speed;
+          rip.alpha -= 0.007;
 
-          if (r.opacity <= 0 || r.radius >= r.maxRadius) {
+          if (rip.alpha <= 0 || rip.r >= rip.maxR) {
             ripples.splice(i, 1);
             continue;
           }
 
           ctx.beginPath();
-          ctx.arc(r.x, r.y, r.radius, 0, Math.PI * 2);
-          ctx.strokeStyle = `rgba(163, 93, 70, ${r.opacity})`;
-          ctx.lineWidth = 1.2;
+          ctx.arc(rip.x, rip.y, rip.r, 0, Math.PI * 2);
+          ctx.strokeStyle = `rgba(185, 64, 45, ${rip.alpha})`;
+          ctx.lineWidth = 1;
           ctx.stroke();
 
           ctx.beginPath();
-          ctx.arc(r.x, r.y, r.radius * 0.6, 0, Math.PI * 2);
-          ctx.strokeStyle = `rgba(140, 136, 123, ${r.opacity * 0.6})`;
-          ctx.lineWidth = 0.8;
+          ctx.arc(rip.x, rip.y, rip.r * 0.65, 0, Math.PI * 2);
+          ctx.strokeStyle = `rgba(141, 135, 123, ${rip.alpha * 0.5})`;
+          ctx.lineWidth = 0.7;
           ctx.stroke();
         }
 
-        // 绘制飘落竹叶
-        ctx.fillStyle = '#8c887b';
-        leaves.forEach(leaf => {
-          leaf.y += leaf.speedY;
-          leaf.x += Math.sin(leaf.y * 0.01) * 0.4 + leaf.speedX;
-          leaf.rotation += leaf.rotSpeed;
+        // 飘落花叶
+        ctx.fillStyle = '#8d877b';
+        petals.forEach(p => {
+          p.y += p.speedY;
+          p.x += Math.sin(p.y * 0.008) * 0.3 + p.speedX;
+          p.rotation += p.rotSpeed;
 
-          if (leaf.y > h + 20) {
-            leaf.y = -20;
-            leaf.x = Math.random() * w;
+          if (p.y > h + 20) {
+            p.y = -20;
+            p.x = Math.random() * w;
           }
 
           ctx.save();
-          ctx.translate(leaf.x, leaf.y);
-          ctx.rotate(leaf.rotation);
-          ctx.globalAlpha = leaf.opacity;
+          ctx.translate(p.x, p.y);
+          ctx.rotate(p.rotation);
+          ctx.globalAlpha = p.opacity;
 
           ctx.beginPath();
-          ctx.ellipse(0, 0, leaf.size, leaf.size * 0.35, 0, 0, Math.PI * 2);
+          ctx.ellipse(0, 0, p.size, p.size * 0.3, 0, 0, Math.PI * 2);
           ctx.fill();
           ctx.restore();
         });
 
-        requestAnimationFrame(animate);
+        requestAnimationFrame(render);
       }
-      animate();
+      render();
     })();
-
-    const haikuData = {
-      spring: { ja: "花の雲　鐘は上野か　浅草か", zh: "落樱若云雾，钟声远扬何处来？浅草或上野。 —— 松尾芭蕉" },
-      summer: { ja: "閑さや　岩にしみ入る　蝉の声", zh: "幽邃寂静里，蝉鸣声声渗入岩。 —— 松尾芭蕉" },
-      autumn: { ja: "名月や　池をめぐりて　夜もすがら", zh: "秋霄朗月悬，绕池漫步不知晓。 —— 松尾芭蕉" },
-      winter: { ja: "降る雪や　明治は遠く　なりにけり", zh: "大雪纷纷下，明治时代已遥远。 —— 中村草田男" }
-    };
-
-    function switchHaiku(season) {
-      const h = haikuData[season];
-      if (!h) return;
-      const el = document.getElementById('haikuText');
-      el.style.opacity = 0;
-      setTimeout(() => {
-        el.innerHTML = `${h.ja}<br><span style="font-size: 15px; color: var(--zen-muted); font-weight: 400;">${h.zh}</span>`;
-        el.style.opacity = 1;
-      }, 200);
-    }
   </script>
 </body>
 </html>

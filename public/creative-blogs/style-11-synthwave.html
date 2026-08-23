@@ -3,19 +3,25 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>SYNTHWAVE 1984 // 11 蒸汽波与合成器浪潮风</title>
+  <title>MIDNIGHT DRIVE FM 88.6 // 11 蒸汽波与 80s 合成器浪潮</title>
   <link rel="stylesheet" href="assets/common.css">
-  <link rel="preconnect" href="https://fonts.googleapis.com">
-  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=VT323&family=Orbitron:wght@700;900&family=Noto+Sans+SC:wght@400;700;900&display=swap" rel="stylesheet">
   <style>
     :root {
-      --synth-bg: #0d0221;
+      --synth-dark: #090117;
+      --synth-deep: #130429;
+      --synth-card: rgba(26, 8, 54, 0.82);
+      --synth-card-border: rgba(255, 42, 141, 0.45);
       --synth-pink: #ff2a8d;
+      --synth-magenta: #f706cf;
       --synth-purple: #7925c7;
       --synth-cyan: #05d9e8;
+      --synth-neon-blue: #01c4e7;
       --synth-yellow: #ffea00;
-      --font-retro: "VT323", "Orbitron", monospace;
+      --synth-peach: #ff8e72;
+      --synth-text: #f0e6ff;
+      --synth-dim: #a491c3;
+      --font-display: 'Courier New', 'SFMono-Regular', Consolas, Monaco, monospace;
+      --font-body: -apple-system, BlinkMacSystemFont, "Segoe UI", "PingFang SC", "Hiragino Sans GB", "Microsoft YaHei", sans-serif;
     }
 
     * {
@@ -25,369 +31,1089 @@
     }
 
     body {
-      background-color: var(--synth-bg);
-      color: #fff;
-      font-family: "Noto Sans SC", sans-serif;
+      background-color: var(--synth-dark);
+      color: var(--synth-text);
+      font-family: var(--font-body);
       min-height: 100vh;
       overflow-x: hidden;
+      line-height: 1.7;
       position: relative;
-      padding-bottom: 120px;
+      padding-bottom: 90px;
+      transition: filter 0.3s ease;
     }
 
-    /* 顶部导航 */
-    .synth-nav {
-      padding: 20px 30px;
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-      border-bottom: 2px solid rgba(255, 42, 141, 0.4);
-      background: rgba(13, 2, 33, 0.85);
-      backdrop-filter: blur(10px);
+    body.night-boost {
+      filter: contrast(1.15) brightness(1.18);
+    }
+
+    /* 背景网格与光晕 */
+    .bg-grid {
+      position: fixed;
+      inset: 0;
+      background-image: 
+        linear-gradient(to right, rgba(255, 42, 141, 0.08) 1px, transparent 1px),
+        linear-gradient(to bottom, rgba(5, 217, 232, 0.08) 1px, transparent 1px);
+      background-size: 32px 32px;
+      pointer-events: none;
+      z-index: 0;
+    }
+
+    .bg-scanlines {
+      position: fixed;
+      inset: 0;
+      background: repeating-linear-gradient(
+        0deg,
+        rgba(0, 0, 0, 0.2),
+        rgba(0, 0, 0, 0.2) 1px,
+        transparent 1px,
+        transparent 3px
+      );
+      pointer-events: none;
+      z-index: 99;
+      opacity: 0.6;
+    }
+
+    /* 顶部导航电台状态栏 */
+    .radio-header {
       position: sticky;
       top: 0;
       z-index: 100;
+      background: rgba(9, 1, 23, 0.88);
+      backdrop-filter: blur(12px);
+      border-bottom: 2px solid var(--synth-pink);
+      box-shadow: 0 4px 25px rgba(255, 42, 141, 0.25);
     }
 
-    .synth-brand {
-      font-family: 'Orbitron', sans-serif;
-      font-size: 24px;
+    .radio-header-inner {
+      max-width: 1200px;
+      margin: 0 auto;
+      padding: 12px 20px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      flex-wrap: wrap;
+      gap: 12px;
+    }
+
+    .station-id {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+    }
+
+    .station-badge {
+      background: linear-gradient(135deg, var(--synth-pink), var(--synth-purple));
+      color: #fff;
+      font-family: var(--font-display);
       font-weight: 900;
-      background: linear-gradient(180deg, #fff 10%, var(--synth-pink) 60%, var(--synth-cyan) 100%);
-      -webkit-background-clip: text;
-      -webkit-text-fill-color: transparent;
-      letter-spacing: 2px;
-      text-shadow: 0 0 20px rgba(255, 42, 141, 0.8);
-    }
-    .synth-brand span {
-      font-family: 'VT323', monospace;
-      font-size: 16px;
-      color: var(--synth-cyan);
-      -webkit-text-fill-color: var(--synth-cyan);
-      margin-left: 8px;
+      font-size: 13px;
+      padding: 4px 10px;
+      border-radius: 4px;
+      letter-spacing: 1.5px;
+      text-shadow: 0 0 8px rgba(255, 255, 255, 0.8);
+      box-shadow: 0 0 12px var(--synth-pink);
     }
 
-    /* 80s 极光网格地平线与巨大霓虹夕阳 */
-    .synth-hero {
-      text-align: center;
-      padding: 60px 20px 40px;
+    .station-title {
+      font-family: var(--font-display);
+      font-weight: 800;
+      font-size: 20px;
+      letter-spacing: 2px;
+      color: #fff;
+      text-shadow: 0 0 10px var(--synth-cyan);
+    }
+
+    .station-title span {
+      color: var(--synth-yellow);
+    }
+
+    .broadcast-status {
+      display: flex;
+      align-items: center;
+      gap: 16px;
+      font-family: var(--font-display);
+      font-size: 13px;
+    }
+
+    .on-air {
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      color: #ff3b30;
+      font-weight: bold;
+    }
+
+    .on-air-dot {
+      width: 10px;
+      height: 10px;
+      border-radius: 50%;
+      background: #ff3b30;
+      box-shadow: 0 0 8px #ff3b30;
+      animation: pulse-dot 1.2s infinite ease-in-out;
+    }
+
+    @keyframes pulse-dot {
+      0%, 100% { transform: scale(1); opacity: 1; }
+      50% { transform: scale(1.3); opacity: 0.4; }
+    }
+
+    .weather-pill {
+      background: rgba(5, 217, 232, 0.12);
+      border: 1px solid var(--synth-cyan);
+      color: var(--synth-cyan);
+      padding: 3px 10px;
+      border-radius: 20px;
+      font-size: 12px;
+    }
+
+    /* Hero / 霓虹夕阳公路区 */
+    .hero-stage {
       position: relative;
+      text-align: center;
+      padding: 50px 20px 40px;
+      z-index: 1;
+      overflow: hidden;
+      border-bottom: 1px solid rgba(255, 42, 141, 0.25);
+    }
+
+    .sun-horizon-wrap {
+      position: relative;
+      width: 220px;
+      height: 110px;
+      margin: 0 auto 20px;
       overflow: hidden;
     }
 
     .synth-sun {
-      width: 200px;
-      height: 200px;
-      margin: 0 auto 30px;
+      width: 220px;
+      height: 220px;
       border-radius: 50%;
-      background: linear-gradient(to bottom, #ffea00, #ff2a8d, #7925c7);
-      box-shadow: 0 0 60px rgba(255, 42, 141, 0.9);
-      position: relative;
+      background: linear-gradient(to bottom, var(--synth-yellow) 0%, var(--synth-peach) 40%, var(--synth-pink) 75%, var(--synth-purple) 100%);
+      box-shadow: 0 0 60px rgba(255, 42, 141, 0.7);
+      position: absolute;
+      top: 0;
+      left: 0;
     }
-    .synth-sun::after {
-      content: "";
+
+    .synth-sun-bars {
       position: absolute;
       inset: 0;
-      background: repeating-linear-gradient(to bottom, transparent 0px, transparent 12px, #0d0221 12px, #0d0221 16px);
-      border-radius: 50%;
+      background: repeating-linear-gradient(
+        to bottom,
+        transparent 0px,
+        transparent 8px,
+        var(--synth-dark) 8px,
+        var(--synth-dark) 12px
+      );
+      mask-image: linear-gradient(to bottom, transparent 30%, black 90%);
+      -webkit-mask-image: linear-gradient(to bottom, transparent 30%, black 90%);
     }
 
-    .synth-hero-title {
-      font-family: 'Orbitron', sans-serif;
-      font-size: clamp(36px, 6vw, 64px);
+    .hero-program-tag {
+      display: inline-block;
+      color: var(--synth-cyan);
+      font-family: var(--font-display);
+      letter-spacing: 3px;
+      font-size: 14px;
+      margin-bottom: 8px;
+      text-transform: uppercase;
+      text-shadow: 0 0 10px rgba(5, 217, 232, 0.6);
+    }
+
+    .hero-title {
+      font-size: clamp(28px, 5vw, 46px);
       font-weight: 900;
-      letter-spacing: 3px;
+      letter-spacing: 2px;
+      color: #ffffff;
+      text-shadow: 0 0 15px var(--synth-pink), 0 0 30px var(--synth-purple);
+      margin-bottom: 14px;
+      line-height: 1.25;
+    }
+
+    .hero-lead {
+      max-width: 720px;
+      margin: 0 auto 24px;
+      color: var(--synth-dim);
+      font-size: 16px;
+      line-height: 1.8;
+    }
+
+    .interactive-control-bar {
+      display: flex;
+      flex-wrap: wrap;
+      justify-content: center;
+      gap: 12px;
+      margin-top: 15px;
+    }
+
+    .synth-action-btn {
+      background: rgba(25, 10, 55, 0.85);
+      border: 1px solid var(--synth-pink);
       color: #fff;
-      text-shadow: 0 0 15px var(--synth-cyan), 0 0 30px var(--synth-pink);
-      margin-bottom: 12px;
+      font-family: var(--font-display);
+      font-size: 13px;
+      padding: 8px 18px;
+      border-radius: 6px;
+      cursor: pointer;
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      transition: all 0.25s ease;
+      box-shadow: 0 0 12px rgba(255, 42, 141, 0.25);
     }
 
-    .synth-hero-sub {
-      font-family: 'VT323', monospace;
-      font-size: 22px;
-      color: var(--synth-yellow);
-      letter-spacing: 3px;
+    .synth-action-btn:hover {
+      background: var(--synth-pink);
+      color: #fff;
+      box-shadow: 0 0 20px rgba(255, 42, 141, 0.8);
+      transform: translateY(-2px);
     }
 
-    /* 布局容器 */
-    .synth-container {
-      max-width: 1140px;
-      margin: 0 auto;
+    .synth-action-btn.active {
+      background: var(--synth-cyan);
+      color: #000;
+      border-color: var(--synth-cyan);
+      font-weight: bold;
+      box-shadow: 0 0 20px rgba(5, 217, 232, 0.8);
+    }
+
+    /* 主网格排版 */
+    .main-layout {
+      max-width: 1200px;
+      margin: 40px auto 0;
       padding: 0 20px;
       display: grid;
-      grid-template-columns: 2fr 1fr;
-      gap: 36px;
+      grid-template-columns: 2.2fr 1fr;
+      gap: 32px;
       position: relative;
-      z-index: 10;
+      z-index: 2;
     }
 
-    /* 霓虹文章卡片 */
-    .synth-card {
-      background: rgba(25, 10, 55, 0.7);
-      border: 1px solid rgba(255, 42, 141, 0.4);
+    /* 主叙事区 */
+    .main-narrative {
+      display: flex;
+      flex-direction: column;
+      gap: 28px;
+    }
+
+    .narrative-card {
+      background: var(--synth-card);
+      border: 1px solid var(--synth-card-border);
       border-radius: 12px;
-      padding: 32px;
-      margin-bottom: 30px;
-      box-shadow: 0 0 20px rgba(121, 37, 199, 0.3), inset 0 0 15px rgba(255, 42, 141, 0.1);
-      transition: all 0.3s ease;
+      padding: 30px;
+      box-shadow: 0 8px 32px rgba(0, 0, 0, 0.5), inset 0 0 20px rgba(255, 42, 141, 0.08);
       position: relative;
       overflow: hidden;
-    }
-    .synth-card:hover {
-      border-color: var(--synth-cyan);
-      box-shadow: 0 0 30px rgba(5, 217, 232, 0.5);
-      transform: translateY(-4px);
+      backdrop-filter: blur(8px);
     }
 
-    .synth-card-date {
-      font-family: 'VT323', monospace;
-      font-size: 18px;
+    .narrative-card::before {
+      content: "";
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 4px;
+      height: 100%;
+      background: linear-gradient(to bottom, var(--synth-pink), var(--synth-cyan));
+    }
+
+    .dj-intro {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      font-family: var(--font-display);
+      font-size: 13px;
+      color: var(--synth-yellow);
+      margin-bottom: 16px;
+      padding-bottom: 12px;
+      border-bottom: 1px dashed rgba(255, 234, 0, 0.3);
+    }
+
+    .article-headline {
+      font-size: 26px;
+      font-weight: 800;
+      color: #fff;
+      line-height: 1.35;
+      margin-bottom: 18px;
+      letter-spacing: 0.5px;
+    }
+
+    .narrative-text {
+      font-size: 15px;
+      color: #e2d9f3;
+      line-height: 1.85;
+      margin-bottom: 18px;
+    }
+
+    .narrative-text strong {
       color: var(--synth-cyan);
+    }
+
+    /* 听众互动留言条 */
+    .listener-quote-box {
+      margin: 20px 0;
+      background: rgba(5, 217, 232, 0.06);
+      border: 1px solid rgba(5, 217, 232, 0.35);
+      border-radius: 8px;
+      padding: 16px 20px;
+      position: relative;
+    }
+
+    .listener-quote-header {
+      display: flex;
+      justify-content: space-between;
+      font-family: var(--font-display);
+      font-size: 12px;
+      color: var(--synth-cyan);
+      margin-bottom: 8px;
+    }
+
+    .listener-quote-body {
+      font-size: 14px;
+      font-style: italic;
+      color: #ffffff;
+      line-height: 1.6;
+    }
+
+    /* 3 个次级栏目卡片 */
+    .section-title-bar {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      margin: 20px 0 10px;
+      font-family: var(--font-display);
+      font-size: 18px;
+      font-weight: 800;
+      color: var(--synth-yellow);
+      letter-spacing: 1.5px;
+    }
+
+    .section-title-bar::after {
+      content: "";
+      flex: 1;
+      height: 1px;
+      background: linear-gradient(to right, var(--synth-yellow), transparent);
+    }
+
+    .sub-columns-grid {
+      display: grid;
+      grid-template-columns: 1fr;
+      gap: 20px;
+    }
+
+    .sub-column-card {
+      background: rgba(19, 4, 41, 0.85);
+      border: 1px solid rgba(121, 37, 199, 0.5);
+      border-radius: 10px;
+      padding: 24px;
+      transition: all 0.3s ease;
+      position: relative;
+    }
+
+    .sub-column-card:hover {
+      border-color: var(--synth-cyan);
+      box-shadow: 0 0 20px rgba(5, 217, 232, 0.35);
+      transform: translateY(-3px);
+    }
+
+    .card-meta-tag {
+      display: inline-block;
+      font-family: var(--font-display);
+      font-size: 11px;
+      font-weight: bold;
+      color: var(--synth-pink);
       margin-bottom: 8px;
       letter-spacing: 1px;
     }
 
-    .synth-card-title {
-      font-size: 24px;
-      font-weight: 800;
-      color: #fff;
-      margin-bottom: 14px;
-      line-height: 1.35;
-    }
-    .synth-card-title:hover {
-      color: var(--synth-pink);
-    }
-
-    .synth-card-body {
-      font-size: 15px;
-      color: #cbd5e1;
-      line-height: 1.8;
-      margin-bottom: 20px;
-    }
-
-    .synth-btn {
-      display: inline-flex;
-      align-items: center;
-      gap: 6px;
-      padding: 8px 20px;
-      background: linear-gradient(90deg, var(--synth-pink), var(--synth-purple));
-      color: #fff;
-      font-family: 'Orbitron', sans-serif;
-      font-size: 12px;
+    .card-title {
+      font-size: 20px;
       font-weight: 700;
-      text-decoration: none;
-      border-radius: 6px;
-      box-shadow: 0 0 15px rgba(255, 42, 141, 0.6);
-      transition: all 0.2s;
-    }
-    .synth-btn:hover {
-      box-shadow: 0 0 25px var(--synth-cyan);
+      color: #fff;
+      margin-bottom: 12px;
     }
 
-    /* 磁带播放器微组件 */
-    .cassette-box {
-      background: #190a37;
-      border: 2px solid var(--synth-yellow);
+    .card-p {
+      font-size: 14px;
+      color: #cfc2e6;
+      line-height: 1.75;
+      margin-bottom: 12px;
+    }
+
+    /* 侧边栏：磁带卡座与资料模块 */
+    .radio-sidebar {
+      display: flex;
+      flex-direction: column;
+      gap: 24px;
+    }
+
+    .cassette-deck {
+      background: #110524;
+      border: 2px solid var(--synth-pink);
       border-radius: 12px;
-      padding: 24px;
-      box-shadow: 0 0 20px rgba(255, 234, 0, 0.3);
-      text-align: center;
-      margin-bottom: 30px;
+      padding: 20px;
+      box-shadow: 0 0 25px rgba(255, 42, 141, 0.3);
+      position: relative;
     }
 
-    .cassette-body {
-      background: #0d0221;
-      border: 2px solid #331555;
+    .deck-head {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      border-bottom: 1px solid rgba(255, 42, 141, 0.3);
+      padding-bottom: 10px;
+      margin-bottom: 15px;
+      font-family: var(--font-display);
+      font-size: 12px;
+      color: var(--synth-cyan);
+    }
+
+    .tape-window {
+      background: #06010d;
+      border: 2px solid #331355;
       border-radius: 8px;
-      padding: 16px;
+      padding: 16px 12px;
       margin-bottom: 16px;
+      position: relative;
+      overflow: hidden;
     }
 
-    .reels-row {
+    .tape-spools {
       display: flex;
       justify-content: space-around;
       align-items: center;
-      margin: 12px 0;
+      margin: 10px 0;
     }
 
-    .cassette-reel {
-      width: 42px;
-      height: 42px;
+    .spool {
+      width: 46px;
+      height: 46px;
       border-radius: 50%;
       border: 4px dashed var(--synth-cyan);
-      animation: spin-reel 4s linear infinite;
+      animation: spin-spool 4s linear infinite;
+      box-shadow: 0 0 10px rgba(5, 217, 232, 0.5);
     }
-    .cassette-reel.paused {
+
+    .spool.paused {
       animation-play-state: paused;
     }
-    @keyframes spin-reel {
+
+    .spool.rewinding {
+      animation: spin-spool 0.6s linear infinite reverse !important;
+    }
+
+    @keyframes spin-spool {
       100% { transform: rotate(360deg); }
     }
 
-    .tape-title {
-      font-family: 'VT323', monospace;
-      font-size: 20px;
+    .tape-label {
+      font-family: var(--font-display);
+      font-size: 14px;
+      font-weight: bold;
       color: var(--synth-yellow);
+      text-align: center;
+      letter-spacing: 1px;
     }
 
-    @media (max-width: 860px) {
-      .synth-container {
+    .tape-counter-readout {
+      font-family: var(--font-display);
+      background: #000;
+      border: 1px solid #442266;
+      color: #39ff14;
+      font-size: 18px;
+      text-align: center;
+      padding: 4px 10px;
+      border-radius: 4px;
+      margin: 8px auto;
+      width: 110px;
+      letter-spacing: 3px;
+      box-shadow: inset 0 0 8px rgba(57, 255, 20, 0.4);
+    }
+
+    /* 均衡器频谱柱 */
+    .eq-spectrum {
+      display: flex;
+      justify-content: center;
+      align-items: flex-end;
+      gap: 5px;
+      height: 36px;
+      margin: 12px 0;
+      padding: 0 10px;
+    }
+
+    .eq-bar {
+      width: 6px;
+      background: linear-gradient(to top, var(--synth-cyan), var(--synth-pink), var(--synth-yellow));
+      border-radius: 2px;
+      height: 12px;
+      transition: height 0.1s ease;
+    }
+
+    /* 曲目列表 Side A / Side B 切换卡 */
+    .tracklist-card {
+      background: var(--synth-card);
+      border: 1px solid rgba(255, 42, 141, 0.35);
+      border-radius: 12px;
+      padding: 20px;
+    }
+
+    .side-tabs {
+      display: flex;
+      gap: 10px;
+      margin-bottom: 16px;
+    }
+
+    .side-tab-btn {
+      flex: 1;
+      background: rgba(13, 2, 33, 0.9);
+      border: 1px solid var(--synth-purple);
+      color: var(--synth-dim);
+      font-family: var(--font-display);
+      font-size: 13px;
+      padding: 8px;
+      border-radius: 6px;
+      cursor: pointer;
+      font-weight: bold;
+      transition: all 0.2s;
+    }
+
+    .side-tab-btn.active {
+      background: var(--synth-pink);
+      color: #fff;
+      border-color: var(--synth-pink);
+      box-shadow: 0 0 12px var(--synth-pink);
+    }
+
+    .track-item {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 10px 0;
+      border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+      font-size: 13px;
+    }
+
+    .track-item:last-child {
+      border-bottom: none;
+    }
+
+    .track-num {
+      font-family: var(--font-display);
+      color: var(--synth-cyan);
+      width: 24px;
+    }
+
+    .track-info {
+      flex: 1;
+      margin: 0 8px;
+    }
+
+    .track-title {
+      color: #fff;
+      font-weight: 600;
+    }
+
+    .track-artist {
+      color: var(--synth-dim);
+      font-size: 11px;
+    }
+
+    .track-time {
+      font-family: var(--font-display);
+      color: var(--synth-yellow);
+      font-size: 12px;
+    }
+
+    /* 虚构电台广播室资料卡 */
+    .station-info-card {
+      background: rgba(13, 2, 33, 0.75);
+      border: 1px dashed rgba(5, 217, 232, 0.4);
+      border-radius: 10px;
+      padding: 18px;
+      font-size: 12px;
+      color: var(--synth-dim);
+      line-height: 1.7;
+    }
+
+    .station-info-row {
+      display: flex;
+      justify-content: space-between;
+      margin-bottom: 6px;
+    }
+
+    .station-info-row span:last-child {
+      color: #fff;
+      font-family: var(--font-display);
+    }
+
+    /* 交互状态展示区 */
+    .status-toast {
+      margin-top: 14px;
+      padding: 10px;
+      border-radius: 6px;
+      background: rgba(255, 42, 141, 0.15);
+      border: 1px solid var(--synth-pink);
+      font-family: var(--font-display);
+      font-size: 12px;
+      color: #fff;
+      text-align: center;
+      display: none;
+      animation: fadeIn 0.3s ease;
+    }
+
+    @keyframes fadeIn {
+      from { opacity: 0; transform: translateY(4px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+
+    /* 收尾签名与日出台词 */
+    .signoff-section {
+      max-width: 1200px;
+      margin: 60px auto 20px;
+      padding: 30px 20px;
+      border-top: 2px solid rgba(255, 42, 141, 0.35);
+      background: linear-gradient(180deg, transparent 0%, rgba(255, 142, 114, 0.08) 100%);
+      border-radius: 16px 16px 0 0;
+      text-align: center;
+      position: relative;
+      z-index: 2;
+    }
+
+    .signoff-time {
+      font-family: var(--font-display);
+      font-size: 14px;
+      color: var(--synth-yellow);
+      letter-spacing: 2px;
+      margin-bottom: 8px;
+    }
+
+    .signoff-quote {
+      font-size: clamp(20px, 3.5vw, 28px);
+      font-weight: 800;
+      color: #ffffff;
+      text-shadow: 0 0 15px rgba(255, 142, 114, 0.8);
+      margin-bottom: 12px;
+    }
+
+    .signoff-host {
+      font-family: var(--font-display);
+      font-size: 13px;
+      color: var(--synth-cyan);
+    }
+
+    /* 底部流动 Outrun 网格 */
+    .grid-highway {
+      position: fixed;
+      bottom: 0;
+      left: 0;
+      width: 100%;
+      height: 38vh;
+      background-image: 
+        linear-gradient(rgba(255, 42, 141, 0.35) 1px, transparent 1px),
+        linear-gradient(90deg, rgba(5, 217, 232, 0.35) 1px, transparent 1px);
+      background-size: 40px 40px;
+      transform: perspective(280px) rotateX(65deg);
+      transform-origin: bottom center;
+      animation: drive-grid 1.8s linear infinite;
+      pointer-events: none;
+      z-index: 0;
+      mask-image: linear-gradient(to top, rgba(0,0,0,0.85) 20%, transparent 100%);
+      -webkit-mask-image: linear-gradient(to top, rgba(0,0,0,0.85) 20%, transparent 100%);
+    }
+
+    @keyframes drive-grid {
+      from { background-position-y: 0px; }
+      to { background-position-y: 40px; }
+    }
+
+    @media (prefers-reduced-motion: reduce) {
+      .grid-highway, .spool, .on-air-dot {
+        animation: none !important;
+      }
+    }
+
+    @media (max-width: 900px) {
+      .main-layout {
         grid-template-columns: 1fr;
+        gap: 24px;
+      }
+      .radio-header-inner {
+        flex-direction: column;
+        align-items: flex-start;
+      }
+      .broadcast-status {
+        width: 100%;
+        justify-content: space-between;
       }
     }
   </style>
 </head>
 <body>
 
-  <!-- 顶栏 -->
-  <nav class="synth-nav">
-    <div class="synth-brand">
-      SYNTH // 1984 <span>[レトロフューチャー]</span>
-    </div>
-    <div style="font-family: 'VT323', monospace; font-size: 18px; color: var(--synth-cyan);">
-      TRACK: 08 // READY
-    </div>
-  </nav>
+  <!-- 网格背景与扫描线 -->
+  <div class="bg-grid"></div>
+  <div class="bg-scanlines"></div>
 
-  <!-- Hero 霓虹夕阳 -->
-  <header class="synth-hero">
-    <div class="synth-sun"></div>
-    <h1 class="synth-hero-title">OUTRUN // 赛博合成器浪潮</h1>
-    <p class="synth-hero-sub">DRIVING INTO THE INFINITE RETRO NEON HORIZON</p>
+  <!-- 顶部电台状态栏 -->
+  <header class="radio-header">
+    <div class="radio-header-inner">
+      <div class="station-id">
+        <span class="station-badge">FM 88.6</span>
+        <div class="station-title">MIDNIGHT DRIVE <span>RADIO</span></div>
+      </div>
+      <div class="broadcast-status">
+        <div class="on-air">
+          <span class="on-air-dot"></span>
+          <span>ON AIR // LIVE</span>
+        </div>
+        <div class="weather-pill">CITY: 02:45 AM / 19°C 霓虹微雨</div>
+      </div>
+    </div>
   </header>
 
-  <!-- 内容容器 -->
-  <div class="synth-container">
-    <!-- 左侧文章 -->
-    <main>
-      <article class="synth-card">
-        <div class="synth-card-date">// 1984.08.22 :: RETRO_FILE_01</div>
-        <div style="margin: 12px 0 16px; border: 2px solid var(--synth-pink); box-shadow: 0 0 15px rgba(255,0,127,0.4); border-radius: 6px; overflow: hidden;">
-          <img src="assets/images/synthwave_sunset.jpg" alt="80s 复古合成器超跑与霓虹夕阳" style="width: 100%; height: 240px; object-fit: cover; display: block;">
-        </div>
-        <h2 class="synth-card-title">合成器浪潮美学：为什么 80 年代的复古未来主义令人无法抗拒？</h2>
-        <p class="synth-card-body">
-          从《银翼杀手》的霓虹夜雨到 Kavinsky 的强劲低音，Synthwave 捕捉了人类在个人电脑与电子乐器黎明期对未来的狂热幻想。那些紫粉色的网格地平线与模拟磁带杂音，是数字文明最浪漫的切片。
-        </p>
-        <a href="#" class="synth-btn">LISTEN & READ ➔</a>
-      </article>
+  <!-- Hero 区：霓虹夕阳与微互动工具栏 -->
+  <div class="hero-stage">
+    <div class="sun-horizon-wrap">
+      <div class="synth-sun"></div>
+      <div class="synth-sun-bars"></div>
+    </div>
+    <div class="hero-program-tag">// MIDNIGHT BROADCAST ARCHIVE // VOL.88</div>
+    <h1 class="hero-title">为什么复古未来主义总在城市疲惫时回来</h1>
+    <p class="hero-lead">
+      当午夜的高架桥只剩下红色尾灯与湿润路面，调频 88.6 兆赫的晶体管轰鸣与模拟合成器延音，成了都市夜行者唯一的精神避难所。
+    </p>
 
-      <article class="synth-card">
-        <div class="synth-card-date">// 1984.08.16 :: RETRO_FILE_02</div>
-        <h2 class="synth-card-title">数字调频（FM）合成器与现代音频着色器技术</h2>
-        <p class="synth-card-body">
-          深入剖析 Yamaha DX7 的 6 算子算法，并探讨如何通过 WebAudio API 与 GLSL 片段着色器在网页端实时还原温润的模拟黑胶与磁带饱和感。
-        </p>
-        <a href="#" class="synth-btn">LISTEN & READ ➔</a>
-      </article>
-
-      <!-- 文章 3 -->
-      <article class="synth-card">
-        <div class="synth-card-date">// 1984.08.08 :: RETRO_FILE_03</div>
-        <h2 class="synth-card-title">罗兰 TR-808 鼓机传奇：定义现代电子乐节奏的晶体管轰鸣</h2>
-        <p class="synth-card-body">
-          原本被设计为伴奏乐器却意外因独特的低音重低音（Sub-bass Kick）改变了音乐史。剖析模拟晶体管饱和失真与微小计时抖动（Timing Jitter）给机器节拍带来的“灵魂摇摆感”。
-        </p>
-        <a href="#" class="synth-btn">LISTEN & READ ➔</a>
-      </article>
-
-      <!-- 文章 4 -->
-      <article class="synth-card">
-        <div class="synth-card-date">// 1984.07.29 :: RETRO_FILE_04</div>
-        <h2 class="synth-card-title">Outrun 竞速文化：向着永不落下的霓虹夕阳全速狂飙</h2>
-        <p class="synth-card-body">
-          经典的世嘉《Out Run》街机、法拉利 Testarossa 侧进气格栅、以及迈阿密棕榈树投下的紫色阴影。回顾 80 年代赛车游戏如何奠定了现代电子游戏极速视觉体验的标准。
-        </p>
-        <a href="#" class="synth-btn">LISTEN & READ ➔</a>
-      </article>
-    </main>
-
-    <!-- 右侧磁带播放器 -->
-    <aside>
-      <div class="cassette-box">
-        <div class="tape-title">CASSETTE MIXTAPE VOL.1</div>
-        <div class="cassette-body">
-          <div style="font-size: 11px; color: var(--synth-pink); letter-spacing: 2px;">STEREO / CHROME EQ</div>
-          <div class="reels-row">
-            <div class="cassette-reel" id="reelLeft"></div>
-            <div style="font-family:'VT323'; font-size:24px; color:#fff;">SIDE A</div>
-            <div class="cassette-reel" id="reelRight"></div>
-          </div>
-          <div style="font-size: 13px; color: var(--synth-cyan);">Now Playing: Nightcall</div>
-
-          <!-- 音频频谱跳动柱 -->
-          <div id="synthEq" style="display: flex; gap: 4px; justify-content: center; align-items: flex-end; height: 28px; margin-top: 10px;"></div>
-        </div>
-        <button class="synth-btn" onclick="toggleTape(this)" style="width: 100%; justify-content: center;">⏸️ 暂停 / 播放磁带</button>
-      </div>
-    </aside>
+    <!-- 交互微文案操作栏 -->
+    <div class="interactive-control-bar">
+      <button class="synth-action-btn" id="btnFlipSide" aria-label="翻到 B 面">
+        <span>🔄</span> <span>翻到 B 面</span>
+      </button>
+      <button class="synth-action-btn" id="btnRewind" aria-label="磁带正在倒带">
+        <span>⏪</span> <span>磁带倒带</span>
+      </button>
+      <button class="synth-action-btn" id="btnBrighten" aria-label="把夜色调亮一点">
+        <span>✨</span> <span>把夜色调亮一点</span>
+      </button>
+      <button class="synth-action-btn" id="btnMsg" aria-label="收到一条来自 02:17 的听众留言">
+        <span>📻</span> <span>收到一条来自 02:17 的听众留言</span>
+      </button>
+    </div>
+    <div class="status-toast" id="statusToast"></div>
   </div>
 
-  <style>
-    /* 底部流动 3D 霓虹网格背景 */
-    .synth-grid-floor {
-      position: fixed;
-      bottom: 0;
-      left: 0;
-      width: 100%;
-      height: 45vh;
-      background-image: 
-        linear-gradient(rgba(255, 42, 141, 0.4) 1px, transparent 1px),
-        linear-gradient(90deg, rgba(5, 217, 232, 0.4) 1px, transparent 1px);
-      background-size: 40px 40px;
-      transform: perspective(300px) rotateX(65deg);
-      transform-origin: bottom center;
-      animation: gridMove 2s linear infinite;
-      pointer-events: none;
-      z-index: 0;
-      mask-image: linear-gradient(to top, rgba(0,0,0,1) 30%, transparent 100%);
-      -webkit-mask-image: linear-gradient(to top, rgba(0,0,0,1) 30%, transparent 100%);
-    }
-    @keyframes gridMove {
-      from { background-position-y: 0px; }
-      to { background-position-y: 40px; }
-    }
-  </style>
-  <div class="synth-grid-floor"></div>
+  <!-- 主内容与侧边栏网格 -->
+  <main class="main-layout">
+    <!-- 左侧：主叙事与次级栏目 -->
+    <section class="main-narrative">
+      <!-- 主叙事文章 -->
+      <article class="narrative-card">
+        <div class="dj-intro">
+          <span>[主持人口播 02:00]</span>
+          <span>“这里是 MIDNIGHT DRIVE FM 88.6，不管你此刻停在哪个收费站前，先把车窗降下一指宽。”</span>
+        </div>
 
+        <h2 class="article-headline">合成器声浪中的记忆重构：从 1984 走向永恒的未来</h2>
+        
+        <p class="narrative-text">
+          在当代高密度的信息冲刷与算法焦虑下，<strong>Synthwave（合成器浪潮）</strong>与 <strong>Vaporwave（蒸汽波）</strong> 展现出一种奇特的治愈力。人们迷恋的并不是真实的 1980 年代，而是一种从未真正降临的<strong>“未来的黄金时代”</strong>——那里有永不褪色的霓虹夕阳、永远保持 120 BPM 匀速巡航的红色 Testarossa，以及模拟磁带特有的温暖饱和失真。
+        </p>
+
+        <!-- 听众留言微模块 -->
+        <div class="listener-quote-box" id="liveListenerMsg">
+          <div class="listener-quote-header">
+            <span>// 听众来电 #4092 来自 环城高架</span>
+            <span>02:17 AM</span>
+          </div>
+          <p class="listener-quote-body">
+            “加完班刚开上高架，车载收音机里正好放出一段空灵的 DX7 电钢琴琶音。雨刮器配合着底鼓节拍摆动，感觉整座沉睡的城市都在为我让路。”
+          </p>
+        </div>
+
+        <p class="narrative-text">
+          调频收音机里的白噪声、模拟压限器对鼓组的粗暴挤压，以及低频晶体管带来的厚实心跳，构成了我们对机器时代最浪漫的温情幻想。复古不是倒退，而是在疲惫的现实裂缝里，为精神安插一盘随时可以倒带的磁带。
+        </p>
+      </article>
+
+      <!-- 次级栏目标题 -->
+      <div class="section-title-bar">
+        <span>SUB-CHANNELS // 调频次级专栏</span>
+      </div>
+
+      <!-- 3 个次级栏目 -->
+      <div class="sub-columns-grid">
+        <!-- 次级栏目 1 -->
+        <article class="sub-column-card">
+          <span class="card-meta-tag">// FREQUENCY_ANALYSIS_01</span>
+          <h3 class="card-title">FM 合成器的玻璃质感</h3>
+          <p class="card-p">
+            1983 年 Yamaha DX7 的问世彻底颠覆了模拟合成器的垄断地位。基于约翰·乔宁频率调制（FM）算法的 6 个算子，创造出前所未有的晶莹电钢琴、金属钟声与冷冽铜管。这种带有微冷“玻璃质感”的音色，成为了整个 80 年代流行乐与赛博朋克夜雨夜景的声音母体。
+          </p>
+        </article>
+
+        <!-- 次级栏目 2 -->
+        <article class="sub-column-card">
+          <span class="card-meta-tag">// RHYTHM_ENGINE_02</span>
+          <h3 class="card-title">TR-808 的机器心跳</h3>
+          <p class="card-p">
+            原本被工程师视作“未达标伴奏玩具”的 Roland TR-808，却因其晶体管电路产生的深沉超低频（Sub-Bass Kick）和带有颗粒感的踩镲，重新定义了全球节奏。它的机器微瑕抖动赋予了电子节拍类似人类心脏律动的有机生命力。
+          </p>
+        </article>
+
+        <!-- 次级栏目 3 -->
+        <article class="sub-column-card">
+          <span class="card-meta-tag">// INFINITE_HIGHWAY_03</span>
+          <h3 class="card-title">一条没有终点的 Outrun 公路</h3>
+          <p class="card-p">
+            源自 1986 年世嘉街机经典，Outrun 不仅是一种游戏风格，更是合成器浪潮的视觉哲学：迈阿密海岸线、等高线紫色网格地面、被斜阳拉长的棕榈树剪影。它向着地平线永无止境地飞驰，象征着永不落幕的浪漫冲刺。
+          </p>
+        </article>
+      </div>
+    </section>
+
+    <!-- 右侧：资料模块与播放器组件 -->
+    <aside class="radio-sidebar">
+      <!-- 磁带播放机微组件 -->
+      <div class="cassette-deck">
+        <div class="deck-head">
+          <span>TAPE DECK: TC-K777</span>
+          <span id="currentSideBadge">SIDE A // ACTIVE</span>
+        </div>
+
+        <div class="tape-window">
+          <div class="tape-label" id="tapeLabelText">NIGHT DRIVE VOL.88</div>
+          <div class="tape-spools">
+            <div class="spool" id="spoolLeft"></div>
+            <div class="tape-counter-readout" id="tapeCounter">08:86</div>
+            <div class="spool" id="spoolRight"></div>
+          </div>
+          <div class="eq-spectrum" id="eqSpectrum"></div>
+        </div>
+
+        <div style="display: flex; gap: 8px;">
+          <button class="synth-action-btn" id="btnTogglePlay" style="flex: 1; justify-content: center;">
+            <span id="playIcon">⏸️</span> <span id="playText">暂停播放</span>
+          </button>
+        </div>
+      </div>
+
+      <!-- Side A / Side B 曲目表资料模块 -->
+      <div class="tracklist-card">
+        <div class="side-tabs">
+          <button class="side-tab-btn active" id="tabSideA">SIDE A (午夜巡航)</button>
+          <button class="side-tab-btn" id="tabSideB">SIDE B (黎明渐白)</button>
+        </div>
+
+        <div id="trackContainer">
+          <!-- 动态渲染曲目 -->
+        </div>
+      </div>
+
+      <!-- 虚构电台广播室资料卡 -->
+      <div class="station-info-card">
+        <div class="station-info-row">
+          <span>电台呼号：</span>
+          <span>MIDNIGHT DRIVE FM</span>
+        </div>
+        <div class="station-info-row">
+          <span>发射频率：</span>
+          <span>88.6 MHz (FM-STEREO)</span>
+        </div>
+        <div class="station-info-row">
+          <span>当前栏目：</span>
+          <span>《高架桥与霓虹余热》</span>
+        </div>
+        <div class="station-info-row">
+          <span>下一首曲目：</span>
+          <span id="nextTrackText">Kavinsky - Pacific Coast</span>
+        </div>
+        <div class="station-info-row">
+          <span>信号源状态：</span>
+          <span>ANALOG TAPE 1/4" MASTER</span>
+        </div>
+        <div style="margin-top: 10px; font-size: 11px; color: var(--synth-yellow);">
+          ※ 本页面为虚构电台体验场景，献给所有在深夜仍在寻找信号的夜行人。
+        </div>
+      </div>
+    </aside>
+  </main>
+
+  <!-- 收尾：日出时段台词 -->
+  <footer class="signoff-section">
+    <div class="signoff-time">// 05:40 AM :: DAWN SIGN-OFF</div>
+    <div class="signoff-quote">“城市醒了，昨晚的旋律还留在高架桥上。”</div>
+    <div class="signoff-host">MIDNIGHT DRIVE FM 88.6 · 主播 Neon Rider 下播致意 · 明夜 00:00 准时起步</div>
+  </footer>
+
+  <!-- 3D 霓虹公路网格地平线 -->
+  <div class="grid-highway" aria-hidden="true"></div>
+
+  <!-- 统一全局导航与交互驱动 -->
   <script src="assets/nav-bar.js"></script>
   <script>
-    function toggleTape(btn) {
-      const r1 = document.getElementById('reelLeft');
-      const r2 = document.getElementById('reelRight');
-      if (r1.classList.contains('paused')) {
-        r1.classList.remove('paused');
-        r2.classList.remove('paused');
-        btn.textContent = '⏸️ 暂停磁带旋转';
-      } else {
-        r1.classList.add('paused');
-        r2.classList.add('paused');
-        btn.textContent = '▶️ 播放磁带旋转';
-      }
+    // 曲目数据 Side A / Side B
+    const tracklistData = {
+      A: [
+        { num: '01', title: 'Midnight City Lights', artist: 'Kavinsky Wave', time: '04:18' },
+        { num: '02', title: 'Pacific Coast Highway', artist: 'Lazerhawk Echo', time: '03:52' },
+        { num: '03', title: 'DX7 Neon Raindrops', artist: 'FM Mirage', time: '05:04' },
+        { num: '04', title: 'Sub-bass Heartbeat 808', artist: 'Analog Drift', time: '04:30' }
+      ],
+      B: [
+        { num: '05', title: 'Dawn over the Viaduct', artist: 'Timecop 1983 tribute', time: '04:45' },
+        { num: '06', title: 'Testarossa Sunrise', artist: 'Outrun Horizon', time: '03:38' },
+        { num: '07', title: 'FM 88.6 Sign-off Tape', artist: 'Station Master', time: '02:50' },
+        { num: '08', title: 'Memory of Tomorrow', artist: 'Retrowave Lab', time: '05:12' }
+      ]
+    };
+
+    let currentSide = 'A';
+    let isPlaying = true;
+    let isNightBoost = false;
+    let counterVal = 886;
+
+    // 渲染曲目
+    function renderTracklist(side) {
+      const container = document.getElementById('trackContainer');
+      const tracks = tracklistData[side];
+      container.innerHTML = tracks.map(t => `
+        <div class="track-item">
+          <span class="track-num">${t.num}</span>
+          <div class="track-info">
+            <div class="track-title">${t.title}</div>
+            <div class="track-artist">${t.artist}</div>
+          </div>
+          <span class="track-time">${t.time}</span>
+        </div>
+      `).join('');
+      
+      document.getElementById('currentSideBadge').textContent = `SIDE ${side} // ACTIVE`;
+      document.getElementById('tapeLabelText').textContent = `NIGHT DRIVE VOL.88 - SIDE ${side}`;
+      document.getElementById('nextTrackText').textContent = side === 'A' ? 'Timecop - Dawn Over Viaduct' : 'Kavinsky - Pacific Coast';
     }
 
-    // 均衡器音频频谱柱跳动
-    (function() {
-      const eq = document.getElementById('synthEq');
-      if (!eq) return;
-      const barCount = 14;
+    // 提示信息吐司
+    function showToast(msg) {
+      const toast = document.getElementById('statusToast');
+      toast.textContent = msg;
+      toast.style.display = 'block';
+      setTimeout(() => {
+        toast.style.display = 'none';
+      }, 3500);
+    }
+
+    // 初始化均衡器跳动
+    function initEqualizer() {
+      const eq = document.getElementById('eqSpectrum');
+      eq.innerHTML = '';
+      const barCount = 16;
       for (let i = 0; i < barCount; i++) {
         const bar = document.createElement('div');
-        bar.style.width = '5px';
-        bar.style.background = 'linear-gradient(to top, #05d9e8, #ff2a8d, #ffea00)';
-        bar.style.borderRadius = '2px';
-        bar.style.height = '6px';
-        bar.style.transition = 'height 0.12s ease';
+        bar.className = 'eq-bar';
         eq.appendChild(bar);
       }
 
       setInterval(() => {
-        const bars = eq.children;
-        for (let b of bars) {
-          const h = 4 + Math.random() * 24;
+        if (!isPlaying) return;
+        const bars = eq.querySelectorAll('.eq-bar');
+        bars.forEach(b => {
+          const h = 4 + Math.floor(Math.random() * 30);
           b.style.height = `${h}px`;
+        });
+      }, 100);
+    }
+
+    // 磁带计数器步进
+    setInterval(() => {
+      if (isPlaying) {
+        counterVal++;
+        if (counterVal > 9999) counterVal = 100;
+        const pad = String(counterVal).padStart(4, '0');
+        const formatted = pad.slice(0, 2) + ':' + pad.slice(2);
+        document.getElementById('tapeCounter').textContent = formatted;
+      }
+    }, 1000);
+
+    // 事件绑定
+    document.addEventListener('DOMContentLoaded', () => {
+      renderTracklist('A');
+      initEqualizer();
+
+      const tabA = document.getElementById('tabSideA');
+      const tabB = document.getElementById('tabSideB');
+      const btnFlip = document.getElementById('btnFlipSide');
+      const btnRewind = document.getElementById('btnRewind');
+      const btnBright = document.getElementById('btnBrighten');
+      const btnMsg = document.getElementById('btnMsg');
+      const btnPlay = document.getElementById('btnTogglePlay');
+      const spools = [document.getElementById('spoolLeft'), document.getElementById('spoolRight')];
+
+      function setSide(side) {
+        currentSide = side;
+        if (side === 'A') {
+          tabA.classList.add('active');
+          tabB.classList.remove('active');
+        } else {
+          tabB.classList.add('active');
+          tabA.classList.remove('active');
         }
-      }, 120);
-    })();
+        renderTracklist(side);
+      }
+
+      tabA.addEventListener('click', () => setSide('A'));
+      tabB.addEventListener('click', () => setSide('B'));
+
+      // 微文案交互 1：翻到 B 面
+      btnFlip.addEventListener('click', () => {
+        const nextSide = currentSide === 'A' ? 'B' : 'A';
+        setSide(nextSide);
+        showToast(`💽 已为您翻到 Side ${nextSide}，磁头已就位，继续播送深夜合辑`);
+      });
+
+      // 微文案交互 2：磁带正在倒带
+      btnRewind.addEventListener('click', () => {
+        spools.forEach(s => s.classList.add('rewinding'));
+        showToast('⏪ 磁带正在倒带... 哔—— 磁头已回到 00:00 初始位置');
+        counterVal = 100;
+        setTimeout(() => {
+          spools.forEach(s => s.classList.remove('rewinding'));
+        }, 1200);
+      });
+
+      // 微文案交互 3：把夜色调亮一点
+      btnBright.addEventListener('click', () => {
+        isNightBoost = !isNightBoost;
+        document.body.classList.toggle('night-boost', isNightBoost);
+        btnBright.classList.toggle('active', isNightBoost);
+        showToast(isNightBoost ? '✨ 荧光增益开启：把夜色调亮一点，看清远处的霓虹天际线' : '🌙 恢复原始午夜暗调');
+      });
+
+      // 微文案交互 4：收到一条来自 02:17 的听众留言
+      btnMsg.addEventListener('click', () => {
+        const liveBox = document.getElementById('liveListenerMsg');
+        liveBox.scrollIntoView({ behavior: 'smooth', block: 'center' });
+        liveBox.style.boxShadow = '0 0 25px rgba(5, 217, 232, 0.8)';
+        showToast('📻 收到一条来自 02:17 的听众留言：“调频刚好，夜风也正好。”');
+        setTimeout(() => {
+          liveBox.style.boxShadow = 'none';
+        }, 2000);
+      });
+
+      // 播放/暂停控制
+      btnPlay.addEventListener('click', () => {
+        isPlaying = !isPlaying;
+        if (isPlaying) {
+          spools.forEach(s => s.classList.remove('paused'));
+          document.getElementById('playIcon').textContent = '⏸️';
+          document.getElementById('playText').textContent = '暂停播放';
+          showToast('▶️ 磁带继续转动，FM 88.6 伴你穿过长隧道');
+        } else {
+          spools.forEach(s => s.classList.add('paused'));
+          document.getElementById('playIcon').textContent = '▶️';
+          document.getElementById('playText').textContent = '继续播放';
+          showToast('⏸️ 磁带暂停中，城市依然在寂静巡航');
+        }
+      });
+    });
   </script>
 </body>
 </html>

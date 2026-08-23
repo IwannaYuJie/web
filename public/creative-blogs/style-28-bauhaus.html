@@ -3,19 +3,25 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>BAUHAUS 1919 — 28 包豪斯几何构成主义</title>
+  <title>BAUHAUS WERKSTATT / 基础课练习册 1926→2026 — 28 包豪斯几何构成主义</title>
   <link rel="stylesheet" href="assets/common.css">
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@500;700;900&family=Noto+Sans+SC:wght@400;700;900&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@500;700;900&family=Noto+Sans+SC:wght@400;600;700;900&family=JetBrains+Mono:wght@500;700&display=swap" rel="stylesheet">
   <style>
     :root {
-      --bh-cream: #f4eee1;
-      --bh-black: #111111;
-      --bh-red: #de3823;
-      --bh-blue: #1c52a3;
-      --bh-yellow: #f3b712;
-      --font-bauhaus: "Space Grotesk", "Noto Sans SC", sans-serif;
+      --bh-cream: #f6f1e7;
+      --bh-paper: #ece4d2;
+      --bh-black: #121212;
+      --bh-white: #ffffff;
+      --bh-red: #d9381e;
+      --bh-blue: #1b4f9c;
+      --bh-yellow: #f4b41a;
+      --bh-gray: #7d7971;
+      --bh-line: #121212;
+      --font-bauhaus: "Space Grotesk", "Noto Sans SC", -apple-system, sans-serif;
+      --font-mono: "JetBrains Mono", monospace;
+      --theme-active: var(--bh-red);
     }
 
     * {
@@ -28,320 +34,962 @@
       background-color: var(--bh-cream);
       color: var(--bh-black);
       font-family: var(--font-bauhaus);
-      line-height: 1.5;
+      line-height: 1.6;
       min-height: 100vh;
-      border-top: 12px solid var(--bh-red);
+      border-top: 14px solid var(--theme-active);
+      transition: border-top-color 0.3s ease;
+      background-image: 
+        linear-gradient(to right, rgba(18, 18, 18, 0.05) 1px, transparent 1px),
+        linear-gradient(to bottom, rgba(18, 18, 18, 0.05) 1px, transparent 1px);
+      background-size: 32px 32px;
     }
 
-    .bauhaus-shell {
-      max-width: 1240px;
+    .werkstatt-shell {
+      max-width: 1280px;
       margin: 0 auto;
-      padding: 40px 24px 80px;
+      padding: 32px 24px 96px;
     }
 
-    /* 顶部非对称巨大题头 */
-    .bauhaus-header {
-      display: grid;
-      grid-template-columns: 2fr 1fr 1fr;
-      border-bottom: 4px solid var(--bh-black);
-      padding-bottom: 24px;
-      margin-bottom: 40px;
-      gap: 20px;
+    /* 顶部非对称巨大题头与工坊档案戳 */
+    .bauhaus-masthead {
+      border: 3px solid var(--bh-black);
+      background: var(--bh-white);
+      box-shadow: 8px 8px 0 var(--bh-black);
+      margin-bottom: 36px;
+      position: relative;
     }
 
-    .bauhaus-logo {
-      font-size: clamp(48px, 8vw, 96px);
-      font-weight: 900;
-      letter-spacing: -0.04em;
-      line-height: 0.85;
+    .masthead-strip {
+      background: var(--bh-black);
+      color: var(--bh-cream);
+      padding: 8px 16px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      font-family: var(--font-mono);
+      font-size: 12px;
+      font-weight: 700;
+      letter-spacing: 0.08em;
       text-transform: uppercase;
     }
 
-    .bauhaus-badge {
+    .masthead-grid {
+      display: grid;
+      grid-template-columns: 2.2fr 1.2fr 1fr;
+      border-top: 2px solid var(--bh-black);
+    }
+
+    .masthead-col {
+      padding: 24px 28px;
+      border-right: 3px solid var(--bh-black);
       display: flex;
       flex-direction: column;
-      justify-content: flex-end;
-      border-left: 2px solid var(--bh-black);
-      padding-left: 16px;
+      justify-content: space-between;
+    }
+    .masthead-col:last-child {
+      border-right: none;
+    }
+
+    .main-logo-text {
+      font-size: clamp(38px, 6.2vw, 84px);
+      font-weight: 900;
+      line-height: 0.88;
+      letter-spacing: -0.04em;
+      text-transform: uppercase;
+      margin-bottom: 12px;
+    }
+
+    .masthead-sub {
+      font-size: 14px;
       font-weight: 700;
+      letter-spacing: 0.05em;
+      color: var(--bh-gray);
+    }
+
+    .masthead-badge-content {
       font-size: 13px;
+      font-family: var(--font-mono);
+      line-height: 1.5;
     }
 
-    .bauhaus-badge strong {
-      color: var(--bh-blue);
-      font-size: 18px;
+    .masthead-badge-content strong {
+      display: block;
+      font-size: 20px;
+      color: var(--bh-red);
+      font-family: var(--font-bauhaus);
+      font-weight: 900;
+      margin-top: 4px;
     }
 
-    /* 几何构成主义大展厅 */
-    .bauhaus-grid-main {
+    /* 互动控制条 */
+    .interactive-control-bar {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 12px;
+      align-items: center;
+      background: var(--bh-white);
+      border: 3px solid var(--bh-black);
+      box-shadow: 6px 6px 0 var(--bh-black);
+      padding: 14px 20px;
+      margin-bottom: 36px;
+    }
+
+    .bar-label {
+      font-size: 12px;
+      font-weight: 900;
+      font-family: var(--font-mono);
+      text-transform: uppercase;
+      background: var(--bh-black);
+      color: var(--bh-white);
+      padding: 4px 8px;
+      margin-right: 8px;
+    }
+
+    .action-btn {
+      padding: 8px 16px;
+      background: var(--bh-cream);
+      border: 2px solid var(--bh-black);
+      font-family: var(--font-bauhaus);
+      font-size: 13px;
+      font-weight: 700;
+      cursor: pointer;
+      box-shadow: 3px 3px 0 var(--bh-black);
+      transition: transform 0.1s, box-shadow 0.1s, background-color 0.2s;
+    }
+    .action-btn:hover {
+      transform: translate(-1px, -1px);
+      box-shadow: 4px 4px 0 var(--bh-black);
+    }
+    .action-btn:active {
+      transform: translate(2px, 2px);
+      box-shadow: 1px 1px 0 var(--bh-black);
+    }
+    .action-btn.btn-red { background: var(--bh-red); color: var(--bh-white); }
+    .action-btn.btn-yellow { background: var(--bh-yellow); color: var(--bh-black); }
+    .action-btn.btn-blue { background: var(--bh-blue); color: var(--bh-white); }
+    .action-btn.active {
+      outline: 3px solid var(--bh-black);
+      font-weight: 900;
+    }
+
+    .status-pill {
+      margin-left: auto;
+      font-family: var(--font-mono);
+      font-size: 12px;
+      font-weight: 700;
+      padding: 6px 12px;
+      border: 2px dashed var(--bh-black);
+      background: #fff;
+    }
+
+    /* 主叙事双栏 */
+    .narrative-grid {
       display: grid;
-      grid-template-columns: 1.2fr 1.8fr;
+      grid-template-columns: 1.15fr 1.85fr;
       gap: 32px;
       margin-bottom: 48px;
     }
 
-    .bauhaus-poster-box {
+    .composition-stage {
+      background: var(--bh-white);
       border: 3px solid var(--bh-black);
-      box-shadow: 12px 12px 0 var(--bh-black);
-      background: #fff;
-      overflow: hidden;
+      box-shadow: 10px 10px 0 var(--bh-black);
+      padding: 24px;
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
+      min-height: 480px;
       position: relative;
     }
 
-    .bauhaus-poster-img {
-      width: 100%;
-      height: 100%;
-      min-height: 440px;
-      object-fit: cover;
-      display: block;
+    .canvas-container {
+      border: 2px solid var(--bh-black);
+      background: #faf8f3;
+      height: 340px;
+      position: relative;
+      overflow: hidden;
+      display: flex;
+      align-items: center;
+      justify-content: center;
     }
 
-    /* 右侧图文与几何色块 */
-    .bauhaus-text-side {
+    /* 构图元素 */
+    .geo-object {
+      position: absolute;
+      transition: all 0.5s cubic-bezier(0.2, 0.9, 0.3, 1.2);
+    }
+    .geo-circle {
+      width: 140px;
+      height: 140px;
+      background: var(--bh-blue);
+      border-radius: 50%;
+      border: 3px solid var(--bh-black);
+    }
+    .geo-square {
+      width: 130px;
+      height: 130px;
+      background: var(--bh-red);
+      border: 3px solid var(--bh-black);
+    }
+    .geo-triangle {
+      width: 0;
+      height: 0;
+      border-left: 75px solid transparent;
+      border-right: 75px solid transparent;
+      border-bottom: 130px solid var(--bh-yellow);
+      filter: drop-shadow(0 0 0 var(--bh-black));
+    }
+    .geo-line {
+      height: 8px;
+      width: 260px;
+      background: var(--bh-black);
+      transform-origin: center;
+    }
+
+    .diagram-caption {
+      margin-top: 14px;
+      font-size: 12px;
+      font-family: var(--font-mono);
+      display: flex;
+      justify-content: space-between;
+      font-weight: 700;
+    }
+
+    .narrative-card {
+      background: var(--bh-white);
+      border: 3px solid var(--bh-black);
+      box-shadow: 10px 10px 0 var(--bh-black);
+      padding: 36px 32px;
+      display: flex;
+      flex-direction: column;
+    }
+
+    .section-tag {
+      display: inline-block;
+      align-self: flex-start;
+      background: var(--bh-black);
+      color: var(--bh-yellow);
+      font-family: var(--font-mono);
+      font-size: 12px;
+      font-weight: 700;
+      padding: 4px 10px;
+      margin-bottom: 16px;
+      letter-spacing: 0.05em;
+    }
+
+    .narrative-card h1 {
+      font-size: clamp(24px, 3.2vw, 36px);
+      font-weight: 900;
+      line-height: 1.25;
+      letter-spacing: -0.02em;
+      margin-bottom: 20px;
+      border-left: 8px solid var(--theme-active);
+      padding-left: 14px;
+      transition: border-color 0.3s;
+    }
+
+    .lead-text {
+      font-size: 17px;
+      line-height: 1.8;
+      font-weight: 600;
+      color: #222;
+      margin-bottom: 18px;
+    }
+
+    .body-text {
+      font-size: 15px;
+      line-height: 1.85;
+      color: #333;
+      margin-bottom: 16px;
+    }
+
+    .functional-annotation {
+      background: var(--bh-paper);
+      border-left: 4px solid var(--bh-black);
+      padding: 14px 16px;
+      margin-top: auto;
+      font-size: 13px;
+      font-family: var(--font-mono);
+      line-height: 1.6;
+    }
+
+    /* 3 个次级栏目 */
+    .sub-columns-section {
+      margin-bottom: 48px;
+    }
+
+    .section-header-bar {
+      border-bottom: 3px solid var(--bh-black);
+      padding-bottom: 8px;
+      margin-bottom: 24px;
+      display: flex;
+      justify-content: space-between;
+      align-items: flex-end;
+    }
+
+    .section-header-bar h2 {
+      font-size: 22px;
+      font-weight: 900;
+      letter-spacing: -0.01em;
+      text-transform: uppercase;
+    }
+
+    .sub-grid {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 24px;
+    }
+
+    .sub-card {
+      background: var(--bh-white);
+      border: 3px solid var(--bh-black);
+      box-shadow: 6px 6px 0 var(--bh-black);
+      padding: 24px;
+      display: flex;
+      flex-direction: column;
+      position: relative;
+    }
+
+    .sub-card-tag {
+      font-family: var(--font-mono);
+      font-size: 11px;
+      font-weight: 700;
+      color: var(--bh-gray);
+      margin-bottom: 10px;
+      letter-spacing: 0.05em;
+    }
+
+    .sub-card h3 {
+      font-size: 19px;
+      font-weight: 900;
+      line-height: 1.35;
+      margin-bottom: 14px;
+      min-height: 52px;
+    }
+
+    .sub-card p {
+      font-size: 14px;
+      line-height: 1.75;
+      color: #3b3b3b;
+      margin-bottom: 16px;
+    }
+
+    .sub-card-footer {
+      margin-top: auto;
+      padding-top: 12px;
+      border-top: 2px dashed #ddd;
+      font-family: var(--font-mono);
+      font-size: 12px;
+      font-weight: 700;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+    }
+
+    /* 资料模块：课程表、形状词典、三原色色票、网格练习、材料实验、作业批注 */
+    .docs-matrix {
+      display: grid;
+      grid-template-columns: repeat(12, 1fr);
+      gap: 24px;
+      margin-bottom: 48px;
+    }
+
+    .docs-card {
+      background: var(--bh-white);
+      border: 3px solid var(--bh-black);
+      box-shadow: 6px 6px 0 var(--bh-black);
+      padding: 20px;
+    }
+
+    .span-4 { grid-column: span 4; }
+    .span-5 { grid-column: span 5; }
+    .span-7 { grid-column: span 7; }
+    .span-8 { grid-column: span 8; }
+    .span-12 { grid-column: span 12; }
+
+    .docs-card h3 {
+      font-size: 16px;
+      font-weight: 900;
+      margin-bottom: 14px;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      font-family: var(--font-mono);
+      text-transform: uppercase;
+      border-bottom: 2px solid var(--bh-black);
+      padding-bottom: 6px;
+    }
+
+    /* 课程表 */
+    .curriculum-table {
+      width: 100%;
+      border-collapse: collapse;
+      font-size: 13px;
+      font-family: var(--font-mono);
+    }
+    .curriculum-table th, .curriculum-table td {
+      border: 1px solid var(--bh-black);
+      padding: 8px 10px;
+      text-align: left;
+    }
+    .curriculum-table th {
+      background: var(--bh-paper);
+      font-weight: 700;
+    }
+
+    /* 形状词典与心理学对应 */
+    .shape-dict-list {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 12px;
+      margin-top: 10px;
+    }
+    .dict-item {
+      border: 2px solid var(--bh-black);
+      padding: 12px;
+      text-align: center;
+      background: var(--bh-cream);
+    }
+    .dict-symbol {
+      font-size: 32px;
+      line-height: 1;
+      margin-bottom: 6px;
+    }
+    .dict-name {
+      font-size: 13px;
+      font-weight: 900;
+    }
+    .dict-desc {
+      font-size: 11px;
+      color: #555;
+      margin-top: 4px;
+    }
+
+    /* 三原色色票 */
+    .swatch-group {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 12px;
+      margin-top: 8px;
+    }
+    .swatch-box {
+      border: 2px solid var(--bh-black);
+      padding: 10px;
+      text-align: left;
+    }
+    .swatch-color {
+      height: 48px;
+      border: 2px solid var(--bh-black);
+      margin-bottom: 8px;
+    }
+    .swatch-info {
+      font-family: var(--font-mono);
+      font-size: 11px;
+      line-height: 1.4;
+    }
+
+    /* 网格与材料实验 */
+    .grid-experiment-demo {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 8px;
+      background: var(--bh-paper);
+      padding: 12px;
+      border: 2px solid var(--bh-black);
+      margin-top: 8px;
+    }
+    .grid-cell {
+      background: var(--bh-white);
+      border: 1px dashed var(--bh-black);
+      padding: 10px;
+      font-size: 11px;
+      font-family: var(--font-mono);
+      min-height: 70px;
       display: flex;
       flex-direction: column;
       justify-content: space-between;
     }
 
-    .article-title-block {
-      background: var(--bh-black);
+    /* 作业批注面板 */
+    .critique-box {
+      background: #fffbe6;
+      border: 2px solid var(--bh-black);
+      padding: 16px;
+      position: relative;
+      margin-top: 10px;
+    }
+    .critique-box::before {
+      content: "KRITIK // 导师批注";
+      position: absolute;
+      top: -10px;
+      right: 12px;
+      background: var(--bh-red);
       color: #fff;
-      padding: 24px 28px;
-      margin-bottom: 24px;
+      font-family: var(--font-mono);
+      font-size: 10px;
+      font-weight: 700;
+      padding: 2px 6px;
     }
 
-    .article-title-block h2 {
-      font-size: 32px;
-      font-weight: 900;
-      line-height: 1.2;
-      letter-spacing: -0.02em;
-    }
-
-    .bauhaus-manifesto {
-      font-size: 16.5px;
-      line-height: 1.8;
-      color: var(--bh-black);
-      margin-bottom: 24px;
-      font-weight: 500;
-    }
-
-    /* 几何交互试验盘 (红黄蓝按钮) */
-    .geometric-dock {
+    /* 收尾工作坊宣言 */
+    .manifesto-banner {
+      background: var(--bh-black);
+      color: var(--bh-cream);
+      border: 3px solid var(--bh-black);
+      box-shadow: 10px 10px 0 var(--bh-yellow);
+      padding: 40px 32px;
       display: flex;
+      flex-direction: column;
       gap: 16px;
-      align-items: center;
-      margin-top: 16px;
+      position: relative;
+      overflow: hidden;
+    }
+    .manifesto-banner::after {
+      content: "";
+      position: absolute;
+      right: -40px;
+      bottom: -40px;
+      width: 180px;
+      height: 180px;
+      border-radius: 50%;
+      background: var(--bh-red);
+      opacity: 0.3;
+      pointer-events: none;
+    }
+    .manifesto-quote {
+      font-size: clamp(22px, 3.5vw, 38px);
+      font-weight: 900;
+      line-height: 1.3;
+      letter-spacing: -0.02em;
+      color: var(--bh-white);
+    }
+    .manifesto-subtext {
+      font-size: 15px;
+      color: #bbb;
+      max-width: 800px;
+      line-height: 1.8;
+    }
+    .manifesto-footer {
+      display: flex;
       flex-wrap: wrap;
+      justify-content: space-between;
+      align-items: center;
+      padding-top: 16px;
+      border-top: 1px solid #333;
+      font-family: var(--font-mono);
+      font-size: 12px;
+      color: var(--bh-yellow);
     }
 
-    .geo-shape-btn {
-      padding: 12px 24px;
-      border: 2px solid var(--bh-black);
-      font-family: var(--font-bauhaus);
-      font-weight: 900;
-      font-size: 14px;
-      cursor: pointer;
-      box-shadow: 4px 4px 0 var(--bh-black);
-      transition: all 0.15s ease;
-    }
-    .geo-shape-btn:active {
-      transform: translate(2px, 2px);
-      box-shadow: 2px 2px 0 var(--bh-black);
-    }
-    .btn-circle { background: var(--bh-blue); color: #fff; border-radius: 999px; }
-    .btn-square { background: var(--bh-red); color: #fff; }
-    .btn-triangle { background: var(--bh-yellow); color: var(--bh-black); }
-
-    /* 三栏底板块 */
-    .bauhaus-three-cols {
-      display: grid;
-      grid-template-columns: repeat(3, 1fr);
-      border-top: 4px solid var(--bh-black);
-      padding-top: 32px;
-      gap: 24px;
-    }
-
-    .col-card {
-      border: 2px solid var(--bh-black);
-      padding: 20px;
-      background: #fff;
-      box-shadow: 6px 6px 0 var(--bh-black);
-    }
-
-    .col-card h3 {
-      font-size: 20px;
-      font-weight: 900;
-      margin-bottom: 8px;
-    }
-
-    @media (max-width: 860px) {
-      .bauhaus-header {
+    /* 响应式调整 */
+    @media (max-width: 980px) {
+      .masthead-grid {
         grid-template-columns: 1fr;
       }
-      .bauhaus-grid-main {
+      .masthead-col {
+        border-right: none;
+        border-bottom: 2px solid var(--bh-black);
+      }
+      .masthead-col:last-child {
+        border-bottom: none;
+      }
+      .narrative-grid {
         grid-template-columns: 1fr;
       }
-      .bauhaus-three-cols {
+      .sub-grid {
         grid-template-columns: 1fr;
+      }
+      .span-4, .span-5, .span-7, .span-8 {
+        grid-column: span 12;
+      }
+      .grid-experiment-demo {
+        grid-template-columns: repeat(2, 1fr);
+      }
+    }
+
+    @media (max-width: 640px) {
+      .shape-dict-list, .swatch-group {
+        grid-template-columns: 1fr;
+      }
+      .interactive-control-bar {
+        flex-direction: column;
+        align-items: stretch;
+      }
+      .status-pill {
+        margin-left: 0;
+        text-align: center;
+      }
+    }
+
+    @media (prefers-reduced-motion: reduce) {
+      .geo-object, .action-btn {
+        transition: none !important;
       }
     }
   </style>
 </head>
 <body>
-  <div class="bauhaus-shell">
-    <!-- 顶部标头 -->
-    <header class="bauhaus-header">
-      <div class="bauhaus-logo">BAUHAUS</div>
-      <div class="bauhaus-badge">
-        <div>STYLE 28 // 构成主义</div>
-        <strong>FORM FOLLOWS FUNCTION</strong>
+  <div class="werkstatt-shell">
+    
+    <!-- 刊物身份大标题 -->
+    <header class="bauhaus-masthead">
+      <div class="masthead-strip">
+        <span>BAUHAUS WERKSTATT / 基础课练习册 1926→2026</span>
+        <span>ARCHIV-NR. 28-GEO</span>
       </div>
-      <div class="bauhaus-badge">
-        <div>WEIMAR · DESSAU · BERLIN</div>
-        <div>1919 — 1933</div>
+      <div class="masthead-grid">
+        <div class="masthead-col">
+          <div class="main-logo-text">BAUHAUS</div>
+          <div class="masthead-sub">FORM FOLLOWS FUNCTION // 形式追随功能</div>
+        </div>
+        <div class="masthead-col">
+          <div class="masthead-badge-content">
+            <div>STUDIENJAHR / 研讨阶段</div>
+            <strong>GRUNDKURS 01</strong>
+            <p style="margin-top: 6px; color: #555;">约翰·伊顿与莫霍利-纳吉基础课程体系档案</p>
+          </div>
+        </div>
+        <div class="masthead-col" style="background: var(--bh-paper);">
+          <div class="masthead-badge-content">
+            <div>DISZIPLIN / 领域</div>
+            <strong style="color: var(--bh-blue);">GEOMETRIE</strong>
+            <p style="margin-top: 6px; color: #555;">红黄蓝 · 点线面 · 工业生产</p>
+          </div>
+        </div>
       </div>
     </header>
 
-    <!-- 主展示区 -->
-    <section class="bauhaus-grid-main">
-      <div class="bauhaus-poster-box">
-        <img src="assets/images/bauhaus_geometry.jpg" alt="包豪斯构成主义海报" class="bauhaus-poster-img">
-      </div>
+    <!-- 互动控制台 -->
+    <nav class="interactive-control-bar" aria-label="包豪斯练习册交互面板">
+      <span class="bar-label">工坊指令</span>
+      <button class="action-btn btn-red active" id="btnStudyRed" onclick="setStudyTheme('red')" aria-label="切换红色研究">切换红色研究</button>
+      <button class="action-btn btn-blue" id="btnStudyBlue" onclick="setStudyTheme('blue')" aria-label="切换蓝色研究">切换蓝色研究</button>
+      <button class="action-btn btn-yellow" id="btnStudyYellow" onclick="setStudyTheme('yellow')" aria-label="切换黄色研究">切换黄色研究</button>
+      <button class="action-btn" onclick="rearrangeGeometry()" aria-label="重新排列几何构成">重新排列几何构成</button>
+      <button class="action-btn" onclick="toggleAnnotation()" aria-label="显示功能说明">显示功能说明</button>
+      <div class="status-pill" id="archiveStatus">练习 03 已归档</div>
+    </nav>
 
-      <div class="bauhaus-text-side">
-        <div class="article-title-block">
-          <div style="color: var(--bh-yellow); font-size: 12px; font-weight: 900; letter-spacing: 0.1em; margin-bottom: 4px;">// MANIFESTO</div>
-          <h2>形式追随功能：包豪斯的几何理性美学</h2>
+    <!-- 主叙事大篇章 -->
+    <main class="narrative-grid">
+      <!-- 左侧动态几何构成台 -->
+      <section class="composition-stage" aria-labelledby="stageHeading">
+        <h2 id="stageHeading" style="font-size: 14px; font-family: var(--font-mono); font-weight: 900; margin-bottom: 12px;">
+          // KOMPOSITION 01 : 动态构成台
+        </h2>
+        <div class="canvas-container" id="geoCanvas" aria-label="几何构成互动试验板">
+          <div class="geo-object geo-circle" id="geoC" style="left: 40px; top: 50px;"></div>
+          <div class="geo-object geo-square" id="geoS" style="right: 50px; bottom: 60px;"></div>
+          <div class="geo-object geo-triangle" id="geoT" style="left: 120px; bottom: 80px;"></div>
+          <div class="geo-object geo-line" id="geoL" style="top: 170px; transform: rotate(-25deg);"></div>
         </div>
+        <div class="diagram-caption">
+          <span>X-AXIS / 240MM</span>
+          <span id="compPresetName">预设：对角张力平衡</span>
+          <span>Y-AXIS / 180MM</span>
+        </div>
+      </section>
 
-        <p class="bauhaus-manifesto">
-          建立一个没有阶级壁垒的工匠与艺术家联邦！纯粹的原色（红、黄、蓝）与严谨的几何形体（圆、三角形、正方形），构成了二十世纪现代主义设计的基石。摒弃一切虚伪的繁复装饰，让材料自身说话。
+      <!-- 右侧核心文本 -->
+      <article class="narrative-card">
+        <span class="section-tag">// HAUPTTEXT 主叙事</span>
+        <h1 id="mainTitle">一把椅子、一张海报与一个按钮的共同问题</h1>
+        <p class="lead-text">
+          当马歇·布劳耶在 1925 年把自行车把手的阿德勒无缝冷拔钢管弯成一把“瓦西里椅”时，他面临的技术抉择，与一名现代前端工程师在 CSS 中写下一个 <code>&lt;button&gt;</code> 的边框和内边距时别无二致。
         </p>
+        <p class="body-text">
+          包豪斯从来不是一种静态复古的装饰风格，而是一套解决工业化生产矛盾的认知协议。核心冲突始终在于：当制品从手工作坊的一对一独创，转变为数以万计的标准化复制时，<strong>材料的真实性、生产的经济性、操作的可用性与视觉的纯粹美感</strong>，该如何在同一种几何骨架中达成妥协？
+        </p>
+        <p class="body-text">
+          无论是木材的纹理、钢管的曲率、纸张的铅字排版，还是当代屏幕上视口网格与触摸目标的像素尺寸，形式不应是外包的涂层，而是功能推演至终局时自然浮现的轮廓。
+        </p>
+        <div class="functional-annotation" id="funcAnnotationBox">
+          <strong>[ 说明 ]</strong> 当前视图聚焦于“物质承载逻辑”：纯几何没有修饰，多余的圆角与阴影被严谨的结构张力取代。
+        </div>
+      </article>
+    </main>
 
-        <!-- 几何色块互动 -->
-        <div>
-          <div style="font-size: 12px; font-weight: 900; text-transform: uppercase; margin-bottom: 8px;">
-            ▶ 切换原色主题调色盘：
+    <!-- 3 个次级栏目 -->
+    <section class="sub-columns-section" aria-labelledby="subSectionHeading">
+      <div class="section-header-bar">
+        <h2 id="subSectionHeading">THEMEN-REIHE / 三大专题讨论</h2>
+        <span style="font-family: var(--font-mono); font-size: 13px; font-weight: 700;">3 KLASSISCHE LEKTIONEN</span>
+      </div>
+
+      <div class="sub-grid">
+        <!-- 栏目 1 -->
+        <article class="sub-card" style="border-top: 8px solid var(--bh-red);">
+          <div class="sub-card-tag">LEKTION 01 // FARBENLEHRE</div>
+          <h3>红黄蓝并不是装饰捷径</h3>
+          <p>
+            大众常常将三原色误认为是包豪斯的一种波普化商标。但在伊顿与康定斯基的色彩研究中，红（直角的稳定与重力）、黄（锐角的尖锐与扩散）、蓝（圆形的向心与沉静）是信息层级的精确映射。如果色彩不能澄清功能优先级，它就是视觉噪音。
+          </p>
+          <div class="sub-card-footer">
+            <span>色彩语义学</span>
+            <span>KR-01</span>
           </div>
-          <div class="geometric-dock">
-            <button class="geo-shape-btn btn-circle" onclick="changeAccent('blue')">● 蔚蓝圆相</button>
-            <button class="geo-shape-btn btn-square" onclick="changeAccent('red')">■ 鲜红矩方</button>
-            <button class="geo-shape-btn btn-triangle" onclick="changeAccent('yellow')">▲ 明黄三角</button>
+        </article>
+
+        <!-- 栏目 2 -->
+        <article class="sub-card" style="border-top: 8px solid var(--bh-blue);">
+          <div class="sub-card-tag">LEKTION 02 // TYPOGRAFIE & LAYOUT</div>
+          <h3>非对称如何保持平衡</h3>
+          <p>
+            扬·奇肖尔德与赫伯特·拜耶倡导的新版面设计，彻底推翻了古典中轴对称排版的僵化。利用字重对比、红黑主次、大跨度留白与斜向视线引导，页面构建出一种如动平衡秤般的工业韵律，使读者的目光能够以最高效率抓取核心事实。
+          </p>
+          <div class="sub-card-footer">
+            <span>动态骨架</span>
+            <span>KR-02</span>
           </div>
+        </article>
+
+        <!-- 栏目 3 -->
+        <article class="sub-card" style="border-top: 8px solid var(--bh-yellow);">
+          <div class="sub-card-tag">LEKTION 03 // DIGITALE EVOLUTION</div>
+          <h3>从工坊到数字产品团队</h3>
+          <p>
+            包豪斯将画家、木匠、金工和印刷工聚拢在同一座厂房的实践，正是现代跨学科产品团队的原型。Design Tokens 对应着标准化构件，组件库对应着预制装配线。当我们用代码构建界面时，包豪斯的工坊精神从未离开。
+          </p>
+          <div class="sub-card-footer">
+            <span>现代协作</span>
+            <span>KR-03</span>
+          </div>
+        </article>
+      </div>
+    </section>
+
+    <!-- 资料模块矩阵 -->
+    <section class="docs-matrix" aria-labelledby="docsMatrixHeading">
+      <!-- 课程表 -->
+      <div class="docs-card span-5">
+        <h3 id="docsMatrixHeading">① 1926 德绍基础课程表</h3>
+        <table class="curriculum-table" aria-label="包豪斯德绍基础课程表">
+          <thead>
+            <tr>
+              <th>学期</th>
+              <th>模块</th>
+              <th>指导导师</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td>VORLEHRE</td>
+              <td>形态与材质对比</td>
+              <td>阿尔伯斯 (Albers)</td>
+            </tr>
+            <tr>
+              <td>WERKSTATT</td>
+              <td>金属家具与管件</td>
+              <td>布劳耶 (Breuer)</td>
+            </tr>
+            <tr>
+              <td>FARBE</td>
+              <td>色彩分析与对应</td>
+              <td>康定斯基 (Kandinsky)</td>
+            </tr>
+            <tr>
+              <td>DRUCK</td>
+              <td>通用无衬线排印</td>
+              <td>拜耶 (Bayer)</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+
+      <!-- 形状词典 -->
+      <div class="docs-card span-7">
+        <h3>② 形状心理词典</h3>
+        <div class="shape-dict-list">
+          <div class="dict-item">
+            <div class="dict-symbol" style="color: var(--bh-blue);">●</div>
+            <div class="dict-name">Kreis / 圆形</div>
+            <div class="dict-desc">向心内敛、流动、无限连续，代表平静与流线型运动。</div>
+          </div>
+          <div class="dict-item">
+            <div class="dict-item-inner">
+              <div class="dict-symbol" style="color: var(--bh-red);">■</div>
+              <div class="dict-name">Quadrat / 正方形</div>
+              <div class="dict-desc">坚实承重、90度垂直稳固，象征工业基座与秩序。</div>
+            </div>
+          </div>
+          <div class="dict-item">
+            <div class="dict-symbol" style="color: var(--bh-yellow);">▲</div>
+            <div class="dict-name">Dreieck / 三角形</div>
+            <div class="dict-desc">锐利穿透、方向指引、动态扩张，释放对角张力。</div>
+          </div>
+        </div>
+      </div>
+
+      <!-- 三原色色票 -->
+      <div class="docs-card span-4">
+        <h3>③ 三原色色票标准</h3>
+        <div class="swatch-group">
+          <div class="swatch-box">
+            <div class="swatch-color" style="background: var(--bh-red);"></div>
+            <div class="swatch-info">
+              <strong>BAUHAUS ROT</strong><br>
+              #D9381E<br>
+              CMYK 10/90/95/0
+            </div>
+          </div>
+          <div class="swatch-box">
+            <div class="swatch-color" style="background: var(--bh-yellow);"></div>
+            <div class="swatch-info">
+              <strong>BAUHAUS GELB</strong><br>
+              #F4B41A<br>
+              CMYK 0/30/95/0
+            </div>
+          </div>
+          <div class="swatch-box">
+            <div class="swatch-color" style="background: var(--bh-blue);"></div>
+            <div class="swatch-info">
+              <strong>BAUHAUS BLAU</strong><br>
+              #1B4F9C<br>
+              CMYK 95/70/10/0
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- 网格练习与材料实验 -->
+      <div class="docs-card span-8">
+        <h3>④ 网格练习与材料实验</h3>
+        <p style="font-size: 13px; color: #555; margin-bottom: 8px;">
+          探索无缝冷拔钢管、胶合弯曲木、工业玻璃与铅活字的承载极限。
+        </p>
+        <div class="grid-experiment-demo">
+          <div class="grid-cell">
+            <strong>01. STAHLROHR</strong>
+            <span>冷拔钢管弯曲率 &gt; R45</span>
+          </div>
+          <div class="grid-cell">
+            <strong>02. EISENGARN</strong>
+            <span>上蜡棉线高张力编织</span>
+          </div>
+          <div class="grid-cell">
+            <strong>03. GLAS & LICHT</strong>
+            <span>平板无波纹工业透光</span>
+          </div>
+          <div class="grid-cell">
+            <strong>04. SATZRASTER</strong>
+            <span>12 点排字基线对齐系统</span>
+          </div>
+        </div>
+        <div class="critique-box">
+          <strong>学生作业批注 #104：</strong> “网格划分清晰，但在第三栏文字的换行处理中留有孤字。请严格遵循非对称排版规则，优先保证断句的语义完整性，不要为了填满右侧边界而强行拉伸字距。” —— 导师组
         </div>
       </div>
     </section>
 
-    <!-- 深度专栏篇章 -->
-    <section style="margin-bottom: 48px; border-top: 4px solid var(--bh-black); padding-top: 36px;">
-      <div style="font-size: 13px; font-weight: 900; color: var(--bh-red); letter-spacing: 0.1em; margin-bottom: 12px;">// ESSAYS & CRITIQUE · 理论与批评</div>
-      <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 32px;">
-        <article style="background: #fff; border: 3px solid var(--bh-black); padding: 28px; box-shadow: 8px 8px 0 var(--bh-black);">
-          <div style="font-size: 11px; font-weight: 900; color: var(--bh-blue); margin-bottom: 8px;">ESSAY 01 // MANIFESTO</div>
-          <h2 style="font-size: 20px; font-weight: 900; line-height: 1.3; margin-bottom: 14px;">魏玛包豪斯宣言：手工艺人与艺术家的等级壁垒消解</h2>
-          <p style="font-size: 14px; line-height: 1.8; color: #333;">
-            瓦尔特·格罗皮乌斯在 1919 年宣告：“建筑师、雕塑家、画家，我们都必须回归手工艺！”这一号召不仅彻底重塑了 20 世纪的现代主义设计，更在现代软件工程中得到了呼应：工程师与全栈设计师的壁垒正在消融，代码就是数字化时代的精密手工艺。
-          </p>
-        </article>
-
-        <article style="background: #fff; border: 3px solid var(--bh-black); padding: 28px; box-shadow: 8px 8px 0 var(--bh-black);">
-          <div style="font-size: 11px; font-weight: 900; color: var(--bh-red); margin-bottom: 8px;">ESSAY 02 // MASS PRODUCTION</div>
-          <h2 style="font-size: 20px; font-weight: 900; line-height: 1.3; margin-bottom: 14px;">瓦西里椅与非对称构图：工业化生产中的先锋秩序</h2>
-          <p style="font-size: 14px; line-height: 1.8; color: #333;">
-            马歇·布劳耶利用无缝钢管弯曲制成的瓦西里椅，将家具结构的承重骨架完全裸露并化为极度优美的线条。在 Web 界面设计中，明晰的骨架与直白的数据流展示，远比繁复的过度拟物更具持久的生命力。
-          </p>
-        </article>
+    <!-- 收尾工作坊宣言 -->
+    <footer class="manifesto-banner" role="contentinfo">
+      <div style="font-family: var(--font-mono); font-size: 12px; letter-spacing: 0.1em; color: var(--bh-yellow);">
+        // ABSCHLUSSERKLÄRUNG / 1926→2026
       </div>
-    </section>
-
-    <!-- 三栏构成卡片 -->
-    <footer class="bauhaus-three-cols">
-      <div class="col-card" style="border-top: 8px solid var(--bh-blue);">
-        <h3>01 / 纯粹原色</h3>
-        <p style="font-size: 13.5px; color: #444;">红、黄、蓝的三原色系统，以最凝练的色谱张力直击心灵。</p>
-      </div>
-      <div class="col-card" style="border-top: 8px solid var(--bh-red);">
-        <h3>02 / 非对称网格</h3>
-        <p style="font-size: 13.5px; color: #444;">打破传统中轴对称，以动态平衡重构信息层级的视觉秩序。</p>
-      </div>
-      <div class="col-card" style="border-top: 8px solid var(--bh-yellow);">
-        <h3>03 / 工业制造</h3>
-        <p style="font-size: 13.5px; color: #444;">艺术与技术的全新统一，服务于大众日常生活的工业设计先驱。</p>
+      <blockquote class="manifesto-quote">
+        “艺术与技术不在两端，它们在同一张工作台上。”
+      </blockquote>
+      <p class="manifesto-subtext">
+        无论时代是停留在蒸汽、机床、冷拔钢管，还是演进至高刷新率屏幕与神经元网络算法，设计的使命始终如一：剔除虚浮的拟态与伪饰，用最简练坚固的形式服务于人的真实需求。
+      </p>
+      <div class="manifesto-footer">
+        <span>BAUHAUS DESSAU ARCHIV · 2026 EDITION</span>
+        <span>FORM FOLLOWS FUNCTION · END OF FOLIO</span>
       </div>
     </footer>
-  <!-- 包豪斯几何浮动画布 -->
-  <canvas id="bauhausGeoCanvas" style="position: fixed; inset: 0; pointer-events: none; z-index: 1; mix-blend-mode: multiply; opacity: 0.65;"></canvas>
+
+  </div>
 
   <script src="assets/nav-bar.js"></script>
   <script>
-    function changeAccent(color) {
-      const colors = {
-        blue: "#1c52a3",
-        red: "#de3823",
-        yellow: "#f3b712"
-      };
-      if (colors[color]) {
-        document.body.style.borderTopColor = colors[color];
-        document.documentElement.style.setProperty('--bh-current-accent', colors[color]);
+    // 状态配置
+    let currentPreset = 0;
+    const presets = [
+      {
+        name: "预设：对角张力平衡",
+        circle: { left: "40px", top: "50px", scale: 1 },
+        square: { right: "50px", bottom: "60px", rotate: 0 },
+        triangle: { left: "130px", bottom: "80px", rotate: 0 },
+        line: { top: "170px", rotate: "-25deg" }
+      },
+      {
+        name: "预设：几何重心集中",
+        circle: { left: "110px", top: "90px", scale: 1.2 },
+        square: { right: "120px", bottom: "110px", rotate: 45 },
+        triangle: { left: "80px", bottom: "40px", rotate: 180 },
+        line: { top: "160px", rotate: "90deg" }
+      },
+      {
+        name: "预设：非对称横向流动",
+        circle: { left: "180px", top: "40px", scale: 0.8 },
+        square: { right: "30px", bottom: "140px", rotate: -15 },
+        triangle: { left: "40px", bottom: "50px", rotate: 30 },
+        line: { top: "220px", rotate: "0deg" }
       }
+    ];
+
+    function setStudyTheme(color) {
+      const colorMap = {
+        red: { hex: "#d9381e", name: "红色", note: "当前研究状态：【红色研究】—— 强调正方形的稳固骨架与警示对比。" },
+        blue: { hex: "#1b4f9c", name: "蓝色", note: "当前研究状态：【蓝色研究】—— 强调圆形的空间包容度与精神宁静。" },
+        yellow: { hex: "#f4b41a", name: "黄色", note: "当前研究状态：【黄色研究】—— 强调三角形的发散穿透与动态张力。" }
+      };
+
+      const selected = colorMap[color] || colorMap.red;
+      document.documentElement.style.setProperty('--theme-active', selected.hex);
+      
+      // 更新按钮激活状态
+      document.querySelectorAll('.interactive-control-bar .action-btn').forEach(btn => btn.classList.remove('active'));
+      if(color === 'red') document.getElementById('btnStudyRed').classList.add('active');
+      if(color === 'blue') document.getElementById('btnStudyBlue').classList.add('active');
+      if(color === 'yellow') document.getElementById('btnStudyYellow').classList.add('active');
+
+      // 更新说明
+      const annotation = document.getElementById('funcAnnotationBox');
+      annotation.innerHTML = `<strong>[ 研究记录 ]</strong> ${selected.note}`;
+      
+      const archiveStatus = document.getElementById('archiveStatus');
+      archiveStatus.textContent = `练习 03 [${selected.name}] 已归档`;
     }
 
-    // 绘制几何形体碰撞浮动
-    (function() {
-      const canvas = document.getElementById('bauhausGeoCanvas');
-      const ctx = canvas.getContext('2d');
-      let w, h;
+    function rearrangeGeometry() {
+      currentPreset = (currentPreset + 1) % presets.length;
+      const p = presets[currentPreset];
+      
+      document.getElementById('compPresetName').textContent = p.name;
+      
+      const c = document.getElementById('geoC');
+      const s = document.getElementById('geoS');
+      const t = document.getElementById('geoT');
+      const l = document.getElementById('geoL');
 
-      function resize() {
-        w = canvas.width = window.innerWidth;
-        h = canvas.height = window.innerHeight;
+      c.style.left = p.circle.left;
+      c.style.top = p.circle.top;
+      c.style.transform = `scale(${p.circle.scale})`;
+
+      s.style.right = p.square.right;
+      s.style.bottom = p.square.bottom;
+      s.style.transform = `rotate(${p.square.rotate}deg)`;
+
+      t.style.left = p.triangle.left;
+      t.style.bottom = p.triangle.bottom;
+      t.style.transform = `rotate(${p.triangle.rotate}deg)`;
+
+      l.style.top = p.line.top;
+      l.style.transform = `rotate(${p.line.rotate})`;
+
+      const archiveStatus = document.getElementById('archiveStatus');
+      archiveStatus.textContent = `构成重排: 方案 0${currentPreset + 1}`;
+    }
+
+    function toggleAnnotation() {
+      const box = document.getElementById('funcAnnotationBox');
+      if (box.style.display === 'none') {
+        box.style.display = 'block';
+      } else {
+        box.style.display = 'none';
       }
-      window.addEventListener('resize', resize);
-      resize();
-
-      const shapes = [
-        { type: 'circle', x: w * 0.2, y: h * 0.3, size: 60, vx: 0.3, vy: 0.2, color: '#1c52a3' },
-        { type: 'square', x: w * 0.8, y: h * 0.4, size: 70, vx: -0.2, vy: 0.3, color: '#de3823', rot: 0, vRot: 0.005 },
-        { type: 'triangle', x: w * 0.5, y: h * 0.7, size: 80, vx: 0.2, vy: -0.25, color: '#f3b712', rot: 0, vRot: -0.004 }
-      ];
-
-      function animate() {
-        ctx.clearRect(0, 0, w, h);
-
-        shapes.forEach(s => {
-          s.x += s.vx;
-          s.y += s.vy;
-          if (s.rot !== undefined) s.rot += s.vRot;
-
-          if (s.x < 50 || s.x > w - 50) s.vx *= -1;
-          if (s.y < 50 || s.y > h - 50) s.vy *= -1;
-
-          ctx.save();
-          ctx.translate(s.x, s.y);
-          if (s.rot) ctx.rotate(s.rot);
-          ctx.fillStyle = s.color;
-
-          if (s.type === 'circle') {
-            ctx.beginPath();
-            ctx.arc(0, 0, s.size, 0, Math.PI * 2);
-            ctx.fill();
-          } else if (s.type === 'square') {
-            ctx.fillRect(-s.size / 2, -s.size / 2, s.size, s.size);
-          } else if (s.type === 'triangle') {
-            ctx.beginPath();
-            ctx.moveTo(0, -s.size);
-            ctx.lineTo(s.size * 0.86, s.size * 0.5);
-            ctx.lineTo(-s.size * 0.86, s.size * 0.5);
-            ctx.closePath();
-            ctx.fill();
-          }
-          ctx.restore();
-        });
-
-        requestAnimationFrame(animate);
-      }
-      animate();
-    })();
+    }
   </script>
 </body>
 </html>

@@ -3,20 +3,25 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>DEEP SPACE MISSION // 19 航天局深空探索飞行手册风</title>
-  <link rel="stylesheet" href="assets/common.css">
+  <title>ORANGE-7 深空任务日志 // 19 航天局深空探索手册</title>
+  <link rel="stylesheet" href="/creative-blogs/assets/common.css">
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Space+Mono:ital,wght@0,400;0,700;1,400&family=Chakra+Petch:wght@500;700;800&family=Noto+Sans+SC:wght@400;500;700&display=swap" rel="stylesheet">
   <style>
     :root {
-      --space-black: #0b0c10;
-      --space-panel: #141821;
-      --space-border: #2e384d;
+      --space-black: #08090d;
+      --space-panel: #11151f;
+      --space-panel-subtle: #161c2b;
+      --space-border: #28334a;
+      --space-border-bright: #435478;
       --space-gold: #ffd166;
-      --space-blue: #4cc9f0;
+      --space-cyan: #4cc9f0;
+      --space-orange: #ff7a00;
       --space-red: #ef476f;
-      --space-white: #f8f9fa;
+      --space-green: #06d6a0;
+      --space-text-main: #e2e8f0;
+      --space-text-muted: #8e9bb4;
       --font-telemetry: 'Space Mono', monospace;
       --font-display: 'Chakra Petch', 'Noto Sans SC', sans-serif;
     }
@@ -29,61 +34,143 @@
 
     body {
       background-color: var(--space-black);
-      color: var(--space-white);
+      color: var(--space-text-main);
       font-family: var(--font-telemetry);
       line-height: 1.7;
-      padding-bottom: 100px;
-      /* 星空网格与遥测点阵 */
+      padding-bottom: 120px;
       background-image: 
-        radial-gradient(rgba(76, 201, 240, 0.15) 1px, transparent 1px),
-        linear-gradient(to right, rgba(255, 255, 255, 0.02) 1px, transparent 1px),
-        linear-gradient(to bottom, rgba(255, 255, 255, 0.02) 1px, transparent 1px);
-      background-size: 30px 30px, 60px 60px, 60px 60px;
+        radial-gradient(rgba(76, 201, 240, 0.12) 1px, transparent 1px),
+        linear-gradient(to right, rgba(255, 255, 255, 0.025) 1px, transparent 1px),
+        linear-gradient(to bottom, rgba(255, 255, 255, 0.025) 1px, transparent 1px);
+      background-size: 32px 32px, 64px 64px, 64px 64px;
+      position: relative;
+    }
+
+    #spaceCanvas {
+      position: fixed;
+      inset: 0;
+      pointer-events: none;
+      z-index: 0;
     }
 
     .mission-wrapper {
-      max-width: 1200px;
+      position: relative;
+      z-index: 1;
+      max-width: 1240px;
       margin: 0 auto;
-      padding: 24px 20px;
+      padding: 24px 20px 80px;
     }
 
-    /* 飞行任务顶栏遥测 HUD */
+    /* 顶部仿真标识与免责声明 */
+    .fictional-notice-bar {
+      display: flex;
+      flex-wrap: wrap;
+      justify-content: space-between;
+      align-items: center;
+      gap: 12px;
+      padding: 8px 16px;
+      background: rgba(255, 122, 0, 0.08);
+      border: 1px dashed rgba(255, 122, 0, 0.4);
+      color: var(--space-orange);
+      font-size: 11px;
+      letter-spacing: 1px;
+      margin-bottom: 20px;
+    }
+
+    /* 顶栏遥测 HUD */
     .telemetry-header {
       background: var(--space-panel);
       border: 1px solid var(--space-border);
-      border-left: 6px solid var(--space-gold);
-      padding: 16px 24px;
+      border-left: 6px solid var(--space-orange);
+      padding: 18px 24px;
       display: flex;
+      flex-wrap: wrap;
       justify-content: space-between;
       align-items: center;
-      margin-bottom: 32px;
-      box-shadow: 0 8px 30px rgba(0,0,0,0.5);
+      gap: 16px;
+      margin-bottom: 28px;
+      box-shadow: 0 10px 30px rgba(0, 0, 0, 0.6);
     }
 
     .mission-badge {
       display: flex;
       align-items: center;
-      gap: 12px;
+      gap: 14px;
     }
     .nasa-worm {
       font-family: var(--font-display);
-      font-size: 24px;
+      font-size: 22px;
       font-weight: 800;
-      color: var(--space-red);
-      letter-spacing: 2px;
+      color: var(--space-orange);
+      letter-spacing: 2.5px;
     }
     .flight-id {
-      font-size: 12px;
+      font-size: 11px;
       color: var(--space-gold);
       background: rgba(255, 209, 102, 0.1);
-      padding: 2px 8px;
+      padding: 3px 8px;
       border: 1px solid var(--space-gold);
     }
 
-    .mission-clock {
-      font-size: 13px;
-      color: var(--space-blue);
-      text-align: right;
+    .mission-clock-strip {
+      display: flex;
+      gap: 20px;
+      font-size: 12px;
+    }
+    .clock-item {
+      display: flex;
+      flex-direction: column;
+      align-items: flex-end;
+    }
+    .clock-label {
+      color: var(--space-text-muted);
+      font-size: 10px;
+    }
+    .clock-val {
+      color: var(--space-cyan);
+      font-weight: 700;
+    }
+
+    /* 遥测仪表栏 (数据模块) */
+    .telemetry-dashboard {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(170px, 1fr));
+      gap: 14px;
+      margin-bottom: 32px;
+    }
+    .telemetry-card {
+      background: var(--space-panel);
+      border: 1px solid var(--space-border);
+      padding: 14px 16px;
+      position: relative;
+      overflow: hidden;
+    }
+    .telemetry-card::before {
+      content: "";
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 2px;
+      background: linear-gradient(90deg, var(--space-cyan), transparent);
+    }
+    .telemetry-card .dash-label {
+      font-size: 11px;
+      color: var(--space-text-muted);
+      margin-bottom: 6px;
+      display: flex;
+      justify-content: space-between;
+    }
+    .telemetry-card .dash-val {
+      font-size: 18px;
+      font-family: var(--font-display);
+      font-weight: 700;
+      color: #fff;
+    }
+    .telemetry-card .dash-sub {
+      font-size: 10px;
+      color: var(--space-green);
+      margin-top: 4px;
     }
 
     /* 任务主手册封面 Hero 卡片 */
@@ -91,136 +178,239 @@
       border: 1px solid var(--space-border);
       background: var(--space-panel);
       display: grid;
-      grid-template-columns: 1.4fr 1fr;
-      margin-bottom: 40px;
+      grid-template-columns: 1.2fr 1fr;
+      margin-bottom: 36px;
       overflow: hidden;
-      position: relative;
     }
     .hero-photo-box {
       position: relative;
       min-height: 380px;
+      background: #000;
     }
     .hero-photo-box img {
       width: 100%;
       height: 100%;
       object-fit: cover;
       display: block;
+      opacity: 0.88;
     }
     .photo-telemetry-tag {
       position: absolute;
       bottom: 12px;
       left: 12px;
-      background: rgba(0,0,0,0.75);
-      border: 1px solid var(--space-blue);
-      color: var(--space-blue);
+      background: rgba(8, 9, 13, 0.85);
+      border: 1px solid var(--space-cyan);
+      color: var(--space-cyan);
       font-size: 11px;
-      padding: 4px 8px;
+      padding: 4px 10px;
     }
 
     .hero-manual-body {
-      padding: 36px 32px;
+      padding: 32px 28px;
       display: flex;
       flex-direction: column;
       justify-content: space-between;
+      gap: 20px;
     }
 
     .checklist-tag {
       font-size: 11px;
-      color: var(--space-gold);
+      color: var(--space-orange);
       letter-spacing: 2px;
-      margin-bottom: 10px;
+      margin-bottom: 8px;
     }
     .manual-heading {
       font-family: var(--font-display);
-      font-size: 28px;
+      font-size: 26px;
       color: #fff;
-      margin-bottom: 16px;
-      line-height: 1.3;
+      margin-bottom: 14px;
+      line-height: 1.35;
     }
     .manual-heading span {
-      color: var(--space-blue);
+      color: var(--space-cyan);
     }
 
+    .flight-checklist {
+      background: rgba(0, 0, 0, 0.35);
+      border: 1px solid var(--space-border);
+      padding: 14px 16px;
+    }
+    .checklist-title {
+      font-size: 11px;
+      color: var(--space-gold);
+      margin-bottom: 8px;
+      letter-spacing: 1px;
+    }
     .flight-checklist-item {
       display: flex;
       align-items: center;
       gap: 10px;
-      font-size: 13px;
-      color: #94a3b8;
-      margin-bottom: 8px;
+      font-size: 12px;
+      color: var(--space-text-muted);
+      margin-bottom: 6px;
     }
     .flight-checklist-item input {
-      accent-color: var(--space-gold);
+      accent-color: var(--space-orange);
+      cursor: pointer;
     }
 
-    /* 任务日志主分栏 */
+    /* 布局分栏 */
     .mission-logs-grid {
       display: grid;
       grid-template-columns: 2fr 1fr;
       gap: 32px;
     }
 
-    .mission-log-card {
+    /* 主叙事与日志卡片 */
+    .main-narrative-card {
       background: var(--space-panel);
       border: 1px solid var(--space-border);
-      padding: 26px;
-      margin-bottom: 24px;
-      position: relative;
+      border-top: 3px solid var(--space-cyan);
+      padding: 30px;
+      margin-bottom: 30px;
     }
-    .mission-log-card::before {
-      content: "";
-      position: absolute;
-      top: 0;
-      left: 0;
-      width: 40px;
-      height: 2px;
-      background: var(--space-blue);
-    }
-
-    .log-meta-row {
+    .narrative-header-meta {
       display: flex;
+      flex-wrap: wrap;
       justify-content: space-between;
+      gap: 8px;
       font-size: 11px;
-      color: #64748b;
-      margin-bottom: 12px;
+      color: var(--space-text-muted);
       border-bottom: 1px dashed var(--space-border);
-      padding-bottom: 6px;
-    }
-
-    .log-title {
-      font-family: var(--font-display);
-      font-size: 20px;
-      color: #fff;
-      margin-bottom: 12px;
-      line-height: 1.4;
-    }
-    .log-title:hover {
-      color: var(--space-gold);
-    }
-
-    .log-content {
-      font-size: 13px;
-      color: #cbd5e1;
-      line-height: 1.8;
+      padding-bottom: 12px;
       margin-bottom: 18px;
     }
+    .narrative-title {
+      font-family: var(--font-display);
+      font-size: 24px;
+      color: #fff;
+      margin-bottom: 16px;
+      line-height: 1.4;
+    }
 
-    .telemetry-btn {
-      display: inline-flex;
+    .narrative-prose p {
+      margin-bottom: 16px;
+      color: #cbd5e1;
+      font-size: 14px;
+      line-height: 1.85;
+    }
+
+    /* 姿态异常与交互演练组件 */
+    .anomaly-box {
+      background: rgba(239, 71, 111, 0.08);
+      border: 1px solid var(--space-red);
+      padding: 18px 20px;
+      margin: 24px 0;
+      border-radius: 2px;
+    }
+    .anomaly-title-row {
+      display: flex;
+      justify-content: space-between;
       align-items: center;
-      gap: 6px;
-      font-size: 12px;
-      color: var(--space-black);
-      background: var(--space-blue);
-      font-weight: 700;
-      padding: 6px 14px;
-      text-decoration: none;
+      margin-bottom: 10px;
     }
-    .telemetry-btn:hover {
-      background: var(--space-gold);
+    .anomaly-code {
+      color: var(--space-red);
+      font-weight: 700;
+      font-size: 13px;
+      letter-spacing: 1px;
+    }
+    .interactive-btn-group {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 12px;
+      margin-top: 14px;
+    }
+    .sim-btn {
+      background: transparent;
+      border: 1px solid var(--space-cyan);
+      color: var(--space-cyan);
+      font-family: var(--font-telemetry);
+      font-size: 12px;
+      padding: 8px 16px;
+      cursor: pointer;
+      transition: all 0.2s ease;
+    }
+    .sim-btn:hover, .sim-btn:focus-visible {
+      background: var(--space-cyan);
+      color: var(--space-black);
+      outline: none;
+    }
+    .sim-btn.active {
+      background: var(--space-orange);
+      border-color: var(--space-orange);
+      color: #000;
+      font-weight: 700;
+    }
+    .anomaly-report-details {
+      display: none;
+      background: #0c0f17;
+      padding: 12px 14px;
+      margin-top: 12px;
+      border-left: 3px solid var(--space-gold);
+      font-size: 12px;
+      color: var(--space-gold);
+      line-height: 1.6;
+    }
+    .attitude-status-screen {
+      margin-top: 12px;
+      padding: 10px 14px;
+      background: #090c12;
+      border: 1px solid var(--space-border);
+      font-size: 12px;
+      color: var(--space-text-main);
+      display: none;
     }
 
-    /* 侧边遥测小部件 */
+    /* 次级栏目 */
+    .secondary-articles {
+      margin-top: 40px;
+    }
+    .sub-section-title {
+      font-family: var(--font-display);
+      font-size: 18px;
+      color: var(--space-gold);
+      letter-spacing: 2px;
+      margin-bottom: 20px;
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+    .sub-section-title::after {
+      content: "";
+      flex: 1;
+      height: 1px;
+      background: var(--space-border);
+    }
+    .article-sub-card {
+      background: var(--space-panel);
+      border: 1px solid var(--space-border);
+      padding: 22px;
+      margin-bottom: 20px;
+      transition: border-color 0.2s;
+    }
+    .article-sub-card:hover {
+      border-color: var(--space-border-bright);
+    }
+    .article-meta {
+      font-size: 11px;
+      color: var(--space-cyan);
+      margin-bottom: 8px;
+    }
+    .article-title {
+      font-family: var(--font-display);
+      font-size: 18px;
+      color: #fff;
+      margin-bottom: 10px;
+      line-height: 1.4;
+    }
+    .article-excerpt {
+      font-size: 13px;
+      color: var(--space-text-muted);
+      line-height: 1.7;
+    }
+
+    /* 侧边栏小部件 */
     .telemetry-widget {
       background: var(--space-panel);
       border: 1px solid var(--space-border);
@@ -229,174 +419,372 @@
     }
     .widget-heading {
       font-size: 12px;
+      font-family: var(--font-display);
       color: var(--space-gold);
       border-bottom: 1px solid var(--space-border);
-      padding-bottom: 6px;
+      padding-bottom: 8px;
       margin-bottom: 14px;
       letter-spacing: 1px;
     }
+    .crew-log-entry {
+      border-left: 2px solid var(--space-orange);
+      padding-left: 12px;
+      margin-bottom: 16px;
+      font-size: 12px;
+    }
+    .crew-log-author {
+      color: var(--space-cyan);
+      font-weight: 700;
+      margin-bottom: 2px;
+    }
+    .crew-log-text {
+      color: #cbd5e1;
+      line-height: 1.6;
+    }
 
-    .telemetry-data-row {
+    .payload-specs {
+      font-size: 12px;
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+    }
+    .payload-item {
       display: flex;
       justify-content: space-between;
-      font-size: 12px;
-      margin-bottom: 8px;
+      border-bottom: 1px dashed rgba(255,255,255,0.06);
+      padding-bottom: 6px;
     }
-    .telemetry-data-row span:last-child {
-      color: var(--space-blue);
-      font-weight: 700;
+    .payload-item span:last-child {
+      color: var(--space-cyan);
     }
 
-    @media (max-width: 860px) {
+    /* 收尾声明区 */
+    .mission-closing-banner {
+      margin-top: 48px;
+      background: linear-gradient(135deg, #11151f 0%, #171d2b 100%);
+      border: 1px solid var(--space-border);
+      border-left: 4px solid var(--space-cyan);
+      padding: 28px 32px;
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+    }
+    .closing-quote {
+      font-family: var(--font-display);
+      font-size: 20px;
+      color: #fff;
+      letter-spacing: 1px;
+    }
+    .closing-sign {
+      font-size: 12px;
+      color: var(--space-gold);
+    }
+
+    @media (max-width: 900px) {
       .flight-manual-hero, .mission-logs-grid {
         grid-template-columns: 1fr;
+      }
+      .telemetry-dashboard {
+        grid-template-columns: repeat(2, 1fr);
+      }
+    }
+    @media (max-width: 540px) {
+      .telemetry-dashboard {
+        grid-template-columns: 1fr;
+      }
+      .mission-clock-strip {
+        flex-direction: column;
+        gap: 6px;
+      }
+      .clock-item {
+        align-items: flex-start;
+      }
+    }
+
+    @media (prefers-reduced-motion: reduce) {
+      * {
+        animation: none !important;
+        transition: none !important;
       }
     }
   </style>
 </head>
 <body>
 
+  <!-- 深空星尘与流星 Canvas 背景 -->
+  <canvas id="spaceCanvas" aria-hidden="true"></canvas>
+
   <div class="mission-wrapper">
+    
+    <!-- 虚构任务与模拟提示 -->
+    <div class="fictional-notice-bar" role="note" aria-label="免责与演示提示">
+      <span>[ 刊物身份: ORANGE-7 深空任务日志 · 界面交互演示手册 ]</span>
+      <span>这是一段模拟数据 (SIMULATED TELEMETRY) · 非真实发射计划</span>
+    </div>
+
     <!-- 顶栏遥测 HUD -->
     <header class="telemetry-header">
       <div class="mission-badge">
-        <span class="nasa-worm">ARTEMIS-LOG</span>
-        <span class="flight-id">FLIGHT DOC // REV 9.4</span>
+        <span class="nasa-worm">ORANGE-7</span>
+        <span class="flight-id">MISSION MANUAL // L2-BOUND</span>
       </div>
-      <div class="mission-clock">
-        <div>MET: <strong>+042:18:22</strong></div>
-        <div style="font-size:11px; color:#64748b;">ORBIT: LUNAR PERIAPSIS (112 KM)</div>
+      <div class="mission-clock-strip">
+        <div class="clock-item">
+          <span class="clock-label">MISSION ELAPSED TIME</span>
+          <span class="clock-val" id="metClock">MET +184:14:28:09</span>
+        </div>
+        <div class="clock-item">
+          <span class="clock-label">COMMS DELAY (1-WAY)</span>
+          <span class="clock-val">4.982 SEC</span>
+        </div>
       </div>
     </header>
 
-    <!-- 飞行手册 Hero 封面 -->
+    <!-- 资料模块：遥测仪表盘 -->
+    <section class="telemetry-dashboard" aria-label="航天器关键状态指标">
+      <div class="telemetry-card">
+        <div class="dash-label"><span>距离地球 (DIST)</span><span>[KM]</span></div>
+        <div class="dash-val">1,492,300</div>
+        <div class="dash-sub">▲ 逼近日地 L2 晕轮轨道</div>
+      </div>
+      <div class="telemetry-card">
+        <div class="dash-label"><span>通信延迟 (RTT)</span><span>[DSN]</span></div>
+        <div class="dash-val">9.964 s</div>
+        <div class="dash-sub">● 深空网堪培拉站锁定</div>
+      </div>
+      <div class="telemetry-card">
+        <div class="dash-label"><span>氧气储备 (O₂)</span><span>[ECLSS]</span></div>
+        <div class="dash-val">96.4 %</div>
+        <div class="dash-sub">● 循环效率 99.1% (NOMINAL)</div>
+      </div>
+      <div class="telemetry-card">
+        <div class="dash-label"><span>主电源 (PWR)</span><span>[SOLAR/RTG]</span></div>
+        <div class="dash-val">14.8 kW</div>
+        <div class="dash-sub">● 4/4 阵列光照角最优</div>
+      </div>
+      <div class="telemetry-card">
+        <div class="dash-label"><span>有效载荷 (LOAD)</span><span>[SPECTRA]</span></div>
+        <div class="dash-val">480 kg</div>
+        <div class="dash-sub">● 极紫外干涉仪待命中</div>
+      </div>
+    </section>
+
+    <!-- 飞行手册封面卡片 -->
     <section class="flight-manual-hero">
       <div class="hero-photo-box">
-        <img src="assets/images/space_mission.jpg" alt="宇航员登月与地球升起摄影">
-        <div class="photo-telemetry-tag">CAM 04 // SURFACE EXPLORATION [EVA-02]</div>
+        <img src="/creative-blogs/assets/images/space_mission.jpg" alt="宇航员在深空舷窗前注视远方星系与仪器面板">
+        <div class="photo-telemetry-tag">CAM 02 // FORWARD HATCH MONITOR [NOMINAL]</div>
       </div>
       <div class="hero-manual-body">
         <div>
-          <div class="checklist-tag">SECTION 01 :: DEEP SPACE FLIGHT PLAN</div>
+          <div class="checklist-tag">CHAPTER 19 :: DEEP SPACE FLIGHT PLAN</div>
           <h1 class="manual-heading">
-            星海孤航：跨越三十八万公里的<span>地月转移轨道手记</span>
+            前往拉格朗日 L2 的<span>第 184 天</span>
           </h1>
-          <p style="font-size: 13px; color: #94a3b8; margin-bottom: 20px;">
-            在真空的绝对静默中，地球如同一颗悬浮在漆黑丝绒上的蓝色宝石。记录航天器姿态控制算法、抗辐射芯片容错架构以及人类在深空边疆的技术沉思。
+          <p style="font-size: 13px; color: var(--space-text-muted); margin-bottom: 16px;">
+            航行至日地引力鞍点，背景宇宙辐射降至寂静。在三模冗余与自主星图定位的严密监控下，每一次微小的力矩喷射都在重塑人类与太阳系尺度的边界。
           </p>
         </div>
-        <div>
-          <div style="font-size: 11px; color: var(--space-gold); margin-bottom: 8px;">CHECKLIST STATUS:</div>
-          <div class="flight-checklist-item">
+        <div class="flight-checklist">
+          <div class="checklist-title">FLIGHT CHECKLIST (第 184 天阶段核验)</div>
+          <label class="flight-checklist-item">
             <input type="checkbox" checked disabled>
-            <span>TLI (地月轨道转移脉冲点火) - COMPLETED</span>
-          </div>
-          <div class="flight-checklist-item">
+            <span>TLI/MCC-4 轨迹中途修正点火 (Δv = 4.2 m/s) - 完成</span>
+          </label>
+          <label class="flight-checklist-item">
             <input type="checkbox" checked disabled>
-            <span>高增益 X-Band 天线阵列对地锁定 - LOCKED</span>
-          </div>
-          <div class="flight-checklist-item">
-            <input type="checkbox" checked disabled>
-            <span>生命维持系统氧分压平衡 - NOMINAL</span>
-          </div>
+            <span>Ka 频段相控阵高增益天线对地追踪锁定 - 正常</span>
+          </label>
+          <label class="flight-checklist-item">
+            <input type="checkbox" checked id="chkEclss">
+            <span>舱内三级再生生命维持系统气压自平衡 - 98.6 kPa</span>
+          </label>
         </div>
       </div>
     </section>
 
-    <!-- 任务日志列表 -->
+    <!-- 任务日志与主叙事 -->
     <div class="mission-logs-grid">
-      <!-- 左侧任务日志 -->
       <main>
-        <article class="mission-log-card">
-          <div class="log-meta-row">
-            <span>ENTRY #01 · MISSION CRITICAL</span>
-            <span>DATE: 2026.08.20 · SYS: RAD-HARD RISC-V</span>
+        <!-- 主叙事文章 -->
+        <article class="main-narrative-card">
+          <div class="narrative-header-meta">
+            <span>LOG ENTRY #184 · MISSION PRIMARY</span>
+            <span>TARGET: SUN-EARTH LAGRANGE POINT L2</span>
+            <span>SYSTEM: ORANGE-7 AUTOPILOT</span>
           </div>
-          <h2 class="log-title">极端环境下的容错架构：航天级嵌入式系统的「三模冗余」实践</h2>
-          <p class="log-content">
-            宇宙高能重离子穿透芯片造成的单粒子翻转（SEU）是深空航行最大的隐形威胁。探讨如何通过三模冗余（TMR）投票机制与纠错内存（ECC）在纳秒级别自我修复计算状态。
-          </p>
-          <a href="#" class="telemetry-btn">READ FLIGHT TELEMETRY ➔</a>
+
+          <h2 class="narrative-title">《前往拉格朗日 L2 的第 184 天》：引力鞍点前的姿态惊魂与人工重构</h2>
+
+          <div class="narrative-prose">
+            <p>
+              在进入第 184 天的 03:14:00 UTC，航天器距离地球已超过 149 万公里。太阳风在这片静默空域吹拂着厚达五层的聚酰亚胺遮阳薄膜。按照既定轨道，ORANGE-7 应在 72 小时后切入围绕日地第二拉格朗日点的李萨如轨道（Lissajous Orbit）。
+            </p>
+            
+            <p>
+              然而在 04:22 UTC，星敏感器 A 发生高能重离子引起的短暂盲区，姿态确定系统在计算航向矢量时与陀螺积分产生了 0.38 度的偏角异常，触发了 <code>ERR-0x89C ATTITUDE_DRIFT</code> 警报。反作用飞轮组转速迅速逼近 4200 RPM 饱和阈值。
+            </p>
+
+            <!-- 异常与交互区域 -->
+            <div class="anomaly-box" role="region" aria-label="姿态异常与交互处理">
+              <div class="anomaly-title-row">
+                <span class="anomaly-code">⚠ 异常状态代码: ERR-0x89C [ATTITUDE_DRIFT]</span>
+                <span style="font-size: 11px; color: var(--space-red);">SEVERITY: HIGH</span>
+              </div>
+              <p style="font-size: 12px; color: #cbd5e1; margin-bottom: 8px;">
+                飞轮自旋角动量累积，反作用推力系统（RCS）进入待命。地面测控延迟 4.98 秒，需要乘员与机载决策链进行本地确认。
+              </p>
+              
+              <div class="interactive-btn-group">
+                <button class="sim-btn" id="btnToggleReport" aria-expanded="false" aria-controls="anomalyReport">展开异常报告</button>
+                <button class="sim-btn" id="btnCorrectAttitude">确认姿态修正演示</button>
+              </div>
+
+              <div id="anomalyReport" class="anomaly-report-details" role="status">
+                <strong>[遥测诊断报告]</strong><br>
+                - 星敏感器 A/B 差异校验：偏角差 +0.384°<br>
+                - 三模冗余投票器：判定为单粒子翻转导致的瞬态星表匹配失锁<br>
+                - 建议指令：强制采用脉冲星导航备用矢量，并触发 RCS 0.12s 冷气微脉冲卸载飞轮角动量。
+              </div>
+
+              <div id="attitudeScreen" class="attitude-status-screen" role="status">
+                [模拟执行中] ➔ RCS 冷气喷嘴脉冲激发... 飞轮转速降至 1850 RPM... 姿态重锁定完成... <strong>遥测已恢复 (NOMINAL)</strong>
+              </div>
+            </div>
+
+            <p>
+              乘员组在比对三模冗余计算单元的投票差异后，果断终止了自动重试循环，手动切换至脉冲星 X 射线时域基准，并下达了冷气脉冲指令。14 秒后，主天线再次完美对准西澳大利亚新诺西亚测控站。
+            </p>
+            <p>
+              这次人工干预再次证明：无论自动化算法演进到何种精度，在深空未知辐射与极端拓扑中，人类工程师直觉与可解释冗余架构依然是最后的安全网。
+            </p>
+          </div>
         </article>
 
-        <article class="mission-log-card">
-          <div class="log-meta-row">
-            <span>ENTRY #02 · NAVIGATION & ORBIT</span>
-            <span>DATE: 2026.08.14 · SYS: KALMAN FILTER</span>
-          </div>
-          <h2 class="log-title">星图匹配与自主导航：利用脉冲星信号建立宇宙深空 GPS</h2>
-          <p class="log-content">
-            当航天器飞离近地轨道，地面深空测控网（DSN）的单向延迟将达到数十分钟。通过观测 X 射线毫秒脉冲星自转周期，航天器得以在数千万公里外实现毫米级的自主定位。
-          </p>
-          <a href="#" class="telemetry-btn">READ FLIGHT TELEMETRY ➔</a>
-        </article>
+        <!-- 次级栏目 -->
+        <section class="secondary-articles" aria-label="航天技术次级专栏">
+          <h3 class="sub-section-title">ENGINEERING DISPATCHES // 技术专栏</h3>
 
-        <!-- 文章 3 -->
-        <article class="mission-log-card">
-          <div class="log-meta-row">
-            <span>ENTRY #03 · CELESTIAL MECHANICS</span>
-            <span>DATE: 2026.07.30 · SYS: HOHMANN TRANSFER</span>
-          </div>
-          <h2 class="log-title">霍曼转移与拉格朗日引力平衡点：星际远航的最优能量路径</h2>
-          <p class="log-content">
-            推导双脉冲切向加速在双椭圆轨道共面转移中的德尔塔-V（Δv）极值。分析詹姆斯·韦伯太空望远镜在日地 L2 平衡点微弱引力井中的晕轮轨道（Halo Orbit）维持策略。
-          </p>
-          <a href="#" class="telemetry-btn">READ FLIGHT TELEMETRY ➔</a>
-        </article>
+          <article class="article-sub-card">
+            <div class="article-meta">NAVIGATION // 脉冲星导航笔记</div>
+            <h4 class="article-title">《脉冲星导航笔记：毫秒自旋中的宇宙灯塔》</h4>
+            <p class="article-excerpt">
+              远离近地卫星导航星座后，蟹状星云等毫秒脉冲星发射的 X 射线脉冲周期稳定性堪比原子钟。通过机载准直探测器测量脉冲到达时间（TOA），航天器在百万公里尺度下摆脱对地面深空网测距的绝对依赖。
+            </p>
+          </article>
 
-        <!-- 文章 4 -->
-        <article class="mission-log-card">
-          <div class="log-meta-row">
-            <span>ENTRY #04 · AVIONICS FAULT-TOLERANCE</span>
-            <span>DATE: 2026.07.19 · SYS: AGC CORE ROPE</span>
-          </div>
-          <h2 class="log-title">阿波罗导航计算机（AGC）：编织在铜环磁芯中的代码与实时抢占调度</h2>
-          <p class="log-content">
-            1969 年登月舱降落阶段著名的 1202 报警。玛格丽特·汉密尔顿设计的异步优先级执行器（Priority Job Scheduling）如何在雷达数据溢出时果断丢弃低优先任务，确保主控推进器安全点火。
-          </p>
-          <a href="#" class="telemetry-btn">READ FLIGHT TELEMETRY ➔</a>
-        </article>
+          <article class="article-sub-card">
+            <div class="article-meta">ARCHITECTURE // 容错计算架构</div>
+            <h4 class="article-title">《三模冗余为何仍需要人：深空容错系统的边界》</h4>
+            <p class="article-excerpt">
+              三模冗余（TMR）通过三个独立 CPU 与多数表决器消除单粒子翻转的影响，但面对未知的共模失效与传感歧义，自动投票算法可能陷入死锁。人类工程师的经验干预是打破逻辑僵局的关键。
+            </p>
+          </article>
+
+          <article class="article-sub-card">
+            <div class="article-meta">AVIONICS HISTORY // 阿波罗航电启示</div>
+            <h4 class="article-title">《阿波罗导航计算机留下的工程启示：从 1202 报警到现代抢占调度》</h4>
+            <p class="article-excerpt">
+              回顾 1969 年登月舱 AGC 计算机在雷达过载下的异步优先级抢占式调度。半个世纪过去，抗辐射处理器的核心理念依然遵循汉密尔顿原则：确保最关键的生命与推进控制任务永远享有最高中断权。
+            </p>
+          </article>
+        </section>
       </main>
 
-      <!-- 右侧飞行仪表板 -->
-      <aside>
+      <!-- 侧边栏资料模块 -->
+      <aside aria-label="乘员通讯与载荷状态">
+        <!-- 乘员短讯 -->
         <div class="telemetry-widget">
-          <div class="widget-heading">TELEMETRY DATA STREAM</div>
-          <div class="telemetry-data-row">
-            <span>VELOCITY:</span>
-            <span>1.62 km/s</span>
+          <h3 class="widget-heading">CREW COMM LOGS // 乘员短讯</h3>
+          
+          <div class="crew-log-entry">
+            <div class="crew-log-author">CDR. 易岚 (指令长) · 04:30 UTC</div>
+            <div class="crew-log-text">“姿态复位完毕，舷窗外能清晰看到银河悬臂的暗尘埃带。舱内生命维持读数平稳，准备进行 L2 捕获前最后一次光谱校准。”</div>
           </div>
-          <div class="telemetry-data-row">
-            <span>ALTITUDE:</span>
-            <span>112.4 km</span>
-          </div>
-          <div class="telemetry-data-row">
-            <span>CABIN PRESSURE:</span>
-            <span>101.3 kPa</span>
-          </div>
-          <div class="telemetry-data-row">
-            <span>SOLAR ARRAY:</span>
-            <span>98.2% EFF</span>
+
+          <div class="crew-log-entry">
+            <div class="crew-log-author">NAV. 索菲亚 (导航专员) · 03:15 UTC</div>
+            <div class="crew-log-text">“脉冲星 PSR B1937+21 信号相位与星历表偏差仅 0.04 毫秒，自主导航解算处于完美状态。”</div>
           </div>
         </div>
 
+        <!-- 科学载荷与异常代码速查 -->
         <div class="telemetry-widget">
-          <div class="widget-heading">MISSION LOG ARCHIVE</div>
-          <div style="font-size:12px; color:#94a3b8; line-height:2;">
-            <div>📁 APOLLO LEGACY NOTES</div>
-            <div>📁 ARTEMIS HARDWARE SPECS</div>
-            <div>📁 MARS SAMPLE RETURN (MSR)</div>
+          <h3 class="widget-heading">PAYLOAD & DIAGNOSTICS // 载荷与诊断</h3>
+          <div class="payload-specs">
+            <div class="payload-item">
+              <span>紫外干涉仪温度</span>
+              <span>-182.4 °C</span>
+            </div>
+            <div class="payload-item">
+              <span>遮阳帆张力</span>
+              <span>124 N (NOMINAL)</span>
+            </div>
+            <div class="payload-item">
+              <span>反冲冷气余量</span>
+              <span>88.2 kg</span>
+            </div>
+            <div class="payload-item">
+              <span>ECC 纠错计数 (24h)</span>
+              <span>14 次纠正 / 0 次未决</span>
+            </div>
+          </div>
+        </div>
+
+        <!-- 异常代码参考表 -->
+        <div class="telemetry-widget">
+          <h3 class="widget-heading">ANOMALY CODEBOOK // 代码速查</h3>
+          <div style="font-size: 11px; color: var(--space-text-muted); line-height: 1.8;">
+            <div><span style="color:var(--space-gold)">ERR-0x89C</span>: 姿态角速度漂移异常</div>
+            <div><span style="color:var(--space-cyan)">NOM-0x101</span>: 高增益天线自动跟踪</div>
+            <div><span style="color:var(--space-green)">RST-0x004</span>: TMR 投票器热重置就绪</div>
           </div>
         </div>
       </aside>
     </div>
-  <!-- 深空星尘与流星 Canvas -->
-  <canvas id="spaceCanvas" style="position: fixed; inset: 0; pointer-events: none; z-index: 0;"></canvas>
 
-  <script src="assets/nav-bar.js"></script>
+    <!-- 收尾区 -->
+    <footer class="mission-closing-banner">
+      <div class="closing-quote">“在遥远处，可靠性就是回家的路。”</div>
+      <div class="closing-sign">—— ORANGE-7 深空探索任务指挥部 · 飞行手册总则 01 条</div>
+    </footer>
+
+  </div>
+
+  <script src="/creative-blogs/assets/nav-bar.js"></script>
   <script>
+    // 交互逻辑：展开异常报告与姿态修正演示
     (function() {
+      const btnToggle = document.getElementById('btnToggleReport');
+      const reportBox = document.getElementById('anomalyReport');
+      const btnCorrect = document.getElementById('btnCorrectAttitude');
+      const attitudeScreen = document.getElementById('attitudeScreen');
+
+      if (btnToggle && reportBox) {
+        btnToggle.addEventListener('click', () => {
+          const isExpanded = btnToggle.getAttribute('aria-expanded') === 'true';
+          btnToggle.setAttribute('aria-expanded', !isExpanded);
+          if (!isExpanded) {
+            reportBox.style.display = 'block';
+            btnToggle.textContent = '收起异常报告';
+          } else {
+            reportBox.style.display = 'none';
+            btnToggle.textContent = '展开异常报告';
+          }
+        });
+      }
+
+      if (btnCorrect && attitudeScreen) {
+        btnCorrect.addEventListener('click', () => {
+          attitudeScreen.style.display = 'block';
+          btnCorrect.classList.add('active');
+          btnCorrect.textContent = '遥测已恢复 ✓';
+        });
+      }
+
+      // 星空与流星轻量渲染 Canvas
       const canvas = document.getElementById('spaceCanvas');
+      if (!canvas) return;
       const ctx = canvas.getContext('2d');
       let w = canvas.width = window.innerWidth;
       let h = canvas.height = window.innerHeight;
@@ -406,69 +794,69 @@
         h = canvas.height = window.innerHeight;
       });
 
-      const stars = Array.from({ length: 60 }, () => ({
+      const stars = Array.from({ length: 65 }, () => ({
         x: Math.random() * w,
         y: Math.random() * h,
-        size: Math.random() * 2,
+        size: Math.random() * 1.8 + 0.3,
         opacity: Math.random(),
-        speed: 0.01 + Math.random() * 0.02
+        speed: 0.008 + Math.random() * 0.015
       }));
 
       const meteors = [];
-
       function createMeteor() {
         meteors.push({
           x: Math.random() * w,
-          y: Math.random() * (h * 0.4),
+          y: Math.random() * (h * 0.45),
           len: 60 + Math.random() * 80,
-          speed: 8 + Math.random() * 6,
+          speed: 7 + Math.random() * 5,
           opacity: 1
         });
       }
 
       setInterval(() => {
-        if (Math.random() < 0.6) createMeteor();
-      }, 3500);
+        if (Math.random() < 0.45) createMeteor();
+      }, 4000);
 
-      function loop() {
+      function render() {
         ctx.clearRect(0, 0, w, h);
 
-        // 恒星闪烁
-        stars.forEach(s => {
+        // 绘制闪烁恒星
+        for (let i = 0; i < stars.length; i++) {
+          const s = stars[i];
           s.opacity += s.speed;
-          if (s.opacity > 1 || s.opacity < 0.2) s.speed *= -1;
-          ctx.fillStyle = `rgba(255, 255, 255, ${s.opacity})`;
+          if (s.opacity > 1 || s.opacity < 0.15) s.speed = -s.speed;
+          ctx.fillStyle = `rgba(226, 232, 240, ${s.opacity})`;
           ctx.beginPath();
           ctx.arc(s.x, s.y, s.size, 0, Math.PI * 2);
           ctx.fill();
-        });
+        }
 
-        // 流星划过
+        // 绘制深空流星
         for (let i = meteors.length - 1; i >= 0; i--) {
           const m = meteors[i];
           m.x -= m.speed * 1.2;
-          m.y += m.speed * 0.8;
-          m.opacity -= 0.02;
+          m.y += m.speed * 0.7;
+          m.opacity -= 0.018;
 
           if (m.opacity <= 0 || m.x < 0 || m.y > h) {
             meteors.splice(i, 1);
             continue;
           }
 
-          const grad = ctx.createLinearGradient(m.x, m.y, m.x + m.len, m.y - m.len * 0.6);
+          const grad = ctx.createLinearGradient(m.x, m.y, m.x + m.len, m.y - m.len * 0.58);
           grad.addColorStop(0, `rgba(76, 201, 240, ${m.opacity})`);
           grad.addColorStop(1, 'rgba(76, 201, 240, 0)');
           ctx.strokeStyle = grad;
-          ctx.lineWidth = 1.5;
+          ctx.lineWidth = 1.2;
           ctx.beginPath();
           ctx.moveTo(m.x, m.y);
-          ctx.lineTo(m.x + m.len, m.y - m.len * 0.6);
+          ctx.lineTo(m.x + m.len, m.y - m.len * 0.58);
           ctx.stroke();
         }
 
-        requestAnimationFrame(loop);
+        requestAnimationFrame(render);
       }
-      loop();
+      render();
     })();
   </script>
 </body>

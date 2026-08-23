@@ -3,21 +3,26 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>guest@terminal:~$ // 10 纯文本黑客命令行交互风</title>
+  <title>guest@orangecat:~$ // 10 纯文本黑客命令行</title>
   <link rel="stylesheet" href="assets/common.css">
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Fira+Code:wght@400;500;700&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Fira+Code:wght@400;500;600;700&display=swap" rel="stylesheet">
   <style>
     :root {
-      --term-bg: #0c1015;
+      --term-bg: #070a0e;
+      --term-card-bg: #0b0f17;
+      --term-border: #1e293b;
+      --term-border-glow: #38bdf844;
       --term-green: #39ff14;
       --term-dim-green: #22c55e;
-      --term-yellow: #facc15;
       --term-cyan: #38bdf8;
-      --term-white: #f8fafc;
-      --term-gray: #64748b;
-      --term-prompt: #a855f7;
+      --term-yellow: #facc15;
+      --term-purple: #c084fc;
+      --term-red: #f43f5e;
+      --term-text: #e2e8f0;
+      --term-muted: #64748b;
+      --term-prompt: #4ade80;
     }
 
     * {
@@ -28,104 +33,285 @@
 
     body {
       background-color: var(--term-bg);
-      color: var(--term-green);
-      font-family: "Fira Code", monospace;
+      color: var(--term-text);
+      font-family: "Fira Code", "JetBrains Mono", Consolas, monospace;
       font-size: 14px;
-      line-height: 1.6;
-      padding: 24px 20px 100px;
+      line-height: 1.65;
+      padding: 24px 16px 120px;
       min-height: 100vh;
+      overflow-x: hidden;
     }
 
-    .terminal-container {
-      max-width: 1000px;
+    .cli-workspace {
+      max-width: 1060px;
       margin: 0 auto;
-      background: #080b0e;
-      border: 1px solid #1e293b;
-      box-shadow: 0 10px 40px rgba(0, 0, 0, 0.8);
-      border-radius: 8px;
-      overflow: hidden;
+      display: flex;
+      flex-direction: column;
+      gap: 20px;
     }
 
-    /* 终端窗口顶栏 */
-    .terminal-header {
-      background: #161e27;
+    /* 顶部黑客控制台视窗 */
+    .terminal-window {
+      background: var(--term-card-bg);
+      border: 1px solid var(--term-border);
+      border-radius: 8px;
+      box-shadow: 0 16px 48px rgba(0, 0, 0, 0.85), 0 0 0 1px rgba(255, 255, 255, 0.05);
+      overflow: hidden;
+      position: relative;
+    }
+
+    .terminal-window::before {
+      content: "";
+      position: absolute;
+      inset: 0;
+      background: linear-gradient(rgba(18, 16, 16, 0) 50%, rgba(0, 0, 0, 0.35) 50%);
+      background-size: 100% 4px;
+      z-index: 5;
+      pointer-events: none;
+      opacity: 0.7;
+    }
+
+    .terminal-titlebar {
+      background: #111827;
       padding: 10px 16px;
       display: flex;
       justify-content: space-between;
       align-items: center;
-      border-bottom: 1px solid #1e293b;
+      border-bottom: 1px solid #1f2937;
+      user-select: none;
     }
 
-    .terminal-buttons {
+    .win-controls {
       display: flex;
       gap: 8px;
     }
-    .term-circle {
+
+    .win-btn {
       width: 12px;
       height: 12px;
       border-radius: 50%;
+      display: inline-block;
     }
-    .circle-red { background: #ef4444; }
-    .circle-yellow { background: #eab308; }
-    .circle-green { background: #22c55e; }
 
-    .terminal-title {
-      color: var(--term-gray);
+    .btn-close { background: #ef4444; }
+    .btn-min { background: #f59e0b; }
+    .btn-max { background: #10b981; }
+
+    .win-title {
       font-size: 12px;
-      font-weight: 600;
+      color: var(--term-muted);
+      font-weight: 500;
+      letter-spacing: 0.5px;
+    }
+
+    .win-badge {
+      font-size: 11px;
+      padding: 2px 8px;
+      border-radius: 4px;
+      background: #1e293b;
+      color: var(--term-cyan);
+      border: 1px solid #334155;
     }
 
     /* 终端主体输出区 */
     .terminal-body {
-      padding: 24px;
-      min-height: 540px;
+      padding: 24px 20px;
+      min-height: 480px;
+      position: relative;
+      z-index: 10;
     }
 
-    .ascii-banner {
+    .ascii-art {
       color: var(--term-cyan);
       font-size: 11px;
       line-height: 1.15;
-      margin-bottom: 20px;
+      margin-bottom: 18px;
       white-space: pre;
+      overflow-x: auto;
+      text-shadow: 0 0 10px rgba(56, 189, 248, 0.4);
+    }
+
+    .sys-banner {
+      background: rgba(30, 41, 59, 0.4);
+      border: 1px dashed var(--term-border);
+      padding: 12px 16px;
+      border-radius: 6px;
+      margin-bottom: 20px;
+      font-size: 13px;
+      color: #94a3b8;
+    }
+
+    .history-stream {
+      display: flex;
+      flex-direction: column;
+      gap: 16px;
+    }
+
+    .log-item {
+      animation: termFade 0.15s ease-out;
+    }
+
+    @keyframes termFade {
+      from { opacity: 0; transform: translateY(4px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+
+    .log-cmd-row {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      font-weight: 600;
+      color: var(--term-prompt);
+      margin-bottom: 6px;
+    }
+
+    .log-cmd-text {
+      color: #fff;
+    }
+
+    .log-content {
+      padding-left: 2px;
+      color: var(--term-text);
+    }
+
+    /* 模块排版与微组件 */
+    .cli-card {
+      background: #0d131d;
+      border-left: 3px solid var(--term-green);
+      border-top: 1px solid #1e293b;
+      border-right: 1px solid #1e293b;
+      border-bottom: 1px solid #1e293b;
+      padding: 16px;
+      border-radius: 0 6px 6px 0;
+      margin: 8px 0;
+    }
+
+    .cli-card-cyan {
+      border-left-color: var(--term-cyan);
+    }
+
+    .cli-card-yellow {
+      border-left-color: var(--term-yellow);
+    }
+
+    .cli-card-purple {
+      border-left-color: var(--term-purple);
+    }
+
+    .cli-header-title {
+      font-size: 16px;
+      font-weight: 700;
+      color: var(--term-green);
+      margin-bottom: 6px;
+      display: flex;
+      justify-content: space-between;
+      align-items: baseline;
+      flex-wrap: wrap;
+      gap: 8px;
+    }
+
+    .cli-meta-tag {
+      font-size: 12px;
+      font-weight: normal;
+      color: var(--term-muted);
+    }
+
+    .cli-prose {
+      font-size: 13.5px;
+      line-height: 1.75;
+      color: #cbd5e1;
+    }
+
+    .cli-prose p {
+      margin-bottom: 12px;
+    }
+
+    .cli-prose p:last-child {
+      margin-bottom: 0;
+    }
+
+    .cli-prose strong {
+      color: #fff;
+    }
+
+    .code-block {
+      background: #05080c;
+      border: 1px solid #1e293b;
+      border-radius: 4px;
+      padding: 10px 14px;
+      margin: 10px 0;
+      font-size: 12.5px;
+      color: var(--term-cyan);
       overflow-x: auto;
     }
 
-    .output-line {
-      margin-bottom: 12px;
-    }
-    .output-line.system {
-      color: var(--term-gray);
-    }
-    .output-line.error {
-      color: #ef4444;
-    }
-    .output-line.article {
-      color: var(--term-white);
-      background: rgba(255, 255, 255, 0.03);
-      border-left: 2px solid var(--term-green);
-      padding: 12px 16px;
-      margin: 12px 0;
+    .cli-table {
+      width: 100%;
+      border-collapse: collapse;
+      margin: 10px 0;
+      font-size: 13px;
     }
 
-    .cmd-history-item {
-      margin-bottom: 8px;
+    .cli-table th {
+      text-align: left;
+      padding: 6px 8px;
+      border-bottom: 1px solid #334155;
+      color: var(--term-muted);
     }
 
-    /* 命令行输入提示符 */
-    .input-line {
+    .cli-table td {
+      padding: 6px 8px;
+      border-bottom: 1px solid #1a2230;
+      color: var(--term-text);
+    }
+
+    .status-badge {
+      display: inline-block;
+      padding: 2px 6px;
+      border-radius: 3px;
+      font-size: 11px;
+      font-weight: 600;
+    }
+
+    .status-active { background: rgba(57, 255, 20, 0.15); color: var(--term-green); border: 1px solid var(--term-green); }
+    .status-wip { background: rgba(250, 204, 21, 0.15); color: var(--term-yellow); border: 1px solid var(--term-yellow); }
+    .status-archive { background: rgba(148, 163, 184, 0.15); color: #94a3b8; border: 1px solid #64748b; }
+
+    .file-interactive-item {
+      color: var(--term-cyan);
+      cursor: pointer;
+      text-decoration: underline;
+      text-decoration-style: dashed;
+      text-underline-offset: 3px;
+      font-weight: 500;
+      transition: color 0.15s ease;
+    }
+
+    .file-interactive-item:hover {
+      color: #fff;
+      background: rgba(56, 189, 248, 0.2);
+    }
+
+    /* 输入交互行 */
+    .input-row {
       display: flex;
       align-items: center;
       gap: 10px;
-      margin-top: 16px;
+      margin-top: 20px;
+      background: #0b1118;
+      padding: 10px 14px;
+      border: 1px solid #1e293b;
+      border-radius: 6px;
     }
 
-    .prompt-text {
+    .prompt-label {
       color: var(--term-prompt);
       font-weight: 700;
-      flex-shrink: 0;
+      white-space: nowrap;
+      user-select: none;
     }
 
-    .term-input {
+    .cli-input {
       flex: 1;
       background: transparent;
       border: none;
@@ -136,268 +322,574 @@
       caret-color: var(--term-green);
     }
 
-    /* 快捷指令按键栏 */
-    .quick-cmd-bar {
-      margin-top: 20px;
-      padding-top: 14px;
-      border-top: 1px dashed #1e293b;
-      display: flex;
-      gap: 10px;
-      flex-wrap: wrap;
-      font-size: 12px;
-    }
-    .quick-cmd-btn {
-      background: #161e27;
-      border: 1px solid #334155;
-      color: var(--term-cyan);
-      padding: 4px 10px;
-      border-radius: 4px;
-      cursor: pointer;
-      font-family: inherit;
-    }
-    .quick-cmd-btn:hover {
-      background: var(--term-cyan);
-      color: #000;
+    .cli-input::placeholder {
+      color: #475569;
     }
 
-    .highlight-keyword { color: var(--term-yellow); font-weight: bold; }
-    .file-link { color: var(--term-cyan); text-decoration: underline; cursor: pointer; }
+    /* 快捷命令抽屉/工具栏 */
+    .quick-shelf {
+      background: #090e15;
+      border: 1px solid #1e293b;
+      border-radius: 8px;
+      padding: 14px 18px;
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+    }
+
+    .shelf-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      font-size: 12px;
+      color: var(--term-muted);
+    }
+
+    .quick-chips {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 8px;
+    }
+
+    .quick-btn {
+      background: #131b26;
+      border: 1px solid #2a374a;
+      color: var(--term-cyan);
+      padding: 6px 12px;
+      border-radius: 4px;
+      font-family: inherit;
+      font-size: 12px;
+      cursor: pointer;
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      transition: all 0.15s ease;
+    }
+
+    .quick-btn:hover {
+      background: var(--term-cyan);
+      color: #05080c;
+      border-color: var(--term-cyan);
+      box-shadow: 0 0 10px rgba(56, 189, 248, 0.35);
+    }
+
+    .quick-btn-alert {
+      color: var(--term-yellow);
+      border-color: #4d3d18;
+    }
+    .quick-btn-alert:hover {
+      background: var(--term-yellow);
+      color: #05080c;
+      border-color: var(--term-yellow);
+      box-shadow: 0 0 10px rgba(250, 204, 21, 0.35);
+    }
+
+    .quick-btn-danger {
+      color: var(--term-red);
+      border-color: #4c1d24;
+    }
+    .quick-btn-danger:hover {
+      background: var(--term-red);
+      color: #fff;
+      border-color: var(--term-red);
+    }
+
+    /* 资料区与只读快照收尾卡 */
+    .system-footer-card {
+      background: #080c12;
+      border: 1px dashed #243042;
+      border-radius: 8px;
+      padding: 16px 20px;
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+      font-size: 12.5px;
+      color: var(--term-muted);
+    }
+
+    .footer-highlight {
+      color: #e2e8f0;
+    }
+
+    .session-indicator {
+      display: inline-block;
+      width: 8px;
+      height: 8px;
+      border-radius: 50%;
+      background: var(--term-dim-green);
+      box-shadow: 0 0 6px var(--term-green);
+      margin-right: 6px;
+    }
+
+    @media (max-width: 768px) {
+      body {
+        padding: 16px 10px 100px;
+      }
+      .terminal-body {
+        padding: 16px 12px;
+      }
+      .ascii-art {
+        font-size: 9px;
+      }
+      .prompt-label {
+        font-size: 12px;
+      }
+      .cli-input {
+        font-size: 13px;
+      }
+    }
+
+    @media (prefers-reduced-motion: reduce) {
+      .log-item {
+        animation: none;
+      }
+      .quick-btn {
+        transition: none;
+      }
+    }
   </style>
 </head>
 <body>
 
-  <div class="terminal-container">
-    <!-- 顶栏 -->
-    <div class="terminal-header">
-      <div class="terminal-buttons">
-        <div class="term-circle circle-red"></div>
-        <div class="term-circle circle-yellow"></div>
-        <div class="term-circle circle-green"></div>
-      </div>
-      <div class="terminal-title">guest@archlinux: ~/blog (bash 5.2)</div>
-      <div style="font-size: 11px; color: var(--term-gray);">UTF-8</div>
-    </div>
-
-    <!-- 终端内容区 -->
-    <div class="terminal-body" id="termBody">
-      <!-- ASCII Banner -->
-      <div class="ascii-banner">
-  ____  _____ _   _     ____ _     ___   ____  _     ___   ____ 
- |  _ \| ____| \ | |   / ___| |   |_ _| | __ )| |   / _ \ / ___|
- | |_) |  _| |  \| |  | |   | |    | |  |  _ \| |  | | | | |  _ 
- |  __/| |___| |\  |  | |___| |___ | |  | |_) | |__| |_| | |_| |
- |_|   |_____|_| \_|   \____|_____|___| |____/|_____\___/ \____|
+  <div class="cli-workspace">
+    <!-- 终端主视窗 -->
+    <section class="terminal-window" aria-label="纯文本黑客命令行交互视窗">
+      <div class="terminal-titlebar">
+        <div class="win-controls" aria-hidden="true">
+          <span class="win-btn btn-close" title="模拟关闭"></span>
+          <span class="win-btn btn-min" title="模拟最小化"></span>
+          <span class="win-btn btn-max" title="模拟全屏"></span>
+        </div>
+        <div class="win-title">guest@orangecat: ~/workspace/orange-notebook (zsh)</div>
+        <div class="win-badge" id="clockDisplay">2026-08-20 22:42:10 UTC</div>
       </div>
 
-      <div class="output-line system">
-        [SYSTEM] Welcome to Interactive CLI Blog (v2.4.0-release)<br>
-        [SYSTEM] Type <span class="highlight-keyword">'help'</span> or <span class="highlight-keyword">'ls'</span> to view available posts and commands.<br>
-        [SYSTEM] Session started at: <span id="sessionTime"></span>
-      </div>
+      <div class="terminal-body" id="termBody">
+        <!-- ASCII 标志 -->
+        <div class="ascii-art" aria-hidden="true">
+  ____  ____     _    _   _  ____ _____ ____    _  _____ 
+ / ___||  _ \   / \  | \ | |/ ___| ____/ ___|  / \|_   _|
+| |  _ | |_) | / _ \ |  \| | |  _|  _|| |     / _ \ | |  
+| |_| ||  _ < / ___ \| |\  | |_| | |__| |___ / ___ \| |  
+ \____||_| \_/_/   \_\_| \_|\____|_____\____/_/   \_|_|  
+=========================================================
+ * Pure Text CLI Kernel // Interactive Publication V4.2
+ * All contents are accessible via shell commands.
+        </div>
 
-      <!-- 输出日志容器 -->
-      <div id="commandOutput"></div>
+        <div class="sys-banner">
+          <div><strong>[SYS_INIT]</strong> 终端载入成功。当前登录身份为只读受限访客 <code>guest@orangecat</code>。</div>
+          <div style="margin-top:4px;">输入 <span style="color:var(--term-yellow);">help</span> 查看全部可用指令；点击下方快捷指令或文件名可立即直接执行。</div>
+        </div>
 
-      <!-- 输入行 -->
-      <div class="input-line">
-        <span class="prompt-text">guest@dev:~/blog$</span>
-        <input type="text" id="cliInput" class="term-input" autofocus autocomplete="off" spellcheck="false" placeholder="输入命令...">
-      </div>
+        <!-- 输出历史流 -->
+        <div class="history-stream" id="historyStream"></div>
 
-      <!-- 快捷点击指令 -->
-      <div class="quick-cmd-bar">
-        <span style="color:var(--term-gray); align-self:center;">快捷指令:</span>
-        <button class="quick-cmd-btn" onclick="execCmd('help')">help</button>
-        <button class="quick-cmd-btn" onclick="execCmd('ls')">ls -la</button>
-        <button class="quick-cmd-btn" onclick="execCmd('cat 01_agents.md')">cat 01_agents.md</button>
-        <button class="quick-cmd-btn" onclick="execCmd('cat 02_kernel.md')">cat 02_kernel.md</button>
-        <button class="quick-cmd-btn" onclick="execCmd('about')">about</button>
-        <button class="quick-cmd-btn" onclick="execCmd('clear')">clear</button>
+        <!-- 当前输入行 -->
+        <div class="input-row">
+          <span class="prompt-label" id="livePrompt">guest@orangecat:~$</span>
+          <input 
+            type="text" 
+            id="cliInputField" 
+            class="cli-input" 
+            placeholder="输入指令 (例: help, ls notes, cat notes/agents.md)..." 
+            autocomplete="off" 
+            spellcheck="false" 
+            aria-label="命令行输入框"
+            autofocus
+          />
+        </div>
       </div>
-    </div>
+    </section>
+
+    <!-- 移动端/极速指令抽屉 -->
+    <nav class="quick-shelf" aria-label="快捷命令工具栏">
+      <div class="shelf-header">
+        <span>⚡ 移动端 / 快捷命令工具栏（点击即时执行）：</span>
+        <span>回车或点击生效</span>
+      </div>
+      <div class="quick-chips">
+        <button class="quick-btn" onclick="runCommand('help')" aria-label="执行 help 指令"><code>help</code> (帮助手册)</button>
+        <button class="quick-btn" onclick="runCommand('about')" aria-label="执行 about 指令"><code>about</code> (作者档案)</button>
+        <button class="quick-btn" onclick="runCommand('ls notes')" aria-label="执行 ls notes 指令"><code>ls notes</code> (阅读列表)</button>
+        <button class="quick-btn" onclick="runCommand('cat notes/agents.md')" aria-label="阅读 Agent 核心主叙事"><code>cat notes/agents.md</code> (主叙事)</button>
+        <button class="quick-btn" onclick="runCommand('cat notes/slow-web.md')" aria-label="阅读慢网络随笔"><code>cat notes/slow-web.md</code> (独立思考)</button>
+        <button class="quick-btn" onclick="runCommand('projects')" aria-label="执行 projects 指令"><code>projects</code> (实验状态)</button>
+        <button class="quick-btn" onclick="runCommand('now')" aria-label="执行 now 指令"><code>now</code> (当下焦距)</button>
+        <button class="quick-btn" onclick="runCommand('history')" aria-label="执行 history 指令"><code>history</code> (命令历史)</button>
+        <button class="quick-btn quick-btn-alert" onclick="runCommand('sudo cat /etc/shadow')" aria-label="尝试提权彩蛋"><code>sudo su</code> (权限拦截)</button>
+        <button class="quick-btn quick-btn-danger" onclick="runCommand('exit')" aria-label="执行 exit 退出"><code>exit</code> (收尾会话)</button>
+        <button class="quick-btn" onclick="runCommand('clear')" aria-label="执行 clear 清屏"><code>clear</code> (重置视窗)</button>
+      </div>
+    </nav>
+
+    <!-- 收尾区：系统元数据与只读快照状态 -->
+    <footer class="system-footer-card">
+      <div>
+        <span class="session-indicator"></span>
+        <span class="footer-highlight">RUNTIME STATUS:</span> 
+        只读快照已同步至内存持久栈 (Snapshot Hash: <code>0x7f88a91c_orangecat</code>)。
+      </div>
+      <div>
+        <span>会话收尾：当输入 <code>exit</code> 时，系统将固化当前探索流并显示最终只读归档。</span>
+      </div>
+    </footer>
   </div>
 
   <script src="assets/nav-bar.js"></script>
   <script>
-    document.getElementById('sessionTime').textContent = new Date().toLocaleString();
+    // 系统时钟更新
+    function updateClock() {
+      const el = document.getElementById('clockDisplay');
+      if (el) {
+        const now = new Date();
+        el.textContent = now.toISOString().replace('T', ' ').substring(0, 19) + ' UTC';
+      }
+    }
+    setInterval(updateClock, 1000);
+    updateClock();
 
-    const articles = {
-      "01_agents.md": {
-        title: "01_agents.md // 自主智能体系统的协同协议与拓扑演进",
+    // 历史命令记录
+    const cmdHistory = ['ls notes', 'cat notes/agents.md'];
+    let historyCursor = cmdHistory.length;
+
+    // 文档库数据
+    const database = {
+      agents: {
+        file: "notes/agents.md",
+        title: "让 Agent 可观察、可暂停、可回滚",
+        category: "自主智能体架构 / 容错协议",
         date: "2026-08-20",
-        content: `【摘要】\n在多智能体（Multi-Agent）系统中，传统的中心化 Master-Worker 架构在面临长链条推理与动态工具调度时容易形成通信瓶颈。\n\n【核心论点】\n1. 基于 Gossip 协议的去中心化子智能体协同能提升 40% 的容错率；\n2. 结构化日志上下文压缩（Context Token Distillation）是实现长任务自治的关键；\n3. 每一个 Agent 都应当拥有隔离的 Workspace 与权限边界。`
+        lines: 42,
+        content: `
+          <p><strong>【核心矛盾】</strong> 当我们将多步推理、外部工具调用与文件系统读写权限完整下放给自主智能体（Autonomous Agents）时，最大的恐惧并非模型变笨，而是其陷入不可观测的幻觉循环与破坏性副作用。</p>
+          <p>在复杂的软件工程流水线中，传统黑盒运行让开发者只能在智能体“跑飞或崩溃”后事后排查，造成巨大的 Token 损耗与环境污染。为此，我们提炼了构建长链条 Agent 的三项黄金法则：</p>
+          
+          <div class="code-block">
+[Agent Control Protocol v1.4]
+1. Observable Step Logging  -> 结构化 DAG 执行轨迹与实时 Memory Diff 监控
+2. Stateful Pause Point    -> 高危动作（如 rm -rf、git push -f、转账 API）前置人机协同断点
+3. Transactional Rollback  -> 基于轻量级沙盒与虚拟文件系统的多版本快照回退
+          </div>
+
+          <p><strong>1. 可观察（Observable）：让思维链透明落地。</strong> 拒绝单一的流式输出，智能体的每一次 <code>Thought -> Action -> Observation</code> 都应当被解构为独立的数据包并打上时间戳。在 Orangecat 的试验中，我们引入了上下文状态折叠算法，在保证可观测性的同时避免让历史冗余拖慢推理窗口。</p>
+          
+          <p><strong>2. 可暂停（Pausable）：为人机协作保留介入窗口。</strong> 真正的自主性不是失控狂奔，而是对不确定性保持谦逊。当智能体单次工具调用的置信度评分低于设定阈值，或即将执行写操作时，系统触发软中断（Soft Interrupt），允许人类开发者无缝接管或微调其下一步策略。</p>
+
+          <p><strong>3. 可回滚（Rollbackable）：让探索过程可逆。</strong> 编程是一场试错。给智能体配备 Transactional Sandbox，记录每一个文件补丁与环境变量变迁。一旦后续验证测试失败，系统可在 10ms 内回退到上一个安全快照，使 Agent 具备了“原地复活并尝试新路径”的韧性。</p>
+        `
       },
-      "02_kernel.md": {
-        title: "02_kernel.md // 深入 Linux eBPF：无侵入式微服务可观测性实践",
-        date: "2026-08-15",
-        content: `【摘要】\n探讨如何利用 eBPF 技术在内核空间直接捕获网络 socket 与系统调用，实现零代码侵入、纳秒级开销的分布式追踪架构。从 kprobe 到 tracepoint，彻底洞悉内核每一微秒的数据流动。`
-      },
-      "03_terminal_zen.md": {
-        title: "03_terminal_zen.md // 终端美学：为什么纯文本拥有永恒的生命力？",
-        date: "2026-08-05",
-        content: `【摘要】\n从 1970 年代的 VT100 终端到如今的 Alacritty 与 WezTerm，字符界面剔除了所有视觉噪音，只留下人与代码之间最纯粹的对话。`
-      },
-      "04_rust_async.md": {
-        title: "04_rust_async.md // 深入 Rust 异步运行时：从 Future 状态机到 Epoll Reactor",
-        date: "2026-07-28",
-        content: `【摘要】\n深入推导 Tokio 与 async-std 的核心调度循环。为什么无栈协程（Stackless Coroutine）能在单机支撑百万级长连接并发？通过手写简化版 Mini-Tokio 掌握 Pin 与 Waker 的终极奥义。`
-      },
-      "05_compiler_ast.md": {
-        title: "05_compiler_ast.md // 打造微型编译器：从递归下降语法解析到字节码生成",
-        date: "2026-07-12",
-        content: `【摘要】\n从零实现一个支持闭包与高阶函数的 Lisp/Scheme 解释器。剖析抽象语法树（AST）求值与寄存器虚拟机（Register VM）的性能权衡。`
+      slowWeb: {
+        file: "notes/slow-web.md",
+        title: "慢网络与纯文本的永恒生命力",
+        category: "数字哲学 / Web 本质",
+        date: "2026-08-12",
+        lines: 28,
+        content: `
+          <p>在这个充斥着 100MB 单页应用、动态视频流与高频推送的膨胀互联网中，纯文本就像古老岩壁上的刻痕，具备一种天然的抵抗力。</p>
+          <p>字符终端剔除了所有注意力劫持的设计陷阱。没有弹窗，没有追踪脚本，没有多余的修饰，只有高对比度的字符在方寸屏幕间跳动。这不仅是一种极客审美，更是一种将思维能量重新聚焦于内容与逻辑本身的工程克制。</p>
+        `
       }
     };
 
-    const cliInput = document.getElementById('cliInput');
-    const commandOutput = document.getElementById('commandOutput');
+    const streamEl = document.getElementById('historyStream');
+    const inputEl = document.getElementById('cliInputField');
 
-    function appendOutput(cmd, resHtml) {
+    function appendLog(command, htmlContent, lineCount) {
       const item = document.createElement('div');
-      item.className = 'cmd-history-item';
+      item.className = 'log-item';
+      
+      let lineMeta = '';
+      if (lineCount) {
+        lineMeta = `<div style="margin-top:8px; font-size:11.5px; color:var(--term-muted);">── 输出完成，共 ${lineCount} 行 ──</div>`;
+      }
+
       item.innerHTML = `
-        <div style="color:var(--term-prompt); font-weight:bold;">guest@dev:~/blog$ <span style="color:#fff;">${cmd}</span></div>
-        <div style="margin-top:4px;">${resHtml}</div>
+        <div class="log-cmd-row">
+          <span>guest@orangecat:~$</span>
+          <span class="log-cmd-text">${escapeHtml(command)}</span>
+        </div>
+        <div class="log-content">${htmlContent}</div>
+        ${lineMeta}
       `;
-      commandOutput.appendChild(item);
-      window.scrollTo(0, document.body.scrollHeight);
+      streamEl.appendChild(item);
+      window.scrollTo({
+        top: document.body.scrollHeight,
+        behavior: 'smooth'
+      });
     }
 
-    function execCmd(rawCmd) {
-      const cmd = rawCmd.trim();
+    function escapeHtml(str) {
+      return str.replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;');
+    }
+
+    function runCommand(raw) {
+      const cmd = raw.trim();
       if (!cmd) return;
 
-      const parts = cmd.split(' ');
-      const action = parts[0].toLowerCase();
-      const arg = parts.slice(1).join(' ');
-
-      let output = '';
-
-      switch(action) {
-        case 'help':
-          output = `
-            <div><strong>可用命令列表：</strong></div>
-            <div style="padding-left:14px; color:#cbd5e1;">
-              <div>• <span class="highlight-keyword">ls</span> / <span class="highlight-keyword">dir</span> : 列出所有博客文章与文件</div>
-              <div>• <span class="highlight-keyword">cat &lt;filename&gt;</span> : 查看指定文章内容 (例: cat 04_rust_async.md)</div>
-              <div>• <span class="highlight-keyword">neofetch</span> : 打印极客系统硬件与版本信息</div>
-              <div>• <span class="highlight-keyword">about</span> : 查看博主个人档案</div>
-              <div>• <span class="highlight-keyword">date</span> : 显示当前系统时区与时间</div>
-              <div>• <span class="highlight-keyword">clear</span> : 清屏</div>
-            </div>
-          `;
-          break;
-
-        case 'neofetch':
-          output = `
-            <div style="font-family:monospace; line-height:1.4; color:var(--term-cyan);">
-              &nbsp;&nbsp;&nbsp;__&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;__&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<strong>guest@hacker-core</strong><br>
-              &nbsp;&nbsp;/&nbsp;\\&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;/&nbsp;\\&nbsp;&nbsp;&nbsp;&nbsp;-----------------<br>
-              &nbsp;|===|=======|===|&nbsp;&nbsp;&nbsp;<strong>OS:</strong> Arch Linux x86_64<br>
-              &nbsp;&nbsp;\\_/&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;\\_/&nbsp;&nbsp;&nbsp;&nbsp;<strong>Kernel:</strong> 6.10.4-zen-1-zen<br>
-              &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<strong>Uptime:</strong> 42 days, 13 hours<br>
-              &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<strong>Shell:</strong> zsh 5.9 (x86_64-apple-darwin)<br>
-              &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<strong>CPU:</strong> Apple M3 Max (16 Cores)<br>
-              &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<strong>Memory:</strong> 14208MiB / 65536MiB
-            </div>
-          `;
-          break;
-
-        case 'ls':
-        case 'dir':
-          output = `
-            <div style="color:var(--term-gray);">total 5 files, 1 directory</div>
-            <div style="color:var(--term-cyan);">drwxr-xr-x  2 dev dev 4096 Aug 21 .system/</div>
-            <div>-rw-r--r--  1 dev dev 1840 Aug 20 <span class="file-link" onclick="execCmd('cat 01_agents.md')">01_agents.md</span></div>
-            <div>-rw-r--r--  1 dev dev 1420 Aug 15 <span class="file-link" onclick="execCmd('cat 02_kernel.md')">02_kernel.md</span></div>
-            <div>-rw-r--r--  1 dev dev 1120 Aug 05 <span class="file-link" onclick="execCmd('cat 03_terminal_zen.md')">03_terminal_zen.md</span></div>
-            <div>-rw-r--r--  1 dev dev 2140 Jul 28 <span class="file-link" onclick="execCmd('cat 04_rust_async.md')">04_rust_async.md</span></div>
-            <div>-rw-r--r--  1 dev dev 1980 Jul 12 <span class="file-link" onclick="execCmd('cat 05_compiler_ast.md')">05_compiler_ast.md</span></div>
-            <div>-rwxr-xr-x  1 dev dev  512 Aug 21 <span class="file-link" onclick="execCmd('about')">about_author.sh</span>*</div>
-          `;
-          break;
-
-        case 'cat':
-          if (!arg) {
-            output = `<div class="output-line error">错误: 请指定文件名。用法: cat &lt;filename&gt;</div>`;
-          } else if (articles[arg]) {
-            const doc = articles[arg];
-            output = `
-              <div class="output-line article">
-                <div style="color:var(--term-yellow); font-weight:bold; margin-bottom:8px;">${doc.title}</div>
-                <div style="color:var(--term-gray); font-size:12px; margin-bottom:12px;">DATE: ${doc.date} | AUTHOR: System Architect</div>
-                <div style="white-space:pre-wrap; line-height:1.7;">${doc.content}</div>
-              </div>
-            `;
-          } else {
-            output = `<div class="output-line error">cat: ${arg}: 没有那个文件或目录</div>`;
-          }
-          break;
-
-        case 'sudo':
-          output = `<div class="output-line error">[SECURITY AUDIT] 用户不在 sudoers 列表中。此事件将被报告给超级管理员。</div>`;
-          break;
-
-        case 'about':
-          output = `
-            <div class="output-line article">
-              <div style="color:var(--term-cyan); font-weight:bold;">[USER BIO] System Architect</div>
-              <div style="margin-top:6px;">全栈系统架构师 / CLI 极客 / 算法与排版探索者。</div>
-              <div style="color:var(--term-gray); font-size:12px; margin-top:6px;">STACK: Rust, Go, Python, TypeScript, Linux Kernel, eBPF</div>
-            </div>
-          `;
-          break;
-
-        case 'date':
-          output = `<div>${new Date().toString()}</div>`;
-          break;
-
-        case 'clear':
-          commandOutput.innerHTML = '';
-          cliInput.value = '';
-          return;
-
-        default:
-          output = `<div class="output-line error">bash: ${action}: 未找到命令。键入 'help' 查看帮助。</div>`;
+      // 记录历史
+      if (cmdHistory[cmdHistory.length - 1] !== cmd) {
+        cmdHistory.push(cmd);
       }
-      appendOutput(cmd, output);
-      cliInput.value = '';
+      historyCursor = cmdHistory.length;
+
+      const lower = cmd.toLowerCase();
+
+      // 1. CLEAR
+      if (lower === 'clear') {
+        streamEl.innerHTML = '';
+        inputEl.value = '';
+        return;
+      }
+
+      // 2. HELP
+      if (lower === 'help') {
+        const out = `
+          <div class="cli-card cli-card-cyan">
+            <div class="cli-header-title">
+              <span>ORANGECAT CLI 系统命令手册</span>
+              <span class="cli-meta-tag">Shell Builtins v4.2</span>
+            </div>
+            <div class="cli-prose">
+              <table class="cli-table">
+                <thead>
+                  <tr><th>命令格式</th><th>功能说明</th><th>快捷试用</th></tr>
+                </thead>
+                <tbody>
+                  <tr><td><code>help</code></td><td>显示本帮助系统与全部可用指令一览</td><td><span class="file-interactive-item" onclick="runCommand('help')">exec</span></td></tr>
+                  <tr><td><code>about</code></td><td>关于刊物、作者背景与终端设计哲学</td><td><span class="file-interactive-item" onclick="runCommand('about')">exec</span></td></tr>
+                  <tr><td><code>ls notes</code></td><td>列出所有公开的探索文章与技术笔记</td><td><span class="file-interactive-item" onclick="runCommand('ls notes')">exec</span></td></tr>
+                  <tr><td><code>cat notes/agents.md</code></td><td><strong>【主叙事】</strong> 查看关于 Agent 可观察/可暂停/可回滚全文</td><td><span class="file-interactive-item" onclick="runCommand('cat notes/agents.md')">exec</span></td></tr>
+                  <tr><td><code>cat notes/slow-web.md</code></td><td>查看纯文本与慢网络随笔思考</td><td><span class="file-interactive-item" onclick="runCommand('cat notes/slow-web.md')">exec</span></td></tr>
+                  <tr><td><code>projects</code></td><td>展示实验室当前正在推进的三个项目及状态</td><td><span class="file-interactive-item" onclick="runCommand('projects')">exec</span></td></tr>
+                  <tr><td><code>now</code></td><td>展示当下焦距：正在研究、正在阅读、下一步</td><td><span class="file-interactive-item" onclick="runCommand('now')">exec</span></td></tr>
+                  <tr><td><code>history</code></td><td>展示终端会话内执行过的所有历史命令</td><td><span class="file-interactive-item" onclick="runCommand('history')">exec</span></td></tr>
+                  <tr><td><code>clear</code></td><td>清空当前屏幕的所有输出流</td><td><span class="file-interactive-item" onclick="runCommand('clear')">exec</span></td></tr>
+                  <tr><td><code>exit</code></td><td>结束当前访客会话，生成只读状态快照</td><td><span class="file-interactive-item" onclick="runCommand('exit')">exec</span></td></tr>
+                </tbody>
+              </table>
+            </div>
+          </div>
+        `;
+        appendLog(cmd, out, 16);
+      }
+
+      // 3. ABOUT
+      else if (lower === 'about') {
+        const out = `
+          <div class="cli-card cli-card-purple">
+            <div class="cli-header-title">
+              <span>关于 ORANGECAT (极客日志与系统架构试验场)</span>
+              <span class="cli-meta-tag">ARCH_INFO: X86_64 / LINUX_CORE</span>
+            </div>
+            <div class="cli-prose">
+              <p>这里是一个专注于 <strong>自主智能体架构、分布式系统、eBPF 底层追踪与纯文本交互设计</strong> 的数字试验场。我们相信真正坚固的代码不需要繁复的视觉糖衣，清晰的协议、精简的状态机与精确的字符流才是工程的本质。</p>
+              <p>终端作者：<code>orangecat</code>（系统架构师 / 独立协议研究员）<br>
+              当前版本：<code>v4.2.0-kernel-release</code> | 协议：<code>MIT Open-Terminal</code></p>
+            </div>
+          </div>
+        `;
+        appendLog(cmd, out, 9);
+      }
+
+      // 4. LS NOTES
+      else if (lower === 'ls notes' || lower === 'ls') {
+        const out = `
+          <div style="margin:4px 0 10px; font-size:12.5px; color:var(--term-muted);">/home/orangecat/notes (2 个公开文档, 权限 drwxr-xr-x):</div>
+          <table class="cli-table">
+            <thead>
+              <tr><th>权限</th><th>大小</th><th>修改日期</th><th>文件名称 (点击直接阅读)</th></tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td>-rw-r--r--</td>
+                <td>4.8 KB</td>
+                <td>2026-08-20</td>
+                <td><span class="file-interactive-item" onclick="runCommand('cat notes/agents.md')">notes/agents.md</span> (主叙事：让 Agent 可观察、可暂停、可回滚)</td>
+              </tr>
+              <tr>
+                <td>-rw-r--r--</td>
+                <td>2.1 KB</td>
+                <td>2026-08-12</td>
+                <td><span class="file-interactive-item" onclick="runCommand('cat notes/slow-web.md')">notes/slow-web.md</span> (慢网络与纯文本的永恒生命力)</td>
+              </tr>
+            </tbody>
+          </table>
+        `;
+        appendLog(cmd, out, 6);
+      }
+
+      // 5. CAT NOTES/AGENTS.MD (主叙事)
+      else if (lower === 'cat notes/agents.md' || lower === 'cat agents.md' || lower === 'cat agents') {
+        const doc = database.agents;
+        const out = `
+          <article class="cli-card" style="border-left-color: var(--term-green);">
+            <div class="cli-header-title">
+              <span>《${doc.title}》</span>
+              <span class="cli-meta-tag">FILE: ${doc.file} | ${doc.date}</span>
+            </div>
+            <div style="font-size:12px; color:var(--term-dim-green); margin-bottom:12px;">[分类: ${doc.category}]</div>
+            <div class="cli-prose">${doc.content}</div>
+          </article>
+        `;
+        appendLog(cmd, out, doc.lines);
+      }
+
+      // 6. CAT NOTES/SLOW-WEB.MD
+      else if (lower === 'cat notes/slow-web.md' || lower === 'cat slow-web.md') {
+        const doc = database.slowWeb;
+        const out = `
+          <article class="cli-card cli-card-yellow">
+            <div class="cli-header-title">
+              <span>《${doc.title}》</span>
+              <span class="cli-meta-tag">FILE: ${doc.file} | ${doc.date}</span>
+            </div>
+            <div style="font-size:12px; color:var(--term-yellow); margin-bottom:12px;">[分类: ${doc.category}]</div>
+            <div class="cli-prose">${doc.content}</div>
+          </article>
+        `;
+        appendLog(cmd, out, doc.lines);
+      }
+
+      // 7. PROJECTS (次级栏目 1: 实验与状态)
+      else if (lower === 'projects') {
+        const out = `
+          <div class="cli-card cli-card-cyan">
+            <div class="cli-header-title">
+              <span>实验室核心工程矩阵 (PROJECT MATRIX)</span>
+              <span class="cli-meta-tag">ACTIVE 3 EXPERIMENTS</span>
+            </div>
+            <div class="cli-prose">
+              <table class="cli-table">
+                <thead>
+                  <tr><th>项目名称</th><th>核心定位</th><th>当前状态</th><th>最近进展</th></tr>
+                </thead>
+                <tbody>
+                  <tr>
+                    <td><strong>SandTrace-Agent</strong></td>
+                    <td>智能体虚拟沙盒与运行时回滚引擎</td>
+                    <td><span class="status-badge status-active">ACTIVE / 迭代中</span></td>
+                    <td>已支持 Linux eBPF syscall 级别的文件系统写拦截</td>
+                  </tr>
+                  <tr>
+                    <td><strong>MonoCLI-Vite</strong></td>
+                    <td>零依赖极简纯文本 Web 构建工具链</td>
+                    <td><span class="status-badge status-wip">WIP / 验证中</span></td>
+                    <td>完成 AST 语法树字符级重绘，包体压缩至 12KB</td>
+                  </tr>
+                  <tr>
+                    <td><strong>Protocol-Gossip-Net</strong></td>
+                    <td>分布式边缘自治节点的 Gossip 状态传播</td>
+                    <td><span class="status-badge status-archive">STABLE / 归档</span></td>
+                    <td>通过 10,000 节点高并发容错断网演练压测</td>
+                  </tr>
+                </tbody>
+              </table>
+            </div>
+          </div>
+        `;
+        appendLog(cmd, out, 12);
+      }
+
+      // 8. NOW (次级栏目 2: 正在研究/阅读/下一步)
+      else if (lower === 'now') {
+        const out = `
+          <div class="cli-card cli-card-yellow">
+            <div class="cli-header-title">
+              <span>当下焦点状态 (NOW / RADAR)</span>
+              <span class="cli-meta-tag">UPDATE: 2026-08</span>
+            </div>
+            <div class="cli-prose">
+              <p>🔍 <strong>正在研究：</strong> Multi-Agent 编排中的“不可逆动作防护网”与轻量级 WASM 沙盒热恢复；</p>
+              <p>📖 <strong>正在阅读：</strong> 重新研读《Operating Systems: Three Easy Pieces》与《Database Internals》第 4 章关于事务 WAL 机制的推导；</p>
+              <p>🚀 <strong>下一步计划：</strong> 将 Orangecat CLI 的命令行解释器开源为一个独立的无框架轻量组件，支持任意 Markdown 博客挂载。</p>
+            </div>
+          </div>
+        `;
+        appendLog(cmd, out, 8);
+      }
+
+      // 9. HISTORY (次级栏目 3: 最近命令)
+      else if (lower === 'history') {
+        let historyList = cmdHistory.map((item, idx) => `<div><span style="color:var(--term-muted); display:inline-block; width:36px;">${idx + 1}</span> <code>${escapeHtml(item)}</code></div>`).join('');
+        const out = `
+          <div style="background:#090d14; border:1px solid #1e293b; padding:12px 16px; border-radius:6px; font-size:13px;">
+            <div style="color:var(--term-cyan); font-weight:600; margin-bottom:8px;">📜 会话指令历史记录：</div>
+            <div style="line-height:1.8;">${historyList}</div>
+          </div>
+        `;
+        appendLog(cmd, out, cmdHistory.length + 2);
+      }
+
+      // 10. EXIT (收尾区)
+      else if (lower === 'exit' || lower === 'quit') {
+        const out = `
+          <div style="background:rgba(57, 255, 20, 0.06); border:1px solid var(--term-green); padding:16px 20px; border-radius:6px; color:var(--term-text);">
+            <div style="color:var(--term-green); font-weight:700; font-size:15px; margin-bottom:6px;">[LOGOUT] 会话结束，想法已写入只读快照。</div>
+            <p style="font-size:13px; color:#cbd5e1; margin:0;">
+              感谢您访问 Orangecat 极客终端。所有公开文章、实验状态已作为不可变文本持久化保存在当前 DOM 中。输入 <span class="file-interactive-item" onclick="runCommand('help')">help</span> 可重新唤醒交互。
+            </p>
+          </div>
+        `;
+        appendLog(cmd, out, 4);
+      }
+
+      // 11. SUDO / 权限拦截交互文案
+      else if (lower.startsWith('sudo') || lower.startsWith('su') || lower.includes('/etc/shadow') || lower.includes('rm ')) {
+        const out = `<div style="color:var(--term-red); font-weight:500;">permission denied：这里没有隐藏彩蛋，先看公开笔记。请使用 <span class="file-interactive-item" onclick="runCommand('ls notes')">ls notes</span> 浏览文档。</div>`;
+        appendLog(cmd, out, 1);
+      }
+
+      // 12. CAT 未指定或未知文件
+      else if (lower.startsWith('cat')) {
+        const target = cmd.split(' ').slice(1).join(' ').trim();
+        if (!target) {
+          const out = `<div style="color:var(--term-yellow);">cat: 缺少参数。用法: cat notes/agents.md</div>`;
+          appendLog(cmd, out, 1);
+        } else {
+          const out = `<div style="color:var(--term-red);">cat: ${escapeHtml(target)}: 没有那个文件或目录。输入 <span class="file-interactive-item" onclick="runCommand('ls notes')">ls notes</span> 查看全部可用文件。</div>`;
+          appendLog(cmd, out, 1);
+        }
+      }
+
+      // 13. 404 未知命令
+      else {
+        const out = `<div style="color:var(--term-red);">command not found: "${escapeHtml(cmd)}"：试试 <span class="file-interactive-item" onclick="runCommand('help')">help</span> 查看完整手册。</div>`;
+        appendLog(cmd, out, 1);
+      }
+
+      inputEl.value = '';
     }
 
-  <style>
-    .terminal-container {
-      position: relative;
-    }
-    .terminal-container::before {
-      content: " ";
-      display: block;
-      position: absolute;
-      top: 0; left: 0; bottom: 0; right: 0;
-      background: linear-gradient(rgba(18, 16, 16, 0) 50%, rgba(0, 0, 0, 0.25) 50%);
-      background-size: 100% 4px;
-      z-index: 20;
-      pointer-events: none;
-      opacity: 0.6;
-    }
-    .output-group {
-      animation: termFadeIn 0.2s ease-out;
-    }
-    @keyframes termFadeIn {
-      from { opacity: 0; transform: translateY(4px); }
-      to { opacity: 1; transform: translateY(0); }
-    }
-  </style>
-
-  <script src="assets/nav-bar.js"></script>
-  <script>
-    cliInput.addEventListener('keydown', (e) => {
+    // 键盘监听
+    inputEl.addEventListener('keydown', (e) => {
       if (e.key === 'Enter') {
-        execCmd(cliInput.value);
+        runCommand(inputEl.value);
+      } else if (e.key === 'ArrowUp') {
+        e.preventDefault();
+        if (historyCursor > 0) {
+          historyCursor--;
+          inputEl.value = cmdHistory[historyCursor] || '';
+        }
+      } else if (e.key === 'ArrowDown') {
+        e.preventDefault();
+        if (historyCursor < cmdHistory.length - 1) {
+          historyCursor++;
+          inputEl.value = cmdHistory[historyCursor] || '';
+        } else {
+          historyCursor = cmdHistory.length;
+          inputEl.value = '';
+        }
       }
     });
 
-    // 默认展示 ls
-    execCmd('ls');
+    // 页面初始化：默认执行 ls notes 与 cat notes/agents.md 呈现主叙事
+    window.addEventListener('DOMContentLoaded', () => {
+      runCommand('ls notes');
+      setTimeout(() => {
+        runCommand('cat notes/agents.md');
+      }, 80);
+    });
   </script>
 </body>
 </html>

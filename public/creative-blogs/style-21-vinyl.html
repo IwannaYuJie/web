@@ -3,20 +3,30 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>33 RPM VINYL ZINE // 21 复古黑胶唱片与独立音乐志</title>
-  <link rel="stylesheet" href="assets/common.css">
+  <title>33⅓ / 深夜聆听室 ISSUE 21 — 复古黑胶唱片音乐志</title>
+  <link rel="stylesheet" href="/creative-blogs/assets/common.css">
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=DM+Serif+Display:ital@0;1&family=Outfit:wght@400;600;800&family=Noto+Serif+SC:wght@400;600;900&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@500;700;800&family=Newsreader:ital,opsz,wght@0,6..72,400;0,6..72,600;1,6..72,400&family=Noto+Serif+SC:wght@300;400;600;900&family=Space+Mono:ital,wght@0,400;0,700;1,400&display=swap" rel="stylesheet">
   <style>
     :root {
-      --vinyl-black: #121212;
-      --vinyl-cream: #f6f0ea;
-      --vinyl-amber: #e69138;
-      --vinyl-groove: #262626;
-      --vinyl-label-red: #cc3333;
-      --font-vinyl-title: 'DM Serif Display', 'Noto Serif SC', serif;
-      --font-vinyl-body: 'Outfit', 'Noto Serif SC', sans-serif;
+      --bg-lacquer: #0c0a09;
+      --bg-deck: #151210;
+      --bg-groove-card: #1c1815;
+      --paper-cream: #efe7db;
+      --paper-muted: #b8aba0;
+      --paper-faint: #6c625a;
+      --amber-tube: #d97724;
+      --amber-gold: #f2a859;
+      --label-crimson: #9e2a2b;
+      --label-burgundy: #541212;
+      --lead-silver: #a39c94;
+      --vinyl-rim: #24201c;
+      --line-groove: rgba(239, 231, 219, 0.12);
+
+      --font-display: 'Cinzel', 'Noto Serif SC', serif;
+      --font-body: 'Newsreader', 'Noto Serif SC', serif;
+      --font-mono: 'Space Mono', monospace;
     }
 
     * {
@@ -26,388 +36,1142 @@
     }
 
     body {
-      background-color: var(--vinyl-black);
-      color: var(--vinyl-cream);
-      font-family: var(--font-vinyl-body);
-      line-height: 1.75;
-      padding-bottom: 100px;
-      /* 温暖木质与唱片纹理 */
-      background-image: 
-        radial-gradient(circle at 20% 30%, rgba(230, 145, 56, 0.15) 0%, transparent 50%),
-        radial-gradient(circle at 80% 70%, rgba(204, 51, 51, 0.1) 0%, transparent 50%);
-    }
-
-    .vinyl-wrapper {
-      max-width: 1200px;
-      margin: 0 auto;
-      padding: 28px 20px;
+      background-color: var(--bg-lacquer);
+      color: var(--paper-cream);
+      font-family: var(--font-body);
+      line-height: 1.8;
+      font-size: 17px;
+      min-height: 100vh;
+      overflow-x: hidden;
+      background-image:
+        radial-gradient(ellipse 60% 40% at 50% 0%, rgba(217, 119, 36, 0.12) 0%, transparent 70%),
+        radial-gradient(circle 800px at 100% 40%, rgba(158, 42, 43, 0.08) 0%, transparent 60%),
+        linear-gradient(to bottom, #0c0a09 0%, #120e0c 50%, #0a0807 100%);
     }
 
     /* 刊头 */
-    .vinyl-masthead {
-      border-bottom: 1px solid rgba(255, 255, 255, 0.15);
-      padding-bottom: 20px;
-      margin-bottom: 36px;
+    .masthead-wrapper {
+      border-bottom: 1px solid var(--line-groove);
+      background: rgba(12, 10, 9, 0.85);
+      backdrop-filter: blur(12px);
+      position: sticky;
+      top: 0;
+      z-index: 40;
+    }
+    .masthead {
+      max-width: 1240px;
+      margin: 0 auto;
+      padding: 18px 24px;
       display: flex;
       justify-content: space-between;
-      align-items: flex-end;
-    }
-    .vinyl-logo {
-      font-family: var(--font-vinyl-title);
-      font-size: 32px;
-      letter-spacing: 1px;
-      color: #fff;
-    }
-    .vinyl-rpm-badge {
-      font-size: 11px;
-      color: var(--vinyl-amber);
-      border: 1px solid var(--vinyl-amber);
-      padding: 3px 10px;
-      border-radius: 20px;
-      letter-spacing: 2px;
-    }
-
-    /* 黑胶唱机 Hero 播放器大卡片 */
-    .turntable-hero-card {
-      background: #1c1a18;
-      border: 1px solid #332d29;
-      border-radius: 24px;
-      padding: 36px;
-      display: grid;
-      grid-template-columns: 1.2fr 1fr;
-      gap: 36px;
       align-items: center;
-      margin-bottom: 48px;
-      box-shadow: 0 20px 50px rgba(0,0,0,0.6);
-      position: relative;
+      flex-wrap: wrap;
+      gap: 16px;
+    }
+    .masthead-identity {
+      display: flex;
+      align-items: center;
+      gap: 14px;
+    }
+    .identity-badge {
+      font-family: var(--font-mono);
+      font-size: 11px;
+      background: var(--label-crimson);
+      color: #fff;
+      padding: 3px 8px;
+      border-radius: 2px;
+      letter-spacing: 1.5px;
+      font-weight: 700;
+      text-transform: uppercase;
+    }
+    .identity-title {
+      font-family: var(--font-display);
+      font-size: 20px;
+      font-weight: 700;
+      letter-spacing: 2px;
+      color: var(--paper-cream);
+    }
+    .theme-motto {
+      font-family: var(--font-mono);
+      font-size: 12px;
+      color: var(--amber-gold);
+      letter-spacing: 1.5px;
     }
 
-    .turntable-visual-panel {
+    .container {
+      max-width: 1240px;
+      margin: 0 auto;
+      padding: 40px 24px 80px;
+    }
+
+    /* 播放器与唱盘交互面板 */
+    .turntable-console {
+      background: linear-gradient(145deg, #1d1916 0%, #13100e 100%);
+      border: 1px solid #38302a;
+      border-radius: 12px;
+      box-shadow: 0 30px 80px rgba(0, 0, 0, 0.8), inset 0 1px 0 rgba(255, 255, 255, 0.08);
+      padding: 36px;
+      margin-bottom: 56px;
+      display: grid;
+      grid-template-columns: 380px 1fr;
+      gap: 40px;
       position: relative;
-      border-radius: 16px;
       overflow: hidden;
-      box-shadow: 0 10px 30px rgba(0,0,0,0.8);
-    }
-    .turntable-visual-panel img {
-      width: 100%;
-      height: 340px;
-      object-fit: cover;
-      display: block;
     }
 
-    /* 旋转唱片微组件 */
-    .spinning-lp-disc {
+    .turntable-console::before {
+      content: "";
       position: absolute;
-      top: 20px;
-      right: 20px;
-      width: 90px;
-      height: 90px;
+      top: 0; left: 0; right: 0; height: 3px;
+      background: linear-gradient(90deg, transparent, var(--amber-tube), transparent);
+    }
+
+    /* 唱盘区域 */
+    .platter-bay {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      position: relative;
+    }
+
+    .turntable-platter {
+      width: 290px;
+      height: 290px;
       border-radius: 50%;
-      background: radial-gradient(circle, #cc3333 22%, #111 23%, #222 30%, #111 35%, #222 45%, #111 60%, #222 75%, #111 100%);
-      box-shadow: 0 4px 15px rgba(0,0,0,0.9);
-      animation: spin-lp 4s linear infinite;
+      background: radial-gradient(circle, #25201c 0%, #0e0c0b 60%, #1f1b18 100%);
+      box-shadow: 0 15px 35px rgba(0, 0, 0, 0.9), inset 0 0 25px rgba(0,0,0,0.8);
+      border: 6px solid #2a2420;
+      position: relative;
       display: flex;
       align-items: center;
       justify-content: center;
     }
-    .spinning-lp-disc.paused {
+
+    .vinyl-disc {
+      width: 264px;
+      height: 264px;
+      border-radius: 50%;
+      background: 
+        repeating-radial-gradient(circle at center, #111 0px, #111 2px, #1b1b1b 3px, #111 4px),
+        radial-gradient(circle, #1a1a1a 10%, #000 90%);
+      position: relative;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      box-shadow: 0 0 20px rgba(0,0,0,0.7);
+      transition: transform 0.8s ease;
+      animation: spin-vinyl 1.8s linear infinite;
+    }
+
+    .vinyl-disc.paused {
       animation-play-state: paused;
     }
-    .lp-center-hole {
+
+    .vinyl-disc.side-b {
+      border: 2px dashed rgba(242, 168, 89, 0.4);
+    }
+
+    @keyframes spin-vinyl {
+      from { transform: rotate(0deg); }
+      to { transform: rotate(360deg); }
+    }
+
+    /* 唱片中心标签 */
+    .vinyl-center-label {
+      width: 96px;
+      height: 96px;
+      border-radius: 50%;
+      background: radial-gradient(circle, var(--label-crimson) 0%, var(--label-burgundy) 100%);
+      border: 2px solid var(--amber-gold);
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      color: var(--paper-cream);
+      text-align: center;
+      box-shadow: inset 0 0 10px rgba(0,0,0,0.6);
+      position: relative;
+      z-index: 2;
+    }
+
+    .center-label-rpm {
+      font-family: var(--font-mono);
+      font-size: 8px;
+      letter-spacing: 1px;
+      color: var(--amber-gold);
+    }
+    .center-label-side {
+      font-family: var(--font-display);
+      font-size: 16px;
+      font-weight: 700;
+      line-height: 1;
+      margin: 2px 0;
+    }
+    .center-label-sub {
+      font-family: var(--font-mono);
+      font-size: 7px;
+      letter-spacing: 0.5px;
+      opacity: 0.85;
+    }
+    .spindle-hole {
       width: 10px;
       height: 10px;
       background: #000;
       border-radius: 50%;
-      border: 1px solid #fff;
-    }
-    @keyframes spin-lp {
-      100% { transform: rotate(360deg); }
+      border: 1px solid #555;
+      position: absolute;
     }
 
-    .hero-album-title {
-      font-family: var(--font-vinyl-title);
-      font-size: 34px;
-      color: #fff;
-      margin-bottom: 14px;
-      line-height: 1.2;
+    /* 唱臂模拟 */
+    .tonearm {
+      position: absolute;
+      top: 10px;
+      right: 15px;
+      width: 140px;
+      height: 180px;
+      pointer-events: none;
+      transition: transform 0.6s cubic-bezier(0.2, 0.8, 0.3, 1);
+      transform-origin: 120px 20px;
+      transform: rotate(24deg);
+      z-index: 10;
     }
-    .hero-album-title span {
-      color: var(--vinyl-amber);
+    .tonearm.lifted {
+      transform: rotate(-10deg);
+    }
+    .tonearm-base {
+      position: absolute;
+      top: 10px;
+      right: 10px;
+      width: 24px;
+      height: 24px;
+      background: #3e3731;
+      border-radius: 50%;
+      border: 2px solid #635850;
+      box-shadow: 0 4px 8px rgba(0,0,0,0.6);
+    }
+    .tonearm-rod {
+      position: absolute;
+      top: 20px;
+      right: 20px;
+      width: 5px;
+      height: 130px;
+      background: linear-gradient(to right, #cfc6be, #877f77);
+      transform: rotate(20deg);
+      border-radius: 3px;
+    }
+    .tonearm-cartridge {
+      position: absolute;
+      bottom: 25px;
+      left: 32px;
+      width: 16px;
+      height: 24px;
+      background: #111;
+      border: 1px solid var(--amber-gold);
+      border-radius: 2px;
+      transform: rotate(20deg);
+    }
+    .tonearm-cartridge::after {
+      content: "";
+      position: absolute;
+      bottom: -4px;
+      left: 7px;
+      width: 2px;
+      height: 6px;
+      background: #fff;
     }
 
-    .liner-notes-p {
-      font-size: 14px;
-      color: #b8aba0;
-      line-height: 1.85;
+    /* 操控面板与当前播放 */
+    .deck-info {
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
+    }
+
+    .now-playing-header {
+      border-bottom: 1px dashed var(--line-groove);
+      padding-bottom: 16px;
       margin-bottom: 20px;
     }
-
-    .vinyl-play-btn {
+    .now-tag {
+      font-family: var(--font-mono);
+      font-size: 11px;
+      color: var(--amber-gold);
+      letter-spacing: 2px;
       display: inline-flex;
       align-items: center;
-      gap: 10px;
-      background: var(--vinyl-amber);
-      color: #000;
-      font-weight: 800;
+      gap: 6px;
+    }
+    .live-dot {
+      width: 7px;
+      height: 7px;
+      border-radius: 50%;
+      background: var(--amber-tube);
+      box-shadow: 0 0 8px var(--amber-gold);
+      animation: pulse-glow 1.5s ease-in-out infinite alternate;
+    }
+    @keyframes pulse-glow {
+      from { opacity: 0.4; }
+      to { opacity: 1; }
+    }
+
+    .current-track-name {
+      font-family: var(--font-display);
+      font-size: 28px;
+      color: var(--paper-cream);
+      margin-top: 6px;
+      line-height: 1.25;
+    }
+    .current-track-artist {
+      font-family: var(--font-mono);
       font-size: 13px;
-      padding: 10px 22px;
-      border-radius: 999px;
-      text-decoration: none;
-      transition: all 0.2s;
-      cursor: pointer;
-      border: none;
-    }
-    .vinyl-play-btn:hover {
-      background: #ffaa4d;
-      transform: scale(1.03);
+      color: var(--paper-muted);
+      margin-top: 4px;
     }
 
-    /* 曲目列表 / 乐评文章网格 */
-    .tracklist-grid {
-      display: grid;
-      grid-template-columns: 2fr 1fr;
-      gap: 36px;
-    }
-
-    .track-post-card {
-      background: #181615;
-      border: 1px solid #2e2824;
-      border-radius: 16px;
-      padding: 30px;
-      margin-bottom: 28px;
-      transition: border-color 0.2s;
-    }
-    .track-post-card:hover {
-      border-color: var(--vinyl-amber);
-    }
-
-    .track-number-row {
+    .controls-grid {
       display: flex;
-      justify-content: space-between;
-      font-size: 12px;
-      color: var(--vinyl-amber);
-      font-weight: 700;
-      margin-bottom: 10px;
+      flex-wrap: wrap;
+      gap: 12px;
+      margin: 20px 0;
     }
 
-    .track-title {
-      font-family: var(--font-vinyl-title);
+    .control-btn {
+      background: #241f1b;
+      color: var(--paper-cream);
+      border: 1px solid #453c35;
+      font-family: var(--font-mono);
+      font-size: 12px;
+      padding: 10px 18px;
+      border-radius: 4px;
+      cursor: pointer;
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      transition: all 0.2s ease;
+      letter-spacing: 0.5px;
+    }
+    .control-btn:hover {
+      background: #332b25;
+      border-color: var(--amber-gold);
+      color: var(--amber-gold);
+      transform: translateY(-1px);
+    }
+    .control-btn.primary {
+      background: var(--amber-tube);
+      color: #0c0a09;
+      font-weight: 700;
+      border-color: var(--amber-gold);
+    }
+    .control-btn.primary:hover {
+      background: var(--amber-gold);
+      color: #000;
+    }
+
+    .groove-meta-strip {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(130px, 1fr));
+      gap: 12px;
+      background: #110e0c;
+      padding: 14px 18px;
+      border-radius: 6px;
+      border: 1px solid rgba(255, 255, 255, 0.05);
+      font-family: var(--font-mono);
+      font-size: 11px;
+    }
+    .meta-label {
+      color: var(--paper-faint);
+      display: block;
+      margin-bottom: 2px;
+      text-transform: uppercase;
+      letter-spacing: 1px;
+    }
+    .meta-val {
+      color: var(--paper-cream);
+      font-weight: 600;
+    }
+
+    /* 主要双栏布局 */
+    .zine-layout {
+      display: grid;
+      grid-template-columns: 1fr 340px;
+      gap: 48px;
+    }
+
+    /* 主叙事模块 */
+    .main-narrative {
+      background: var(--bg-deck);
+      border: 1px solid #2d2621;
+      border-radius: 8px;
+      padding: 44px;
+      position: relative;
+    }
+
+    .main-narrative::after {
+      content: "33⅓ RPM MASTER RECORDING";
+      position: absolute;
+      bottom: 16px;
+      right: 24px;
+      font-family: var(--font-mono);
+      font-size: 10px;
+      letter-spacing: 2px;
+      color: var(--paper-faint);
+    }
+
+    .narrative-kicker {
+      font-family: var(--font-mono);
+      font-size: 12px;
+      color: var(--amber-tube);
+      letter-spacing: 2.5px;
+      text-transform: uppercase;
+      margin-bottom: 12px;
+    }
+
+    .narrative-title {
+      font-family: var(--font-display);
+      font-size: 38px;
+      line-height: 1.25;
+      color: #fff;
+      margin-bottom: 24px;
+    }
+
+    .side-structure-divider {
+      display: flex;
+      align-items: center;
+      gap: 16px;
+      margin: 32px 0 24px;
+      font-family: var(--font-mono);
+      font-size: 13px;
+      color: var(--amber-gold);
+      letter-spacing: 2px;
+    }
+    .side-structure-divider::before,
+    .side-structure-divider::after {
+      content: "";
+      flex: 1;
+      height: 1px;
+      background: var(--line-groove);
+    }
+
+    .narrative-lead {
+      font-size: 20px;
+      line-height: 1.7;
+      color: #f7ede2;
+      font-style: italic;
+      margin-bottom: 24px;
+      border-left: 3px solid var(--amber-tube);
+      padding-left: 20px;
+    }
+
+    .narrative-body p {
+      margin-bottom: 20px;
+      color: var(--paper-cream);
+      text-align: justify;
+    }
+
+    .narrative-body blockquote {
+      margin: 32px 0;
+      padding: 24px 28px;
+      background: #100d0b;
+      border-left: 2px solid var(--label-crimson);
+      font-size: 18px;
+      font-style: italic;
+      color: #eddcd2;
+    }
+
+    /* 次级栏目卡片组 */
+    .secondary-sections {
+      margin-top: 56px;
+      display: grid;
+      grid-template-columns: 1fr;
+      gap: 28px;
+    }
+
+    .sub-section-card {
+      background: var(--bg-deck);
+      border: 1px solid #2d2621;
+      border-radius: 8px;
+      padding: 32px;
+      transition: transform 0.2s ease, border-color 0.2s ease;
+    }
+    .sub-section-card:hover {
+      border-color: var(--amber-tube);
+      transform: translateY(-2px);
+    }
+
+    .sub-tag {
+      font-family: var(--font-mono);
+      font-size: 11px;
+      color: var(--amber-gold);
+      letter-spacing: 1.5px;
+      margin-bottom: 8px;
+      display: block;
+    }
+
+    .sub-title {
+      font-family: var(--font-display);
       font-size: 24px;
       color: #fff;
       margin-bottom: 14px;
+      line-height: 1.35;
     }
 
-    .track-body {
-      font-size: 14px;
-      color: #b5a99f;
-      line-height: 1.8;
+    .sub-content {
+      font-size: 16px;
+      color: var(--paper-muted);
+      line-height: 1.75;
     }
 
-    /* 侧边歌单与黑胶唱片架 */
-    .crate-widget {
-      background: #181615;
-      border: 1px solid #2e2824;
-      border-radius: 16px;
+    /* 侧边栏资料模块 */
+    .sidebar-crate {
+      display: flex;
+      flex-direction: column;
+      gap: 28px;
+    }
+
+    .crate-card {
+      background: var(--bg-deck);
+      border: 1px solid #2d2621;
+      border-radius: 8px;
       padding: 24px;
-      margin-bottom: 28px;
     }
-    .crate-heading {
-      font-family: var(--font-vinyl-title);
-      font-size: 18px;
-      color: var(--vinyl-amber);
-      border-bottom: 1px solid #332d29;
+
+    .crate-card-title {
+      font-family: var(--font-display);
+      font-size: 16px;
+      color: var(--paper-cream);
+      letter-spacing: 1px;
+      border-bottom: 1px solid var(--line-groove);
       padding-bottom: 10px;
       margin-bottom: 16px;
-    }
-
-    .vinyl-track-item {
       display: flex;
       justify-content: space-between;
-      padding: 8px 0;
-      border-bottom: 1px solid rgba(255,255,255,0.05);
-      font-size: 13px;
-      color: #ccc;
+      align-items: center;
     }
-    .vinyl-track-item:last-child { border-bottom: none; }
+    .crate-card-title span {
+      font-family: var(--font-mono);
+      font-size: 11px;
+      color: var(--amber-tube);
+    }
 
-    @media (max-width: 860px) {
-      .turntable-hero-card, .tracklist-grid {
+    .tracklist-item {
+      display: flex;
+      justify-content: space-between;
+      align-items: baseline;
+      padding: 8px 0;
+      border-bottom: 1px dotted rgba(255, 255, 255, 0.08);
+      font-size: 14px;
+    }
+    .tracklist-item:last-child {
+      border-bottom: none;
+    }
+    .track-num {
+      font-family: var(--font-mono);
+      font-size: 11px;
+      color: var(--paper-faint);
+      margin-right: 8px;
+    }
+    .track-time {
+      font-family: var(--font-mono);
+      font-size: 11px;
+      color: var(--amber-gold);
+    }
+
+    .spec-table {
+      width: 100%;
+      font-family: var(--font-mono);
+      font-size: 12px;
+      border-collapse: collapse;
+    }
+    .spec-table td {
+      padding: 7px 0;
+      border-bottom: 1px solid rgba(255, 255, 255, 0.04);
+    }
+    .spec-key {
+      color: var(--paper-faint);
+      width: 42%;
+    }
+    .spec-val {
+      color: var(--paper-cream);
+    }
+
+    /* 淘碟清单 */
+    .crate-dig-item {
+      padding: 10px 0;
+      border-bottom: 1px dashed rgba(255, 255, 255, 0.08);
+    }
+    .crate-dig-item:last-child {
+      border-bottom: none;
+    }
+    .dig-album {
+      font-weight: 600;
+      font-size: 14px;
+      color: #fff;
+    }
+    .dig-note {
+      font-size: 12px;
+      color: var(--paper-muted);
+      margin-top: 2px;
+    }
+
+    /* 短评互动模块 */
+    .listener-notes-module {
+      margin-top: 56px;
+      background: linear-gradient(180deg, var(--bg-deck) 0%, #100d0b 100%);
+      border: 1px solid #332a24;
+      border-radius: 8px;
+      padding: 36px;
+    }
+
+    .notes-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: flex-end;
+      margin-bottom: 24px;
+      flex-wrap: wrap;
+      gap: 12px;
+    }
+    .notes-header h3 {
+      font-family: var(--font-display);
+      font-size: 24px;
+      color: #fff;
+    }
+
+    .comment-input-area {
+      display: flex;
+      gap: 12px;
+      margin-bottom: 28px;
+    }
+    .comment-input-area input {
+      flex: 1;
+      background: #0d0a08;
+      border: 1px solid #4a3d33;
+      border-radius: 4px;
+      padding: 12px 16px;
+      color: var(--paper-cream);
+      font-family: var(--font-body);
+      font-size: 15px;
+      outline: none;
+      transition: border-color 0.2s;
+    }
+    .comment-input-area input:focus {
+      border-color: var(--amber-gold);
+    }
+
+    .review-stream {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+      gap: 16px;
+    }
+
+    .review-card {
+      background: #171310;
+      border: 1px solid #29221d;
+      padding: 16px;
+      border-radius: 4px;
+      position: relative;
+    }
+    .review-card p {
+      font-size: 14px;
+      color: var(--paper-cream);
+      font-style: italic;
+      margin-bottom: 8px;
+      line-height: 1.5;
+    }
+    .review-author {
+      font-family: var(--font-mono);
+      font-size: 11px;
+      color: var(--amber-tube);
+    }
+
+    /* 封套收尾页 */
+    .sleeve-footer {
+      margin-top: 64px;
+      padding-top: 40px;
+      border-top: 1px solid var(--line-groove);
+      text-align: center;
+    }
+    .sleeve-inlay-quote {
+      font-family: var(--font-display);
+      font-size: 26px;
+      color: var(--paper-cream);
+      font-style: italic;
+      max-width: 720px;
+      margin: 0 auto 16px;
+      line-height: 1.5;
+    }
+    .sleeve-catalog {
+      font-family: var(--font-mono);
+      font-size: 12px;
+      letter-spacing: 3px;
+      color: var(--paper-faint);
+    }
+
+    /* 浮动音符交互 */
+    .vinyl-note-particle {
+      position: fixed;
+      pointer-events: none;
+      z-index: 9999;
+      font-family: var(--font-mono);
+      color: var(--amber-gold);
+      font-size: 18px;
+      animation: floatUp 1s ease-out forwards;
+    }
+    @keyframes floatUp {
+      0% { opacity: 1; transform: translate(0, 0) scale(0.8); }
+      100% { opacity: 0; transform: translate(15px, -60px) scale(1.3); }
+    }
+
+    @media (prefers-reduced-motion: reduce) {
+      .vinyl-disc {
+        animation: none !important;
+      }
+      .live-dot {
+        animation: none !important;
+      }
+      .vinyl-note-particle {
+        display: none !important;
+      }
+    }
+
+    @media (max-width: 960px) {
+      .turntable-console {
         grid-template-columns: 1fr;
+        padding: 24px;
+        gap: 28px;
+      }
+      .zine-layout {
+        grid-template-columns: 1fr;
+      }
+      .main-narrative {
+        padding: 28px;
+      }
+      .narrative-title {
+        font-size: 28px;
+      }
+    }
+
+    @media (max-width: 580px) {
+      .turntable-platter {
+        width: 240px;
+        height: 240px;
+      }
+      .vinyl-disc {
+        width: 220px;
+        height: 220px;
+      }
+      .tonearm {
+        display: none;
+      }
+      .comment-input-area {
+        flex-direction: column;
       }
     }
   </style>
 </head>
 <body>
 
-  <div class="vinyl-wrapper">
-    <!-- 顶栏 -->
-    <header class="vinyl-masthead">
-      <div>
-        <div class="vinyl-logo">SIDE A // THE VINYL CHRONICLES</div>
-        <div style="font-size: 12px; color: #887766;">独立音乐评论 · 黑胶唱片收藏 · 听觉美学札记</div>
+  <!-- 刊头 -->
+  <header class="masthead-wrapper">
+    <div class="masthead">
+      <div class="masthead-identity">
+        <span class="identity-badge">ISSUE 21</span>
+        <h1 class="identity-title">33⅓ / 深夜聆听室</h1>
       </div>
-      <div class="vinyl-rpm-badge">STEREO 33⅓ RPM</div>
-    </header>
+      <div class="theme-motto">“机器保持节拍，人赋予摇摆”</div>
+    </div>
+  </header>
 
-    <!-- 黑胶唱机 Hero 封面卡片 -->
-    <section class="turntable-hero-card">
-      <div class="turntable-visual-panel">
-        <img src="assets/images/vinyl_turntable.jpg" alt="复古黑胶唱机与唱片架特写摄影">
-        <div class="spinning-lp-disc" id="lpDisc">
-          <div class="lp-center-hole"></div>
+  <div class="container">
+    
+    <!-- 唱盘模拟与交互主控台 -->
+    <section class="turntable-console" aria-label="黑胶唱盘控制台">
+      <div class="platter-bay">
+        <div class="turntable-platter">
+          <div class="vinyl-disc" id="vinylDisc" aria-hidden="true">
+            <div class="vinyl-center-label">
+              <span class="center-label-rpm">33⅓ RPM</span>
+              <span class="center-label-side" id="discSideLabel">SIDE A</span>
+              <span class="center-label-sub">STEREO // 21</span>
+              <div class="spindle-hole"></div>
+            </div>
+          </div>
+          <div class="tonearm" id="tonearmEl" aria-hidden="true">
+            <div class="tonearm-base"></div>
+            <div class="tonearm-rod"></div>
+            <div class="tonearm-cartridge"></div>
+          </div>
         </div>
       </div>
-      <div>
-        <div style="font-size: 11px; color: var(--vinyl-amber); letter-spacing: 2px; margin-bottom: 8px;">FEATURED RECORD // A-SIDE 01</div>
-        <h1 class="hero-album-title">
-          暖光、唱针与黑胶微响：<span>模拟时代的听觉温润感</span>
-        </h1>
-        <p class="liner-notes-p">
-          数字音频消除了底噪与机械抖晃，却也剥离了物理介质与时间共振的仪式感。当唱针缓缓滑入黑胶唱片的音轨，那一声微弱的爆豆声，正是音乐呼吸的起点。
-        </p>
-        <button class="vinyl-play-btn" onclick="toggleNeedle()">
-          <span id="playIcon">▶</span>
-          <span id="playText">PLAY ROTATING TURNTABLE</span>
-        </button>
+
+      <div class="deck-info">
+        <div class="now-playing-header">
+          <div class="now-tag">
+            <span class="live-dot" id="needleStatusDot"></span>
+            <span id="needleStatusText">唱针已入槽 // 模拟信号流动中</span>
+          </div>
+          <h2 class="current-track-name" id="currentTrackTitle">Kind of Blue (Alternate Matrix Cut)</h2>
+          <div class="current-track-artist" id="currentTrackMeta">Miles Davis Quintet · Columbia Studio B, NYC 1959</div>
+        </div>
+
+        <div class="controls-grid">
+          <button class="control-btn primary" id="toggleNeedleBtn" onclick="toggleNeedle()" aria-label="控制唱针升降与播放">
+            <span id="needleActionIcon">❚❚</span>
+            <span id="needleActionText">暂停，让房间安静一会儿</span>
+          </button>
+          <button class="control-btn" id="flipSideBtn" onclick="flipSide()" aria-label="唱片翻面">
+            <span>⟲</span>
+            <span id="flipSideText">唱片转到 B 面</span>
+          </button>
+          <button class="control-btn" onclick="spawnCrackles(event)" aria-label="聆听物理爆豆底噪">
+            <span>✨</span>
+            <span>模拟底噪微响</span>
+          </button>
+        </div>
+
+        <div class="groove-meta-strip">
+          <div>
+            <span class="meta-label">母带版本</span>
+            <span class="meta-val" id="metaMaster">1959 原盘模拟直刻</span>
+          </div>
+          <div>
+            <span class="meta-label">矩阵刻号</span>
+            <span class="meta-val" id="metaMatrix">XSM-47326-1AJ</span>
+          </div>
+          <div>
+            <span class="meta-label">针压设置</span>
+            <span class="meta-val">1.82 g (VTF)</span>
+          </div>
+          <div>
+            <span class="meta-label">唱头拾音</span>
+            <span class="meta-val">动圈 MC 0.3mV</span>
+          </div>
+        </div>
       </div>
     </section>
 
-    <!-- 曲目随笔列表 -->
-    <div class="tracklist-grid">
-      <!-- 左侧曲目文章 -->
+    <!-- 主叙事与侧边栏网格 -->
+    <div class="zine-layout">
+      
+      <!-- 主叙事区 -->
       <main>
-        <article class="track-post-card">
-          <div class="track-number-row">
-            <span>TRACK 01 // MODERN JAZZ</span>
-            <span>DURATION: 08:42</span>
+        <article class="main-narrative">
+          <div class="narrative-kicker">MAIN ESSAY // 深度专栏</div>
+          <h2 class="narrative-title">从 Miles Davis 到代码即兴：秩序与自由的双面回响</h2>
+          
+          <div class="narrative-lead">
+            机械钟表以微秒划分确定性，黑胶唱槽以微米雕琢不可逆的震颤。当我们在键盘上键入第一行递归逻辑时，本质上与 1959 年哥伦比亚录音室里的那支小号别无二致。
           </div>
-          <h2 class="track-title">从 Miles Davis 到即兴重构：在代码中寻找爵士乐的自由节拍</h2>
-          <p class="track-body">
-            《Kind of Blue》之所以成为不朽神作，在于其突破了固定和弦进程的枷锁，赋予了每个声部自主对话的空间。正如优秀的微服务架构设计，不过度拘泥于死板的同步调用，而是以事件驱动的弹性节拍自由共鸣。
-          </p>
+
+          <div class="side-structure-divider">SIDE A : 框架的诞生与边界</div>
+
+          <div class="narrative-body">
+            <p>
+              在传统编曲观念里，每个乐手都依附于严密的总谱体系——如同命令式编程中的严格控制流，任何越界的音符都会被视作“语法错误”。然而 Miles Davis 在录制《Kind of Blue》前夜，只递给乐手们几张写有简单调式（Modes）的纸片。
+            </p>
+            <p>
+              没有既定和弦进行的桎梏，只有留白与可能性。这并非混乱的无序，而是最高层级的抽象契约。乐手们在共享的调式约束内即兴对话，每一次小号的破音、每一记略带犹豫的钢琴延音，都在证明一件事情：<b>真正的灵性，从不发生于绝对精准的网格之上，而诞生于对规则的主动游离。</b>
+            </p>
+            
+            <blockquote>
+              “不要弹那些已经写在谱子上的音符；弹那些缺失的、让空气产生重量的缝隙。”
+            </blockquote>
+
+            <div class="side-structure-divider">SIDE B : 模拟世界的微小容差</div>
+
+            <p>
+              今天的软件工程师热衷于设计“确定性系统”，追求零毛刺、绝对一致与纳秒级对齐。但在模拟音频的世界里，黑胶唱片的魅力恰恰来自于它的“非绝对完美”。
+            </p>
+            <p>
+              聚氯乙烯塑料在旋转时承受唱针的微观摩擦，电机皮带带来 0.05% 的机械抖晃（Wow & Flutter）。这种极其微小的动态容差，使得每次唱针落入音槽的声波都不完全同构。它提醒着我们：在严谨的代码结构之下，必须为人性留出一截呼吸的微延迟。
+            </p>
+          </div>
         </article>
 
-        <article class="track-post-card">
-          <div class="track-number-row">
-            <span>TRACK 02 // AMBIENT & MINIMALISM</span>
-            <span>DURATION: 06:15</span>
+        <!-- 次级栏目 -->
+        <section class="secondary-sections" aria-label="次级专题栏目">
+          
+          <div class="sub-section-card">
+            <span class="sub-tag">COLUMN 01 // 声音建筑学</span>
+            <h3 class="sub-title">Brian Eno 与不打扰的声音建筑</h3>
+            <p class="sub-content">
+              环境音乐（Ambient Music）从来不是为了填满耳朵，而是像光线与室内温度一样重塑空间感知。1978 年《Music for Airports》以不同长度的磁带环（Tape Loops）异步循环，通过数学上不可公约的周期错位，生成了永不重复却始终宁静的声音景观。优秀的系统交互同样如此——最精妙的设计永远如呼吸般融于无形。
+            </p>
           </div>
-          <h2 class="track-title">Brian Eno 与环境音乐：不喧宾夺主的背景声音建筑学</h2>
-          <p class="track-body">
-            环境音乐旨在“既能引人专注沉浸，又能在不经意间完全融入周围空间”。优秀的 UI/UX 设计亦如是——最高的境界并非炫耀喧哗的交互，而是如呼吸般自然贴合心流。
-          </p>
-        </article>
 
-        <!-- TRACK 03 -->
-        <article class="track-post-card">
-          <div class="track-number-row">
-            <span>TRACK 03 // ANALOG MASTERING</span>
-            <span>DURATION: 07:18</span>
+          <div class="sub-section-card">
+            <span class="sub-tag">COLUMN 02 // 律动解构</span>
+            <h3 class="sub-title">J Dilla 的微延迟：打破量化网格的灵魂律动</h3>
+            <p class="sub-content">
+              底特律制作人 J Dilla 故意关掉 MPC 采样器上的自动量化（Quantize Off）。让底鼓稍微拖后 12 毫秒，小军鼓稍微前抢 8 毫秒，这种“醉汉步态”打破了鼓机的冰冷节拍。这证明了最迷人的律动不是算出来的，而是由肉身肌肉记忆对抗机械精准度所产生的奇妙张力。
+            </p>
           </div>
-          <h2 class="track-title">RIAA 均衡曲线与模拟母带：为什么黑胶的偶次谐波如此耐听？</h2>
-          <p class="track-body">
-            数字音频的方波截断会带来刺耳的奇次谐波失真，而黑胶唱针在微观微槽中的机械震动却产生了温润的二次谐波（Second Harmonic）。探讨硬件模拟感在现代数字化音频引擎中的重建。
-          </p>
-        </article>
 
-        <!-- TRACK 04 -->
-        <article class="track-post-card">
-          <div class="track-number-row">
-            <span>TRACK 04 // NEO-SOUL & HIPHOP</span>
-            <span>DURATION: 05:40</span>
+          <div class="sub-section-card">
+            <span class="sub-tag">COLUMN 03 // 物质考古</span>
+            <h3 class="sub-title">一张二手唱片留下的手写日期</h3>
+            <p class="sub-content">
+              在东京神保町淘到的一张 1974 年原版 Keith Jarrett《Köln Concert》内封套上，用圆珠笔工整写着：“1982.11.04，雨，第一次合租屋的最后一晚”。数字流媒体拥有数以亿计的曲库，却剥离了物品与某个人生切片的实体绑定。那一行字迹让这块塑料圆盘拥有了属于特定人类的灵魂刻印。
+            </p>
           </div>
-          <h2 class="track-title">J Dilla 的人性化微延迟（Humanized Swing）：打破量化网格的灵魂律动</h2>
-          <p class="track-body">
-            关闭 MPC 采样器的自动对齐量化（Quantize Off），让底鼓故意延迟 15 毫秒，军鼓微微提前。这种故意制造的微小时钟偏差，让冷冰冰的数字节拍瞬间拥有了人类心脏跳动的有机生命力。
-          </p>
-        </article>
+
+        </section>
+
+        <!-- 听后短评互动模块 -->
+        <section class="listener-notes-module" aria-label="听友即时笔记">
+          <div class="notes-header">
+            <div>
+              <h3>深夜聆听便签</h3>
+              <p style="font-size:13px; color:var(--paper-muted); margin-top:4px;">在唱片旋转的白噪音里，留下你的听觉印记</p>
+            </div>
+            <span style="font-family:var(--font-mono); font-size:12px; color:var(--amber-gold);">STREAM STATUS: 4 ENTRIES</span>
+          </div>
+
+          <div class="comment-input-area">
+            <input type="text" id="userReviewInput" placeholder="写下一句听感... (如: 听到了 1970 年雨夜的空气湿度)" aria-label="输入听后短评">
+            <button class="control-btn primary" onclick="submitReview()">
+              <span>写下一句听感</span>
+            </button>
+          </div>
+
+          <div class="review-stream" id="reviewStream">
+            <div class="review-card">
+              <p>“关闭量化对齐后，音乐终于开始像心脏一样搏动了。”</p>
+              <div class="review-author">— @AnalogDrifter · 01:24 AM</div>
+            </div>
+            <div class="review-card">
+              <p>“那一下轻微的爆豆声，让整个空荡的房间有了炭火的温度。”</p>
+              <div class="review-author">— @CrateDigger_99 · 02:15 AM</div>
+            </div>
+            <div class="review-card">
+              <p>“代码写累了听 Eno，感觉每个变量都找到了归宿。”</p>
+              <div class="review-author">— @KernelGroove · 03:02 AM</div>
+            </div>
+          </div>
+        </section>
+
       </main>
 
-      <!-- 右侧黑胶唱片收藏架 -->
-      <aside>
-        <div class="crate-widget">
-          <div class="crate-heading">📻 ROTATION CRATE</div>
-          <div class="vinyl-track-item">
-            <span>Miles Davis - Blue in Green</span>
-            <span style="color:var(--vinyl-amber);">05:37</span>
+      <!-- 侧边栏资料模块 -->
+      <aside class="sidebar-crate">
+        
+        <!-- 曲目表 -->
+        <div class="crate-card">
+          <div class="crate-card-title">
+            TRACKLIST <span>本期选段</span>
           </div>
-          <div class="vinyl-track-item">
-            <span>Bill Evans - Peace Piece</span>
-            <span style="color:var(--vinyl-amber);">06:42</span>
+          <div class="tracklist-item">
+            <div><span class="track-num">A1</span> So What</div>
+            <div class="track-time">09:22</div>
           </div>
-          <div class="vinyl-track-item">
-            <span>John Coltrane - Naima</span>
-            <span style="color:var(--vinyl-amber);">04:24</span>
+          <div class="tracklist-item">
+            <div><span class="track-num">A2</span> Freddie Freeloader</div>
+            <div class="track-time">09:46</div>
           </div>
-          <div class="vinyl-track-item">
-            <span>Thelonious Monk - 'Round Midnight</span>
-            <span style="color:var(--vinyl-amber);">03:12</span>
+          <div class="tracklist-item">
+            <div><span class="track-num">A3</span> Blue in Green</div>
+            <div class="track-time">05:37</div>
+          </div>
+          <div class="tracklist-item">
+            <div><span class="track-num">B1</span> All Blues</div>
+            <div class="track-time">11:33</div>
+          </div>
+          <div class="tracklist-item">
+            <div><span class="track-num">B2</span> Flamenco Sketches</div>
+            <div class="track-time">09:26</div>
           </div>
         </div>
 
-        <div class="crate-widget">
-          <div class="crate-heading">🎛️ AUDIOPHILE SPECS</div>
-          <div style="font-size: 13px; color: #a89d94; line-height: 2;">
-            <div>• 唱机: Linn Sondek LP12</div>
-            <div>• 唱头: Ortofon 2M Bronze</div>
-            <div>• 唱放: 纯甲类电子管放大器</div>
-            <div>• 扬声器: Tannoy Stirling GR</div>
+        <!-- 音响重放链路资料 -->
+        <div class="crate-card">
+          <div class="crate-card-title">
+            SIGNAL CHAIN <span>音响链路</span>
+          </div>
+          <table class="spec-table">
+            <tbody>
+              <tr>
+                <td class="spec-key">转盘</td>
+                <td class="spec-val">Linn Sondek LP12</td>
+              </tr>
+              <tr>
+                <td class="spec-key">唱臂</td>
+                <td class="spec-val">Ittok LVII 9-inch</td>
+              </tr>
+              <tr>
+                <td class="spec-key">唱头</td>
+                <td class="spec-val">Ortofon SPU Classic GE</td>
+              </tr>
+              <tr>
+                <td class="spec-key">唱放</td>
+                <td class="spec-val">纯甲类真空管升压器</td>
+              </tr>
+              <tr>
+                <td class="spec-key">均衡</td>
+                <td class="spec-val">RIAA 标准模拟衰减</td>
+              </tr>
+              <tr>
+                <td class="spec-key">扬声器</td>
+                <td class="spec-val">Tannoy Dual-Concentric</td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+
+        <!-- 淘碟清单 -->
+        <div class="crate-card">
+          <div class="crate-card-title">
+            DIGGING CRATE <span>淘碟清单</span>
+          </div>
+          <div class="crate-dig-item">
+            <div class="dig-album">Bill Evans — Peace Piece</div>
+            <div class="dig-note">Riverside 1958 · 纯粹左手单音循环的冥想杰作</div>
+          </div>
+          <div class="crate-dig-item">
+            <div class="dig-album">Thelonious Monk — Solo Monk</div>
+            <div class="dig-note">Columbia 1965 · 锯齿状节奏切分与不和谐音阶</div>
+          </div>
+          <div class="crate-dig-item">
+            <div class="dig-album">J Dilla — Donuts</div>
+            <div class="dig-note">Stones Throw 2006 · 采样与微延迟的永恒教科书</div>
           </div>
         </div>
+
       </aside>
+
     </div>
+
+    <!-- 封套收尾页 -->
+    <footer class="sleeve-footer">
+      <blockquote class="sleeve-inlay-quote">
+        “收藏的不是塑料圆盘，是某个夜晚的空气。”
+      </blockquote>
+      <div class="sleeve-catalog">
+        33⅓ VINYL ARCHIVE // ISSUE NO.21 // PRINTED & PRESSED FOR LATE NIGHT LISTENERS
+      </div>
+    </footer>
+
   </div>
 
-  <style>
-    .music-note-fly {
-      position: absolute;
-      font-size: 22px;
-      color: #e69138;
-      pointer-events: none;
-      z-index: 9999;
-      animation: noteFloatUp 1.2s ease-out forwards;
-    }
-    @keyframes noteFloatUp {
-      0% { transform: translateY(0) scale(0.5) rotate(0deg); opacity: 1; }
-      50% { transform: translateY(-30px) scale(1.2) rotate(15deg); opacity: 0.8; }
-      100% { transform: translateY(-70px) scale(1) rotate(-15deg); opacity: 0; }
-    }
-  </style>
-
-  <script src="assets/nav-bar.js"></script>
+  <script src="/creative-blogs/assets/nav-bar.js"></script>
   <script>
     let isPlaying = true;
+    let currentSide = 'A';
+
+    const discData = {
+      'A': {
+        sideLabel: 'SIDE A',
+        trackTitle: 'Kind of Blue (Alternate Matrix Cut)',
+        trackMeta: 'Miles Davis Quintet · Columbia Studio B, NYC 1959',
+        master: '1959 原盘模拟直刻',
+        matrix: 'XSM-47326-1AJ'
+      },
+      'B': {
+        sideLabel: 'SIDE B',
+        trackTitle: 'Flamenco Sketches & All Blues Suite',
+        trackMeta: 'Miles Davis, Coltrane & Bill Evans · Late Night Session',
+        master: '1961 伦敦压片模拟二代母带',
+        matrix: 'XSM-47327-2BK'
+      }
+    };
+
     function toggleNeedle() {
-      const disc = document.getElementById('lpDisc');
-      const icon = document.getElementById('playIcon');
-      const text = document.getElementById('playText');
+      const disc = document.getElementById('vinylDisc');
+      const tonearm = document.getElementById('tonearmEl');
+      const actionIcon = document.getElementById('needleActionIcon');
+      const actionText = document.getElementById('needleActionText');
+      const statusText = document.getElementById('needleStatusText');
+      const statusDot = document.getElementById('needleStatusDot');
+
       isPlaying = !isPlaying;
+
       if (isPlaying) {
         disc.classList.remove('paused');
-        icon.textContent = '⏸';
-        text.textContent = 'PAUSE TURNTABLE';
-        spawnMusicNote(window.innerWidth / 2, window.innerHeight / 2);
+        tonearm.classList.remove('lifted');
+        actionIcon.textContent = '❚❚';
+        actionText.textContent = '暂停，让房间安静一会儿';
+        statusText.textContent = '唱针已入槽 // 模拟信号流动中';
+        statusDot.style.background = 'var(--amber-tube)';
+        statusDot.style.boxShadow = '0 0 8px var(--amber-gold)';
       } else {
         disc.classList.add('paused');
-        icon.textContent = '▶';
-        text.textContent = 'PLAY ROTATING TURNTABLE';
+        tonearm.classList.add('lifted');
+        actionIcon.textContent = '▶';
+        actionText.textContent = '放下唱针';
+        statusText.textContent = '唱针已抬起 // 唱机处于待机静默状态';
+        statusDot.style.background = '#666';
+        statusDot.style.boxShadow = 'none';
       }
     }
 
-    function spawnMusicNote(x, y) {
-      const notes = ['♪', '♫', '♬', '♩', '📻', '✨'];
-      const note = document.createElement('div');
-      note.className = 'music-note-fly';
-      note.textContent = notes[Math.floor(Math.random() * notes.length)];
-      note.style.left = `${x - 10}px`;
-      note.style.top = `${y - 10}px`;
-      document.body.appendChild(note);
-      setTimeout(() => note.remove(), 1200);
+    function flipSide() {
+      currentSide = (currentSide === 'A') ? 'B' : 'A';
+      const data = discData[currentSide];
+      
+      const disc = document.getElementById('vinylDisc');
+      const sideLabel = document.getElementById('discSideLabel');
+      const flipBtnText = document.getElementById('flipSideText');
+      
+      document.getElementById('currentTrackTitle').textContent = data.trackTitle;
+      document.getElementById('currentTrackMeta').textContent = data.trackMeta;
+      document.getElementById('metaMaster').textContent = data.master;
+      document.getElementById('metaMatrix').textContent = data.matrix;
+      sideLabel.textContent = data.sideLabel;
+
+      if (currentSide === 'B') {
+        disc.classList.add('side-b');
+        flipBtnText.textContent = '唱片转回 A 面';
+      } else {
+        disc.classList.remove('side-b');
+        flipBtnText.textContent = '唱片转到 B 面';
+      }
+
+      spawnNoteEffect(window.innerWidth / 2, window.innerHeight / 2, '⟲ ' + data.sideLabel);
     }
 
-    window.addEventListener('click', (e) => {
-      if (e.target.closest('.blog-switcher-trigger') || e.target.closest('.blog-switcher-modal')) return;
-      spawnMusicNote(e.pageX, e.pageY);
+    function spawnCrackles(e) {
+      const sounds = ['♪ Crackle', '♫ Pop', '♬ 33⅓', '♩ Warmth', '✨ Vinyl'];
+      const text = sounds[Math.floor(Math.random() * sounds.length)];
+      const x = e.clientX || window.innerWidth / 2;
+      const y = e.clientY || window.innerHeight / 2;
+      spawnNoteEffect(x, y, text);
+    }
+
+    function spawnNoteEffect(x, y, text) {
+      const el = document.createElement('div');
+      el.className = 'vinyl-note-particle';
+      el.textContent = text;
+      el.style.left = `${x}px`;
+      el.style.top = `${y}px`;
+      document.body.appendChild(el);
+      setTimeout(() => el.remove(), 1000);
+    }
+
+    function submitReview() {
+      const input = document.getElementById('userReviewInput');
+      const val = input.value.trim();
+      if (!val) return;
+
+      const stream = document.getElementById('reviewStream');
+      const card = document.createElement('div');
+      card.className = 'review-card';
+      card.innerHTML = `
+        <p>“${escapeHtml(val)}”</p>
+        <div class="review-author">— @深夜访客 · 刚刚记录</div>
+      `;
+      stream.prepend(card);
+      input.value = '';
+      spawnNoteEffect(window.innerWidth / 2, window.innerHeight / 2, '✍ 已留存');
+    }
+
+    function escapeHtml(str) {
+      return str.replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;").replace(/"/g, "&quot;").replace(/'/g, "&#039;");
+    }
+
+    document.addEventListener('DOMContentLoaded', () => {
+      const input = document.getElementById('userReviewInput');
+      input.addEventListener('keypress', (e) => {
+        if (e.key === 'Enter') submitReview();
+      });
     });
   </script>
 </body>

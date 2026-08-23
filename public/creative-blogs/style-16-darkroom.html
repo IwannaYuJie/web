@@ -7,15 +7,26 @@
   <link rel="stylesheet" href="assets/common.css">
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Courier+Prime:ital,wght@0,400;0,700;1,400&family=Special+Elite&family=Noto+Serif+SC:wght@400;600&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Courier+Prime:ital,wght@0,400;0,700;1,400&family=Special+Elite&family=Noto+Serif+SC:wght@400;600;700;900&display=swap" rel="stylesheet">
   <style>
     :root {
-      --dark-bg: #09090b;
+      --bg-dark: #0a0a0c;
+      --bg-paper: #121216;
+      --tray-bg: #0f1015;
       --safelight-red: #ef4444;
-      --safelight-amber: #f97316;
-      --film-text: #e4e4e7;
-      --film-muted: #71717a;
-      --font-film: "Courier Prime", "Special Elite", monospace, "Noto Serif SC", serif;
+      --safelight-glow: rgba(239, 68, 68, 0.45);
+      --amber-gold: #f59e0b;
+      --chemical-cyan: #38bdf8;
+      --film-edge: #222228;
+      --text-main: #e2e8f0;
+      --text-dim: #94a3b8;
+      --text-muted: #64748b;
+      --paper-cream: #f4ede2;
+      --polaroid-bg: #f8f6f0;
+      --polaroid-shadow: 0 16px 36px rgba(0,0,0,0.65);
+      --font-mono: "Courier Prime", "Special Elite", monospace;
+      --font-serif: "Noto Serif SC", "Songti SC", serif;
+      --grain-opacity: 0.12;
     }
 
     * {
@@ -25,245 +36,945 @@
     }
 
     body {
-      background-color: var(--dark-bg);
-      color: var(--film-text);
-      font-family: var(--font-film);
+      background-color: var(--bg-dark);
+      color: var(--text-main);
+      font-family: var(--font-mono);
       line-height: 1.8;
-      padding: 30px 16px 100px;
+      padding: 24px 16px 120px;
+      position: relative;
+      overflow-x: hidden;
+      transition: background-color 0.6s ease, color 0.6s ease;
     }
 
-    .darkroom-layout {
-      max-width: 1100px;
+    /* 安全灯模式激活 */
+    body.safelight-mode {
+      --bg-dark: #120303;
+      --bg-paper: #1a0808;
+      --text-main: #fca5a5;
+      --text-dim: #b91c1c;
+      --safelight-glow: rgba(239, 68, 68, 0.85);
+      box-shadow: inset 0 0 150px rgba(220, 38, 38, 0.35);
+    }
+
+    /* 银盐颗粒噪点层 */
+    body::before {
+      content: "";
+      position: fixed;
+      inset: 0;
+      background-image: radial-gradient(#ffffff 0.75px, transparent 0.75px), radial-gradient(#000000 0.75px, transparent 0.75px);
+      background-size: 4px 4px, 6px 6px;
+      opacity: var(--grain-opacity);
+      pointer-events: none;
+      z-index: 99;
+    }
+
+    .darkroom-container {
+      max-width: 1140px;
       margin: 0 auto;
+      position: relative;
     }
 
-    /* 顶栏暗房红灯指示器 */
-    .safelight-header {
-      border-bottom: 1px solid #27272a;
-      padding-bottom: 20px;
+    /* 顶栏控制台 */
+    .top-console {
       display: flex;
+      flex-wrap: wrap;
       justify-content: space-between;
       align-items: center;
-      margin-bottom: 40px;
+      gap: 16px;
+      padding: 16px 20px;
+      background: #111115;
+      border: 1px solid #27272a;
+      border-left: 4px solid var(--safelight-red);
+      border-radius: 4px;
+      margin-bottom: 28px;
     }
 
-    .safelight-indicator {
-      display: flex;
+    .meta-tag {
+      display: inline-flex;
       align-items: center;
-      gap: 8px;
-      color: var(--safelight-red);
+      gap: 10px;
       font-size: 12px;
-      font-weight: bold;
       letter-spacing: 2px;
+      text-transform: uppercase;
+      color: var(--amber-gold);
     }
-    .red-bulb {
-      width: 10px;
-      height: 10px;
+
+    .status-light {
+      width: 12px;
+      height: 12px;
       border-radius: 50%;
       background: var(--safelight-red);
-      box-shadow: 0 0 12px var(--safelight-red);
-      animation: bulb-pulse 2s infinite;
+      box-shadow: 0 0 14px var(--safelight-red);
+      animation: safelightBreathe 3s infinite ease-in-out;
     }
-    @keyframes bulb-pulse {
-      0%, 100% { opacity: 1; transform: scale(1); }
-      50% { opacity: 0.6; transform: scale(0.85); }
+
+    @keyframes safelightBreathe {
+      0%, 100% { opacity: 0.6; transform: scale(0.9); box-shadow: 0 0 8px var(--safelight-red); }
+      50% { opacity: 1; transform: scale(1.15); box-shadow: 0 0 22px var(--safelight-red), 0 0 35px var(--safelight-red); }
+    }
+
+    .interactive-bar {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 10px;
+    }
+
+    .action-btn {
+      background: #1e1e24;
+      color: #e2e8f0;
+      border: 1px solid #3f3f46;
+      padding: 7px 14px;
+      font-family: var(--font-mono);
+      font-size: 12px;
+      cursor: pointer;
+      border-radius: 3px;
+      transition: all 0.2s ease;
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+    }
+
+    .action-btn:hover {
+      background: #27272a;
+      border-color: var(--amber-gold);
+      color: #fff;
+      transform: translateY(-1px);
+    }
+
+    .action-btn.active {
+      background: var(--safelight-red);
+      border-color: var(--safelight-red);
+      color: #fff;
+      box-shadow: 0 0 12px var(--safelight-glow);
     }
 
     /* 刊头 */
-    .film-title {
-      font-size: clamp(30px, 5vw, 50px);
-      font-weight: 700;
-      letter-spacing: 2px;
-      margin-bottom: 8px;
-      color: #fff;
+    .journal-masthead {
+      margin-bottom: 34px;
+      border-bottom: 2px dashed #27272a;
+      padding-bottom: 24px;
     }
 
-    /* 35mm 胶卷底片带 */
-    .film-strip {
-      background: #18181b;
-      border-top: 6px solid #000;
-      border-bottom: 6px solid #000;
-      padding: 24px 0;
-      margin: 40px 0;
-      position: relative;
-    }
-
-    /* 齿孔 Perforations */
-    .sprockets-top, .sprockets-bottom {
-      height: 16px;
-      background: repeating-linear-gradient(to right, #000 0px, #000 12px, transparent 12px, transparent 24px);
-      position: absolute;
-      width: 100%;
-      left: 0;
-    }
-    .sprockets-top { top: 4px; }
-    .sprockets-bottom { bottom: 4px; }
-
-    .film-frames-container {
-      display: grid;
-      grid-template-columns: 1fr 1fr;
-      gap: 30px;
-      padding: 10px 30px;
-    }
-
-    .film-frame {
-      background: #09090b;
-      border: 1px solid #3f3f46;
-      padding: 20px;
-      position: relative;
-    }
-
-    .frame-number {
-      font-size: 11px;
-      color: var(--safelight-amber);
-      margin-bottom: 8px;
-      letter-spacing: 1.5px;
-    }
-
-    .frame-photo {
-      height: 180px;
-      background: radial-gradient(circle, #27272a, #09090b);
-      border: 1px solid #27272a;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      font-size: 40px;
-      margin-bottom: 14px;
-      filter: sepia(0.3) contrast(1.2);
-    }
-
-    .frame-title {
-      font-size: 20px;
-      font-weight: 700;
-      color: #fff;
-      margin-bottom: 8px;
-    }
-
-    .frame-desc {
+    .journal-id {
       font-size: 13px;
-      color: #a1a1aa;
-      line-height: 1.7;
+      letter-spacing: 4px;
+      color: var(--text-dim);
+      display: flex;
+      justify-content: space-between;
+      flex-wrap: wrap;
+      gap: 10px;
+      margin-bottom: 8px;
+    }
+
+    .journal-title {
+      font-family: var(--font-serif);
+      font-size: clamp(28px, 4.5vw, 44px);
+      font-weight: 900;
+      color: #ffffff;
+      letter-spacing: 1px;
+      line-height: 1.25;
       margin-bottom: 12px;
     }
 
-    /* EXIF 铭牌 */
-    .exif-stamp {
-      font-size: 11px;
-      color: var(--film-muted);
-      border-top: 1px dashed #27272a;
-      padding-top: 8px;
+    .journal-subtitle {
+      font-size: 14px;
+      color: var(--text-muted);
+      max-width: 800px;
     }
 
-    @media (max-width: 768px) {
-      .film-frames-container {
+    /* 接触印样 (Contact Sheet) 栅格带 */
+    .contact-sheet-section {
+      background: #000000;
+      border: 2px solid #222226;
+      padding: 24px 18px;
+      border-radius: 4px;
+      margin-bottom: 40px;
+      box-shadow: inset 0 0 50px rgba(0,0,0,0.8);
+      position: relative;
+    }
+
+    .contact-sheet-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 18px;
+      padding: 0 6px 12px;
+      border-bottom: 1px solid #1f1f24;
+      font-size: 11px;
+      color: var(--amber-gold);
+      letter-spacing: 1.5px;
+    }
+
+    .contact-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(130px, 1fr));
+      gap: 12px;
+    }
+
+    .contact-thumb {
+      background: #0d0d10;
+      border: 1px solid #26262b;
+      padding: 6px;
+      font-size: 10px;
+      text-align: center;
+      cursor: pointer;
+      position: relative;
+      transition: all 0.25s ease;
+    }
+
+    .contact-thumb:hover, .contact-thumb.highlight {
+      border-color: var(--amber-gold);
+      background: #18181f;
+      transform: scale(1.04);
+      z-index: 2;
+    }
+
+    .thumb-render {
+      height: 70px;
+      background: #1c1c22;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 20px;
+      margin-bottom: 4px;
+      border-radius: 2px;
+      overflow: hidden;
+      position: relative;
+    }
+
+    .contact-thumb.marked::after {
+      content: "✔ PICK";
+      position: absolute;
+      top: 2px;
+      right: 2px;
+      background: var(--safelight-red);
+      color: #fff;
+      font-size: 8px;
+      padding: 1px 4px;
+      border-radius: 2px;
+      font-weight: bold;
+    }
+
+    /* 35mm 胶片带包装主叙事 */
+    .film-strip-wrap {
+      background: #09090b;
+      border-top: 10px solid #000;
+      border-bottom: 10px solid #000;
+      position: relative;
+      padding: 34px 16px;
+      margin-bottom: 48px;
+      border-radius: 6px;
+      box-shadow: 0 20px 40px rgba(0,0,0,0.6);
+    }
+
+    .sprocket-holes-top, .sprocket-holes-bottom {
+      height: 18px;
+      position: absolute;
+      left: 0;
+      right: 0;
+      background: repeating-linear-gradient(
+        to right,
+        #000 0,
+        #000 12px,
+        #2a2a30 12px,
+        #2a2a30 22px,
+        #000 22px,
+        #000 32px
+      );
+    }
+    .sprocket-holes-top { top: -6px; }
+    .sprocket-holes-bottom { bottom: -6px; }
+
+    .film-meta-running {
+      position: absolute;
+      top: 14px;
+      right: 24px;
+      font-size: 10px;
+      color: var(--amber-gold);
+      letter-spacing: 2px;
+    }
+
+    /* 主叙事双栏 */
+    .main-narrative {
+      display: grid;
+      grid-template-columns: 1.15fr 0.85fr;
+      gap: 32px;
+      background: #111115;
+      border: 1px solid #27272a;
+      padding: 32px;
+      border-radius: 4px;
+    }
+
+    .narrative-badge {
+      display: inline-block;
+      background: rgba(245, 158, 11, 0.15);
+      color: var(--amber-gold);
+      border: 1px solid rgba(245, 158, 11, 0.35);
+      padding: 3px 8px;
+      font-size: 11px;
+      margin-bottom: 14px;
+      border-radius: 2px;
+    }
+
+    .narrative-title {
+      font-family: var(--font-serif);
+      font-size: clamp(24px, 3.2vw, 32px);
+      font-weight: 700;
+      color: #fff;
+      line-height: 1.35;
+      margin-bottom: 18px;
+    }
+
+    .narrative-body p {
+      font-family: var(--font-serif);
+      font-size: 15.5px;
+      line-height: 1.9;
+      color: #d1d5db;
+      margin-bottom: 18px;
+      text-align: justify;
+    }
+
+    .body-quote {
+      border-left: 3px solid var(--safelight-red);
+      padding: 8px 16px;
+      margin: 18px 0;
+      background: rgba(239, 68, 68, 0.05);
+      font-style: italic;
+      color: #fca5a5;
+    }
+
+    /* 显影水槽/拍立得卡片区域 */
+    .visual-chamber {
+      display: flex;
+      flex-direction: column;
+      gap: 20px;
+    }
+
+    .polaroid-frame {
+      background: var(--polaroid-bg);
+      color: #1e1e24;
+      padding: 14px 14px 28px;
+      box-shadow: var(--polaroid-shadow);
+      border-radius: 2px;
+      transform: rotate(-1deg);
+      transition: transform 0.3s ease, filter 0.5s ease;
+      position: relative;
+    }
+
+    .polaroid-frame:hover {
+      transform: rotate(0deg) scale(1.02);
+    }
+
+    .polaroid-image-stage {
+      width: 100%;
+      height: 270px;
+      background: #1a1a20;
+      position: relative;
+      overflow: hidden;
+      border-radius: 2px;
+    }
+
+    .photo-art {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      display: block;
+      filter: contrast(1.18) grayscale(0.3) brightness(0.92);
+      transition: filter 0.8s ease, transform 0.8s ease;
+    }
+
+    /* 负片/正片反转类 */
+    .photo-art.inverted {
+      filter: invert(0.95) contrast(1.3) hue-rotate(180deg);
+    }
+
+    /* 显影浮现动效 */
+    .photo-art.developing {
+      animation: filmDeveloping 3.6s forwards cubic-bezier(0.2, 0.8, 0.2, 1);
+    }
+
+    @keyframes filmDeveloping {
+      0% { filter: brightness(0.05) contrast(0.5) blur(4px) grayscale(1); }
+      40% { filter: brightness(0.35) contrast(0.8) blur(2px) sepia(0.8) grayscale(0.5); }
+      75% { filter: brightness(0.8) contrast(1.1) blur(0.5px) sepia(0.2); }
+      100% { filter: contrast(1.18) grayscale(0.3) brightness(0.92); }
+    }
+
+    .polaroid-caption {
+      margin-top: 14px;
+      font-family: var(--font-mono);
+      font-size: 13px;
+      font-weight: 700;
+      color: #27272a;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      border-bottom: 1px dashed #cbd5e1;
+      padding-bottom: 6px;
+    }
+
+    .polaroid-note {
+      font-size: 11px;
+      color: #64748b;
+      margin-top: 6px;
+      font-style: italic;
+    }
+
+    .chemical-tray-status {
+      background: var(--tray-bg);
+      border: 1px solid #27272a;
+      padding: 14px;
+      border-radius: 4px;
+      font-size: 12px;
+    }
+
+    .tray-timer-bar {
+      height: 4px;
+      background: #27272a;
+      border-radius: 2px;
+      margin: 10px 0 6px;
+      overflow: hidden;
+    }
+
+    .tray-progress {
+      height: 100%;
+      width: 68%;
+      background: linear-gradient(90deg, var(--amber-gold), var(--safelight-red));
+      transition: width 0.3s ease;
+    }
+
+    /* 资料模块：接触印样数据台与配方 */
+    .lab-dossier-grid {
+      display: grid;
+      grid-template-columns: 2fr 1fr;
+      gap: 24px;
+      margin-bottom: 48px;
+    }
+
+    .dossier-card {
+      background: var(--bg-paper);
+      border: 1px solid #27272a;
+      border-radius: 4px;
+      padding: 24px;
+    }
+
+    .dossier-title {
+      font-size: 14px;
+      color: var(--amber-gold);
+      letter-spacing: 2px;
+      margin-bottom: 16px;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      border-bottom: 1px solid #27272a;
+      padding-bottom: 8px;
+    }
+
+    .exif-table {
+      width: 100%;
+      border-collapse: collapse;
+      font-size: 13px;
+    }
+
+    .exif-table th, .exif-table td {
+      padding: 8px 10px;
+      text-align: left;
+      border-bottom: 1px solid #1e1e24;
+    }
+
+    .exif-table th {
+      color: var(--text-muted);
+      width: 32%;
+      font-weight: normal;
+    }
+
+    .exif-table td {
+      color: #f1f5f9;
+      font-weight: bold;
+    }
+
+    .field-notes-list {
+      display: flex;
+      flex-direction: column;
+      gap: 14px;
+    }
+
+    .field-note-item {
+      background: #17171d;
+      border-left: 2px solid var(--chemical-cyan);
+      padding: 10px 14px;
+      font-size: 12px;
+    }
+
+    .field-note-item .note-author {
+      color: var(--chemical-cyan);
+      font-weight: bold;
+      margin-bottom: 4px;
+    }
+
+    .field-note-item .note-text {
+      color: #cbd5e1;
+      line-height: 1.6;
+    }
+
+    /* 3 个次级栏目：胶片暗房深度随笔 */
+    .secondary-columns {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 22px;
+      margin-bottom: 50px;
+    }
+
+    .column-card {
+      background: #111116;
+      border: 1px solid #22222a;
+      padding: 22px;
+      border-radius: 4px;
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
+      position: relative;
+      transition: border-color 0.3s ease, transform 0.3s ease;
+    }
+
+    .column-card:hover {
+      border-color: var(--safelight-red);
+      transform: translateY(-4px);
+    }
+
+    .col-header {
+      margin-bottom: 14px;
+    }
+
+    .col-index {
+      font-size: 11px;
+      color: var(--safelight-red);
+      font-weight: bold;
+      letter-spacing: 1.5px;
+      margin-bottom: 6px;
+    }
+
+    .col-title {
+      font-family: var(--font-serif);
+      font-size: 18px;
+      font-weight: 700;
+      color: #ffffff;
+      line-height: 1.45;
+    }
+
+    .col-body {
+      font-size: 13.5px;
+      color: #94a3b8;
+      line-height: 1.8;
+      margin-bottom: 18px;
+      text-align: justify;
+    }
+
+    .col-footer {
+      font-size: 11px;
+      color: var(--text-muted);
+      border-top: 1px dashed #27272a;
+      padding-top: 10px;
+      display: flex;
+      justify-content: space-between;
+    }
+
+    /* 收尾相纸背面手写卡 */
+    .darkroom-epilogue {
+      margin-top: 50px;
+      background: var(--paper-cream);
+      color: #2b2b2b;
+      padding: 36px 30px;
+      border-radius: 3px;
+      box-shadow: 0 10px 30px rgba(0,0,0,0.5);
+      position: relative;
+      border: 1px solid #d4c5b0;
+    }
+
+    .paper-watermark {
+      position: absolute;
+      top: 16px;
+      right: 20px;
+      font-size: 11px;
+      color: #a89f91;
+      letter-spacing: 2px;
+      text-transform: uppercase;
+    }
+
+    .epilogue-pencil {
+      font-family: var(--font-serif);
+      font-size: clamp(20px, 3vw, 26px);
+      font-weight: 700;
+      line-height: 1.6;
+      color: #1f2937;
+      text-align: center;
+      margin: 14px 0 18px;
+      letter-spacing: 1px;
+    }
+
+    .epilogue-meta {
+      text-align: center;
+      font-size: 12px;
+      color: #78716c;
+      letter-spacing: 1px;
+    }
+
+    /* 响应式调整 */
+    @media (max-width: 900px) {
+      .main-narrative {
         grid-template-columns: 1fr;
-        padding: 10px;
+      }
+      .lab-dossier-grid {
+        grid-template-columns: 1fr;
+      }
+      .secondary-columns {
+        grid-template-columns: 1fr;
+      }
+      .top-console {
+        flex-direction: column;
+        align-items: flex-start;
+      }
+    }
+
+    @media (prefers-reduced-motion: reduce) {
+      .status-light, .photo-art.developing {
+        animation: none !important;
+      }
+      .column-card, .polaroid-frame, .action-btn {
+        transition: none !important;
       }
     }
   </style>
 </head>
 <body>
 
-  <div class="darkroom-layout">
-    <!-- 顶栏红灯 -->
-    <header class="safelight-header">
-      <div>
-        <div class="film-title">DARKROOM // 胶片志</div>
-        <div style="font-size: 13px; color: var(--film-muted);">KODAK TRI-X 400 · 银盐摄影与静默手记</div>
+  <div class="darkroom-container">
+    <!-- 顶部暗房控制台 -->
+    <header class="top-console" role="region" aria-label="暗房控制面板">
+      <div class="meta-tag">
+        <span class="status-light" id="safelightBulb" aria-hidden="true"></span>
+        <span id="safelightStatusText">SAFELIGHT: 待命 (DIM RED 15W)</span>
       </div>
-      <div class="safelight-indicator">
-        <span class="red-bulb"></span>
-        <span>SAFELIGHT ACTIVE [暗房显影中]</span>
+
+      <div class="interactive-bar">
+        <button class="action-btn" id="btnToggleSafelight" aria-label="切换红灯安全照明模式">
+          🔴 打开安全灯
+        </button>
+        <button class="action-btn" id="btnInvertNegative" aria-label="底片负片与正像切换">
+          🎞️ 查看底片正像
+        </button>
+        <button class="action-btn" id="btnDevelopAgain" aria-label="重放第17格显影过程">
+          🧪 显影完成，影像正在出现
+        </button>
+        <button class="action-btn" id="btnMagnifyFrame" aria-label="放大查看第17格便利店细节">
+          🔍 放大第 17 格
+        </button>
       </div>
     </header>
 
-    <!-- 35mm 胶卷底片栏 -->
-    <section class="film-strip">
-      <div class="sprockets-top"></div>
-      
-      <div class="film-frames-container">
-        <!-- 画幅 1 -->
-        <article class="film-frame">
-          <div class="frame-number">▶ 24A // KODAK TX 400 // EXP.01</div>
-          <div style="margin: 12px 0 16px; border: 1px solid #333; overflow: hidden; border-radius: 4px;">
-            <img src="assets/images/darkroom_film.jpg" alt="巴黎雨夜黑白胶片摄影" style="width: 100%; height: 220px; object-fit: cover; display: block; filter: contrast(1.15) brightness(0.95);">
-          </div>
-          <h2 class="frame-title">银盐颗粒的物理质感：为什么在数字时代我们依然渴望杂音？</h2>
-          <p class="frame-desc">
-            高像素传感器消除了所有的噪点，却也常常抽离了画面的情绪温度。胶片乳剂中卤化银晶体的随机排列，恰如真实世界中充满未知的偶发之美。
+    <!-- 刊物身份说明 -->
+    <section class="journal-masthead">
+      <div class="journal-id">
+        <span>DARKROOM NOTES // 36 张城市微光</span>
+        <span>ROLL NO. #TX-1994-08 · ILFORD HP5+ 400</span>
+      </div>
+      <h1 class="journal-title">暗室显影记：从傍晚到清晨的 36 段感光切片</h1>
+      <p class="journal-subtitle">
+        记录一卷装填在机械快门里的黑白底片。在卤化银颗粒与柯达 D-76 显影液的缓慢置换中，重新打捞暮色坍塌与破晓降临间的都市残影。
+      </p>
+    </section>
+
+    <!-- 资料模块 A：接触印样 (Contact Sheet) 概览 -->
+    <section class="contact-sheet-section" aria-label="底片接触印样预览">
+      <div class="contact-sheet-header">
+        <span>CONTACT PROOF SHEET // EXP 13 TO 18</span>
+        <span>STATUS: WASHED & DRIED / 纯棉钡地纸打样</span>
+      </div>
+      <div class="contact-grid">
+        <div class="contact-thumb" data-frame="13">
+          <div class="thumb-render">🌆</div>
+          <span>13A 暮色立交</span>
+        </div>
+        <div class="contact-thumb" data-frame="14">
+          <div class="thumb-render">🚇</div>
+          <span>14A 地下换乘口</span>
+        </div>
+        <div class="contact-thumb" data-frame="15">
+          <div class="thumb-render">🌧️</div>
+          <span>15A 积水霓虹倒影</span>
+        </div>
+        <div class="contact-thumb" data-frame="16">
+          <div class="thumb-render">🌂</div>
+          <span>16A 撑伞人背影</span>
+        </div>
+        <div class="contact-thumb marked highlight" data-frame="17" id="thumb17">
+          <div class="thumb-render">🏪</div>
+          <span>17A 雨后便利店</span>
+        </div>
+        <div class="contact-thumb" data-frame="18">
+          <div class="thumb-render">🚲</div>
+          <span>18A 凌晨报刊亭</span>
+        </div>
+      </div>
+    </section>
+
+    <!-- 主叙事：第 17 格底片卷轴展厅 -->
+    <section class="film-strip-wrap" aria-labelledby="mainNarrativeHeading">
+      <div class="sprocket-holes-top" aria-hidden="true"></div>
+      <span class="film-meta-running">SAFETY FILM ▶ 17A ▶ KODAK TRI-X PAN</span>
+
+      <div class="main-narrative">
+        <!-- 叙事文字 -->
+        <article class="narrative-body">
+          <span class="narrative-badge">SELECTED FRAME #17 / 主叙事</span>
+          <h2 class="narrative-title" id="mainNarrativeHeading">第 17 格：雨后便利店</h2>
+
+          <p>
+            拍摄发生在午夜两点十七分。暴雨刚歇，柏油路面像浸饱了机油与冷雨的黑色镜面，把二十四小时便利店苍白刺眼的荧光灯切碎在水洼里。
           </p>
-          <div class="exif-stamp">
-            EXIF: LEICA M6 · SUMMICRON 35mm F/2 · 1/125s · D-76 显影 9.5 MIN
+
+          <div class="body-quote">
+            “隔着起雾的玻璃门，店员正在给关东煮保温槽加水。热气升腾的瞬间，他脸上的轮廓光被乳化成一片极轻的柔焦。”
           </div>
+
+          <p>
+            <strong>【拍摄前观察与曝光决断】</strong>
+            测光表读数在暗部落入 Zone II，而货架上的白色灯箱却直冲 Zone VIII。若按数字相机的直方图逻辑，这势必是一张高光溢出或暗部死黑的废片。我将光圈旋至 f/2，把快门压到 1/30 秒——这已经是手持 50mm 镜头的极限。我选择信任胶片对高光的宽容度，让银盐颗粒去承接光比撕裂的痛感。
+          </p>
+
+          <p>
+            <strong>【显影结果与一段回忆】</strong>
+            在显影罐里使用 D-76 (1:1) 配方，恒温 20°C，前三十秒连续轻柔翻转。当底片挂在干燥箱里逆光看去时，第 17 格的银颗粒没有融化成糊斑，便利店招牌上的微弱斑驳被严丝合缝地固化了下来。很多年前同行的那个人曾说，城市在雨夜是不会睡着的，它只是在等一个愿意在冷风里放慢呼吸的人。
+          </p>
         </article>
 
-        <!-- 画幅 2 -->
-        <article class="film-frame">
-          <div class="frame-number">▶ 25A // KODAK TX 400 // EXP.02</div>
-          <div class="frame-photo">☕🕯️</div>
-          <h2 class="frame-title">暗房里的时间延宕：从曝光到显影的等待哲学</h2>
-          <p class="frame-desc">
-            在红色安全灯的微光中，看着白色的相纸在显影液中慢慢浮现出灰阶层次。这种无法被“Ctrl+Z”撤销的沉浸感，是快节奏生活最好的解毒剂。
-          </p>
-          <div class="exif-stamp">
-            EXIF: HASSELBLAD 500C/M · PLANAR 80mm F/2.8 · 1/60s · ILFORD MULTIGRADE
+        <!-- 显影可视化 / 拍立得相纸 -->
+        <aside class="visual-chamber">
+          <div class="polaroid-frame" id="polaroidCard">
+            <div class="polaroid-image-stage">
+              <img src="assets/images/darkroom_film.jpg" alt="黑白胶片拍摄的雨后便利店与街道光影" class="photo-art developing" id="mainPhoto">
+            </div>
+            <div class="polaroid-caption">
+              <span>FRAME #17A // CONVENIENCE STORE</span>
+              <span style="font-size: 11px; color: #64748b;">LATENT IMAGE</span>
+            </div>
+            <div class="polaroid-note">
+              手持曝光 / 柯达 D-76 显影 10.5 MIN / 无裁切全画幅接触印相
+            </div>
           </div>
-        </article>
 
-        <!-- 画幅 3 -->
-        <article class="film-frame">
-          <div class="frame-number">▶ 26A // ILFORD HP5 // EXP.03</div>
-          <h2 class="frame-title">安塞尔·亚当斯区域曝光法（Zone System）的数学美</h2>
-          <p class="frame-desc">
-            将自然界的连续光影量化为 0 到 X 的十一个灰阶区域。精准计算阴影暗部与高光反差，在快门按下之前就已经在脑海中完成最终打印成片的预视觉化（Previsualization）。
-          </p>
-          <div class="exif-stamp">
-            EXIF: LARGE FORMAT 4x5 · SCHNEIDER 150mm · F/22 · ZONE V CALIBRATION
+          <!-- 显影水槽实时参数 -->
+          <div class="chemical-tray-status">
+            <div style="display: flex; justify-content: space-between; font-weight: bold;">
+              <span>🧪 显影槽状态监测 (DEV TRAY)</span>
+              <span id="chemicalTemp" style="color: var(--amber-gold);">20.0 °C</span>
+            </div>
+            <div class="tray-timer-bar">
+              <div class="tray-progress" id="trayProgress"></div>
+            </div>
+            <div style="font-size: 11px; color: var(--text-dim); display: flex; justify-content: space-between;">
+              <span>药液: Kodak D-76 (1:1)</span>
+              <span>定时: 08:30 / 10:30 (定影就绪)</span>
+            </div>
           </div>
-        </article>
-
-        <!-- 画幅 4 -->
-        <article class="film-frame">
-          <div class="frame-number">▶ 27A // FUJI ACROS 100 // EXP.04</div>
-          <h2 class="frame-title">定影、水洗与纯棉钡地纸：让银盐影像跨越百年的物理炼金</h2>
-          <p class="frame-desc">
-            利用海波（硫代硫酸钠）彻底溶解未曝光的溴化银，再经过长达一小时的流水浸洗去除酸性残留。这不仅是摄影技术，更是人类与时间衰变抗衡的致密物理契约。
-          </p>
-          <div class="exif-stamp">
-            EXIF: LEICA MP · SUMMILUX 50mm F/1.4 · ARCHIVAL FIBER PRINT
-          </div>
-        </article>
+        </aside>
       </div>
 
-      <div class="sprockets-bottom"></div>
+      <div class="sprocket-holes-bottom" aria-hidden="true"></div>
     </section>
+
+    <!-- 资料模块 B：显影参数台与摄影师旁注 -->
+    <section class="lab-dossier-grid" aria-label="暗房技术数据与旁注档案">
+      <div class="dossier-card">
+        <h3 class="dossier-title">
+          <span>📋 EXIF & CHEMICAL DOSSIER / 第 17 格物理档案</span>
+        </h3>
+        <table class="exif-table">
+          <tbody>
+            <tr>
+              <th>胶卷型号 (Film Stock)</th>
+              <td>ILFORD HP5 PLUS 400 (35mm / 36 Exp)</td>
+            </tr>
+            <tr>
+              <th>感光度 / 设定 (ISO Rating)</th>
+              <td>ISO 400 (Push +1 to EI 800)</td>
+            </tr>
+            <tr>
+              <th>光圈 / 快门 (Aperture / Shutter)</th>
+              <td>LEICA Summicron 50mm f/2.0 · 1/30s</td>
+            </tr>
+            <tr>
+              <th>显影药水 (Developer)</th>
+              <td>Kodak D-76 Stock 稀释比例 1 : 1</td>
+            </tr>
+            <tr>
+              <th>反应温度 / 时间 (Temp / Timing)</th>
+              <td>20.0°C (±0.5°C) · 10 分 30 秒</td>
+            </tr>
+            <tr>
+              <th>停显 / 定影 (Stop & Fix)</th>
+              <td>Ilfostop 1min · Ilford Rapid Fixer 5min</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+
+      <div class="dossier-card">
+        <h3 class="dossier-title">
+          <span>✍️ PHOTOGRAPHER FIELD NOTES / 摄影师旁注</span>
+        </h3>
+        <div class="field-notes-list">
+          <div class="field-note-item">
+            <div class="note-author">旁注 01 · 暮色段落</div>
+            <div class="note-text">“第 13 格的立交桥天空反差比预想平，下次需要加一片黄色滤镜压暗天空灰阶。”</div>
+          </div>
+          <div class="field-note-item">
+            <div class="note-author">旁注 02 · 药温控制</div>
+            <div class="note-text">“室温升高了 1.5°C，显影液用水浴法恒温，切忌剧烈晃动显影罐以免颗粒结块粗化。”</div>
+          </div>
+          <div class="field-note-item">
+            <div class="note-author">旁注 03 · 放大机光圈</div>
+            <div class="note-text">“第 17 格放至 8×10 寸时，镜头收至 f/8 最锐，高光区域需用遮光板局部减光 1.5 秒。”</div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- 3 个次级栏目 -->
+    <section class="secondary-columns" aria-label="暗房随笔与理论栏目">
+      <!-- 栏目 1 -->
+      <article class="column-card">
+        <div class="col-header">
+          <div class="col-index">ESSAY // 01</div>
+          <h3 class="col-title">银盐颗粒为何让画面有时间感</h3>
+        </div>
+        <p class="col-body">
+          数字传感器的像素是整齐划一的方阵网格，而胶片上的银盐晶体是随机沉降的微观星丛。每一颗溴化银在受光还原时，都保留了光子击中乳剂层那一瞬的物理震颤。这种不可复刻的杂质与随机噪点，让静止的图像拥有了类似呼吸的生命质感与岁月沉淀。
+        </p>
+        <div class="col-footer">
+          <span>物理感光结晶</span>
+          <span>阅读 4 MIN</span>
+        </div>
+      </article>
+
+      <!-- 栏目 2 -->
+      <article class="column-card">
+        <div class="col-header">
+          <div class="col-index">ESSAY // 02</div>
+          <h3 class="col-title">红灯下等待八分钟</h3>
+        </div>
+        <p class="col-body">
+          暗房安全灯把世界收缩进单一的红橙光谱。当相纸滑入显影浅盘，在前四十五秒内几乎是一片死白。你必须学会在虚无中屏息等待——看着暗部像墨汁渗透宣纸一样缓慢浮出水面。这种不可逆的凝视，是对即时反馈时代的终极反叛与心灵校准。
+        </p>
+        <div class="col-footer">
+          <span>暗室仪式感</span>
+          <span>阅读 5 MIN</span>
+        </div>
+      </article>
+
+      <!-- 栏目 3 -->
+      <article class="column-card">
+        <div class="col-header">
+          <div class="col-index">ESSAY // 03</div>
+          <h3 class="col-title">一张失败底片的第二次生命</h3>
+        </div>
+        <p class="col-body">
+          第 04 格因为快门卡顿导致严重欠曝，几乎只有微弱的轮廓阴影。但当我把它置于放大机下，采用高反差 4 号滤色片和局部加光（Burning）技法时，原本隐没在胶片基底里的路灯光晕却被淬炼成极具张力的版画剪影。在暗房里，没有真正的废片，只有未被发现的解读方式。
+        </p>
+        <div class="col-footer">
+          <span>暗房挽救技法</span>
+          <span>阅读 3 MIN</span>
+        </div>
+      </article>
+    </section>
+
+    <!-- 收尾：相纸背面铅笔字 -->
+    <footer class="darkroom-epilogue" role="contentinfo">
+      <div class="paper-watermark">ILFORD FIBER BASE · DOUBLE WEIGHT</div>
+      <p class="epilogue-pencil">“有些光，只有慢下来才留得住。”</p>
+      <div class="epilogue-meta">
+        —— 1994.10.18 深夜 · 手写于第 17 格相纸背面 · 纯棉钡地相纸印相
+      </div>
+    </footer>
   </div>
 
-  <style>
-    .red-bulb {
-      animation: bulbBreathe 2.5s ease-in-out infinite alternate;
-    }
-    @keyframes bulbBreathe {
-      from { box-shadow: 0 0 6px #ef4444; opacity: 0.6; }
-      to { box-shadow: 0 0 20px #ef4444, 0 0 40px rgba(239, 68, 68, 0.4); opacity: 1; }
-    }
-    .film-frame img {
-      filter: contrast(1.15) brightness(0.85) sepia(0.2);
-      transition: filter 0.8s ease, transform 0.4s ease;
-    }
-    .film-frame:hover img {
-      filter: contrast(1.1) brightness(1.05) sepia(0);
-      transform: scale(1.03);
-    }
-    .film-frame {
-      transition: transform 0.3s ease, border-color 0.3s ease;
-    }
-    .film-frame:hover {
-      transform: translateY(-4px);
-      border-color: var(--safelight-red);
-    }
-  </style>
+  <!-- 互动脚本逻辑 -->
+  <script>
+    document.addEventListener('DOMContentLoaded', () => {
+      const btnSafelight = document.getElementById('btnToggleSafelight');
+      const btnInvert = document.getElementById('btnInvertNegative');
+      const btnDevelop = document.getElementById('btnDevelopAgain');
+      const btnMagnify = document.getElementById('btnMagnifyFrame');
+      const safelightStatus = document.getElementById('safelightStatusText');
+      const mainPhoto = document.getElementById('mainPhoto');
+      const polaroidCard = document.getElementById('polaroidCard');
+      const contactThumbs = document.querySelectorAll('.contact-thumb');
 
+      // 1. 打开/关闭安全灯模式
+      let safelightActive = false;
+      btnSafelight.addEventListener('click', () => {
+        safelightActive = !safelightActive;
+        document.body.classList.toggle('safelight-mode', safelightActive);
+        btnSafelight.classList.toggle('active', safelightActive);
+        
+        if (safelightActive) {
+          btnSafelight.innerHTML = '💡 关闭安全灯 (切回明室)';
+          safelightStatus.innerText = 'SAFELIGHT: 全面激活 [暗室红灯作业中]';
+        } else {
+          btnSafelight.innerHTML = '🔴 打开安全灯';
+          safelightStatus.innerText = 'SAFELIGHT: 待命 (DIM RED 15W)';
+        }
+      });
+
+      // 2. 查看底片正像 / 负片反转
+      let isInverted = false;
+      btnInvert.addEventListener('click', () => {
+        isInverted = !isInverted;
+        mainPhoto.classList.toggle('inverted', isInverted);
+        btnInvert.classList.toggle('active', isInverted);
+        btnInvert.innerHTML = isInverted ? '🎞️ 查看负片形态' : '🎞️ 查看底片正像';
+      });
+
+      // 3. 重新重播显影动画
+      btnDevelop.addEventListener('click', () => {
+        mainPhoto.classList.remove('developing');
+        void mainPhoto.offsetWidth; // 触发重绘
+        mainPhoto.classList.add('developing');
+        btnDevelop.innerHTML = '⏳ 正在显影析出...';
+        btnDevelop.disabled = true;
+        setTimeout(() => {
+          btnDevelop.innerHTML = '🧪 显影完成，影像正在出现';
+          btnDevelop.disabled = false;
+        }, 3600);
+      });
+
+      // 4. 放大第 17 格
+      let isMagnified = false;
+      btnMagnify.addEventListener('click', () => {
+        isMagnified = !isMagnified;
+        btnMagnify.classList.toggle('active', isMagnified);
+        if (isMagnified) {
+          polaroidCard.style.transform = 'scale(1.08) rotate(0deg)';
+          polaroidCard.style.zIndex = '10';
+          btnMagnify.innerHTML = '🔍 还原第 17 格';
+        } else {
+          polaroidCard.style.transform = 'rotate(-1deg)';
+          polaroidCard.style.zIndex = '1';
+          btnMagnify.innerHTML = '🔍 放大第 17 格';
+        }
+      });
+
+      // 5. 点击接触印样小图联动
+      contactThumbs.forEach(thumb => {
+        thumb.addEventListener('click', () => {
+          contactThumbs.forEach(t => t.classList.remove('highlight'));
+          thumb.classList.add('highlight');
+        });
+      });
+    });
+  </script>
+
+  <!-- 全局统一导航组件 -->
   <script src="assets/nav-bar.js"></script>
 </body>
 </html>

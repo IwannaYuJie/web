@@ -3,19 +3,22 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>桜の空 // 17 二次元日系萌系物语风</title>
-  <link rel="stylesheet" href="assets/common.css">
+  <title>桜の空 · 放学后观察部 // 17 二次元日系萌系物语</title>
+  <link rel="stylesheet" href="/creative-blogs/assets/common.css">
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Zen+Maru+Gothic:wght@400;500;700;900&family=M+PLUS+Rounded+1c:wght@400;700;800&family=Noto+Sans+SC:wght@400;500;700&display=swap" rel="stylesheet">
   <style>
     :root {
       --sakura-pink: #ff7597;
-      --sakura-light: #fff0f5;
+      --sakura-light: #fff3f7;
+      --sakura-soft: #ffe4ec;
       --sakura-accent: #ff3366;
-      --pastel-blue: #7cc6fe;
-      --pastel-purple: #c084fc;
-      --anime-dark: #2d232e;
+      --sky-blue: #7cc6fe;
+      --mellow-purple: #c084fc;
+      --matcha-green: #86efac;
+      --cream-yellow: #fef08a;
+      --anime-dark: #2f2231;
       --anime-card-bg: rgba(255, 255, 255, 0.94);
       --anime-border: #ffd1dc;
       --font-anime: "Zen Maru Gothic", "M PLUS Rounded 1c", "Noto Sans SC", sans-serif;
@@ -35,14 +38,13 @@
       min-height: 100vh;
       overflow-x: hidden;
       position: relative;
-      padding-bottom: 100px;
       background-image: 
-        radial-gradient(circle at 10% 20%, rgba(255, 117, 151, 0.18) 0%, transparent 40%),
-        radial-gradient(circle at 90% 80%, rgba(124, 198, 254, 0.18) 0%, transparent 40%),
-        repeating-linear-gradient(45deg, rgba(255, 117, 151, 0.04) 0px, rgba(255, 117, 151, 0.04) 10px, transparent 10px, transparent 20px);
+        radial-gradient(circle at 10% 20%, rgba(255, 117, 151, 0.16) 0%, transparent 40%),
+        radial-gradient(circle at 90% 80%, rgba(124, 198, 254, 0.16) 0%, transparent 40%),
+        radial-gradient(circle at 50% 50%, rgba(255, 255, 255, 0.6) 0%, transparent 60%),
+        repeating-linear-gradient(45deg, rgba(255, 117, 151, 0.03) 0px, rgba(255, 117, 151, 0.03) 12px, transparent 12px, transparent 24px);
     }
 
-    /* 樱花飘落容器 */
     .sakura-container {
       position: fixed;
       inset: 0;
@@ -55,7 +57,7 @@
       position: absolute;
       background: radial-gradient(circle, #ffb7c5, #ff7597);
       border-radius: 150% 0 150% 0;
-      opacity: 0.7;
+      opacity: 0.75;
       animation: sakura-fall linear infinite;
     }
 
@@ -63,24 +65,24 @@
       0% {
         top: -10%;
         transform: rotate(0deg) translateX(0);
-        opacity: 0.8;
+        opacity: 0.85;
       }
       100% {
         top: 110%;
-        transform: rotate(360deg) translateX(120px);
-        opacity: 0.2;
+        transform: rotate(360deg) translateX(140px);
+        opacity: 0.1;
       }
     }
 
     .anime-wrapper {
-      max-width: 1200px;
+      max-width: 1240px;
       margin: 0 auto;
-      padding: 24px 20px;
+      padding: 24px 20px 80px;
       position: relative;
       z-index: 10;
     }
 
-    /* 顶部萌系导航栏 */
+    /* 顶栏 */
     .anime-navbar {
       background: var(--anime-card-bg);
       border: 2px solid var(--anime-border);
@@ -90,33 +92,45 @@
       justify-content: space-between;
       align-items: center;
       box-shadow: 0 8px 25px rgba(255, 117, 151, 0.15);
-      margin-bottom: 30px;
+      margin-bottom: 28px;
       backdrop-filter: blur(10px);
+      gap: 16px;
     }
 
     .anime-brand {
-      font-size: 20px;
+      font-size: 19px;
       font-weight: 900;
       color: var(--sakura-accent);
       display: flex;
       align-items: center;
       gap: 10px;
-      letter-spacing: 1px;
+      letter-spacing: 0.5px;
+      white-space: nowrap;
+      flex-shrink: 0;
     }
-    .anime-brand span.sub {
-      font-size: 12px;
+
+    .anime-brand-text {
+      white-space: nowrap;
+    }
+
+    .anime-brand .sub {
+      font-size: 11px;
       color: #9d84b7;
       background: #fdf2f8;
-      padding: 2px 8px;
+      padding: 2px 10px;
       border-radius: 20px;
       border: 1px solid var(--anime-border);
+      white-space: nowrap;
     }
 
     .anime-nav-links {
       display: flex;
-      gap: 12px;
+      gap: 10px;
       list-style: none;
+      align-items: center;
+      flex-wrap: nowrap;
     }
+
     .anime-nav-link {
       color: var(--anime-dark);
       text-decoration: none;
@@ -125,7 +139,13 @@
       padding: 6px 14px;
       border-radius: 20px;
       transition: all 0.2s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+      white-space: nowrap;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      min-height: 34px;
     }
+
     .anime-nav-link:hover, .anime-nav-link.active {
       background: var(--sakura-pink);
       color: #fff;
@@ -133,43 +153,44 @@
       box-shadow: 0 4px 12px rgba(255, 117, 151, 0.4);
     }
 
-    /* 巨幅二次元动漫插画 Hero 封面大卡片 */
-    .anime-hero-banner-box {
+    /* 头部社团刊物大封面 */
+    .club-hero {
+      background: #fff;
       border: 3px solid #fff;
       border-radius: 28px;
       overflow: hidden;
-      box-shadow: 0 16px 40px rgba(255, 117, 151, 0.25);
-      margin-bottom: 40px;
+      box-shadow: 0 16px 40px rgba(255, 117, 151, 0.22);
+      margin-bottom: 34px;
       position: relative;
-      background: #000;
     }
 
     .hero-img-cover {
       width: 100%;
-      height: 440px;
+      height: 400px;
       object-fit: cover;
       display: block;
       transition: transform 0.6s ease;
     }
-    .anime-hero-banner-box:hover .hero-img-cover {
+
+    .club-hero:hover .hero-img-cover {
       transform: scale(1.02);
     }
 
     .hero-overlay-content {
       position: absolute;
-      bottom: 24px;
-      left: 24px;
-      right: 24px;
-      background: rgba(255, 255, 255, 0.88);
+      bottom: 20px;
+      left: 20px;
+      right: 20px;
+      background: rgba(255, 255, 255, 0.92);
       backdrop-filter: blur(16px);
-      -webkit-backdrop-filter: blur(16px);
-      border: 2px solid rgba(255, 255, 255, 0.9);
+      border: 2px solid rgba(255, 255, 255, 0.95);
       border-radius: 20px;
-      padding: 24px 30px;
+      padding: 22px 28px;
       display: flex;
       justify-content: space-between;
       align-items: center;
-      box-shadow: 0 10px 30px rgba(0, 0, 0, 0.15);
+      gap: 20px;
+      box-shadow: 0 10px 30px rgba(255, 117, 151, 0.15);
     }
 
     .hero-tag-badge {
@@ -180,183 +201,294 @@
       color: #fff;
       font-size: 11px;
       font-weight: 800;
-      padding: 4px 10px;
+      padding: 4px 12px;
       border-radius: 20px;
       margin-bottom: 8px;
     }
 
-    .hero-anime-heading {
-      font-size: clamp(22px, 3.5vw, 32px);
+    .hero-heading {
+      font-size: clamp(20px, 3.2vw, 30px);
       font-weight: 900;
       color: #2e1d2c;
-      line-height: 1.3;
+      line-height: 1.35;
     }
-    .hero-anime-heading span {
+
+    .hero-heading span {
       color: var(--sakura-accent);
     }
 
-    .hero-meta-author {
+    .hero-stats {
+      display: flex;
+      gap: 16px;
+      text-align: right;
+    }
+
+    .stat-pill {
+      background: var(--sakura-soft);
+      padding: 8px 14px;
+      border-radius: 14px;
+      font-size: 12px;
+      font-weight: 700;
+      color: var(--sakura-accent);
+      border: 1px solid var(--anime-border);
+    }
+
+    /* 角色档案区域 */
+    .section-headline {
       display: flex;
       align-items: center;
-      gap: 14px;
-    }
-    .avatar-img {
-      width: 64px;
-      height: 64px;
-      border-radius: 50%;
-      border: 3px solid var(--sakura-pink);
-      box-shadow: 0 4px 14px rgba(255, 117, 151, 0.4);
-      object-fit: cover;
+      justify-content: space-between;
+      margin: 36px 0 18px;
+      padding-bottom: 8px;
+      border-bottom: 2px dashed var(--anime-border);
     }
 
-    /* 主网格排版 */
-    .anime-main-grid {
+    .section-headline h2 {
+      font-size: 22px;
+      font-weight: 900;
+      color: #2e1d2c;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .headline-pill {
+      font-size: 12px;
+      background: #fff;
+      border: 1.5px solid var(--sakura-pink);
+      color: var(--sakura-accent);
+      padding: 4px 12px;
+      border-radius: 20px;
+      font-weight: 700;
+    }
+
+    .chars-grid {
       display: grid;
-      grid-template-columns: 2fr 1fr;
-      gap: 32px;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 18px;
+      margin-bottom: 36px;
     }
 
-    /* 二次元文章卡片（图文并茂） */
-    .anime-post-card {
+    .char-card {
       background: var(--anime-card-bg);
       border: 2px solid var(--anime-border);
-      border-radius: 22px;
-      overflow: hidden;
-      margin-bottom: 32px;
-      box-shadow: 0 8px 25px rgba(255, 117, 151, 0.08);
-      transition: all 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
-    }
-    .anime-post-card:hover {
-      transform: translateY(-5px);
-      box-shadow: 0 15px 35px rgba(255, 117, 151, 0.22);
-      border-color: var(--sakura-pink);
-    }
-
-    .post-cover-img-box {
-      width: 100%;
-      height: 260px;
-      overflow: hidden;
+      border-radius: 20px;
+      padding: 18px;
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+      transition: all 0.25s ease;
+      box-shadow: 0 6px 18px rgba(255, 117, 151, 0.08);
       position: relative;
     }
-    .post-cover-img {
+
+    .char-card:hover {
+      transform: translateY(-4px);
+      border-color: var(--sakura-pink);
+      box-shadow: 0 12px 28px rgba(255, 117, 151, 0.2);
+    }
+
+    .char-header {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+    }
+
+    .char-avatar-box {
+      width: 52px;
+      height: 52px;
+      border-radius: 50%;
+      border: 2.5px solid var(--sakura-pink);
+      overflow: hidden;
+      flex-shrink: 0;
+      background: #ffe4ec;
+    }
+
+    .char-avatar-box img {
       width: 100%;
       height: 100%;
       object-fit: cover;
-      transition: transform 0.5s ease;
-    }
-    .anime-post-card:hover .post-cover-img {
-      transform: scale(1.04);
     }
 
-    .post-badge-float {
-      position: absolute;
-      top: 14px;
-      left: 14px;
-      background: rgba(0, 0, 0, 0.65);
-      backdrop-filter: blur(8px);
-      color: #fff;
-      font-size: 11px;
-      font-weight: 700;
-      padding: 4px 10px;
-      border-radius: 12px;
-      border: 1px solid rgba(255, 255, 255, 0.3);
-    }
-
-    .post-content-inner {
-      padding: 26px 30px 30px;
-    }
-
-    .card-top-tags {
-      display: flex;
-      gap: 8px;
-      align-items: center;
-      margin-bottom: 12px;
-    }
-    .anime-tag {
-      font-size: 11px;
-      font-weight: 700;
-      padding: 3px 10px;
-      border-radius: 12px;
-      background: #fff1f2;
-      color: var(--sakura-accent);
-      border: 1px solid rgba(255, 117, 151, 0.3);
-    }
-    .anime-tag.blue {
-      background: #eff6ff;
-      color: #2563eb;
-      border-color: #bfdbfe;
-    }
-    .anime-tag.purple {
-      background: #faf5ff;
-      color: #9333ea;
-      border-color: #e9d5ff;
-    }
-
-    .anime-card-title {
-      font-size: 22px;
-      font-weight: 800;
-      color: #2e2030;
-      margin-bottom: 12px;
-      line-height: 1.35;
-    }
-    .anime-card-title:hover {
-      color: var(--sakura-accent);
-    }
-
-    .anime-card-body {
-      font-size: 14px;
-      color: #5c4e5e;
-      line-height: 1.85;
-      margin-bottom: 20px;
-    }
-
-    /* 视觉小说台词对话框气泡 */
-    .vn-speech-bubble {
-      background: #fff8f9;
-      border-left: 4px solid var(--sakura-pink);
-      padding: 12px 18px;
-      border-radius: 0 12px 12px 0;
-      font-size: 13px;
-      color: #704b57;
-      margin-bottom: 18px;
-      position: relative;
-    }
-    .vn-speech-bubble strong {
-      color: var(--sakura-accent);
-    }
-
-    .anime-btn {
-      display: inline-flex;
-      align-items: center;
-      gap: 6px;
-      padding: 8px 20px;
-      background: linear-gradient(135deg, var(--sakura-pink), var(--sakura-accent));
-      color: #fff;
-      font-size: 13px;
-      font-weight: 700;
-      border-radius: 999px;
-      text-decoration: none;
-      box-shadow: 0 4px 12px rgba(255, 77, 121, 0.3);
-      transition: all 0.2s;
-    }
-    .anime-btn:hover {
-      transform: scale(1.04);
-      box-shadow: 0 6px 18px rgba(255, 77, 121, 0.45);
-    }
-
-    /* 侧边栏小组件 */
-    .anime-sidebar-widget {
-      background: var(--anime-card-bg);
-      border: 2px solid var(--anime-border);
-      border-radius: 22px;
-      padding: 24px;
-      margin-bottom: 28px;
-      box-shadow: 0 8px 25px rgba(255, 117, 151, 0.08);
-    }
-
-    .widget-title {
+    .char-name {
       font-size: 16px;
       font-weight: 800;
+      color: #2e1d2c;
+    }
+
+    .char-role {
+      font-size: 11px;
+      font-weight: 700;
+      color: var(--sakura-accent);
+      background: #fff0f5;
+      padding: 2px 8px;
+      border-radius: 10px;
+      display: inline-block;
+    }
+
+    .char-meta-row {
+      font-size: 12px;
+      color: #665566;
+      display: flex;
+      justify-content: space-between;
+      background: #fff8fa;
+      padding: 6px 10px;
+      border-radius: 10px;
+      border: 1px dashed var(--anime-border);
+    }
+
+    .char-quote {
+      font-size: 12px;
+      color: #554455;
+      background: #fff;
+      padding: 10px 12px;
+      border-radius: 12px;
+      border-left: 3px solid var(--sakura-pink);
+      line-height: 1.5;
+      margin-top: auto;
+      font-style: italic;
+    }
+
+    /* 主网格排版：左边叙事，右边次级栏目与资料 */
+    .anime-main-grid {
+      display: grid;
+      grid-template-columns: 1.85fr 1.15fr;
+      gap: 30px;
+    }
+
+    /* 主叙事话数卡片 */
+    .story-chapter-card {
+      background: var(--anime-card-bg);
+      border: 2px solid var(--anime-border);
+      border-radius: 24px;
+      overflow: hidden;
+      margin-bottom: 28px;
+      box-shadow: 0 8px 24px rgba(255, 117, 151, 0.08);
+      transition: all 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+    }
+
+    .story-chapter-card:hover {
+      transform: translateY(-4px);
+      box-shadow: 0 14px 32px rgba(255, 117, 151, 0.18);
+      border-color: var(--sakura-pink);
+    }
+
+    .story-card-top {
+      padding: 22px 26px 16px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      border-bottom: 1px dashed var(--anime-border);
+      background: #fff9fb;
+    }
+
+    .chapter-badge {
+      font-size: 12px;
+      font-weight: 800;
+      padding: 4px 12px;
+      border-radius: 20px;
+      background: linear-gradient(135deg, #ff7597, #ff3366);
+      color: #fff;
+    }
+
+    .chapter-date {
+      font-size: 12px;
+      color: #887788;
+      font-weight: 700;
+    }
+
+    .story-card-content {
+      padding: 22px 26px;
+    }
+
+    .story-card-title {
+      font-size: 20px;
+      font-weight: 900;
+      color: #2e1d2c;
+      margin-bottom: 12px;
+      line-height: 1.4;
+    }
+
+    .story-card-body {
+      font-size: 14.5px;
+      color: #554455;
+      line-height: 1.85;
+      margin-bottom: 18px;
+    }
+
+    .vn-dialog-box {
+      background: #fff8f9;
+      border-left: 4px solid var(--sakura-pink);
+      padding: 12px 16px;
+      border-radius: 0 14px 14px 0;
+      font-size: 13.5px;
+      color: #6a4452;
+      margin-bottom: 16px;
+      display: flex;
+      gap: 8px;
+      align-items: flex-start;
+    }
+
+    .vn-dialog-box strong {
+      color: var(--sakura-accent);
+      flex-shrink: 0;
+    }
+
+    .story-actions {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      flex-wrap: wrap;
+      gap: 10px;
+      padding-top: 10px;
+      border-top: 1px solid #fdf2f8;
+    }
+
+    .interact-choice-btn {
+      background: #fff;
+      border: 1.5px solid var(--sakura-pink);
+      color: var(--sakura-accent);
+      padding: 7px 16px;
+      border-radius: 20px;
+      font-size: 12.5px;
+      font-weight: 800;
+      cursor: pointer;
+      font-family: inherit;
+      transition: all 0.2s;
+    }
+
+    .interact-choice-btn:hover {
+      background: var(--sakura-pink);
+      color: #fff;
+      transform: scale(1.03);
+    }
+
+    .interact-choice-btn:active {
+      transform: scale(0.96);
+    }
+
+    .favor-badge {
+      font-size: 12px;
+      color: #705570;
+      font-weight: 700;
+      display: flex;
+      align-items: center;
+      gap: 6px;
+    }
+
+    /* 侧边栏卡片 */
+    .anime-sidebar-card {
+      background: var(--anime-card-bg);
+      border: 2px solid var(--anime-border);
+      border-radius: 24px;
+      padding: 22px;
+      margin-bottom: 26px;
+      box-shadow: 0 8px 22px rgba(255, 117, 151, 0.08);
+    }
+
+    .sidebar-title {
+      font-size: 16px;
+      font-weight: 900;
       color: var(--sakura-accent);
       display: flex;
       align-items: center;
@@ -366,269 +498,693 @@
       margin-bottom: 16px;
     }
 
-    .profile-card-center {
-      text-align: center;
-    }
-    .profile-avatar-big {
-      width: 100px;
-      height: 100px;
-      border-radius: 50%;
-      border: 4px solid var(--sakura-pink);
-      box-shadow: 0 8px 20px rgba(255, 117, 151, 0.3);
-      object-fit: cover;
-      margin-bottom: 12px;
-      animation: float-profile 3s ease-in-out infinite alternate;
-    }
-    @keyframes float-profile {
-      0% { transform: translateY(0); }
-      100% { transform: translateY(-6px); }
+    /* 章节进度与CG缩略图 */
+    .progress-box {
+      margin-bottom: 18px;
     }
 
-    .bangumi-item {
+    .progress-bar-outer {
+      width: 100%;
+      height: 10px;
+      background: #ffe4ec;
+      border-radius: 20px;
+      overflow: hidden;
+      margin: 8px 0 4px;
+    }
+
+    .progress-bar-inner {
+      height: 100%;
+      width: 88%;
+      background: linear-gradient(90deg, #ff7597, #c084fc);
+      border-radius: 20px;
+      transition: width 0.4s ease;
+    }
+
+    .cg-gallery-grid {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 8px;
+      margin-top: 12px;
+    }
+
+    .cg-thumb {
+      aspect-ratio: 4/3;
+      border-radius: 12px;
+      overflow: hidden;
+      border: 1.5px solid var(--anime-border);
+      position: relative;
+      cursor: pointer;
+      background: #fee2e2;
+    }
+
+    .cg-thumb img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      transition: transform 0.3s;
+    }
+
+    .cg-thumb:hover img {
+      transform: scale(1.08);
+    }
+
+    .cg-tag {
+      position: absolute;
+      bottom: 4px;
+      right: 4px;
+      background: rgba(0, 0, 0, 0.65);
+      color: #fff;
+      font-size: 9px;
+      padding: 1px 5px;
+      border-radius: 6px;
+      font-weight: 700;
+    }
+
+    /* 作画练习栏目 */
+    .art-practice-item {
+      display: flex;
+      gap: 12px;
+      margin-bottom: 14px;
+      padding-bottom: 12px;
+      border-bottom: 1px solid #fdf2f8;
+      align-items: center;
+    }
+
+    .art-practice-item:last-child {
+      border-bottom: none;
+      margin-bottom: 0;
+      padding-bottom: 0;
+    }
+
+    .art-thumb {
+      width: 60px;
+      height: 60px;
+      border-radius: 12px;
+      object-fit: cover;
+      border: 1.5px solid var(--anime-border);
+      flex-shrink: 0;
+    }
+
+    .art-info h4 {
+      font-size: 13.5px;
+      font-weight: 800;
+      color: #2e1d2c;
+      margin-bottom: 2px;
+    }
+
+    .art-info p {
+      font-size: 11.5px;
+      color: #776677;
+      line-height: 1.4;
+    }
+
+    /* 歌单 */
+    .music-track {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 8px 10px;
+      border-radius: 12px;
+      background: #fff8fb;
+      margin-bottom: 8px;
+      border: 1px solid #fce7f3;
+      font-size: 12.5px;
+    }
+
+    .music-title {
+      font-weight: 700;
+      color: #2e1d2c;
+      display: flex;
+      align-items: center;
+      gap: 6px;
+    }
+
+    .music-bpm {
+      font-size: 10.5px;
+      color: var(--sakura-accent);
+      background: #fff;
+      padding: 2px 6px;
+      border-radius: 8px;
+      font-weight: 800;
+      border: 1px solid var(--anime-border);
+    }
+
+    /* 便利店夜宵评分 */
+    .snack-review-card {
+      background: #fff8f9;
+      border-radius: 14px;
+      padding: 12px;
+      margin-bottom: 10px;
+      border: 1px solid #fce7f3;
+    }
+
+    .snack-review-card:last-child {
+      margin-bottom: 0;
+    }
+
+    .snack-header {
       display: flex;
       justify-content: space-between;
       align-items: center;
-      padding: 8px 0;
-      border-bottom: 1px solid #fdf2f8;
-      font-size: 13px;
-    }
-    .bangumi-item:last-child { border-bottom: none; }
-    .bangumi-status {
-      font-size: 11px;
-      background: #fdf2f8;
-      color: var(--sakura-accent);
-      padding: 2px 8px;
-      border-radius: 10px;
-      font-weight: 700;
+      margin-bottom: 4px;
     }
 
-    /* 萌系点赞交互 */
-    .moe-react-btn {
-      background: #fff;
-      border: 1.5px solid var(--sakura-pink);
+    .snack-name {
+      font-size: 13px;
+      font-weight: 800;
+      color: #2e1d2c;
+    }
+
+    .snack-score {
+      font-size: 12px;
+      color: #e11d48;
+      font-weight: 800;
+    }
+
+    .snack-comment {
+      font-size: 11.5px;
+      color: #776677;
+      line-height: 1.45;
+    }
+
+    /* 片尾收尾 */
+    .outro-card {
+      background: linear-gradient(135deg, #fff0f5 0%, #fdf4ff 100%);
+      border: 2px solid var(--anime-border);
+      border-radius: 24px;
+      padding: 30px;
+      text-align: center;
+      margin-top: 36px;
+      box-shadow: 0 10px 30px rgba(255, 117, 151, 0.12);
+      position: relative;
+      overflow: hidden;
+    }
+
+    .outro-sparkle {
+      font-size: 26px;
+      margin-bottom: 8px;
+    }
+
+    .outro-title {
+      font-size: 22px;
+      font-weight: 900;
       color: var(--sakura-accent);
-      padding: 6px 14px;
-      border-radius: 20px;
+      margin-bottom: 8px;
+      letter-spacing: 1px;
+    }
+
+    .outro-sub {
+      font-size: 14px;
+      color: #665566;
+      max-width: 600px;
+      margin: 0 auto 18px;
+    }
+
+    .outro-credits {
+      display: flex;
+      justify-content: center;
+      gap: 18px;
+      flex-wrap: wrap;
       font-size: 12px;
       font-weight: 700;
-      cursor: pointer;
-      font-family: inherit;
-      transition: all 0.15s;
-    }
-    .moe-react-btn:active {
-      transform: scale(0.92);
+      color: #887788;
+      border-top: 1px dashed var(--anime-border);
+      padding-top: 14px;
     }
 
-    @media (max-width: 860px) {
+    .floating-heart {
+      position: absolute;
+      font-size: 22px;
+      pointer-events: none;
+      z-index: 99999;
+      animation: heartFlyUp 1.1s ease-out forwards;
+    }
+
+    @keyframes heartFlyUp {
+      0% { transform: scale(0.6) translateY(0); opacity: 1; }
+      50% { transform: scale(1.2) translateY(-32px); opacity: 0.95; }
+      100% { transform: scale(1) translateY(-75px); opacity: 0; }
+    }
+
+    @media (max-width: 980px) {
+      .chars-grid {
+        grid-template-columns: repeat(2, 1fr);
+      }
       .anime-main-grid {
         grid-template-columns: 1fr;
       }
+      .anime-navbar {
+        border-radius: 24px;
+        flex-direction: column;
+        align-items: stretch;
+        gap: 12px;
+        padding: 14px 18px;
+      }
+      .anime-brand {
+        justify-content: space-between;
+        width: 100%;
+      }
+      .anime-nav-links {
+        display: grid;
+        grid-template-columns: repeat(4, 1fr);
+        width: 100%;
+        gap: 8px;
+      }
+      .anime-nav-link {
+        padding: 8px 6px;
+        font-size: 12px;
+        text-align: center;
+      }
+    }
+
+    @media (max-width: 640px) {
+      .anime-wrapper {
+        padding: 16px 14px 60px;
+      }
+      .anime-navbar {
+        border-radius: 20px;
+        padding: 12px 14px;
+        gap: 10px;
+        margin-bottom: 20px;
+      }
+      .anime-brand {
+        font-size: 16px;
+        flex-direction: column;
+        align-items: flex-start;
+        gap: 4px;
+      }
+      .anime-brand-text {
+        display: inline-flex;
+        align-items: center;
+        gap: 6px;
+      }
+      .anime-brand .sub {
+        font-size: 10.5px;
+        padding: 2px 8px;
+      }
+      .anime-nav-links {
+        grid-template-columns: repeat(2, 1fr);
+        gap: 8px;
+      }
+      .anime-nav-link {
+        font-size: 12.5px;
+        padding: 8px 10px;
+        background: #fff;
+        border: 1px solid var(--anime-border);
+      }
+      .chars-grid {
+        grid-template-columns: 1fr;
+      }
       .hero-img-cover {
-        height: 280px;
+        height: 240px;
       }
       .hero-overlay-content {
         position: static;
-        margin-top: 14px;
+        margin-top: 12px;
         flex-direction: column;
         align-items: flex-start;
-        gap: 14px;
+        padding: 16px;
       }
-      .anime-hero-banner-box {
+      .club-hero {
         background: transparent;
         border: none;
         box-shadow: none;
+      }
+      .hero-stats {
+        text-align: left;
+        width: 100%;
+        justify-content: flex-start;
+        flex-wrap: wrap;
+      }
+    }
+
+    @media (prefers-reduced-motion: reduce) {
+      .petal {
+        animation: none;
+        display: none;
+      }
+      .club-hero:hover .hero-img-cover,
+      .char-card:hover,
+      .story-chapter-card:hover,
+      .anime-nav-link:hover {
+        transform: none;
       }
     }
   </style>
 </head>
 <body>
 
-  <!-- 全屏樱花飘落动效 -->
+  <!-- 飘落樱花花瓣 -->
   <div class="sakura-container" id="sakuraBox"></div>
 
   <div class="anime-wrapper">
-    <!-- 顶栏导航 -->
-    <nav class="anime-navbar">
+    <!-- 顶栏 -->
+    <nav class="anime-navbar" aria-label="社团导航">
       <div class="anime-brand">
-        <span>🌸</span>
-        <span>桜の空 // SAKURA BLOG</span>
-        <span class="sub">二次元 · 轻小说 · ACG 视觉</span>
+        <span class="anime-brand-text">🌸 桜の空 · 放学后观察部</span>
+        <span class="sub">校园同人游戏制作手记</span>
       </div>
       <ul class="anime-nav-links">
-        <li><a href="#" class="anime-nav-link active">📖 随笔物語</a></li>
-        <li><a href="#" class="anime-nav-link">📺 新番追逐</a></li>
-        <li><a href="#" class="anime-nav-link">🎮 Galgame 鉴赏</a></li>
+        <li><a href="#story" class="anime-nav-link active">📖 连载物语</a></li>
+        <li><a href="#characters" class="anime-nav-link">🎨 角色档案</a></li>
+        <li><a href="#art" class="anime-nav-link">🖼️ 作画&歌单</a></li>
+        <li><a href="#snacks" class="anime-nav-link">🍙 部室补给</a></li>
       </ul>
     </nav>
 
-    <!-- 巨幅动漫插画 Hero 封面 -->
-    <header class="anime-hero-banner-box">
-      <img src="assets/images/anime_banner.jpg" alt="二次元动漫少女与夕阳海景" class="hero-img-cover">
+    <!-- 刊物大封面 -->
+    <header class="club-hero">
+      <img src="/creative-blogs/assets/images/anime_banner.jpg" alt="放学后观察部的社团黄昏与樱花" class="hero-img-cover">
       <div class="hero-overlay-content">
         <div>
-          <div class="hero-tag-badge">✨ FEATURED STORY // 樱花与海岸线的约定</div>
-          <h1 class="hero-anime-heading">
-            在夕阳染红的天空下，<br>记录每一个<span>闪闪发光</span>的瞬间。
+          <div class="hero-tag-badge">🌸 特别连载企划 · 文化祭出展倒计时 3 天</div>
+          <h1 class="hero-heading">
+            《樱花落完之前，把<span>未完成的游戏</span>做出来》
           </h1>
         </div>
-        <div class="hero-meta-author">
-          <img src="assets/images/anime_avatar.jpg" alt="看板娘头像" class="avatar-img">
-          <div>
-            <div style="font-weight: 800; font-size: 14px; color: var(--sakura-accent);">看板娘 · 樱乃 (Sakura)</div>
-            <div style="font-size: 11px; color: #776677;">Lv.99 ACG 萌系观察员</div>
-          </div>
+        <div class="hero-stats">
+          <div class="stat-pill">部室温度 23.5℃</div>
+          <div class="stat-pill">代码总行数 4,820</div>
         </div>
       </div>
     </header>
 
-    <!-- 主网格 -->
-    <div class="anime-main-grid">
-      <!-- 左侧精选文章 -->
-      <main>
-        <!-- 文章 1: 芙莉莲 -->
-        <article class="anime-post-card">
-          <div class="post-cover-img-box">
-            <span class="post-badge-float">🌟 深度长文</span>
-            <img src="assets/images/anime_frieren.jpg" alt="葬送的芙莉莲插画" class="post-cover-img">
+    <!-- 资料模块：社团角色卡 (4名原创角色) -->
+    <section id="characters" aria-label="社团角色卡">
+      <div class="section-headline">
+        <h2><span>👥</span> 部员资料卡 // CLUB ROSTER</h2>
+        <span class="headline-pill">今日部室到齐率 100%</span>
+      </div>
+      <div class="chars-grid">
+        <!-- 角色 1: 樱乃 -->
+        <article class="char-card">
+          <div class="char-header">
+            <div class="char-avatar-box">
+              <img src="/creative-blogs/assets/images/anime_avatar.jpg" alt="部长·樱乃">
+            </div>
+            <div>
+              <div class="char-name">浅野 樱乃</div>
+              <span class="char-role">部长 / 企划·剧本</span>
+            </div>
           </div>
-          <div class="post-content-inner">
-            <div class="card-top-tags">
-              <span class="anime-tag">🌸 动画鉴赏</span>
-              <span class="anime-tag blue">神作评测</span>
-              <span style="font-size: 12px; color: #998899;">2026.08.22 · 5分钟阅读</span>
+          <div class="char-meta-row">
+            <span>性格：元气冒失但绝不认输</span>
+            <span>心情：🔥 燃起来了</span>
+          </div>
+          <div class="char-quote">
+            「哪怕只剩下最后三张背景没画完，只要全员都在，奇迹就一定会发生！」
+          </div>
+        </article>
+
+        <!-- 角色 2: 澪 -->
+        <article class="char-card">
+          <div class="char-header">
+            <div class="char-avatar-box">
+              <img src="/creative-blogs/assets/images/anime_frieren.jpg" alt="主美·白石 澪">
             </div>
-            <h2 class="anime-card-title">《葬送的芙莉莲》：时间的厚度与微小羁绊的长歌</h2>
-            <p class="anime-card-body">
-              千年精灵的一生漫长如恒星，而人类的寿命不过白驹过隙。当欣梅尔死后，芙莉莲才真正踏上重新理解人类情感的旅程。这部作品用最轻柔平缓的叙事笔触，治愈了现代人内心的浮躁与焦虑。
+            <div>
+              <div class="char-name">白石 澪</div>
+              <span class="char-role">主美 / 原画·UI</span>
+            </div>
+          </div>
+          <div class="char-meta-row">
+            <span>性格：毒舌冷淡却极度护短</span>
+            <span>心情：🍵 想喝抹茶拿铁</span>
+          </div>
+          <div class="char-quote">
+            「哼，别误会了，我通宵重画立绘只是因为无法容忍透视错误而已。」
+          </div>
+        </article>
+
+        <!-- 角色 3: 奏太 -->
+        <article class="char-card">
+          <div class="char-header">
+            <div class="char-avatar-box">
+              <img src="/creative-blogs/assets/images/anime_room.jpg" alt="程序·橘 奏太">
+            </div>
+            <div>
+              <div class="char-name">橘 奏太</div>
+              <span class="char-role">主程 / 引擎开发</span>
+            </div>
+          </div>
+          <div class="char-meta-row">
+            <span>性格：技术宅、逻辑控</span>
+            <span>心情：☕ 咖啡因过载</span>
+          </div>
+          <div class="char-quote">
+            「渲染流水线重构完毕，帧率稳在 60 帧了，接下来就看你们的剧情了。」
+          </div>
+        </article>
+
+        <!-- 角色 4: 雏乃 -->
+        <article class="char-card">
+          <div class="char-header">
+            <div class="char-avatar-box">
+              <img src="/creative-blogs/assets/images/anime_banner.jpg" alt="音效·七海 雏乃">
+            </div>
+            <div>
+              <div class="char-name">七海 雏乃</div>
+              <span class="char-role">音乐 / 音效·后勤</span>
+            </div>
+          </div>
+          <div class="char-meta-row">
+            <span>性格：天然呆、部室吉祥物</span>
+            <span>心情：🍙 刚吃完饭团</span>
+          </div>
+          <div class="char-quote">
+            「BGM的主旋律写好啦~听起来就像吹过天台的四月春风一样哦！」
+          </div>
+        </article>
+      </div>
+    </section>
+
+    <!-- 主体网格 -->
+    <div class="anime-main-grid" id="story">
+      <!-- 左侧：主叙事四话完整篇章 -->
+      <main aria-label="主叙事：樱花落完之前">
+        <!-- 第 01 话 -->
+        <article class="story-chapter-card">
+          <div class="story-card-top">
+            <span class="chapter-badge">第 01 话 · 招募与草稿纸</span>
+            <span class="chapter-date">4月12日 晴 / 部室第一天</span>
+          </div>
+          <div class="story-card-content">
+            <h3 class="story-card-title">旧校舍角落的空教室，与写在草稿纸背面的世界</h3>
+            <p class="story-card-body">
+              高二开学第二周，旧美术教室里只剩下三张缺角的桌子。樱乃把写满了游戏世界观的便签贴得满墙都是。那天下午，捧着写生簿路过的澪被一张分镜吸引了目光，而正在调试自制Galgame引擎的奏太默默把笔记本搬了进来。雏乃则带来了自制的樱花曲奇——“放学后观察部”就这样在四月的风里诞生了。
             </p>
-            <div class="vn-speech-bubble">
-              <strong>芙莉莲：</strong>「即使只有百分之一的意义，如果能让你露出笑容，那便是值得去追寻的魔法。」
+            <div class="vn-dialog-box">
+              <strong>樱乃：</strong>
+              <span>「我们的目标是——在秋天文化祭上，让全校都玩到属于我们自己的恋爱解谜冒险物语！」</span>
             </div>
-            <div style="display: flex; justify-content: space-between; align-items: center;">
-              <a href="#" class="anime-btn">阅读全文物語 ➔</a>
-              <button class="moe-react-btn" onclick="sendHeart(this)">💖 萌力发送 (520)</button>
+            <div class="story-actions">
+              <button class="interact-choice-btn" onclick="triggerInteract(this, '好感度 +1：因为你认真读完了开端')">✨ 选项：递上一盒热牛奶</button>
+              <div class="favor-badge" id="favor-01">💖 全员默契度：Lv.1</div>
             </div>
           </div>
         </article>
 
-        <!-- 文章 2: 舒适动漫房间与代码日常 -->
-        <article class="anime-post-card">
-          <div class="post-cover-img-box">
-            <span class="post-badge-float">💻 宅居手记</span>
-            <img src="assets/images/anime_room.jpg" alt="温馨二次元书桌与代码日常" class="post-cover-img">
+        <!-- 第 02 话 -->
+        <article class="story-chapter-card">
+          <div class="story-card-top">
+            <span class="chapter-badge">第 02 话 · 第一次崩溃与大雨</span>
+            <span class="chapter-date">5月28日 暴雨 / Alpha测试</span>
           </div>
-          <div class="post-content-inner">
-            <div class="card-top-tags">
-              <span class="anime-tag purple">🎮 宅系生活</span>
-              <span class="anime-tag">Lofi 编程</span>
-              <span style="font-size: 12px; color: #998899;">2026.08.18</span>
-            </div>
-            <h2 class="anime-card-title">被手办与漫画包围的深夜书房：二次元程序员的理想工位指南</h2>
-            <p class="anime-card-body">
-              屏幕里是正在跑测试的 Rust 代码，耳机里是轻柔的 Anime Lofi 节拍，桌角是一杯热气腾腾的奶茶与吉卜力龙猫抱枕。如何打造一个兼具极客效率与满满 ACG 治愈感的心流创作空间？
+          <div class="story-card-content">
+            <h3 class="story-card-title">黑屏的CRT显示器，与窗外滂沱的初夏骤雨</h3>
+            <p class="story-card-body">
+              距离第一次校内试玩仅剩三天时，内存泄漏问题导致游戏进行到第三章必然死锁崩溃。澪画了两周的动态CG因为图层错乱丢失了遮罩，气氛一度降到冰点。部室里只有窗外的雨声和风扇的嗡嗡声。大家低着头，直到雏乃默默把保温瓶里的热麦茶分给大家。
             </p>
-            <div class="vn-speech-bubble">
-              <strong>宅居心语：</strong>「只要被喜欢的事物所环绕，即使是再复杂的 Bug 也能怀着好心情解开呢~」
+            <div class="vn-dialog-box">
+              <strong>奏太：</strong>
+              <span>「别慌……把错误堆栈发给我。今晚我不走，一定把垃圾回收器重写出来。」</span>
             </div>
-            <div style="display: flex; justify-content: space-between; align-items: center;">
-              <a href="#" class="anime-btn">阅读全文物語 ➔</a>
-              <button class="moe-react-btn" onclick="sendHeart(this)">💖 萌力发送 (388)</button>
+            <div class="story-actions">
+              <button class="interact-choice-btn" onclick="triggerInteract(this, '好感度 +1：因为你选择留下来并肩作战')">选择：留下来一起修 Bug</button>
+              <div class="favor-badge" id="favor-02">⚡ 逆境突破度：75%</div>
             </div>
           </div>
         </article>
 
-        <!-- 文章 3: 新海诚光影与渲染美学 -->
-        <article class="anime-post-card">
-          <div class="post-content-inner" style="padding-top: 24px;">
-            <div class="card-top-tags">
-              <span class="anime-tag blue">✨ 视觉渲染</span>
-              <span class="anime-tag">丁达尔光</span>
-              <span style="font-size: 12px; color: #998899;">2026.08.02</span>
-            </div>
-            <h2 class="anime-card-title">新海诚画风解密：逆光丁达尔效应与 WebGL 积雨云着色器</h2>
-            <p class="anime-card-body">
-              从《言叶之庭》雨滴打在翠绿枫叶上的透亮反射，到《天气之子》中撕裂云层洒向东京街头的金色体积光（Volumetric Light）。探索如何用 GLSL 在浏览器端复现日系动画天花板级的空气感与通透感。
+        <!-- 第 03 话 -->
+        <article class="story-chapter-card">
+          <div class="story-card-top">
+            <span class="chapter-badge">第 03 话 · 凌晨三点的部室</span>
+            <span class="chapter-date">6月15日 阴转微风 / 极限赶工</span>
+          </div>
+          <div class="story-card-content">
+            <h3 class="story-card-title">吃完的杯面、散落的脚本，与晨光微曦的天台</h3>
+            <p class="story-card-body">
+              最后一次合版是在樱乃家附近的家庭餐厅与部室两头跑完成的。键盘敲击声在凌晨两点半终于停歇。澪完成了片尾致敬插画，雏乃把最后一段钢琴独奏混音切入片头，奏太按下了编译键：0 Errors, 0 Warnings。当晨光从天窗洒进教室时，大家趴在桌上睡着了，嘴角挂着笑。
             </p>
-            <div class="vn-speech-bubble">
-              <strong>光影随笔：</strong>「光芒并不只照亮物体，它本身就是空气与时间流逝的形状。」
+            <div class="vn-dialog-box">
+              <strong>澪：</strong>
+              <span>「……睡着的樱乃看起来真傻。不过，这次画出来的日落，确实挺好看的。」</span>
             </div>
-            <div style="display: flex; justify-content: space-between; align-items: center;">
-              <a href="#" class="anime-btn">阅读全文物語 ➔</a>
-              <button class="moe-react-btn" onclick="sendHeart(this)">💖 萌力发送 (612)</button>
+            <div class="story-actions">
+              <button class="interact-choice-btn" onclick="triggerInteract(this, '解锁第 03 话隐藏幕后：好感度 +1')">解锁第 03 话专属花絮</button>
+              <div class="favor-badge" id="favor-03">🌙 深夜战友羁绊：MAX</div>
+            </div>
+          </div>
+        </article>
+
+        <!-- 第 04 话 -->
+        <article class="story-chapter-card">
+          <div class="story-card-top">
+            <span class="chapter-badge">第 04 话 · 文化祭试玩！</span>
+            <span class="chapter-date">6月20日 晴朗 / 展出首日</span>
+          </div>
+          <div class="story-card-content">
+            <h3 class="story-card-title">挤满走廊的队伍，与通关画面弹出的“谢谢你们”</h3>
+            <p class="story-card-body">
+              展位前排起了长队，连邻校的同好都特意赶来试玩。当第一位玩家通关真结局、音响里流淌出雏乃谱写的片尾曲时，全场响起了掌声。樱乃悄悄擦掉了眼角的眼泪，转头对所有人说：“我们做到了！”樱花落完之前，这个夏天成了所有人不可替代的宝藏。
+            </p>
+            <div class="vn-dialog-box">
+              <strong>放学后观察部全员：</strong>
+              <span>「感谢所有在屏幕前陪伴我们走过这段旅程的你！」</span>
+            </div>
+            <div class="story-actions">
+              <button class="interact-choice-btn" onclick="triggerInteract(this, '好感度 +1：因为你认真读完了复盘')">💖 为观察部发送应援弹幕</button>
+              <div class="favor-badge" id="favor-04">🏆 达成成就：青春无悔</div>
             </div>
           </div>
         </article>
       </main>
 
-      <!-- 右侧边栏 -->
-      <aside>
-        <!-- 博主名片卡片 -->
-        <div class="anime-sidebar-widget profile-card-center">
-          <img src="assets/images/anime_avatar.jpg" alt="博主头像" class="profile-avatar-big">
-          <div style="font-size: 18px; font-weight: 800; color: var(--sakura-accent); margin-bottom: 4px;">樱乃の空间</div>
-          <p style="font-size: 13px; color: #665566; line-height: 1.6; margin-bottom: 14px;">
-            全栈架构师 / 二次元原画与轻小说爱好者。致力于把技术做成充满治愈与美感的艺术品！✨
-          </p>
-          <div style="display: flex; gap: 6px; justify-content: center; flex-wrap: wrap;">
-            <span class="anime-tag">#动画</span>
-            <span class="anime-tag blue">#轻小说</span>
-            <span class="anime-tag purple">#Rust萌化</span>
+      <!-- 右侧：次级栏目与资料 -->
+      <aside aria-label="次级栏目">
+        <!-- 章节进度与收藏 CG 缩略图 -->
+        <div class="anime-sidebar-card">
+          <div class="sidebar-title">
+            <span>📊</span>
+            <span>企划进度 & CG 收藏图鉴</span>
+          </div>
+          <div class="progress-box">
+            <div style="display:flex; justify-content:space-between; font-size:12px; font-weight:700;">
+              <span>总制作完成度 (Master Ver)</span>
+              <span style="color:var(--sakura-accent);">94.5%</span>
+            </div>
+            <div class="progress-bar-outer">
+              <div class="progress-bar-inner"></div>
+            </div>
+          </div>
+          <div style="font-size:12px; font-weight:700; color:#665566; margin-bottom:6px;">已解锁关键 CG 缩略图：</div>
+          <div class="cg-gallery-grid">
+            <div class="cg-thumb" onclick="sendHeart(event)" title="CG: 初遇旧校舍">
+              <img src="/creative-blogs/assets/images/anime_banner.jpg" alt="初遇旧校舍CG">
+              <span class="cg-tag">CG-01</span>
+            </div>
+            <div class="cg-thumb" onclick="sendHeart(event)" title="CG: 暴雨中的决意">
+              <img src="/creative-blogs/assets/images/anime_frieren.jpg" alt="暴雨中的决意CG">
+              <span class="cg-tag">CG-02</span>
+            </div>
+            <div class="cg-thumb" onclick="sendHeart(event)" title="CG: 拂晓的部室">
+              <img src="/creative-blogs/assets/images/anime_room.jpg" alt="拂晓的部室CG">
+              <span class="cg-tag">CG-03</span>
+            </div>
           </div>
         </div>
 
-        <!-- 追番列表 -->
-        <div class="anime-sidebar-widget">
-          <div class="widget-title">
-            <span>📺</span>
-            <span>本季追番清单 (On Air)</span>
+        <!-- 次级栏目 1: 本周作画练习 -->
+        <div class="anime-sidebar-card" id="art">
+          <div class="sidebar-title">
+            <span>🎨</span>
+            <span>次级栏目 · 本周作画练习</span>
           </div>
-          <div class="bangumi-item">
-            <span>葬送的芙莉莲 第二季</span>
-            <span class="bangumi-status">第 08 话 ★★★★★</span>
+          <div class="art-practice-item">
+            <img src="/creative-blogs/assets/images/anime_frieren.jpg" alt="黄昏光影笔刷测试" class="art-thumb">
+            <div class="art-info">
+              <h4>黄昏丁达尔光线测试</h4>
+              <p>澪的色彩笔记：逆光场景中使用微弱青紫反光，能大幅提升透明感。</p>
+            </div>
           </div>
-          <div class="bangumi-item">
-            <span>孤独摇滚！第二季</span>
-            <span class="bangumi-status">追番中 推荐</span>
-          </div>
-          <div class="bangumi-item">
-            <span>命运石之门 0 (重温)</span>
-            <span class="bangumi-status">神作殿堂</span>
+          <div class="art-practice-item">
+            <img src="/creative-blogs/assets/images/anime_room.jpg" alt="部室杂物与背景线稿" class="art-thumb">
+            <div class="art-info">
+              <h4>部室透视与杂物细节</h4>
+              <p>练习重点：桌角手办与电线杂乱感，营造生动的日常气息。</p>
+            </div>
           </div>
         </div>
 
-        <!-- 萌系音乐盒 -->
-        <div class="anime-sidebar-widget">
-          <div class="widget-title">
-            <span>🎵</span>
-            <span>BGM 萌音电台</span>
+        <!-- 次级栏目 2: 部室循环歌单 -->
+        <div class="anime-sidebar-card">
+          <div class="sidebar-title">
+            <span>🎧</span>
+            <span>次级栏目 · 部室循环歌单</span>
           </div>
-          <div style="font-size: 13px; color: #554455; margin-bottom: 8px;">
-            🎧 正在循环：<strong>secret base ~君がくれたもの~</strong>
+          <div class="music-track">
+            <div class="music-title">
+              <span>🎵</span>
+              <span>《放学后的天台风铃》</span>
+            </div>
+            <span class="music-bpm">Lofi / 85 BPM</span>
           </div>
-          <div style="font-size: 11px; color: var(--sakura-accent);">
-            ♪ 10年后 8月的夏天 依然相信能再次相见...
+          <div class="music-track">
+            <div class="music-title">
+              <span>🎵</span>
+              <span>《雨天敲代码的白噪音》</span>
+            </div>
+            <span class="music-bpm">Ambient / 60 BPM</span>
+          </div>
+          <div class="music-track">
+            <div class="music-title">
+              <span>🎵</span>
+              <span>《向着文化祭奔跑！》</span>
+            </div>
+            <span class="music-bpm">Chiptune / 142 BPM</span>
+          </div>
+        </div>
+
+        <!-- 次级栏目 3: 便利店夜宵评分 -->
+        <div class="anime-sidebar-card" id="snacks">
+          <div class="sidebar-title">
+            <span>🍙</span>
+            <span>次级栏目 · 便利店夜宵评分</span>
+          </div>
+          <div class="snack-review-card">
+            <div class="snack-header">
+              <span class="snack-name">罗森 · 明太子烤饭团</span>
+              <span class="snack-score">★ 9.8 / 10</span>
+            </div>
+            <p class="snack-comment">“微波炉加热30秒后海苔依然脆！主程奏太深夜回血首选。”</p>
+          </div>
+          <div class="snack-review-card">
+            <div class="snack-header">
+              <span class="snack-name">全家 · 浓厚宇治抹茶泡芙</span>
+              <span class="snack-score">★ 9.5 / 10</span>
+            </div>
+            <p class="snack-comment">“苦甜平衡刚刚好，澪在画不上色卡时吃一个立马恢复灵感。”</p>
+          </div>
+          <div class="snack-review-card">
+            <div class="snack-header">
+              <span class="snack-name">7-Eleven · 关东煮萝卜块</span>
+              <span class="snack-score">★ 9.2 / 10</span>
+            </div>
+            <p class="snack-comment">“高汤吸得非常足，雏乃说冬天通宵喝一口汤整个人都融化了。”</p>
           </div>
         </div>
       </aside>
     </div>
+
+    <!-- 收尾模块：片尾字幕 -->
+    <footer class="outro-card">
+      <div class="outro-sparkle">🌸 ✨ 🌸</div>
+      <h3 class="outro-title">明天放学后，部室见。</h3>
+      <p class="outro-sub">
+        「只要你还在翻阅这本手记，关于我们的物语就永远不会画上句点。」
+      </p>
+      <div class="outro-credits">
+        <span>企画·制作：放学后观察部 (Sakura Club)</span>
+        <span>脚本：浅野 樱乃</span>
+        <span>美术：白石 澪</span>
+        <span>程序：橘 奏太</span>
+        <span>音乐：七海 雏乃</span>
+      </div>
+    </footer>
   </div>
 
-  <style>
-    .flying-heart {
-      position: absolute;
-      font-size: 24px;
-      pointer-events: none;
-      z-index: 99999;
-      animation: heartFlyUp 1s ease-out forwards;
-    }
-    @keyframes heartFlyUp {
-      0% { transform: scale(0.5) translateY(0); opacity: 1; }
-      50% { transform: scale(1.3) translateY(-30px); opacity: 0.9; }
-      100% { transform: scale(1) translateY(-70px); opacity: 0; }
-    }
-  </style>
-
-  <script src="assets/nav-bar.js"></script>
+  <script src="/creative-blogs/assets/nav-bar.js"></script>
   <script>
     // 动态生成飘落樱花花瓣
     const sakuraBox = document.getElementById('sakuraBox');
@@ -636,38 +1192,60 @@
       if (!sakuraBox) return;
       const petal = document.createElement('div');
       petal.className = 'petal';
-      const size = Math.random() * 12 + 8;
+      const size = Math.random() * 10 + 8;
       petal.style.width = `${size}px`;
-      petal.style.height = `${size * 1.3}px`;
+      petal.style.height = `${size * 1.35}px`;
       petal.style.left = `${Math.random() * 100}vw`;
-      petal.style.animationDuration = `${Math.random() * 4 + 4}s`;
+      petal.style.animationDuration = `${Math.random() * 3.5 + 4.5}s`;
       sakuraBox.appendChild(petal);
       setTimeout(() => petal.remove(), 8000);
     }
-    setInterval(createPetal, 400);
+    setInterval(createPetal, 450);
 
-    function createFloatingHeart(x, y) {
-      const hearts = ['💖', '💕', '🌸', '✨', '🐾', '🎀'];
-      const heart = document.createElement('div');
-      heart.className = 'flying-heart';
-      heart.textContent = hearts[Math.floor(Math.random() * hearts.length)];
-      heart.style.left = `${x - 12}px`;
-      heart.style.top = `${y - 12}px`;
-      document.body.appendChild(heart);
-      setTimeout(() => heart.remove(), 1000);
+    function createFloatingEffect(x, y, text) {
+      const el = document.createElement('div');
+      el.className = 'floating-heart';
+      el.textContent = text;
+      el.style.left = `${x - 14}px`;
+      el.style.top = `${y - 14}px`;
+      document.body.appendChild(el);
+      setTimeout(() => el.remove(), 1100);
     }
 
-    // 萌力发送点赞
-    function sendHeart(btn) {
-      let count = parseInt(btn.textContent.match(/\d+/)[0]) + 1;
-      btn.textContent = `💖 萌力发送 (${count})`;
+    function triggerInteract(btn, toastMsg) {
       const rect = btn.getBoundingClientRect();
-      createFloatingHeart(rect.left + rect.width / 2, rect.top);
+      const scrollY = window.scrollY || window.pageYOffset;
+      const x = rect.left + rect.width / 2;
+      const y = rect.top + scrollY;
+
+      createFloatingEffect(x, y, '💖 +1');
+      const originalText = btn.textContent;
+      btn.textContent = `✨ ${toastMsg}`;
+      btn.style.background = '#ff7597';
+      btn.style.color = '#fff';
+      
+      setTimeout(() => {
+        btn.textContent = originalText;
+        btn.style.background = '';
+        btn.style.color = '';
+      }, 2500);
+    }
+
+    function sendHeart(e) {
+      const scrollY = window.scrollY || window.pageYOffset;
+      const x = e.pageX || (e.clientX + window.scrollX);
+      const y = e.pageY || (e.clientY + scrollY);
+      const icons = ['🌸', '✨', '💕', '🎀', '🍰'];
+      createFloatingEffect(x, y, icons[Math.floor(Math.random() * icons.length)]);
     }
 
     window.addEventListener('click', (e) => {
-      if (e.target.closest('.blog-switcher-trigger') || e.target.closest('.blog-switcher-modal')) return;
-      createFloatingHeart(e.pageX, e.pageY);
+      if (e.target.closest('.blog-switcher-trigger') || 
+          e.target.closest('.blog-switcher-modal') ||
+          e.target.closest('.interact-choice-btn')) return;
+      
+      const icons = ['🌸', '✨', '💕', '🐾'];
+      createFloatingEffect(e.pageX, e.pageY, icons[Math.floor(Math.random() * icons.length)]);
     });
   </script>
 </body>

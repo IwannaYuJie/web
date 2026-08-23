@@ -3,20 +3,27 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>AURA // 15 未来拟态毛玻璃实验室风</title>
-  <link rel="stylesheet" href="assets/common.css">
-  <link rel="preconnect" href="https://fonts.googleapis.com">
-  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;600;700&family=Noto+Sans+SC:wght@400;600;800&display=swap" rel="stylesheet">
+  <title>AURA LAB // 15 未来拟态毛玻璃实验室</title>
+  <link rel="stylesheet" href="/creative-blogs/assets/common.css">
   <style>
     :root {
-      --glass-bg: #070913;
-      --glass-card: rgba(255, 255, 255, 0.05);
-      --glass-card-hover: rgba(255, 255, 255, 0.08);
-      --glass-border: rgba(255, 255, 255, 0.12);
-      --glass-text: #f8fafc;
-      --glass-sub: #94a3b8;
-      --font-glass: "Space Grotesk", "Noto Sans SC", sans-serif;
+      --bg-deep: #050711;
+      --glass-base: rgba(255, 255, 255, 0.05);
+      --glass-base-hover: rgba(255, 255, 255, 0.09);
+      --glass-border: rgba(255, 255, 255, 0.14);
+      --glass-border-strong: rgba(255, 255, 255, 0.3);
+      --glass-blur: 24px;
+      --glass-noise-opacity: 0.035;
+      --text-main: #f8fafc;
+      --text-muted: #94a3b8;
+      --text-subtle: #64748b;
+      --accent-cyan: #38bdf8;
+      --accent-violet: #818cf8;
+      --accent-rose: #f472b6;
+      --accent-emerald: #34d399;
+      --aurora-opacity: 0.65;
+      --ambient-anim: running;
+      --font-stack: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "PingFang SC", "Hiragino Sans GB", "Microsoft YaHei", sans-serif;
     }
 
     * {
@@ -26,291 +33,1034 @@
     }
 
     body {
-      background-color: var(--glass-bg);
-      color: var(--glass-text);
-      font-family: var(--font-glass);
+      background-color: var(--bg-deep);
+      color: var(--text-main);
+      font-family: var(--font-stack);
       min-height: 100vh;
+      line-height: 1.75;
       overflow-x: hidden;
       position: relative;
-      padding: 40px 20px 100px;
-      line-height: 1.7;
+      padding: 24px 16px 120px;
     }
 
-    /* 极光背景光晕 */
-    .aurora-orb {
+    /* 极光背景层 */
+    .aurora-canvas {
       position: fixed;
-      border-radius: 50%;
-      filter: blur(90px);
+      inset: 0;
       pointer-events: none;
       z-index: 1;
-      opacity: 0.6;
-      transition: transform 0.2s ease-out;
+      overflow: hidden;
+      opacity: var(--aurora-opacity);
+      transition: opacity 0.4s ease;
     }
-    .orb-1 { width: 450px; height: 450px; background: #6366f1; top: -100px; left: -100px; }
-    .orb-2 { width: 500px; height: 500px; background: #ec4899; bottom: 50px; right: -100px; }
-    .orb-3 { width: 350px; height: 350px; background: #06b6d4; top: 40%; left: 40%; }
 
-    .glass-container {
-      max-width: 1180px;
+    .aurora-blob {
+      position: absolute;
+      border-radius: 50%;
+      filter: blur(80px);
+      mix-blend-mode: screen;
+      animation-play-state: var(--ambient-anim);
+    }
+
+    .blob-1 {
+      width: 520px;
+      height: 520px;
+      background: radial-gradient(circle, rgba(129, 140, 248, 0.5) 0%, rgba(99, 102, 241, 0.1) 70%, transparent 80%);
+      top: -120px;
+      left: -100px;
+      animation: floatA 18s ease-in-out infinite alternate;
+    }
+
+    .blob-2 {
+      width: 600px;
+      height: 600px;
+      background: radial-gradient(circle, rgba(244, 114, 182, 0.45) 0%, rgba(236, 72, 153, 0.08) 65%, transparent 80%);
+      bottom: -150px;
+      right: -100px;
+      animation: floatB 22s ease-in-out infinite alternate;
+    }
+
+    .blob-3 {
+      width: 440px;
+      height: 440px;
+      background: radial-gradient(circle, rgba(56, 189, 248, 0.45) 0%, rgba(6, 182, 212, 0.1) 65%, transparent 80%);
+      top: 40%;
+      left: 55%;
+      animation: floatC 20s ease-in-out infinite alternate;
+    }
+
+    .interactive-cursor-light {
+      position: fixed;
+      width: 360px;
+      height: 360px;
+      border-radius: 50%;
+      background: radial-gradient(circle, rgba(56, 189, 248, 0.28) 0%, rgba(129, 140, 248, 0.15) 45%, transparent 70%);
+      filter: blur(50px);
+      pointer-events: none;
+      z-index: 2;
+      transform: translate(-50%, -50%);
+      transition: opacity 0.3s ease;
+      opacity: var(--aurora-opacity);
+    }
+
+    @keyframes floatA {
+      0% { transform: translate(0, 0) scale(1); }
+      100% { transform: translate(120px, 80px) scale(1.15); }
+    }
+    @keyframes floatB {
+      0% { transform: translate(0, 0) scale(1.1); }
+      100% { transform: translate(-100px, -90px) scale(0.95); }
+    }
+    @keyframes floatC {
+      0% { transform: translate(0, 0) scale(0.9); }
+      100% { transform: translate(-80px, 70px) scale(1.2); }
+    }
+
+    /* 噪点纹理层模拟物理毛玻璃微观结构 */
+    .glass-grain {
+      position: fixed;
+      inset: 0;
+      pointer-events: none;
+      z-index: 3;
+      opacity: var(--glass-noise-opacity);
+      background-image: radial-gradient(rgba(255,255,255,0.75) 1px, transparent 0);
+      background-size: 8px 8px;
+    }
+
+    .container {
+      max-width: 1140px;
       margin: 0 auto;
       position: relative;
       z-index: 10;
     }
 
-    /* 顶栏 */
-    .glass-header {
-      background: rgba(255, 255, 255, 0.04);
-      backdrop-filter: blur(24px);
-      -webkit-backdrop-filter: blur(24px);
+    /* 顶栏身份卡 */
+    .lab-masthead {
+      background: var(--glass-base);
+      backdrop-filter: blur(var(--glass-blur));
+      -webkit-backdrop-filter: blur(var(--glass-blur));
       border: 1px solid var(--glass-border);
       border-radius: 20px;
-      padding: 18px 30px;
+      padding: 20px 28px;
       display: flex;
       justify-content: space-between;
       align-items: center;
-      margin-bottom: 40px;
-      box-shadow: 0 10px 30px rgba(0, 0, 0, 0.4);
+      flex-wrap: wrap;
+      gap: 16px;
+      margin-bottom: 36px;
+      box-shadow: 0 16px 36px rgba(0, 0, 0, 0.45);
     }
 
-    .glass-logo {
+    .identity-lockup {
+      display: flex;
+      align-items: center;
+      gap: 14px;
+    }
+
+    .lab-prism-icon {
+      width: 36px;
+      height: 36px;
+      border-radius: 10px;
+      background: linear-gradient(135deg, rgba(56, 189, 248, 0.3), rgba(244, 114, 182, 0.3));
+      border: 1px solid rgba(255, 255, 255, 0.4);
+      display: grid;
+      place-items: center;
+      font-size: 18px;
+      box-shadow: 0 4px 12px rgba(0,0,0,0.3);
+    }
+
+    .identity-meta h1 {
+      font-size: 18px;
+      font-weight: 700;
+      letter-spacing: 0.5px;
+      color: #fff;
+    }
+
+    .identity-meta p {
+      font-size: 12px;
+      color: var(--accent-cyan);
+      letter-spacing: 1px;
+      text-transform: uppercase;
+    }
+
+    .status-pill {
+      font-size: 12px;
+      padding: 6px 14px;
+      border-radius: 999px;
+      background: rgba(56, 189, 248, 0.1);
+      border: 1px solid rgba(56, 189, 248, 0.3);
+      color: var(--accent-cyan);
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .status-dot {
+      width: 8px;
+      height: 8px;
+      border-radius: 50%;
+      background: var(--accent-emerald);
+      box-shadow: 0 0 8px var(--accent-emerald);
+    }
+
+    /* 主叙事 Hero */
+    .hero-narrative {
+      background: var(--glass-base);
+      backdrop-filter: blur(var(--glass-blur));
+      -webkit-backdrop-filter: blur(var(--glass-blur));
+      border: 1px solid var(--glass-border);
+      border-radius: 28px;
+      padding: 44px;
+      margin-bottom: 40px;
+      position: relative;
+      overflow: hidden;
+      box-shadow: 0 24px 50px rgba(0, 0, 0, 0.55);
+    }
+
+    .hero-narrative::before {
+      content: "";
+      position: absolute;
+      top: 0;
+      left: 0;
+      right: 0;
+      height: 1px;
+      background: linear-gradient(90deg, transparent, rgba(255,255,255,0.4), transparent);
+    }
+
+    .narrative-tag {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      font-size: 12px;
+      font-weight: 700;
+      letter-spacing: 1.5px;
+      color: var(--accent-violet);
+      background: rgba(129, 140, 248, 0.12);
+      border: 1px solid rgba(129, 140, 248, 0.25);
+      padding: 5px 12px;
+      border-radius: 6px;
+      margin-bottom: 18px;
+    }
+
+    .hero-title {
+      font-size: clamp(26px, 4.2vw, 42px);
+      font-weight: 800;
+      line-height: 1.25;
+      margin-bottom: 20px;
+      background: linear-gradient(135deg, #ffffff 40%, #cbd5e1 90%);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+    }
+
+    .hero-lead {
+      font-size: 16px;
+      color: #e2e8f0;
+      margin-bottom: 28px;
+      max-width: 900px;
+      line-height: 1.85;
+    }
+
+    .core-pillars {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+      gap: 16px;
+      margin-top: 28px;
+      border-top: 1px solid rgba(255, 255, 255, 0.08);
+      padding-top: 24px;
+    }
+
+    .pillar-card {
+      background: rgba(255, 255, 255, 0.03);
+      border: 1px solid rgba(255, 255, 255, 0.06);
+      border-radius: 14px;
+      padding: 16px 18px;
+    }
+
+    .pillar-card h2 {
+      font-size: 14px;
+      font-weight: 700;
+      color: #fff;
+      margin-bottom: 6px;
+      display: flex;
+      align-items: center;
+      gap: 6px;
+    }
+
+    .pillar-card p {
+      font-size: 13px;
+      color: var(--text-muted);
+      line-height: 1.6;
+    }
+
+    /* 次级栏目：三列深度观察 */
+    .section-heading {
       font-size: 20px;
       font-weight: 700;
+      margin-bottom: 20px;
+      color: #f1f5f9;
       display: flex;
       align-items: center;
       gap: 10px;
     }
 
-    /* Hero */
-    .glass-hero {
-      background: rgba(255, 255, 255, 0.03);
-      backdrop-filter: blur(30px);
-      border: 1px solid var(--glass-border);
-      border-radius: 28px;
-      padding: 50px;
-      margin-bottom: 40px;
-      box-shadow: 0 20px 50px rgba(0, 0, 0, 0.5);
+    .secondary-grid {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 22px;
+      margin-bottom: 44px;
     }
 
-    .glass-title {
-      font-size: clamp(32px, 5vw, 54px);
+    .column-article {
+      background: var(--glass-base);
+      backdrop-filter: blur(var(--glass-blur));
+      -webkit-backdrop-filter: blur(var(--glass-blur));
+      border: 1px solid var(--glass-border);
+      border-radius: 20px;
+      padding: 28px 24px;
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
+      transition: transform 0.3s ease, border-color 0.3s ease, background 0.3s ease;
+    }
+
+    .column-article:hover {
+      background: var(--glass-base-hover);
+      border-color: var(--glass-border-strong);
+      transform: translateY(-4px);
+    }
+
+    .column-badge {
+      font-size: 11px;
+      font-weight: 700;
+      color: var(--accent-rose);
+      background: rgba(244, 114, 182, 0.1);
+      border: 1px solid rgba(244, 114, 182, 0.25);
+      padding: 3px 8px;
+      border-radius: 4px;
+      display: inline-block;
+      margin-bottom: 14px;
+      align-self: flex-start;
+    }
+
+    .column-article:nth-child(2) .column-badge {
+      color: var(--accent-cyan);
+      background: rgba(56, 189, 248, 0.1);
+      border-color: rgba(56, 189, 248, 0.25);
+    }
+
+    .column-article:nth-child(3) .column-badge {
+      color: var(--accent-emerald);
+      background: rgba(52, 211, 153, 0.1);
+      border-color: rgba(52, 211, 153, 0.25);
+    }
+
+    .column-article h2 {
+      font-size: 18px;
+      font-weight: 700;
+      line-height: 1.4;
+      margin-bottom: 12px;
+      color: #fff;
+    }
+
+    .column-article p {
+      font-size: 14px;
+      color: var(--text-muted);
+      line-height: 1.7;
+      margin-bottom: 18px;
+    }
+
+    .metric-footer {
+      border-top: 1px solid rgba(255, 255, 255, 0.08);
+      padding-top: 12px;
+      font-size: 12px;
+      color: var(--accent-cyan);
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+
+    /* 资料模块：四个实验舱卡片 + 对比度与可读性指标 */
+    .lab-capsules-section {
+      background: var(--glass-base);
+      backdrop-filter: blur(var(--glass-blur));
+      -webkit-backdrop-filter: blur(var(--glass-blur));
+      border: 1px solid var(--glass-border);
+      border-radius: 24px;
+      padding: 36px;
+      margin-bottom: 40px;
+    }
+
+    .capsules-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: flex-end;
+      flex-wrap: wrap;
+      gap: 12px;
+      margin-bottom: 24px;
+      border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+      padding-bottom: 16px;
+    }
+
+    .capsules-grid {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 18px;
+      margin-bottom: 28px;
+    }
+
+    .capsule-card {
+      background: rgba(255, 255, 255, 0.03);
+      border: 1px solid rgba(255, 255, 255, 0.1);
+      border-radius: 16px;
+      padding: 20px 16px;
+      text-align: center;
+      position: relative;
+    }
+
+    .capsule-number {
+      font-size: 11px;
+      color: var(--accent-cyan);
+      font-weight: 700;
+      letter-spacing: 1px;
+      margin-bottom: 4px;
+    }
+
+    .capsule-name {
+      font-size: 16px;
+      font-weight: 700;
+      color: #fff;
+      margin-bottom: 8px;
+    }
+
+    .capsule-preview {
+      height: 70px;
+      margin: 12px 0;
+      border-radius: 10px;
+      display: grid;
+      place-items: center;
+      font-size: 12px;
+      font-weight: 600;
+      color: #fff;
+      border: 1px solid rgba(255,255,255,0.2);
+    }
+
+    .preview-refract {
+      background: linear-gradient(135deg, rgba(255,255,255,0.2), rgba(255,255,255,0.02));
+      box-shadow: inset 0 0 12px rgba(255,255,255,0.2);
+    }
+
+    .preview-depth {
+      background: rgba(129, 140, 248, 0.15);
+      box-shadow: 0 12px 24px rgba(0,0,0,0.4), inset 0 1px 1px rgba(255,255,255,0.4);
+    }
+
+    .preview-noise {
+      background: rgba(255,255,255,0.08);
+      background-image: radial-gradient(rgba(255,255,255,0.4) 1px, transparent 0);
+      background-size: 4px 4px;
+    }
+
+    .preview-motion {
+      background: linear-gradient(90deg, rgba(244, 114, 182, 0.15), rgba(56, 189, 248, 0.15));
+      border: 1px dashed rgba(255,255,255,0.3);
+    }
+
+    .capsule-stat {
+      font-size: 12px;
+      color: var(--text-muted);
+      line-height: 1.5;
+    }
+
+    /* 指标对比栏 */
+    .metrics-readability-bar {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+      gap: 16px;
+      background: rgba(0, 0, 0, 0.25);
+      border: 1px solid rgba(255, 255, 255, 0.08);
+      border-radius: 14px;
+      padding: 16px 20px;
+    }
+
+    .metric-item {
+      display: flex;
+      flex-direction: column;
+      gap: 4px;
+    }
+
+    .metric-label {
+      font-size: 11px;
+      color: var(--text-subtle);
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+    }
+
+    .metric-val {
+      font-size: 15px;
+      font-weight: 700;
+      color: #fff;
+    }
+
+    .metric-val.pass {
+      color: var(--accent-emerald);
+    }
+
+    /* 主题交互控制台 */
+    .control-deck {
+      background: var(--glass-base);
+      backdrop-filter: blur(var(--glass-blur));
+      -webkit-backdrop-filter: blur(var(--glass-blur));
+      border: 1px solid var(--glass-border);
+      border-radius: 24px;
+      padding: 32px;
+      margin-bottom: 40px;
+      box-shadow: 0 16px 40px rgba(0,0,0,0.4);
+    }
+
+    .deck-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 20px;
+      flex-wrap: wrap;
+      gap: 10px;
+    }
+
+    .interactive-button-group {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 12px;
+      margin-bottom: 24px;
+    }
+
+    .interactive-button-group button {
+      background: rgba(255, 255, 255, 0.06);
+      border: 1px solid rgba(255, 255, 255, 0.16);
+      color: #f1f5f9;
+      padding: 10px 18px;
+      border-radius: 12px;
+      font-size: 13px;
+      font-weight: 600;
+      cursor: pointer;
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      transition: all 0.2s ease;
+      font-family: inherit;
+    }
+
+    .interactive-button-group button:hover {
+      background: rgba(255, 255, 255, 0.14);
+      border-color: rgba(255, 255, 255, 0.35);
+      transform: translateY(-1px);
+    }
+
+    .interactive-button-group button.active {
+      background: rgba(56, 189, 248, 0.2);
+      border-color: var(--accent-cyan);
+      color: #fff;
+      box-shadow: 0 0 12px rgba(56, 189, 248, 0.25);
+    }
+
+    .sliders-panel {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+      gap: 20px;
+      background: rgba(255, 255, 255, 0.02);
+      border: 1px solid rgba(255, 255, 255, 0.06);
+      border-radius: 16px;
+      padding: 20px;
+    }
+
+    .slider-box {
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+    }
+
+    .slider-label {
+      display: flex;
+      justify-content: space-between;
+      font-size: 13px;
+      color: var(--text-muted);
+    }
+
+    .slider-box input[type="range"] {
+      width: 100%;
+      height: 6px;
+      accent-color: var(--accent-cyan);
+      background: rgba(255, 255, 255, 0.1);
+      border-radius: 4px;
+      cursor: pointer;
+    }
+
+    .feedback-banner {
+      margin-top: 18px;
+      padding: 12px 18px;
+      border-radius: 10px;
+      font-size: 13px;
+      background: rgba(52, 211, 153, 0.1);
+      border: 1px solid rgba(52, 211, 153, 0.3);
+      color: #a7f3d0;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    /* 收尾声明 */
+    .lab-conclusion {
+      background: linear-gradient(135deg, rgba(255, 255, 255, 0.06), rgba(255, 255, 255, 0.02));
+      backdrop-filter: blur(var(--glass-blur));
+      -webkit-backdrop-filter: blur(var(--glass-blur));
+      border: 1px solid var(--glass-border);
+      border-radius: 24px;
+      padding: 40px;
+      text-align: center;
+      position: relative;
+    }
+
+    .conclusion-quote {
+      font-size: clamp(20px, 3.2vw, 30px);
       font-weight: 800;
-      line-height: 1.15;
+      line-height: 1.45;
+      color: #fff;
       margin-bottom: 16px;
-      background: linear-gradient(135deg, #ffffff 50%, #94a3b8 100%);
+      background: linear-gradient(135deg, #ffffff 20%, #94a3b8 100%);
       -webkit-background-clip: text;
       -webkit-text-fill-color: transparent;
     }
 
-    .glass-desc {
-      font-size: 17px;
-      color: var(--glass-sub);
-      max-width: 760px;
-    }
-
-    /* 文章网格 */
-    .glass-grid {
-      display: grid;
-      grid-template-columns: 1fr 1fr;
-      gap: 28px;
-    }
-
-    .glass-card {
-      background: var(--glass-card);
-      backdrop-filter: blur(24px);
-      -webkit-backdrop-filter: blur(24px);
-      border: 1px solid var(--glass-border);
-      border-radius: 24px;
-      padding: 36px;
-      transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1);
-    }
-    .glass-card:hover {
-      background: var(--glass-card-hover);
-      border-color: rgba(255, 255, 255, 0.25);
-      transform: translateY(-4px);
-      box-shadow: 0 20px 40px rgba(0, 0, 0, 0.4);
-    }
-
-    .glass-tag {
-      font-size: 11px;
-      font-weight: 700;
-      color: #38bdf8;
-      background: rgba(56, 189, 248, 0.1);
-      padding: 4px 10px;
-      border-radius: 999px;
-      display: inline-block;
-      margin-bottom: 14px;
-    }
-
-    .card-title {
-      font-size: 24px;
-      font-weight: 700;
-      margin-bottom: 12px;
-      line-height: 1.35;
-    }
-
-    .card-body {
+    .conclusion-sub {
       font-size: 15px;
-      color: var(--glass-sub);
+      color: var(--text-muted);
+      max-width: 680px;
+      margin: 0 auto;
       line-height: 1.8;
     }
 
-    @media (max-width: 800px) {
-      .glass-grid {
+    /* 边界清晰模式样式 */
+    body.clear-borders {
+      --glass-border: rgba(255, 255, 255, 0.45);
+      --glass-border-strong: #ffffff;
+      --glass-base: rgba(10, 14, 28, 0.85);
+    }
+
+    /* 尊重减少动态效果 */
+    @media (prefers-reduced-motion: reduce) {
+      .aurora-blob {
+        animation: none !important;
+      }
+      .column-article, .interactive-button-group button {
+        transition: none !important;
+      }
+    }
+
+    @media (max-width: 900px) {
+      .secondary-grid {
         grid-template-columns: 1fr;
       }
-      .glass-hero {
-        padding: 24px;
+      .capsules-grid {
+        grid-template-columns: repeat(2, 1fr);
+      }
+      .hero-narrative {
+        padding: 28px 20px;
+      }
+      .lab-capsules-section, .control-deck, .lab-conclusion {
+        padding: 24px 18px;
+      }
+    }
+
+    @media (max-width: 540px) {
+      .capsules-grid {
+        grid-template-columns: 1fr;
+      }
+      .interactive-button-group button {
+        width: 100%;
+        justify-content: center;
       }
     }
   </style>
 </head>
 <body>
 
-  <!-- 极光光斑 -->
-  <div class="aurora-orb orb-1" id="orb1"></div>
-  <div class="aurora-orb orb-2" id="orb2"></div>
-  <div class="aurora-orb orb-3" id="orb3"></div>
+  <!-- 极光背景层 -->
+  <div class="aurora-canvas" aria-hidden="true">
+    <div class="aurora-blob blob-1" id="auroraBlob1"></div>
+    <div class="aurora-blob blob-2" id="auroraBlob2"></div>
+    <div class="aurora-blob blob-3" id="auroraBlob3"></div>
+  </div>
 
-  <div class="glass-container">
-    <!-- 顶栏 -->
-    <header class="glass-header">
-      <div class="glass-logo">
-        <span>✨</span>
-        <span>AURA LAB // 前沿界面探索实验室</span>
+  <!-- 随鼠标移动的环境光斑 -->
+  <div class="interactive-cursor-light" id="cursorLight" aria-hidden="true"></div>
+
+  <!-- 噪点层 -->
+  <div class="glass-grain" aria-hidden="true"></div>
+
+  <div class="container">
+    <!-- 刊物身份栏 -->
+    <header class="lab-masthead" role="banner">
+      <div class="identity-lockup">
+        <div class="lab-prism-icon" aria-hidden="true">◈</div>
+        <div class="identity-meta">
+          <h1>AURA LAB // 环境计算实验室</h1>
+          <p>Ambient Computing &amp; Refractive UI Initiative</p>
+        </div>
       </div>
-      <div style="font-size: 12px; color: var(--glass-sub);">
-        GLASSMORPHISM V3.0
+      <div class="status-pill" aria-label="实验室状态：环境光线感知与拟态引擎运行中">
+        <span class="status-dot" aria-hidden="true"></span>
+        <span>环境介质折射率：1.42 IOR (Normal)</span>
       </div>
     </header>
 
-    <!-- Hero -->
-    <section class="glass-hero">
-      <h1 class="glass-title">透视未来：多层拟态与折射之美</h1>
-      <p class="glass-desc">
-        在纯黑与绚烂极光的交汇处，探索光线在半透明介质中的微弱折射。这里记录关于未来人机界面、三维着色器渲染与智能体系统的先锋思考。
-      </p>
-    </section>
-
-    <!-- 文章网格 -->
-    <main class="glass-grid">
-      <article class="glass-card">
-        <span class="glass-tag">UI / RENDERING</span>
-        <h2 class="card-title">拟态毛玻璃（Glassmorphism）的物理光学原理与 GPU 加速优化</h2>
-        <p class="card-body">
-          解析双重高斯模糊（Dual-pass Gaussian Blur）与法线折射贴图在 WebGL 中的实现。如何在 120 FPS 下维持极致丝滑的实时流体光影折射？
+    <!-- 主叙事 Hero -->
+    <main>
+      <article class="hero-narrative">
+        <span class="narrative-tag">VOL.15 主叙事研究</span>
+        <h2 class="hero-title">当界面开始理解光、距离与意图</h2>
+        <p class="hero-lead">
+          长久以来，图形用户界面（GUI）被囚禁在固定尺寸的硬质发光矩形中。然而，环境计算（Ambient Computing）正在重新定义人机关系：界面不再是遮挡世界的厚重面板，而是如同多层半透明微透镜，从屏幕中央自然退守到空间边缘。它理解周围光源的色温、使用者与介质的物理距离，以及最微弱的交互意图。
         </p>
+
+        <div class="core-pillars">
+          <div class="pillar-card">
+            <h2><span>①</span> 空间层级 (Depth)</h2>
+            <p>半透明介质通过高斯景深差建立认知优先级，无需生硬的线条切分即可形成天然纵深。</p>
+          </div>
+          <div class="pillar-card">
+            <h2><span>②</span> 环境感知 (Sensor-aware)</h2>
+            <p>捕捉物理环境的照度、色温与遮挡关系，使半透明面板的菲涅尔反射与真实物理世界同步。</p>
+          </div>
+          <div class="pillar-card">
+            <h2><span>③</span> 隐私边界 (Privacy Shell)</h2>
+            <p>当视线移开或传感器侦测到旁人注视时，毛玻璃模糊核自适应扩大，将敏感数据退化为光晕。</p>
+          </div>
+          <div class="pillar-card">
+            <h2><span>④</span> 低刺激模式 (Calm UI)</h2>
+            <p>摒弃高饱和度实色冲击，以柔和漫反射减少眼部感光疲劳，营造不打扰的从容体验。</p>
+          </div>
+        </div>
       </article>
 
-      <article class="glass-card">
-        <span class="glass-tag">AGENTIC SYSTEMS</span>
-        <h2 class="card-title">空间计算与环境感知：下一代 AI 界面将会隐形</h2>
-        <p class="card-body">
-          当穿戴式设备与多模态大模型深度融合，传统以“页面”为单位的 UI 将逐步消解为漂浮在真实空间中的智能感知层。
-        </p>
-      </article>
+      <!-- 次级栏目 -->
+      <section aria-labelledby="secondary-heading">
+        <h2 id="secondary-heading" class="section-heading">
+          <span aria-hidden="true">🔬</span> 次级专题观察
+        </h2>
+        <div class="secondary-grid">
+          <!-- 栏目 1 -->
+          <article class="column-article">
+            <div>
+              <span class="column-badge">光学介质论</span>
+              <h2>玻璃并不等于透明</h2>
+              <p>
+                真正的透明意味着信息虚无，而拟态毛玻璃的价值在于“有质感的遮蔽”。光在微观粗糙表面的漫反射（Roughness Diffusion）构成了物理世界的安全距离，它既保留了背景的流动空间感，又为前景文字提供了稳定的对比度衬底。
+              </p>
+            </div>
+            <div class="metric-footer">
+              <span>漫反射粗糙度</span>
+              <strong>0.68 RMS</strong>
+            </div>
+          </article>
 
-      <!-- 文章 3 -->
-      <article class="glass-card">
-        <span class="glass-tag">OPTICAL PHYSICS</span>
-        <h2 class="card-title">实时流体折射着色器：基于 Snell 定律的多层介质物理模拟</h2>
-        <p class="card-body">
-          推导折射率（IOR）在曲面半透明介质中的菲涅尔反射衰减（Fresnel Decay）。通过法线扰动贴图在片段着色器中实现水银与琉璃交织的流动折射。
-        </p>
-      </article>
+          <!-- 栏目 2 -->
+          <article class="column-article">
+            <div>
+              <span class="column-badge">着色器与能耗</span>
+              <h2>模糊背后的 GPU 成本</h2>
+              <p>
+                每增加 1px 的多通道高斯模糊核，片段着色器的纹理采样次数呈阶乘上升。环境计算界面必须通过降采样（Downsampling）、双重 Kawase 模糊以及动态跳帧渲染，在 120 FPS 丝滑光影与移动端设备电池续航之间取得审慎平衡。
+              </p>
+            </div>
+            <div class="metric-footer">
+              <span>两步降采样开销</span>
+              <strong>0.84 ms / 帧</strong>
+            </div>
+          </article>
 
-      <!-- 文章 4 -->
-      <article class="glass-card">
-        <span class="glass-tag">TRANSPARENT COMPUTING</span>
-        <h2 class="card-title">无感交互与环境智能：从实体触摸到意图预测</h2>
-        <p class="card-body">
-          界面不再需要显式的点击与滑动。通过眼动追踪与脑电注意力预测，计算设备如同空气般融入环境，只在需要时于视野边缘凝聚为半透明微光。
+          <!-- 栏目 3 -->
+          <article class="column-article">
+            <div>
+              <span class="column-badge">伦理与感知</span>
+              <h2>无感交互仍需明确同意</h2>
+              <p>
+                当界面通过眼动轨迹与距离传感器预先“猜”出意图并提前凝聚玻璃面板时，极易诱发用户的失控感。环境智能必须保留清晰的反馈触感与明确的退出通道，隐形交互不能成为侵占用户知情权与选择权的借口。
+              </p>
+            </div>
+            <div class="metric-footer">
+              <span>意图确认阈值</span>
+              <strong>320 ms 视线停留</strong>
+            </div>
+          </article>
+        </div>
+      </section>
+
+      <!-- 资料模块：四个实验舱卡片 + 指标 -->
+      <section class="lab-capsules-section" aria-labelledby="capsules-title">
+        <div class="capsules-header">
+          <div>
+            <h2 id="capsules-title" style="font-size: 18px; font-weight: 700; color: #fff; margin-bottom: 4px;">
+              光学实验舱资料参数 (CAPSULES MATRIX)
+            </h2>
+            <p style="font-size: 13px; color: var(--text-muted);">
+              基于 WebGL 片段着色器物理模拟参数矩阵与无障碍标准测试
+            </p>
+          </div>
+          <span style="font-size: 12px; color: var(--accent-violet); font-weight: 600;">LAB SPEC v3.4.2</span>
+        </div>
+
+        <div class="capsules-grid">
+          <!-- 舱 1：折射 -->
+          <div class="capsule-card">
+            <div class="capsule-number">MODULE 01</div>
+            <h3 class="capsule-name">折射 (Refraction)</h3>
+            <div class="capsule-preview preview-refract" aria-hidden="true">IOR: 1.45</div>
+            <p class="capsule-stat">基于 Snell 定律的背景微扰动计算，模拟微弧度光学曲面。</p>
+          </div>
+
+          <!-- 舱 2：深度 -->
+          <div class="capsule-card">
+            <div class="capsule-number">MODULE 02</div>
+            <h3 class="capsule-name">深度 (Depth &amp; Z)</h3>
+            <div class="capsule-preview preview-depth" aria-hidden="true">Z-Layer: +3</div>
+            <p class="capsule-stat">三维视差与背阴投影多重叠加，构建清晰的空间信息层级。</p>
+          </div>
+
+          <!-- 舱 3：噪声 -->
+          <div class="capsule-card">
+            <div class="capsule-number">MODULE 03</div>
+            <h3 class="capsule-name">噪声 (Noise Grain)</h3>
+            <div class="capsule-preview preview-noise" aria-hidden="true">Grain: 3.5%</div>
+            <p class="capsule-stat">亚像素级随机微粒，消除 8-bit 色彩断层（Color Banding）。</p>
+          </div>
+
+          <!-- 舱 4：动效强度 -->
+          <div class="capsule-card">
+            <div class="capsule-number">MODULE 04</div>
+            <h3 class="capsule-name">动效强度 (Kinetic)</h3>
+            <div class="capsule-preview preview-motion" aria-hidden="true">Flux: Adaptive</div>
+            <p class="capsule-stat">极光流动速率与鼠标物理惯性联动，支持一键降噪与冻结。</p>
+          </div>
+        </div>
+
+        <!-- 对比度与可读性指标 -->
+        <div class="metrics-readability-bar" aria-label="可读性与无障碍对比度检测指标">
+          <div class="metric-item">
+            <span class="metric-label">WCAG 2.1 文本对比度</span>
+            <span class="metric-val pass" id="metricContrast">7.82 : 1 (AAA)</span>
+          </div>
+          <div class="metric-item">
+            <span class="metric-label">背景抗眩光指数</span>
+            <span class="metric-val">88.4 / 100</span>
+          </div>
+          <div class="metric-item">
+            <span class="metric-label">空间层级分离度</span>
+            <span class="metric-val">0.92 (High Clarity)</span>
+          </div>
+          <div class="metric-item">
+            <span class="metric-label">动态光子热能预估</span>
+            <span class="metric-val" id="metricThermal">0.32 W (Optimal)</span>
+          </div>
+        </div>
+      </section>
+
+      <!-- 主题专属交互台 -->
+      <section class="control-deck" aria-labelledby="controls-title">
+        <div class="deck-header">
+          <h2 id="controls-title" style="font-size: 18px; font-weight: 700; color: #fff;">
+            🎛️ 环境光学实验室调节台
+          </h2>
+          <span style="font-size: 12px; color: var(--accent-cyan);">交互微调与无障碍模式</span>
+        </div>
+
+        <div class="interactive-button-group" role="toolbar" aria-label="环境光学模式调节">
+          <button type="button" id="btnDimAurora" aria-pressed="false" onclick="toggleAuroraIntensity()">
+            <span>🔅</span> <span id="textDimAurora">调低极光强度</span>
+          </button>
+          <button type="button" id="btnFreezeLight" aria-pressed="false" onclick="toggleFreezeAmbient()">
+            <span>❄️</span> <span id="textFreezeLight">冻结环境光</span>
+          </button>
+          <button type="button" id="btnClearBorder" aria-pressed="false" onclick="toggleClearBorder()">
+            <span>🔲</span> <span id="textClearBorder">切换清晰边界</span>
+          </button>
+          <button type="button" id="btnMotionPref" aria-pressed="false" onclick="toggleMotionPreference()">
+            <span>⚡</span> <span id="textMotionPref">切换动态偏好</span>
+          </button>
+        </div>
+
+        <div class="sliders-panel">
+          <div class="slider-box">
+            <div class="slider-label">
+              <label for="sliderBlur">毛玻璃模糊半径 (Blur Radius)</label>
+              <strong id="valBlur" style="color: #fff;">24 px</strong>
+            </div>
+            <input type="range" id="sliderBlur" min="4" max="48" value="24" oninput="handleBlurChange(this.value)" aria-label="毛玻璃模糊半径">
+          </div>
+
+          <div class="slider-box">
+            <div class="slider-label">
+              <label for="sliderAlpha">介质基底透明度 (Alpha Opacity)</label>
+              <strong id="valAlpha" style="color: #fff;">0.05</strong>
+            </div>
+            <input type="range" id="sliderAlpha" min="1" max="25" value="5" oninput="handleAlphaChange(this.value)" aria-label="介质基底透明度">
+          </div>
+        </div>
+
+        <div class="feedback-banner" id="interactionBanner" role="status" aria-live="polite">
+          <span aria-hidden="true">✔</span>
+          <span id="bannerText">环境计算实验室引擎已就绪，所有光学参数与无障碍模式运行正常。</span>
+        </div>
+      </section>
+
+      <!-- 收尾 -->
+      <footer class="lab-conclusion">
+        <blockquote class="conclusion-quote">
+          “未来感首先应当让人舒服，而不是让显卡发热。”
+        </blockquote>
+        <p class="conclusion-sub">
+          界面的终局不是更多发光的像素，而是更懂得何时隐形、何时退让的光学介质。AURA LAB 致力于将冷冰冰的硬件参数转化为体贴、静谧而通透的空间体验。
         </p>
-      </article>
+      </footer>
     </main>
-
-    <!-- 交互组件：毛玻璃光学实验室调节台 -->
-    <div style="background: rgba(255, 255, 255, 0.04); backdrop-filter: blur(20px); border: 1px solid var(--glass-border); border-radius: 20px; padding: 28px; margin-top: 36px; box-shadow: 0 20px 40px rgba(0,0,0,0.4);">
-      <div style="display: flex; justify-content: space-between; align-items: baseline; border-bottom: 1px solid var(--glass-border); padding-bottom: 12px; margin-bottom: 20px;">
-        <div style="font-size: 18px; font-weight: 700; color: #fff;">🎛️ 毛玻璃物理光学渲染控制台 (OPTICAL LAB)</div>
-        <span style="font-size: 11px; color: #38bdf8; font-weight: 600;">REALTIME SHADER PARAMS</span>
-      </div>
-      <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(240px, 1fr)); gap: 20px;">
-        <div>
-          <label style="font-size: 12px; color: var(--glass-sub); display: block; margin-bottom: 6px;">模糊半径 (Blur Radius): <span id="blurVal" style="color:#fff;">24px</span></label>
-          <input type="range" min="4" max="50" value="24" style="width: 100%; accent-color: #6366f1;" oninput="updateGlassOptics()">
-        </div>
-        <div>
-          <label style="font-size: 12px; color: var(--glass-sub); display: block; margin-bottom: 6px;">背景透明度 (Alpha Opacity): <span id="alphaVal" style="color:#fff;">0.05</span></label>
-          <input type="range" min="1" max="25" value="5" style="width: 100%; accent-color: #ec4899;" oninput="updateGlassOptics()">
-        </div>
-      </div>
-    </div>
   </div>
 
-  <style>
-    .glass-card {
-      position: relative;
-      overflow: hidden;
-      transition: transform 0.3s cubic-bezier(0.16, 1, 0.3, 1), border-color 0.3s ease, box-shadow 0.3s ease;
-    }
-    .glass-card::before {
-      content: "";
-      position: absolute;
-      top: 0; left: -100%; width: 100%; height: 100%;
-      background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.1), transparent);
-      transition: left 0.6s ease;
-      pointer-events: none;
-    }
-    .glass-card:hover {
-      transform: translateY(-6px);
-      border-color: rgba(255, 255, 255, 0.3);
-      box-shadow: 0 20px 40px rgba(0, 0, 0, 0.5), inset 0 0 20px rgba(255, 255, 255, 0.05);
-    }
-    .glass-card:hover::before {
-      left: 100%;
-    }
-  </style>
-
-  <!-- 极光跟随光斑 -->
-  <div id="fluidAurora" style="position: fixed; width: 400px; height: 400px; border-radius: 50%; background: radial-gradient(circle, rgba(99, 102, 241, 0.35) 0%, rgba(236, 72, 153, 0.25) 40%, rgba(6, 182, 212, 0) 70%); filter: blur(60px); pointer-events: none; z-index: 2; transform: translate(-50%, -50%);"></div>
-
-  <script src="assets/nav-bar.js"></script>
+  <script src="/creative-blogs/assets/nav-bar.js"></script>
   <script>
-    (function() {
-      const aurora = document.getElementById('fluidAurora');
+    // 鼠标环境光平滑跟随
+    (function initCursorAurora() {
+      const cursorLight = document.getElementById('cursorLight');
       let targetX = window.innerWidth / 2;
       let targetY = window.innerHeight / 2;
       let currentX = targetX;
       let currentY = targetY;
 
-      window.addEventListener('mousemove', (e) => {
+      window.addEventListener('pointermove', (e) => {
         targetX = e.clientX;
         targetY = e.clientY;
       });
 
-      function loop() {
+      function renderCursor() {
         currentX += (targetX - currentX) * 0.08;
         currentY += (targetY - currentY) * 0.08;
-        aurora.style.left = `${currentX}px`;
-        aurora.style.top = `${currentY}px`;
-        requestAnimationFrame(loop);
+        if (cursorLight) {
+          cursorLight.style.left = `${currentX}px`;
+          cursorLight.style.top = `${currentY}px`;
+        }
+        requestAnimationFrame(renderCursor);
       }
-      loop();
+      renderCursor();
     })();
 
-    function updateGlassOptics() {
-      const blurInput = document.querySelector('input[type="range"][max="50"]');
-      const alphaInput = document.querySelector('input[type="range"][max="25"]');
-      if (!blurInput || !alphaInput) return;
-      const blurVal = blurInput.value;
-      const alphaVal = (alphaInput.value / 100).toFixed(2);
-      document.getElementById('blurVal').textContent = `${blurVal}px`;
-      document.getElementById('alphaVal').textContent = `${alphaVal}`;
-      document.documentElement.style.setProperty('--glass-card', `rgba(255, 255, 255, ${alphaVal})`);
-      document.querySelectorAll('.glass-card, .glass-hero, .glass-header').forEach(el => {
-        el.style.backdropFilter = `blur(${blurVal}px)`;
-        el.style.webkitBackdropFilter = `blur(${blurVal}px)`;
-      });
+    // 状态管理
+    let isAuroraDimmed = false;
+    let isAmbientFrozen = false;
+    let isClearBorder = false;
+    let isReducedMotionCustom = false;
+
+    // 检测系统 prefers-reduced-motion
+    if (window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches) {
+      isReducedMotionCustom = true;
+      document.getElementById('bannerText').textContent = '已自动检测并尊重系统的“减少动态效果”偏好。';
+      const motionBtn = document.getElementById('btnMotionPref');
+      if (motionBtn) motionBtn.classList.add('active');
+      document.documentElement.style.setProperty('--ambient-anim', 'paused');
+    }
+
+    function toggleAuroraIntensity() {
+      isAuroraDimmed = !isAuroraDimmed;
+      const btn = document.getElementById('btnDimAurora');
+      const txt = document.getElementById('textDimAurora');
+      const banner = document.getElementById('bannerText');
+      const thermal = document.getElementById('metricThermal');
+
+      if (isAuroraDimmed) {
+        document.documentElement.style.setProperty('--aurora-opacity', '0.22');
+        btn.classList.add('active');
+        btn.setAttribute('aria-pressed', 'true');
+        txt.textContent = '恢复极光强度';
+        banner.textContent = '已调低极光强度，背景光照度降低 65%，进入静谧低刺激模式。';
+        if (thermal) thermal.textContent = '0.12 W (Eco)';
+      } else {
+        document.documentElement.style.setProperty('--aurora-opacity', '0.65');
+        btn.classList.remove('active');
+        btn.setAttribute('aria-pressed', 'false');
+        txt.textContent = '调低极光强度';
+        banner.textContent = '已恢复全光谱极光漫反射渲染。';
+        if (thermal) thermal.textContent = '0.32 W (Optimal)';
+      }
+    }
+
+    function toggleFreezeAmbient() {
+      isAmbientFrozen = !isAmbientFrozen;
+      const btn = document.getElementById('btnFreezeLight');
+      const txt = document.getElementById('textFreezeLight');
+      const banner = document.getElementById('bannerText');
+
+      if (isAmbientFrozen) {
+        document.documentElement.style.setProperty('--ambient-anim', 'paused');
+        btn.classList.add('active');
+        btn.setAttribute('aria-pressed', 'true');
+        txt.textContent = '解冻环境光';
+        banner.textContent = '已冻结环境光流动，光子流保持静止状态以降低显卡能耗。';
+      } else {
+        document.documentElement.style.setProperty('--ambient-anim', 'running');
+        btn.classList.remove('active');
+        btn.setAttribute('aria-pressed', 'false');
+        txt.textContent = '冻结环境光';
+        banner.textContent = '环境光流动已恢复动态物理模拟。';
+      }
+    }
+
+    function toggleClearBorder() {
+      isClearBorder = !isClearBorder;
+      const btn = document.getElementById('btnClearBorder');
+      const txt = document.getElementById('textClearBorder');
+      const banner = document.getElementById('bannerText');
+      const contrast = document.getElementById('metricContrast');
+
+      if (isClearBorder) {
+        document.body.classList.add('clear-borders');
+        btn.classList.add('active');
+        btn.setAttribute('aria-pressed', 'true');
+        txt.textContent = '恢复柔和边界';
+        banner.textContent = '已切换清晰边界模式：高对比度描边增强，满足严苛无障碍阅读需求。';
+        if (contrast) contrast.textContent = '12.4 : 1 (Enhanced)';
+      } else {
+        document.body.classList.remove('clear-borders');
+        btn.classList.remove('active');
+        btn.setAttribute('aria-pressed', 'false');
+        txt.textContent = '切换清晰边界';
+        banner.textContent = '已恢复柔和漫反射多层微光边界。';
+        if (contrast) contrast.textContent = '7.82 : 1 (AAA)';
+      }
+    }
+
+    function toggleMotionPreference() {
+      isReducedMotionCustom = !isReducedMotionCustom;
+      const btn = document.getElementById('btnMotionPref');
+      const banner = document.getElementById('bannerText');
+
+      if (isReducedMotionCustom) {
+        document.documentElement.style.setProperty('--ambient-anim', 'paused');
+        btn.classList.add('active');
+        btn.setAttribute('aria-pressed', 'true');
+        banner.textContent = '已尊重减少动态效果偏好：关闭所有背景浮动，界面处于稳态。';
+      } else {
+        document.documentElement.style.setProperty('--ambient-anim', 'running');
+        btn.classList.remove('active');
+        btn.setAttribute('aria-pressed', 'false');
+        banner.textContent = '已恢复完整动效模式。';
+      }
+    }
+
+    function handleBlurChange(val) {
+      document.getElementById('valBlur').textContent = `${val} px`;
+      document.documentElement.style.setProperty('--glass-blur', `${val}px`);
+    }
+
+    function handleAlphaChange(val) {
+      const alpha = (val / 100).toFixed(2);
+      document.getElementById('valAlpha').textContent = `${alpha}`;
+      document.documentElement.style.setProperty('--glass-base', `rgba(255, 255, 255, ${alpha})`);
     }
   </script>
 </body>

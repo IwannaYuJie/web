@@ -3,222 +3,400 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>复古个人桌面 (Windows 98) — 04 复古视窗操作系统风</title>
-  <link rel="stylesheet" href="assets/common.css">
+  <title>ORANGECAT OS 98 / 个人知识桌面 — 04 90年代经典操作系统</title>
+  <link rel="stylesheet" href="/creative-blogs/assets/common.css">
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Press+Start+2P&family=DotGothic16&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=DotGothic16&family=VT323&family=Noto+Sans+SC:wght@400;500;700;900&display=swap" rel="stylesheet">
   <style>
     :root {
-      --win-bg: #008080;
+      --win-teal: #008080;
       --win-gray: #c0c0c0;
+      --win-light: #ffffff;
       --win-dark: #808080;
-      --win-black: #000000;
-      --win-white: #ffffff;
-      --win-blue: #000080;
-      --win-blue-grad: linear-gradient(90deg, #000080, #1084d0);
+      --win-darkest: #000000;
+      --win-navy: #000080;
+      --win-navy-grad: linear-gradient(90deg, #000080, #1084d0);
+      --win-inactive-grad: linear-gradient(90deg, #808080, #b5b5b5);
+      --win-yellow: #ffffcc;
+      --win-amber: #fff3a8;
+      --font-system: "DotGothic16", "Noto Sans SC", "SimSun", monospace;
+      --font-code: "VT323", "Courier New", monospace;
     }
 
     * {
       box-sizing: border-box;
       margin: 0;
       padding: 0;
-      user-select: none;
     }
 
     body {
-      background-color: var(--win-bg);
-      font-family: "DotGothic16", "Microsoft YaHei", -apple-system, sans-serif;
+      background-color: var(--win-teal);
+      background-image: 
+        radial-gradient(rgba(255, 255, 255, 0.12) 1px, transparent 1px),
+        radial-gradient(rgba(0, 0, 0, 0.15) 1px, transparent 1px);
+      background-size: 20px 20px;
+      background-position: 0 0, 10px 10px;
+      font-family: var(--font-system);
+      color: var(--win-darkest);
       height: 100vh;
+      width: 100vw;
       overflow: hidden;
+      position: relative;
+      user-select: none;
+      -webkit-font-smoothing: antialiased;
+    }
+
+    /* 3D 边框通用工具类 */
+    .bevel-raised {
+      border-top: 2px solid var(--win-light);
+      border-left: 2px solid var(--win-light);
+      border-right: 2px solid var(--win-darkest);
+      border-bottom: 2px solid var(--win-darkest);
+      box-shadow: inset 1px 1px 0 #dfdfdf, inset -1px -1px 0 var(--win-dark);
+    }
+    .bevel-sunken {
+      border-top: 2px solid var(--win-dark);
+      border-left: 2px solid var(--win-dark);
+      border-right: 2px solid var(--win-light);
+      border-bottom: 2px solid var(--win-light);
+      box-shadow: inset 1px 1px 0 var(--win-darkest), inset -1px -1px 0 #dfdfdf;
+    }
+
+    /* 桌面主工作区 */
+    #desktop-workspace {
+      position: absolute;
+      top: 0;
+      left: 0;
+      right: 0;
+      bottom: 40px;
+      padding: 16px;
+      overflow: hidden;
+    }
+
+    /* 桌面图标网格 */
+    .desktop-grid {
+      display: grid;
+      grid-auto-flow: column;
+      grid-template-rows: repeat(auto-fill, 94px);
+      gap: 12px 16px;
+      width: max-content;
+      height: 100%;
+      z-index: 10;
       position: relative;
     }
 
-    /* 桌面图标区域 */
-    .desktop-icons {
-      position: absolute;
-      top: 20px;
-      left: 20px;
-      display: flex;
-      flex-direction: column;
-      gap: 24px;
-      z-index: 10;
-    }
-
-    .desktop-icon {
-      width: 76px;
+    .desktop-icon-btn {
+      width: 84px;
+      background: transparent;
+      border: 1px dotted transparent;
+      padding: 6px 4px;
       display: flex;
       flex-direction: column;
       align-items: center;
       text-align: center;
       cursor: pointer;
-      padding: 4px;
-      border: 1px dotted transparent;
+      color: #ffffff;
+      outline: none;
+      transition: none;
     }
-    .desktop-icon:hover {
-      background: rgba(0, 0, 128, 0.3);
-      border-color: rgba(255, 255, 255, 0.4);
+    .desktop-icon-btn:hover {
+      background: rgba(0, 0, 128, 0.35);
+      border-color: rgba(255, 255, 255, 0.5);
     }
-    .desktop-icon:active, .desktop-icon.selected {
-      background: #000080;
+    .desktop-icon-btn:focus,
+    .desktop-icon-btn.selected {
+      background: var(--win-navy);
+      border-color: #ffffff;
     }
-    .desktop-icon:active span, .desktop-icon.selected span {
-      background: #000080;
+    .desktop-icon-btn:focus .icon-title,
+    .desktop-icon-btn.selected .icon-title {
+      background: var(--win-navy);
       color: #fff;
     }
 
-    .icon-img {
+    .icon-symbol {
       font-size: 32px;
-      margin-bottom: 4px;
-      filter: drop-shadow(2px 2px 0 #000);
+      line-height: 1;
+      margin-bottom: 6px;
+      filter: drop-shadow(2px 2px 0px rgba(0,0,0,0.85));
     }
-
-    .icon-label {
-      color: #fff;
+    .icon-title {
       font-size: 12px;
-      text-shadow: 1px 1px 1px #000;
+      line-height: 1.25;
+      text-shadow: 1px 1px 2px #000, 0 0 1px #000;
       padding: 1px 3px;
-      border-radius: 2px;
+      border-radius: 1px;
       word-break: break-all;
+      letter-spacing: 0.5px;
     }
 
-    /* 经典视窗外框 3D 浮雕 */
-    .win-window {
+    /* 桌面常驻信息条 (右上角水印式样板) */
+    .desktop-brand-banner {
+      position: absolute;
+      top: 18px;
+      right: 24px;
+      text-align: right;
+      color: rgba(255, 255, 255, 0.85);
+      pointer-events: none;
+      z-index: 1;
+    }
+    .brand-title {
+      font-family: var(--font-code);
+      font-size: 28px;
+      letter-spacing: 2px;
+      text-shadow: 2px 2px 0 rgba(0, 0, 0, 0.6);
+    }
+    .brand-sub {
+      font-size: 12px;
+      opacity: 0.85;
+      letter-spacing: 1px;
+      text-shadow: 1px 1px 0 rgba(0, 0, 0, 0.8);
+    }
+
+    /* 窗口系统 Window Container */
+    .win-modal {
       position: absolute;
       background: var(--win-gray);
-      border-top: 2px solid var(--win-white);
-      border-left: 2px solid var(--win-white);
-      border-right: 2px solid var(--win-black);
-      border-bottom: 2px solid var(--win-black);
-      box-shadow: 2px 2px 0 var(--win-dark);
+      border-top: 2px solid var(--win-light);
+      border-left: 2px solid var(--win-light);
+      border-right: 2px solid var(--win-darkest);
+      border-bottom: 2px solid var(--win-darkest);
+      box-shadow: 3px 3px 0 rgba(0,0,0,0.45);
       padding: 3px;
-      z-index: 50;
       display: flex;
       flex-direction: column;
+      min-width: 320px;
+      min-height: 240px;
+      max-width: 95vw;
+      max-height: 85vh;
+      z-index: 30;
+      resize: both;
+      overflow: hidden;
     }
-
-    .win-window.active {
+    .win-modal.active {
       z-index: 100;
+      box-shadow: 4px 4px 10px rgba(0,0,0,0.5);
     }
 
     /* 标题栏 */
-    .win-titlebar {
-      background: var(--win-blue-grad);
-      color: #fff;
-      padding: 3px 6px;
+    .win-header {
+      background: var(--win-navy-grad);
+      color: #ffffff;
+      padding: 3px 5px;
       display: flex;
-      justify-content: space-between;
       align-items: center;
+      justify-content: space-between;
       font-weight: bold;
       font-size: 13px;
+      letter-spacing: 0.5px;
       cursor: move;
     }
-
-    .win-titlebar.inactive {
-      background: var(--win-dark);
+    .win-modal:not(.active) .win-header {
+      background: var(--win-inactive-grad);
+      color: #dcdcdc;
+    }
+    .win-header-left {
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      overflow: hidden;
+      white-space: nowrap;
+      text-overflow: ellipsis;
+    }
+    .win-controls {
+      display: flex;
+      gap: 3px;
+    }
+    .win-ctrl-btn {
+      width: 18px;
+      height: 16px;
+      background: var(--win-gray);
+      border-top: 1px solid var(--win-light);
+      border-left: 1px solid var(--win-light);
+      border-right: 1px solid var(--win-darkest);
+      border-bottom: 1px solid var(--win-darkest);
+      font-size: 10px;
+      line-height: 1;
+      font-family: monospace;
+      font-weight: 900;
+      color: #000;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 0;
+    }
+    .win-ctrl-btn:active {
+      border-top: 1px solid var(--win-darkest);
+      border-left: 1px solid var(--win-darkest);
+      border-right: 1px solid var(--win-light);
+      border-bottom: 1px solid var(--win-light);
+      padding-top: 1px;
+      padding-left: 1px;
     }
 
-    .win-title {
+    /* 菜单栏 */
+    .win-menu {
+      display: flex;
+      gap: 12px;
+      padding: 3px 6px;
+      font-size: 12px;
+      border-bottom: 1px solid var(--win-dark);
+      background: var(--win-gray);
+    }
+    .menu-item {
+      cursor: pointer;
+      padding: 1px 4px;
+    }
+    .menu-item:hover {
+      background: var(--win-navy);
+      color: #fff;
+    }
+
+    /* 视窗内部工作区域 */
+    .win-body {
+      background: #ffffff;
+      border-top: 2px solid var(--win-dark);
+      border-left: 2px solid var(--win-dark);
+      border-right: 2px solid var(--win-light);
+      border-bottom: 2px solid var(--win-light);
+      box-shadow: inset 1px 1px 0 var(--win-darkest);
+      flex: 1;
+      padding: 14px 18px;
+      overflow-y: auto;
+      font-size: 14px;
+      line-height: 1.7;
+      color: #111;
+      user-select: text;
+    }
+
+    /* 状态栏 */
+    .win-statusbar {
+      display: flex;
+      gap: 8px;
+      margin-top: 3px;
+      font-size: 11px;
+      color: #222;
+    }
+    .sb-panel {
+      padding: 2px 6px;
+      background: var(--win-gray);
+      border-top: 1px solid var(--win-dark);
+      border-left: 1px solid var(--win-dark);
+      border-right: 1px solid var(--win-light);
+      border-bottom: 1px solid var(--win-light);
+      overflow: hidden;
+      white-space: nowrap;
+      text-overflow: ellipsis;
+    }
+    .sb-grow {
+      flex: 1;
+    }
+
+    /* 内容排版微组件 */
+    .doc-banner {
+      background: #f1f1f1;
+      border-left: 4px solid var(--win-navy);
+      padding: 8px 12px;
+      margin-bottom: 14px;
+      font-size: 12px;
+      color: #333;
+    }
+    .doc-h1 {
+      font-size: 18px;
+      font-weight: 700;
+      border-bottom: 2px dashed #aaa;
+      padding-bottom: 6px;
+      margin-bottom: 12px;
+      color: var(--win-navy);
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+    .doc-h2 {
+      font-size: 15px;
+      font-weight: 700;
+      margin: 14px 0 8px;
+      color: #222;
+      background: #eee;
+      padding: 2px 6px;
+      display: inline-block;
+    }
+    .project-card {
+      background: #fafafa;
+      border: 1px solid #c0c0c0;
+      padding: 10px 12px;
+      margin-bottom: 12px;
+    }
+    .project-card:hover {
+      border-color: var(--win-navy);
+      background: #f5f8ff;
+    }
+    .tag-chip {
+      display: inline-block;
+      background: var(--win-gray);
+      border: 1px solid #888;
+      font-size: 11px;
+      padding: 1px 6px;
+      margin-right: 4px;
+      margin-bottom: 4px;
+    }
+    .mail-item {
+      border-bottom: 1px solid #ddd;
+      padding: 8px 0;
+    }
+    .mail-meta {
+      font-size: 12px;
+      color: #666;
+      display: flex;
+      justify-content: space-between;
+      margin-bottom: 4px;
+    }
+    .trash-item {
+      background: #fff8f8;
+      border: 1px dashed #c08080;
+      padding: 8px 12px;
+      margin-bottom: 10px;
+    }
+    .trash-action {
+      margin-top: 6px;
+      font-size: 11px;
+      color: #990000;
       display: flex;
       align-items: center;
       gap: 6px;
     }
 
-    .win-controls {
-      display: flex;
-      gap: 3px;
-    }
-
-    .win-btn {
-      width: 18px;
-      height: 16px;
+    /* 经典按钮 */
+    .btn-win {
       background: var(--win-gray);
-      border-top: 1px solid var(--win-white);
-      border-left: 1px solid var(--win-white);
-      border-right: 1px solid var(--win-black);
-      border-bottom: 1px solid var(--win-black);
-      font-size: 10px;
-      font-weight: bold;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      cursor: pointer;
-      color: #000;
-    }
-    .win-btn:active {
-      border-top: 1px solid var(--win-black);
-      border-left: 1px solid var(--win-black);
-      border-right: 1px solid var(--win-white);
-      border-bottom: 1px solid var(--win-white);
-    }
-
-    /* 视窗菜单栏 */
-    .win-menubar {
-      display: flex;
-      gap: 12px;
-      padding: 4px 6px;
+      border-top: 2px solid var(--win-light);
+      border-left: 2px solid var(--win-light);
+      border-right: 2px solid var(--win-darkest);
+      border-bottom: 2px solid var(--win-darkest);
+      padding: 4px 12px;
       font-size: 12px;
-      border-bottom: 1px solid var(--win-dark);
-      margin-bottom: 4px;
-    }
-    .win-menubar span {
       cursor: pointer;
+      font-family: inherit;
     }
-    .win-menubar span:hover {
-      background: #000080;
-      color: #fff;
-    }
-
-    /* 视窗内容主体 */
-    .win-content {
-      background: #fff;
-      border-top: 2px solid var(--win-dark);
-      border-left: 2px solid var(--win-dark);
-      border-right: 2px solid var(--win-white);
-      border-bottom: 2px solid var(--win-white);
-      padding: 16px;
-      overflow-y: auto;
-      flex: 1;
-      font-size: 14px;
-      line-height: 1.7;
-      color: #000;
-      user-select: text;
+    .btn-win:active {
+      border-top: 2px solid var(--win-darkest);
+      border-left: 2px solid var(--win-darkest);
+      border-right: 2px solid var(--win-light);
+      border-bottom: 2px solid var(--win-light);
+      padding: 5px 11px 3px 13px;
     }
 
-    .win-content h2 {
-      font-size: 18px;
-      margin-bottom: 10px;
-      border-bottom: 2px solid #000;
-      padding-bottom: 4px;
-    }
-
-    .post-badge {
-      display: inline-block;
-      background: #ffffcc;
-      border: 1px solid #999;
-      padding: 2px 6px;
-      font-size: 11px;
-      margin-bottom: 12px;
-    }
-
-    /* 便签贴纸窗口 */
-    .sticky-note {
-      background: #ffffa5;
-      font-family: cursive, "DotGothic16", sans-serif;
-      padding: 12px;
-      border: 1px solid #e0d050;
-      box-shadow: 3px 3px 6px rgba(0, 0, 0, 0.2);
-    }
-
-    /* 底部任务栏 */
-    .win-taskbar {
+    /* 底部任务栏 Taskbar */
+    #taskbar {
       position: absolute;
       bottom: 0;
       left: 0;
-      width: 100%;
-      height: 36px;
+      right: 0;
+      height: 38px;
       background: var(--win-gray);
-      border-top: 2px solid var(--win-white);
+      border-top: 2px solid var(--win-light);
       display: flex;
       align-items: center;
       justify-content: space-between;
@@ -226,359 +404,980 @@
       z-index: 1000;
     }
 
-    .taskbar-left {
+    .taskbar-start-area {
       display: flex;
       align-items: center;
       gap: 6px;
+      height: 100%;
+      flex: 1;
+      overflow-x: auto;
     }
 
     .start-btn {
-      height: 28px;
+      height: 30px;
       padding: 0 10px;
       background: var(--win-gray);
-      border-top: 2px solid var(--win-white);
-      border-left: 2px solid var(--win-white);
-      border-right: 2px solid var(--win-black);
-      border-bottom: 2px solid var(--win-black);
+      border-top: 2px solid var(--win-light);
+      border-left: 2px solid var(--win-light);
+      border-right: 2px solid var(--win-darkest);
+      border-bottom: 2px solid var(--win-darkest);
       display: flex;
       align-items: center;
       gap: 6px;
-      font-weight: bold;
+      font-weight: 900;
       font-size: 13px;
       cursor: pointer;
+      outline: none;
+      flex-shrink: 0;
     }
     .start-btn:active, .start-btn.open {
-      border-top: 2px solid var(--win-black);
-      border-left: 2px solid var(--win-black);
-      border-right: 2px solid var(--win-white);
-      border-bottom: 2px solid var(--win-white);
+      border-top: 2px solid var(--win-darkest);
+      border-left: 2px solid var(--win-darkest);
+      border-right: 2px solid var(--win-light);
+      border-bottom: 2px solid var(--win-light);
+      background: #dfdfdf;
+    }
+    .start-flag {
+      font-size: 16px;
+      line-height: 1;
     }
 
+    .task-dock {
+      display: flex;
+      gap: 4px;
+      overflow-x: auto;
+      height: 100%;
+      align-items: center;
+    }
     .task-chip {
-      height: 26px;
-      padding: 0 10px;
+      height: 28px;
+      min-width: 120px;
+      max-width: 180px;
+      padding: 0 8px;
       background: var(--win-gray);
-      border-top: 2px solid var(--win-white);
-      border-left: 2px solid var(--win-white);
-      border-right: 2px solid var(--win-black);
-      border-bottom: 2px solid var(--win-black);
+      border-top: 2px solid var(--win-light);
+      border-left: 2px solid var(--win-light);
+      border-right: 2px solid var(--win-darkest);
+      border-bottom: 2px solid var(--win-darkest);
       display: flex;
       align-items: center;
       gap: 6px;
       font-size: 12px;
       cursor: pointer;
-      max-width: 180px;
+      white-space: nowrap;
       overflow: hidden;
       text-overflow: ellipsis;
-      white-space: nowrap;
+      outline: none;
     }
     .task-chip.active {
-      background: #e0e0e0;
-      border-top: 2px solid var(--win-black);
-      border-left: 2px solid var(--win-black);
-      border-right: 2px solid var(--win-white);
-      border-bottom: 2px solid var(--win-white);
+      background: #e4e4e4;
+      border-top: 2px solid var(--win-darkest);
+      border-left: 2px solid var(--win-darkest);
+      border-right: 2px solid var(--win-light);
+      border-bottom: 2px solid var(--win-light);
       font-weight: bold;
     }
 
-    .tray-clock {
+    /* 托盘区 */
+    .system-tray {
       border-top: 2px solid var(--win-dark);
       border-left: 2px solid var(--win-dark);
-      border-right: 2px solid var(--win-white);
-      border-bottom: 2px solid var(--win-white);
-      padding: 3px 10px;
-      font-size: 12px;
-      background: #c0c0c0;
+      border-right: 2px solid var(--win-light);
+      border-bottom: 2px solid var(--win-light);
+      padding: 2px 8px;
       display: flex;
       align-items: center;
-      gap: 6px;
+      gap: 8px;
+      font-size: 12px;
+      height: 28px;
+      background: var(--win-gray);
+      flex-shrink: 0;
+    }
+    .tray-disk {
+      font-family: var(--font-code);
+      font-size: 14px;
+      color: #000;
+      letter-spacing: 0.5px;
     }
 
-    /* 开始菜单弹窗 */
-    .start-menu {
+    /* 开始菜单 */
+    #start-menu {
       position: absolute;
-      bottom: 38px;
-      left: 2px;
-      width: 220px;
+      bottom: 40px;
+      left: 3px;
+      width: 260px;
       background: var(--win-gray);
-      border-top: 2px solid var(--win-white);
-      border-left: 2px solid var(--win-white);
-      border-right: 2px solid var(--win-black);
-      border-bottom: 2px solid var(--win-black);
-      box-shadow: 3px 3px 10px rgba(0, 0, 0, 0.4);
+      border-top: 2px solid var(--win-light);
+      border-left: 2px solid var(--win-light);
+      border-right: 2px solid var(--win-darkest);
+      border-bottom: 2px solid var(--win-darkest);
+      box-shadow: 4px 4px 10px rgba(0, 0, 0, 0.4);
       display: none;
       z-index: 2000;
-      flex-direction: column;
     }
-    .start-menu.show {
+    #start-menu.show {
       display: flex;
     }
-
-    .start-menu-side {
-      background: #000080;
+    .start-banner-strip {
+      background: var(--win-navy-grad);
       color: #fff;
-      padding: 12px 6px;
-      font-size: 16px;
-      font-weight: bold;
+      padding: 14px 6px;
+      font-family: var(--font-code);
+      font-size: 18px;
+      font-weight: 700;
       writing-mode: vertical-rl;
       transform: rotate(180deg);
-      letter-spacing: 2px;
+      letter-spacing: 3px;
+      display: flex;
+      align-items: center;
+      justify-content: flex-end;
     }
-
-    .start-menu-items {
+    .start-list {
       flex: 1;
       padding: 4px;
+      display: flex;
+      flex-direction: column;
     }
-    .start-item {
-      padding: 8px 12px;
+    .start-opt {
       display: flex;
       align-items: center;
       gap: 10px;
+      padding: 7px 10px;
       font-size: 13px;
       cursor: pointer;
+      color: #000;
+      border: none;
+      background: transparent;
+      text-align: left;
+      width: 100%;
+      font-family: inherit;
     }
-    .start-item:hover {
-      background: #000080;
-      color: #fff;
+    .start-opt:hover {
+      background: var(--win-navy);
+      color: #ffffff;
+    }
+    .start-divider {
+      height: 2px;
+      border-top: 1px solid var(--win-dark);
+      border-bottom: 1px solid var(--win-light);
+      margin: 4px 0;
+    }
+
+    /* 关机/收尾对话框 */
+    #shutdown-dialog {
+      position: fixed;
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%, -50%);
+      width: 360px;
+      background: var(--win-gray);
+      border-top: 2px solid var(--win-light);
+      border-left: 2px solid var(--win-light);
+      border-right: 2px solid var(--win-darkest);
+      border-bottom: 2px solid var(--win-darkest);
+      box-shadow: 6px 6px 0 rgba(0,0,0,0.5);
+      z-index: 9999;
+      display: none;
+      padding: 3px;
+    }
+    #shutdown-dialog.show {
+      display: block;
+    }
+    .shutdown-body {
+      padding: 16px;
+      display: flex;
+      flex-direction: column;
+      gap: 14px;
+    }
+    .shutdown-row {
+      display: flex;
+      gap: 14px;
+      align-items: center;
+    }
+    .shutdown-options {
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+      font-size: 13px;
+    }
+    .shutdown-options label {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      cursor: pointer;
+    }
+
+    /* 系统通知浮窗 Toast */
+    #os-toast {
+      position: fixed;
+      bottom: 50px;
+      right: 16px;
+      background: #ffffdc;
+      border: 1px solid #666;
+      box-shadow: 2px 2px 6px rgba(0,0,0,0.3);
+      padding: 8px 12px;
+      font-size: 12px;
+      z-index: 5000;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      transition: opacity 0.3s;
+      opacity: 0;
+      pointer-events: none;
+    }
+    #os-toast.show {
+      opacity: 1;
+    }
+
+    /* 响应式调整 */
+    @media (max-width: 768px) {
+      .desktop-grid {
+        grid-template-rows: repeat(auto-fill, 80px);
+        gap: 8px 12px;
+      }
+      .desktop-icon-btn {
+        width: 72px;
+      }
+      .icon-symbol {
+        font-size: 26px;
+      }
+      .brand-title {
+        font-size: 20px;
+      }
+      .brand-sub {
+        font-size: 11px;
+      }
+      .win-modal {
+        left: 4% !important;
+        top: 6% !important;
+        width: 92% !important;
+        max-height: 80vh !important;
+      }
     }
   </style>
 </head>
 <body>
 
-  <!-- 桌面图标 -->
-  <div class="desktop-icons">
-    <div class="desktop-icon" onclick="openWin('win-intro')">
-      <div class="icon-img">💻</div>
-      <span class="icon-label">博主档案.txt</span>
-    </div>
-    <div class="desktop-icon" onclick="openWin('win-post1')">
-      <div class="icon-img">📝</div>
-      <span class="icon-label">最新文章.doc</span>
-    </div>
-    <div class="desktop-icon" onclick="openWin('win-post2')">
-      <div class="icon-img">💾</div>
-      <span class="icon-label">像素复古论.wri</span>
-    </div>
-    <div class="desktop-icon" onclick="openWin('win-note')">
-      <div class="icon-img">📌</div>
-      <span class="icon-label">桌面便签.log</span>
-    </div>
+  <!-- 桌面常驻背景品牌徽标 -->
+  <div class="desktop-brand-banner">
+    <div class="brand-title">ORANGECAT OS 98</div>
+    <div class="brand-sub">个人知识桌面 · 文件系统就绪</div>
   </div>
 
-  <!-- 视窗 1: 博主介绍 -->
-  <div id="win-intro" class="win-window active" style="top: 40px; left: 140px; width: 440px; height: 380px;">
-    <div class="win-titlebar" onmousedown="focusWin('win-intro')">
-      <div class="win-title"><span>👤</span> 博主个人档案 - 记事本</div>
-      <div class="win-controls">
-        <button class="win-btn" onclick="minWin('win-intro')">_</button>
-        <button class="win-btn">□</button>
-        <button class="win-btn" onclick="closeWin('win-intro')">✕</button>
-      </div>
-    </div>
-    <div class="win-menubar">
-      <span>文件(F)</span><span>编辑(E)</span><span>格式(O)</span><span>帮助(H)</span>
-    </div>
-    <div class="win-content">
-      <h2>DEV_WORKSPACE // 个人主页</h2>
-      <div class="post-badge">系统版本: Win98 SE · 内存: 64MB · CPU: Pentium II</div>
-      <p>
-        <strong>欢迎来到复古视窗个人站点！</strong><br><br>
-        这里采用 1995-1998 经典视窗操作系统交互排版。每一个窗口都可以点击标题栏聚焦，点击桌面图标可快速唤醒相应文档。<br><br>
-        <strong>研究方向：</strong><br>
-        • 现代 Web 拟物化与复古 UI 重塑<br>
-        • 分布式系统架构设计与高并发实践<br>
-        • 人工智能智能体系统 (AI Agents)
-      </p>
-    </div>
-  </div>
+  <!-- 桌面图标工作区 -->
+  <main id="desktop-workspace" aria-label="操作系统工作区">
+    <div class="desktop-grid">
+      <!-- 主文件 -->
+      <button class="desktop-icon-btn" onclick="openWindow('win-readme')" ondblclick="triggerInteraction('双击打开 README.TXT')" aria-label="打开 README.TXT">
+        <div class="icon-symbol">📄</div>
+        <div class="icon-title">README.TXT</div>
+      </button>
 
-  <!-- 视窗 2: 最新文章 -->
-  <div id="win-post1" class="win-window" style="top: 80px; left: 520px; width: 560px; height: 420px;">
-    <div class="win-titlebar" onmousedown="focusWin('win-post1')">
-      <div class="win-title"><span>📄</span> 最新文章.doc - 写字板</div>
-      <div class="win-controls">
-        <button class="win-btn" onclick="minWin('win-post1')">_</button>
-        <button class="win-btn">□</button>
-        <button class="win-btn" onclick="closeWin('win-post1')">✕</button>
-      </div>
-    </div>
-    <div class="win-menubar">
-      <span>文件(F)</span><span>编辑(E)</span><span>查看(V)</span><span>插入(I)</span>
-    </div>
-    <div class="win-content">
-      <h2>从 GUI 革命谈起：窗口化设计如何重塑人类心智模型</h2>
-      <div class="post-badge">发布时间: 2026-08-18 · 分类: 交互设计历史</div>
-      <p>
-        在施乐帕拓奥托研究中心（Xerox PARC）与早期 Macintosh 之前，人机交互是一条冰冷单调的字符命令行。而「视窗（Window）」概念的诞生，创造了人类历史上第一个「可重叠的多任务数字桌面」。
-        <br><br>
-        灰色斜面凹凸按钮用两道 1px 的黑白边框模拟了物理世界的光照与受压下陷。这种直觉式的视觉隐喻，让数以亿计的普通人第一次无需阅读厚重的手册即可自如操控计算机。
-      </p>
-    </div>
-  </div>
+      <!-- 次级栏目 -->
+      <button class="desktop-icon-btn" onclick="openWindow('win-projects')" aria-label="打开 PROJECTS 实验项目">
+        <div class="icon-symbol">📁</div>
+        <div class="icon-title">PROJECTS</div>
+      </button>
 
-  <!-- 视窗 3: 桌面便签 -->
-  <div id="win-note" class="win-window" style="top: 440px; left: 160px; width: 320px; height: 180px;">
-    <div class="win-titlebar" style="background:#ccaa00;" onmousedown="focusWin('win-note')">
-      <div class="win-title" style="color:#000;"><span>📌</span> 便签贴纸</div>
-      <div class="win-controls">
-        <button class="win-btn" onclick="closeWin('win-note')">✕</button>
-      </div>
-    </div>
-    <div class="win-content sticky-note">
-      <strong>今日待办：</strong><br>
-      1. 喝完 2 杯美式咖啡 ☕<br>
-      2. 构思下一篇系统架构文章<br>
-      3. 给开源项目提一个 PR ✨
-    </div>
-  </div>
+      <button class="desktop-icon-btn" onclick="openWindow('win-notes')" aria-label="打开 NOTES 随笔短文">
+        <div class="icon-symbol">📝</div>
+        <div class="icon-title">NOTES</div>
+      </button>
 
-  <!-- 视窗 4: 系统属性与硬件信息 -->
-  <div id="win-sys" class="win-window" style="top: 180px; left: 460px; width: 440px; height: 320px; display: none;">
-    <div class="win-titlebar" onmousedown="focusWin('win-sys')">
-      <div class="win-title"><span>💻</span> 系统属性 (System Info)</div>
-      <div class="win-controls">
-        <button class="win-btn" onclick="minWin('win-sys')">_</button>
-        <button class="win-btn" onclick="closeWin('win-sys')">✕</button>
-      </div>
+      <button class="desktop-icon-btn" onclick="openWindow('win-inbox')" aria-label="打开 INBOX 读者来信">
+        <div class="icon-symbol">📬</div>
+        <div class="icon-title">INBOX</div>
+      </button>
+
+      <button class="desktop-icon-btn" onclick="openWindow('win-recycle')" aria-label="打开 RECYCLE BIN 回收站">
+        <div class="icon-symbol">🗑️</div>
+        <div class="icon-title">RECYCLE BIN</div>
+      </button>
+
+      <!-- 资料与系统文档 -->
+      <button class="desktop-icon-btn" onclick="openWindow('win-changelog')" aria-label="打开 CHANGELOG_2026.TXT">
+        <div class="icon-symbol">📜</div>
+        <div class="icon-title">CHANGELOG.TXT</div>
+      </button>
+
+      <button class="desktop-icon-btn" onclick="openWindow('win-sysinfo')" aria-label="打开系统属性">
+        <div class="icon-symbol">💻</div>
+        <div class="icon-title">系统属性</div>
+      </button>
     </div>
-    <div class="win-content" style="font-size: 12px; line-height: 1.8;">
-      <div style="display: flex; gap: 16px; align-items: center; border-bottom: 2px groove #fff; padding-bottom: 12px; margin-bottom: 12px;">
-        <span style="font-size: 40px;">🖥️</span>
-        <div>
-          <strong>Microsoft Windows 98 SE</strong><br>
-          系统版本: 4.10.2222 A<br>
-          注册组织: CYBER PIONEER LAB
+
+    <!-- 窗口 1: 主叙事 README.TXT -->
+    <section id="win-readme" class="win-modal active" style="top: 40px; left: 160px; width: 560px; height: 420px;" aria-labelledby="title-readme">
+      <div class="win-header" onmousedown="focusWindow('win-readme')">
+        <div class="win-header-left">
+          <span>📄</span>
+          <span id="title-readme">README.TXT - 记事本</span>
+        </div>
+        <div class="win-controls">
+          <button class="win-ctrl-btn" onclick="minimizeWindow('win-readme')" aria-label="最小化">_</button>
+          <button class="win-ctrl-btn" onclick="maximizeWindow('win-readme')" aria-label="最大化">□</button>
+          <button class="win-ctrl-btn" onclick="closeWindow('win-readme')" aria-label="关闭">✕</button>
         </div>
       </div>
-      <div>
-        <strong>硬件配置清单：</strong><br>
-        • 处理器: Intel Pentium III @ 500 MHz<br>
-        • 物理内存: 128 MB SDRAM PC-100<br>
-        • 显卡: 3dfx Voodoo3 3000 (16MB)<br>
-        • 存储: 10.2 GB Ultra ATA IDE 硬盘
+      <nav class="win-menu" aria-label="文件菜单">
+        <span class="menu-item" onclick="saveFileAction('README.TXT')">文件(F)</span>
+        <span class="menu-item">编辑(E)</span>
+        <span class="menu-item">搜索(S)</span>
+        <span class="menu-item">帮助(H)</span>
+      </nav>
+      <div class="win-body">
+        <div class="doc-banner">
+          文件路径: C:\DESKTOP\README.TXT &nbsp;|&nbsp; 编码: GB2312 &nbsp;|&nbsp; 状态: 已只读存档
+        </div>
+        <h1 class="doc-h1">欢迎来到 ORANGECAT OS 98 个人知识桌面</h1>
+        <p>
+          这不是一个被动展示的静态网页，而是一台被完整封装在浏览器内的 1998 年代个人计算机。在这个被扁平流式布局与信息洪流包围的时代，我们选择将个人博客重构为一组<strong>「可以再次打开、拖动、归档与检视的文件系统」</strong>。
+        </p>
+        <h2 class="doc-h2">核心设计心智：文件隐喻</h2>
+        <p>
+          在施乐与早期视窗的黄金年代，每个想法都拥有自己的拓展名与独立视窗。写作不是往无限下滑的瀑布流里丢砖块，而是把每一个思想片段精准写入 <code>.TXT</code>、封装进文件夹，或是暂时丢进回收站等待下一次思维重组。
+        </p>
+        <h2 class="doc-h2">桌面探索指南</h2>
+        <ul style="padding-left: 20px; margin-top: 6px;">
+          <li>📁 <strong>PROJECTS：</strong>检视今年正在运行的 3 个实验性前端与架构构想。</li>
+          <li>📝 <strong>NOTES：</strong>收录关于人机交互、拟物物理学与技术哲学的 3 篇速记短文。</li>
+          <li>📬 <strong>INBOX：</strong>查阅近期收到的 2 封匿名读者来信与博主回复。</li>
+          <li>🗑️ <strong>RECYCLE BIN：</strong>翻看 3 条被放弃却舍不得彻底粉碎的灵感余烬。</li>
+        </ul>
+        <div style="margin-top: 18px; padding-top: 10px; border-top: 1px dotted #888; font-size: 12px; color: #555;">
+          提示：点击标题栏可自由拖拽窗口，点击菜单栏“文件”可触发灵感存盘，点击任务栏“开始”可唤醒系统调度。
+        </div>
+      </div>
+      <div class="win-statusbar">
+        <div class="sb-panel sb-grow">就绪 · 1,420 字节</div>
+        <div class="sb-panel">行 28, 列 1</div>
+      </div>
+    </section>
+
+    <!-- 窗口 2: PROJECTS 实验项目 -->
+    <section id="win-projects" class="win-modal" style="top: 80px; left: 240px; width: 540px; height: 400px; display: none;" aria-labelledby="title-proj">
+      <div class="win-header" onmousedown="focusWindow('win-projects')">
+        <div class="win-header-left">
+          <span>📁</span>
+          <span id="title-proj">C:\PROJECTS\ - 资源管理器</span>
+        </div>
+        <div class="win-controls">
+          <button class="win-ctrl-btn" onclick="minimizeWindow('win-projects')" aria-label="最小化">_</button>
+          <button class="win-ctrl-btn" onclick="maximizeWindow('win-projects')" aria-label="最大化">□</button>
+          <button class="win-ctrl-btn" onclick="closeWindow('win-projects')" aria-label="关闭">✕</button>
+        </div>
+      </div>
+      <nav class="win-menu" aria-label="资源管理器菜单">
+        <span class="menu-item">查看(V)</span>
+        <span class="menu-item">转到(G)</span>
+        <span class="menu-item">收藏(A)</span>
+      </nav>
+      <div class="win-body">
+        <div class="doc-h1">当前进行中的 3 个实验项目</div>
+        
+        <div class="project-card">
+          <div style="font-weight: 700; color: #000080; font-size: 15px;">01. RetroSkeuomorphism-Web / 拟物化引擎</div>
+          <div style="margin: 4px 0;">
+            <span class="tag-chip">Canvas 渲染</span>
+            <span class="tag-chip">WebGL 光照</span>
+            <span class="tag-chip">90s 拟真</span>
+          </div>
+          <p style="font-size: 13px; color: #333;">
+            探索如何在无需厚重 3D 引擎的前提下，利用纯 CSS 浮雕边框、抖动点阵算法与像素网格还原世纪之交的经典交互手感。
+          </p>
+        </div>
+
+        <div class="project-card">
+          <div style="font-weight: 700; color: #000080; font-size: 15px;">02. LocalAgent-Cluster / 端侧智能体网络</div>
+          <div style="margin: 4px 0;">
+            <span class="tag-chip">WebGPU</span>
+            <span class="tag-chip">Small-LLM</span>
+            <span class="tag-chip">离线优先</span>
+          </div>
+          <p style="font-size: 13px; color: #333;">
+            在浏览器端纯本地加载轻量参数模型，构建个人专属的离线知识图谱调度器，让数据与隐私永远沉淀在本地磁盘。
+          </p>
+        </div>
+
+        <div class="project-card">
+          <div style="font-weight: 700; color: #000080; font-size: 15px;">03. PureArchive-Format / 极简纯文本归档器</div>
+          <div style="margin: 4px 0;">
+            <span class="tag-chip">数据主权</span>
+            <span class="tag-chip">Markdown</span>
+            <span class="tag-chip">百年轻量</span>
+          </div>
+          <p style="font-size: 13px; color: #333;">
+            设计一种能够跨越 50 年软硬件变迁的自包含纯文本发布协议，抵御 SaaS 服务商停运与数字遗失危机。
+          </p>
+        </div>
+      </div>
+      <div class="win-statusbar">
+        <div class="sb-panel sb-grow">3 个对象 · 选中 0 字节</div>
+        <div class="sb-panel">我的电脑</div>
+      </div>
+    </section>
+
+    <!-- 窗口 3: NOTES 短文 -->
+    <section id="win-notes" class="win-modal" style="top: 120px; left: 200px; width: 550px; height: 420px; display: none;" aria-labelledby="title-notes">
+      <div class="win-header" onmousedown="focusWindow('win-notes')">
+        <div class="win-header-left">
+          <span>📝</span>
+          <span id="title-notes">NOTES.DOC - 写字板</span>
+        </div>
+        <div class="win-controls">
+          <button class="win-ctrl-btn" onclick="minimizeWindow('win-notes')" aria-label="最小化">_</button>
+          <button class="win-ctrl-btn" onclick="maximizeWindow('win-notes')" aria-label="最大化">□</button>
+          <button class="win-ctrl-btn" onclick="closeWindow('win-notes')" aria-label="关闭">✕</button>
+        </div>
+      </div>
+      <nav class="win-menu" aria-label="写字板菜单">
+        <span class="menu-item" onclick="saveFileAction('NOTES.DOC')">保存(S)</span>
+        <span class="menu-item">字体(F)</span>
+        <span class="menu-item">段落(P)</span>
+      </nav>
+      <div class="win-body">
+        <div class="doc-h1">思想速记与交互随笔 (3篇)</div>
+
+        <article style="margin-bottom: 16px;">
+          <h2 class="doc-h2">篇一：为什么现代 UI 让人越来越容易疲惫？</h2>
+          <p style="font-size: 13px;">
+            无限流瀑布与自动播放算法剥夺了读者的「句号感知」。在 98 年代，当你把一个视窗关闭并听到软驱复位声时，交互产生了物理闭环。现代界面的空洞感往往来自于缺少这种边界与停顿。
+          </p>
+        </article>
+
+        <article style="margin-bottom: 16px;">
+          <h2 class="doc-h2">篇二：斜面凹凸（Bevel）中的微观光影学</h2>
+          <p style="font-size: 13px;">
+            经典视窗仅用四条 1px 细线（白、灰、暗灰、黑）就成功欺骗了人类的视网膜，让人产生光源固定在左上方 45 度的立体错觉。这种极具效率的符号学造诣，远比无脑堆砌毛玻璃更有力量。
+          </p>
+        </article>
+
+        <article>
+          <h2 class="doc-h2">篇三：把灵感整理成文件的治愈感</h2>
+          <p style="font-size: 13px;">
+            每一次右键新建文本文档并为其命名，都是一次微型的仪式。它把转瞬即逝的意识流固定成了不可被轻易篡改的实体。
+          </p>
+        </article>
+      </div>
+      <div class="win-statusbar">
+        <div class="sb-panel sb-grow">字数: 890 · 格式: RTF 兼容</div>
+        <div class="sb-panel">修改状态: 未变更</div>
+      </div>
+    </section>
+
+    <!-- 窗口 4: INBOX 读者来信 -->
+    <section id="win-inbox" class="win-modal" style="top: 140px; left: 300px; width: 520px; height: 380px; display: none;" aria-labelledby="title-inbox">
+      <div class="win-header" onmousedown="focusWindow('win-inbox')">
+        <div class="win-header-left">
+          <span>📬</span>
+          <span id="title-inbox">收件箱 - Outlook Express 5.0</span>
+        </div>
+        <div class="win-controls">
+          <button class="win-ctrl-btn" onclick="minimizeWindow('win-inbox')" aria-label="最小化">_</button>
+          <button class="win-ctrl-btn" onclick="maximizeWindow('win-inbox')" aria-label="最大化">□</button>
+          <button class="win-ctrl-btn" onclick="closeWindow('win-inbox')" aria-label="关闭">✕</button>
+        </div>
+      </div>
+      <nav class="win-menu" aria-label="邮件菜单">
+        <span class="menu-item" onclick="triggerInteraction('正在收取新邮件...')">发送/接收(S)</span>
+        <span class="menu-item">答复(R)</span>
+      </nav>
+      <div class="win-body">
+        <div class="doc-h1">匿名读者来信 (2 封已读)</div>
+        
+        <div class="mail-item">
+          <div class="mail-meta">
+            <strong>发件人: cyber_traveler_99@matrix.net</strong>
+            <span>2026-03-24 21:14</span>
+          </div>
+          <div style="font-weight: bold; margin-bottom: 4px; font-size: 13px;">主题: 你的 90s 视窗个人站唤起了我的拨号上网记忆</div>
+          <p style="font-size: 13px; color: #333;">
+            你好！无意中在网络角落点开你的知识桌面，听到像素点击的节奏，瞬间想起了小时候用 56k Modem 偷偷下载文本教程的深夜。现在的网站太吵了，能在你的桌面安安静静读会儿文字真好。
+          </p>
+          <div style="margin-top: 6px; font-size: 12px; color: #000080; background: #eef2ff; padding: 4px 8px; border-left: 2px solid #000080;">
+            博主回复：感谢驻足！希望这里能成为你互联网漫游途中一处平静的避风港。
+          </div>
+        </div>
+
+        <div class="mail-item">
+          <div class="mail-meta">
+            <strong>发件人: pixel_artisan@indieweb.org</strong>
+            <span>2026-03-12 10:05</span>
+          </div>
+          <div style="font-weight: bold; margin-bottom: 4px; font-size: 13px;">主题: 关于把博文做成可执行文件系统的探讨</div>
+          <p style="font-size: 13px; color: #333;">
+            看到你把每一篇文章都视作文件系统的一个节点，我非常认同这个视角。比起让平台决定我们读什么，这种可探索的网状个人桌面才是 Web 的本真精神。
+          </p>
+          <div style="margin-top: 6px; font-size: 12px; color: #000080; background: #eef2ff; padding: 4px 8px; border-left: 2px solid #000080;">
+            博主回复：数字主权与个人策展，是我们对抗信息同质化的唯一武器。
+          </div>
+        </div>
+      </div>
+      <div class="win-statusbar">
+        <div class="sb-panel sb-grow">2 封邮件 · 0 封未读</div>
+        <div class="sb-panel">POP3 已连接</div>
+      </div>
+    </section>
+
+    <!-- 窗口 5: RECYCLE BIN 回收站 -->
+    <section id="win-recycle" class="win-modal" style="top: 160px; left: 340px; width: 500px; height: 380px; display: none;" aria-labelledby="title-recycle">
+      <div class="win-header" onmousedown="focusWindow('win-recycle')">
+        <div class="win-header-left">
+          <span>🗑️</span>
+          <span id="title-recycle">回收站 - 灵感墓园</span>
+        </div>
+        <div class="win-controls">
+          <button class="win-ctrl-btn" onclick="minimizeWindow('win-recycle')" aria-label="最小化">_</button>
+          <button class="win-ctrl-btn" onclick="maximizeWindow('win-recycle')" aria-label="最大化">□</button>
+          <button class="win-ctrl-btn" onclick="closeWindow('win-recycle')" aria-label="关闭">✕</button>
+        </div>
+      </div>
+      <div class="win-body">
+        <div class="doc-h1">放弃但值得留念的点子 (3 条)</div>
+        <p style="font-size: 12px; color: #666; margin-bottom: 12px;">
+          这些构想因为工程代价或过于疯狂而被暂时移入回收站，但我们保留了它们的墓碑。
+        </p>
+
+        <div class="trash-item">
+          <div style="font-weight: bold; font-size: 13px;">💀 构想 A: 为每一个网页访客生成专属 MIDI 伴奏</div>
+          <p style="font-size: 12px; color: #444; margin-top: 2px;">
+            原计划利用 WebAudio 根据用户鼠标滑动轨迹实时合成 8-bit 复古 MIDI，后因可能吵醒深夜读者而废弃。
+          </p>
+          <div class="trash-action">
+            <span>⚠️ 这个点子还舍不得彻底删除</span>
+            <button class="btn-win" style="margin-left: auto; font-size: 10px;" onclick="triggerInteraction('已尝试还原灵感：或许明年重写！')">还原</button>
+          </div>
+        </div>
+
+        <div class="trash-item">
+          <div style="font-weight: bold; font-size: 13px;">💀 构想 B: 全站真·虚拟软盘换盘机制</div>
+          <p style="font-size: 12px; color: #444; margin-top: 2px;">
+            阅读长文时强制要求用户点击“插入 DISK 2”才能继续翻页，实验后发现过于折磨读者，降级为纪念彩蛋。
+          </p>
+          <div class="trash-action">
+            <span>⚠️ 这个点子还舍不得彻底删除</span>
+            <button class="btn-win" style="margin-left: auto; font-size: 10px;" onclick="triggerInteraction('3.5英寸 1.44MB 软盘已就绪')">还原</button>
+          </div>
+        </div>
+
+        <div class="trash-item">
+          <div style="font-weight: bold; font-size: 13px;">💀 构想 C: 蓝屏死机 (BSOD) 式 404 页面自动重启器</div>
+          <p style="font-size: 12px; color: #444; margin-top: 2px;">
+            逼真模拟 Windows 崩溃蓝屏并执行内存转储动画，但为了保持无障碍可读性，保留了安全跳过开关。
+          </p>
+          <div class="trash-action">
+            <span>⚠️ 这个点子还舍不得彻底删除</span>
+            <button class="btn-win" style="margin-left: auto; font-size: 10px;" onclick="triggerInteraction('核心转储文件保留中...')">还原</button>
+          </div>
+        </div>
+      </div>
+      <div class="win-statusbar">
+        <div class="sb-panel sb-grow">3 个被放弃的项目</div>
+        <div class="sb-panel">回收站占用: 4.2 MB</div>
+      </div>
+    </section>
+
+    <!-- 窗口 6: CHANGELOG_2026.TXT -->
+    <section id="win-changelog" class="win-modal" style="top: 100px; left: 180px; width: 480px; height: 360px; display: none;" aria-labelledby="title-change">
+      <div class="win-header" onmousedown="focusWindow('win-changelog')">
+        <div class="win-header-left">
+          <span>📜</span>
+          <span id="title-change">CHANGELOG_2026.TXT - 记事本</span>
+        </div>
+        <div class="win-controls">
+          <button class="win-ctrl-btn" onclick="minimizeWindow('win-changelog')" aria-label="最小化">_</button>
+          <button class="win-ctrl-btn" onclick="maximizeWindow('win-changelog')" aria-label="最大化">□</button>
+          <button class="win-ctrl-btn" onclick="closeWindow('win-changelog')" aria-label="关闭">✕</button>
+        </div>
+      </div>
+      <div class="win-body" style="font-family: var(--font-code); font-size: 15px;">
+        <pre style="white-space: pre-wrap; word-break: break-all; margin: 0;">
+========================================
+ORANGECAT OS 98 / BUILD 2026.04.18
+系统演进与维护日志
+========================================
+
+[v4.10.2026-RELEASE]
+- 重写整套视窗排版与无障碍层级；
+- 新增 PROJECTS / NOTES / INBOX / RECYCLE BIN 四级架构；
+- 接入任务栏时钟、磁盘容量计算器与最近打开列表；
+- 优化关机对话框：支持休眠、整理桌面与继续阅读；
+- 确保移动端与触屏环境下视窗自适应缩放；
+- 修复了若干由于像素浮点舍入引起的 Bevel 描边瑕疵。
+
+[STATUS]
+KERNEL: OK
+FILESYSTEM: FAT32 (MOUNTED)
+ENERGY: NOMINAL
+========================================</pre>
+      </div>
+      <div class="win-statusbar">
+        <div class="sb-panel sb-grow">只读文档</div>
+        <div class="sb-panel">ANSI 编码</div>
+      </div>
+    </section>
+
+    <!-- 窗口 7: 系统属性 -->
+    <section id="win-sysinfo" class="win-modal" style="top: 110px; left: 320px; width: 450px; height: 360px; display: none;" aria-labelledby="title-sys">
+      <div class="win-header" onmousedown="focusWindow('win-sysinfo')">
+        <div class="win-header-left">
+          <span>💻</span>
+          <span id="title-sys">系统属性</span>
+        </div>
+        <div class="win-controls">
+          <button class="win-ctrl-btn" onclick="closeWindow('win-sysinfo')" aria-label="关闭">✕</button>
+        </div>
+      </div>
+      <div class="win-body">
+        <div style="display: flex; gap: 16px; align-items: center; border-bottom: 2px groove #fff; padding-bottom: 12px; margin-bottom: 12px;">
+          <span style="font-size: 44px;">🖥️</span>
+          <div>
+            <strong style="font-size: 15px;">ORANGECAT 个人知识桌面操作系统</strong><br>
+            <span style="font-size: 12px; color: #555;">版本: 98 第二版 (SE) · 内核: v4.10.2222</span><br>
+            <span style="font-size: 12px; color: #555;">注册组织: CYBER PIONEER LAB</span>
+          </div>
+        </div>
+        <div style="font-size: 13px; line-height: 1.8;">
+          <strong>硬件与运行时配置：</strong><br>
+          • 处理器: Intel Pentium III Processor @ 500 MHz<br>
+          • 内存容量: 128.0 MB SDRAM (已分配虚拟缓存)<br>
+          • 存储磁盘: IDE 10.2 GB (当前剩余空间: 6.42 GB)<br>
+          • 图形子系统: 3dfx Voodoo3 3000 (16MB AGP)<br>
+          • 网络协议: TCP/IP over Dial-up (56Kbps Modem)
+        </div>
+        <div style="margin-top: 14px; text-align: right;">
+          <button class="btn-win" onclick="closeWindow('win-sysinfo')">确定</button>
+        </div>
+      </div>
+    </section>
+  </main>
+
+  <!-- 开始菜单弹窗 -->
+  <aside id="start-menu" aria-label="开始菜单">
+    <div class="start-banner-strip">WINDOWS 98</div>
+    <div class="start-list">
+      <button class="start-opt" onclick="openWindow('win-readme')"><span>📄</span> 打开 README.TXT</button>
+      <button class="start-opt" onclick="openWindow('win-projects')"><span>📁</span> PROJECTS 实验项目</button>
+      <button class="start-opt" onclick="openWindow('win-notes')"><span>📝</span> NOTES 随笔短文</button>
+      <button class="start-opt" onclick="openWindow('win-inbox')"><span>📬</span> INBOX 读者来信</button>
+      <button class="start-opt" onclick="openWindow('win-recycle')"><span>🗑️</span> RECYCLE BIN 回收站</button>
+      <div class="start-divider"></div>
+      <button class="start-opt" onclick="openWindow('win-changelog')"><span>📜</span> CHANGELOG_2026.TXT</button>
+      <button class="start-opt" onclick="openWindow('win-sysinfo')"><span>💻</span> 系统属性 (System Info)</button>
+      <div class="start-divider"></div>
+      <button class="start-opt" onclick="openShutdownDialog()"><span>⏻</span> 关闭计算机 (Shut Down)...</button>
+    </div>
+  </aside>
+
+  <!-- 关机/收尾对话框 -->
+  <div id="shutdown-dialog" role="dialog" aria-modal="true" aria-labelledby="shutdown-title">
+    <div class="win-header">
+      <div class="win-header-left">
+        <span>⏻</span>
+        <span id="shutdown-title">关闭计算机</span>
+      </div>
+      <div class="win-controls">
+        <button class="win-ctrl-btn" onclick="closeShutdownDialog()" aria-label="关闭">✕</button>
       </div>
     </div>
-  </div>
-
-  <!-- 开始菜单 -->
-  <div id="startMenu" class="start-menu">
-    <div style="display: flex;">
-      <div class="start-menu-side">WINDOWS 98</div>
-      <div class="start-menu-items">
-        <div class="start-item" onclick="openWin('win-intro')"><span>📁</span> 我的文档 (Profile)</div>
-        <div class="start-item" onclick="openWin('win-post1')"><span>📝</span> 最新博客文章 (Articles)</div>
-        <div class="start-item" onclick="openWin('win-sys')"><span>💻</span> 系统属性 (System Info)</div>
-        <div class="start-item" onclick="openWin('win-note')"><span>📌</span> 随手便签 (Sticky Notes)</div>
-        <div style="border-top: 1px solid #808080; margin: 4px 0;"></div>
-        <div class="start-item" onclick="alert('即将关机... 开个玩笑！请尽情探索视窗桌面吧 :)')"><span>⏻</span> 关闭计算机...</div>
+    <div class="shutdown-body">
+      <div class="shutdown-row">
+        <span style="font-size: 36px;">💻</span>
+        <div style="font-size: 13px;">
+          <strong>您希望计算机执行什么操作？</strong>
+        </div>
       </div>
+      <form class="shutdown-options" id="shutdown-form" onsubmit="handleShutdownSubmit(event)">
+        <label>
+          <input type="radio" name="shutdown_opt" value="hibernate" checked>
+          <span>休眠 (进入低功耗状态，保留当前视窗位置)</span>
+        </label>
+        <label>
+          <input type="radio" name="shutdown_opt" value="tidy">
+          <span>重新整理桌面 (居中排列并重置所有已打开窗口)</span>
+        </label>
+        <label>
+          <input type="radio" name="shutdown_opt" value="continue">
+          <span>继续阅读 (保留知识桌面，探索更多文件)</span>
+        </label>
+        <div style="display: flex; gap: 8px; justify-content: flex-end; margin-top: 10px;">
+          <button type="submit" class="btn-win">确定</button>
+          <button type="button" class="btn-win" onclick="closeShutdownDialog()">取消</button>
+        </div>
+      </form>
     </div>
   </div>
 
   <!-- 底部任务栏 -->
-  <div class="win-taskbar">
-    <div class="taskbar-left">
-      <button id="startBtn" class="start-btn" onclick="toggleStartMenu()">
-        <span style="color:#008000; font-size:16px;">🪟</span>
+  <footer id="taskbar" aria-label="底部系统任务栏">
+    <div class="taskbar-start-area">
+      <button id="start-btn" class="start-btn" onclick="toggleStartMenu()" aria-expanded="false" aria-label="开始按钮">
+        <span class="start-flag">🪟</span>
         <span>开始</span>
       </button>
-      <div id="chip-intro" class="task-chip active" onclick="focusWin('win-intro')">👤 博主档案.txt</div>
-      <div id="chip-post1" class="task-chip" onclick="focusWin('win-post1')">📄 最新文章.doc</div>
+
+      <div class="task-dock" id="task-dock" aria-label="活动视窗列表">
+        <!-- 任务栏切片由 JS 自动同步 -->
+      </div>
     </div>
-    <div class="tray-clock">
+
+    <div class="system-tray" aria-label="系统托盘">
+      <span>💾</span>
+      <span class="tray-disk" title="磁盘容量">C: 6.42GB 可用</span>
+      <span style="border-left: 1px solid var(--win-dark); height: 16px; margin: 0 2px;"></span>
       <span>🔊</span>
-      <span id="clockText">15:40</span>
+      <span id="tray-clock" style="font-weight: bold; min-width: 44px; text-align: center;">15:40</span>
     </div>
+  </footer>
+
+  <!-- 系统通知小泡泡 -->
+  <div id="os-toast" role="status" aria-live="polite">
+    <span>💡</span>
+    <span id="os-toast-msg">系统提示</span>
   </div>
 
-  <!-- 像素碎屑 Canvas -->
-  <canvas id="pixelCanvas" style="position: fixed; inset: 0; pointer-events: none; z-index: 99999;"></canvas>
+  <!-- 像素碎屑 Canvas 效果（双击桌面交互） -->
+  <canvas id="pixelCanvas" style="position: fixed; inset: 0; pointer-events: none; z-index: 9999;"></canvas>
 
-  <script src="assets/nav-bar.js"></script>
+  <script src="/creative-blogs/assets/nav-bar.js"></script>
   <script>
-    function updateClock() {
-      const now = new Date();
-      const h = String(now.getHours()).padStart(2, '0');
-      const m = String(now.getMinutes()).padStart(2, '0');
-      document.getElementById('clockText').textContent = `${h}:${m}`;
-    }
-    setInterval(updateClock, 1000);
-    updateClock();
+    // 窗口数据配置与状态
+    const windowsConfig = [
+      { id: 'win-readme', title: 'README.TXT', icon: '📄' },
+      { id: 'win-projects', title: 'PROJECTS', icon: '📁' },
+      { id: 'win-notes', title: 'NOTES.DOC', icon: '📝' },
+      { id: 'win-inbox', title: '收件箱', icon: '📬' },
+      { id: 'win-recycle', title: '回收站', icon: '🗑️' },
+      { id: 'win-changelog', title: 'CHANGELOG.TXT', icon: '📜' },
+      { id: 'win-sysinfo', title: '系统属性', icon: '💻' }
+    ];
 
+    let zIndexCounter = 100;
+    const windowStore = {};
+
+    windowsConfig.forEach(w => {
+      windowStore[w.id] = {
+        minimized: false,
+        isOpen: w.id === 'win-readme',
+        isMax: false,
+        origPos: null
+      };
+    });
+
+    // 提示信息 Toast
+    let toastTimer = null;
+    function triggerInteraction(msg) {
+      const toast = document.getElementById('os-toast');
+      const toastMsg = document.getElementById('os-toast-msg');
+      toastMsg.textContent = msg;
+      toast.classList.add('show');
+      clearTimeout(toastTimer);
+      toastTimer = setTimeout(() => {
+        toast.classList.remove('show');
+      }, 2400);
+    }
+
+    function saveFileAction(filename) {
+      triggerInteraction(`保存成功：灵感不会丢失 [${filename}]`);
+    }
+
+    // 聚焦与激活窗口
+    function focusWindow(id) {
+      document.querySelectorAll('.win-modal').forEach(w => w.classList.remove('active'));
+      const el = document.getElementById(id);
+      if (el) {
+        el.classList.add('active');
+        el.style.display = 'flex';
+        el.style.zIndex = ++zIndexCounter;
+        windowStore[id].isOpen = true;
+        windowStore[id].minimized = false;
+        renderTaskDock();
+      }
+    }
+
+    // 打开指定窗口
+    function openWindow(id) {
+      const el = document.getElementById(id);
+      if (el) {
+        focusWindow(id);
+        closeStartMenu();
+      }
+    }
+
+    // 关闭窗口
+    function closeWindow(id) {
+      const el = document.getElementById(id);
+      if (el) {
+        el.style.display = 'none';
+        el.classList.remove('active');
+        windowStore[id].isOpen = false;
+        renderTaskDock();
+      }
+    }
+
+    // 最小化窗口
+    function minimizeWindow(id) {
+      const el = document.getElementById(id);
+      if (el) {
+        el.style.display = 'none';
+        el.classList.remove('active');
+        windowStore[id].minimized = true;
+        renderTaskDock();
+        triggerInteraction('窗口已最小化到任务栏');
+      }
+    }
+
+    // 最大化/还原窗口
+    function maximizeWindow(id) {
+      const el = document.getElementById(id);
+      if (!el) return;
+      if (!windowStore[id].isMax) {
+        windowStore[id].origPos = {
+          left: el.style.left,
+          top: el.style.top,
+          width: el.style.width,
+          height: el.style.height
+        };
+        el.style.left = '4px';
+        el.style.top = '4px';
+        el.style.width = 'calc(100vw - 8px)';
+        el.style.height = 'calc(100vh - 48px)';
+        windowStore[id].isMax = true;
+      } else {
+        const orig = windowStore[id].origPos;
+        if (orig) {
+          el.style.left = orig.left;
+          el.style.top = orig.top;
+          el.style.width = orig.width;
+          el.style.height = orig.height;
+        }
+        windowStore[id].isMax = false;
+      }
+      focusWindow(id);
+    }
+
+    // 渲染任务栏激活状态切片
+    function renderTaskDock() {
+      const dock = document.getElementById('task-dock');
+      dock.innerHTML = '';
+      windowsConfig.forEach(conf => {
+        const state = windowStore[conf.id];
+        if (state.isOpen) {
+          const btn = document.createElement('button');
+          btn.className = `task-chip ${(!state.minimized && document.getElementById(conf.id)?.classList.contains('active')) ? 'active' : ''}`;
+          btn.innerHTML = `<span>${conf.icon}</span><span>${conf.title}</span>`;
+          btn.setAttribute('aria-label', `任务: ${conf.title}`);
+          btn.onclick = () => {
+            const el = document.getElementById(conf.id);
+            if (state.minimized || el.style.display === 'none') {
+              focusWindow(conf.id);
+            } else if (el.classList.contains('active')) {
+              minimizeWindow(conf.id);
+            } else {
+              focusWindow(conf.id);
+            }
+          };
+          dock.appendChild(btn);
+        }
+      });
+    }
+
+    // 开始菜单控制
     function toggleStartMenu() {
-      const menu = document.getElementById('startMenu');
-      const btn = document.getElementById('startBtn');
-      menu.classList.toggle('show');
-      btn.classList.toggle('open');
+      const menu = document.getElementById('start-menu');
+      const btn = document.getElementById('start-btn');
+      const isShow = menu.classList.toggle('show');
+      btn.classList.toggle('open', isShow);
+      btn.setAttribute('aria-expanded', isShow ? 'true' : 'false');
     }
 
+    function closeStartMenu() {
+      document.getElementById('start-menu').classList.remove('show');
+      const btn = document.getElementById('start-btn');
+      btn.classList.remove('open');
+      btn.setAttribute('aria-expanded', 'false');
+    }
+
+    // 关机对话框
+    function openShutdownDialog() {
+      closeStartMenu();
+      document.getElementById('shutdown-dialog').classList.add('show');
+    }
+    function closeShutdownDialog() {
+      document.getElementById('shutdown-dialog').classList.remove('show');
+    }
+    function handleShutdownSubmit(e) {
+      e.preventDefault();
+      const form = document.getElementById('shutdown-form');
+      const val = form.shutdown_opt.value;
+      closeShutdownDialog();
+
+      if (val === 'hibernate') {
+        triggerInteraction('系统已进入节能休眠状态 (保留所有文档视窗)');
+      } else if (val === 'tidy') {
+        let offset = 40;
+        windowsConfig.forEach(w => {
+          const el = document.getElementById(w.id);
+          if (el) {
+            el.style.left = `${offset}px`;
+            el.style.top = `${offset}px`;
+            el.style.width = '';
+            el.style.height = '';
+            windowStore[w.id].isMax = false;
+            offset += 24;
+          }
+        });
+        triggerInteraction('桌面整理完毕：所有视窗已重置级联排列');
+      } else {
+        triggerInteraction('继续阅读：随时点击桌面图标探索文件');
+      }
+    }
+
+    // 点击外部自动收起开始菜单
     document.addEventListener('click', (e) => {
-      if (!e.target.closest('#startBtn') && !e.target.closest('#startMenu')) {
-        document.getElementById('startMenu').classList.remove('show');
-        document.getElementById('startBtn').classList.remove('open');
+      if (!e.target.closest('#start-btn') && !e.target.closest('#start-menu')) {
+        closeStartMenu();
       }
     });
 
-    function focusWin(id) {
-      document.querySelectorAll('.win-window').forEach(w => w.classList.remove('active'));
-      const target = document.getElementById(id);
-      if (target) {
-        target.classList.add('active');
-        target.style.display = 'flex';
-        target.style.zIndex = ++maxZ;
-      }
+    // 任务栏时钟
+    function updateTrayClock() {
+      const now = new Date();
+      const h = String(now.getHours()).padStart(2, '0');
+      const m = String(now.getMinutes()).padStart(2, '0');
+      const clockEl = document.getElementById('tray-clock');
+      if (clockEl) clockEl.textContent = `${h}:${m}`;
     }
+    setInterval(updateTrayClock, 1000);
+    updateTrayClock();
 
-    let maxZ = 100;
-
-    function openWin(id) {
-      focusWin(id);
-      document.getElementById('startMenu').classList.remove('show');
-      document.getElementById('startBtn').classList.remove('open');
-    }
-
-    function closeWin(id) {
-      const target = document.getElementById(id);
-      if (target) target.style.display = 'none';
-    }
-
-    function minWin(id) {
-      const target = document.getElementById(id);
-      if (target) {
-        target.style.transform = 'scale(0.1) translateY(400px)';
-        target.style.opacity = '0';
-        setTimeout(() => {
-          target.style.display = 'none';
-          target.style.transform = '';
-          target.style.opacity = '';
-        }, 200);
-      }
-    }
-
-    // 窗口拖拽功能
-    document.querySelectorAll('.win-window').forEach(win => {
-      const titleBar = win.querySelector('.win-titlebar');
-      if (!titleBar) return;
+    // 窗口拖拽逻辑（仅允许桌面范围内拖动）
+    document.querySelectorAll('.win-modal').forEach(win => {
+      const header = win.querySelector('.win-header');
+      if (!header) return;
 
       let isDragging = false;
-      let startX, startY, origX, origY;
+      let startX, startY, origLeft, origTop;
 
-      titleBar.addEventListener('mousedown', (e) => {
-        if (e.target.closest('.win-btn-ctrl')) return;
+      header.addEventListener('mousedown', (e) => {
+        if (e.target.closest('.win-ctrl-btn') || e.target.closest('.win-menu')) return;
+        if (windowStore[win.id]?.isMax) return; // 最大化状态禁止拖动
         isDragging = true;
-        focusWin(win.id);
+        focusWindow(win.id);
         startX = e.clientX;
         startY = e.clientY;
         const rect = win.getBoundingClientRect();
-        origX = rect.left;
-        origY = rect.top;
+        origLeft = rect.left;
+        origTop = rect.top;
 
         function onMouseMove(ev) {
           if (!isDragging) return;
           const dx = ev.clientX - startX;
           const dy = ev.clientY - startY;
-          win.style.left = `${Math.max(10, origX + dx)}px`;
-          win.style.top = `${Math.max(10, origY + dy)}px`;
+          const newLeft = Math.max(0, Math.min(window.innerWidth - 80, origLeft + dx));
+          const newTop = Math.max(0, Math.min(window.innerHeight - 80, origTop + dy));
+          win.style.left = `${newLeft}px`;
+          win.style.top = `${newTop}px`;
           win.style.right = 'auto';
           win.style.bottom = 'auto';
         }
@@ -594,8 +1393,11 @@
       });
     });
 
-    // 双击像素碎屑粒子
+    // 双击产生复古 8-bit 彩色像素碎屑 (尊重减少动效偏好)
     (function() {
+      const prefersReduced = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+      if (prefersReduced) return;
+
       const canvas = document.getElementById('pixelCanvas');
       const ctx = canvas.getContext('2d');
       let w = canvas.width = window.innerWidth;
@@ -609,16 +1411,16 @@
       const pixels = [];
 
       window.addEventListener('dblclick', (e) => {
-        const colors = ['#ffffa5', '#00f0ff', '#ffffff', '#000080', '#008080'];
-        for (let i = 0; i < 24; i++) {
+        const colors = ['#ffffcc', '#000080', '#ffffff', '#008080', '#ffff00', '#dfdfdf'];
+        for (let i = 0; i < 28; i++) {
           pixels.push({
             x: e.clientX,
             y: e.clientY,
             vx: (Math.random() - 0.5) * 8,
-            vy: (Math.random() - 0.5) * 8 - 2,
-            size: 4 + Math.floor(Math.random() * 4),
+            vy: (Math.random() - 0.5) * 8 - 2.5,
+            size: 3 + Math.floor(Math.random() * 4),
             color: colors[Math.floor(Math.random() * colors.length)],
-            life: 1
+            life: 1.0
           });
         }
       });
@@ -629,8 +1431,8 @@
           const p = pixels[i];
           p.x += p.vx;
           p.y += p.vy;
-          p.vy += 0.25; // 重力
-          p.life -= 0.025;
+          p.vy += 0.22;
+          p.life -= 0.024;
 
           if (p.life <= 0) {
             pixels.splice(i, 1);
@@ -638,13 +1440,16 @@
           }
 
           ctx.fillStyle = p.color;
-          ctx.globalAlpha = p.life;
+          ctx.globalAlpha = Math.max(0, p.life);
           ctx.fillRect(p.x, p.y, p.size, p.size);
         }
         requestAnimationFrame(loop);
       }
       loop();
     })();
+
+    // 初始渲染任务栏
+    renderTaskDock();
   </script>
 </body>
 </html>

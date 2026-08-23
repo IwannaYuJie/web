@@ -3,19 +3,24 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>文渊时报 — 02 复古报纸与文学期刊风</title>
-  <link rel="stylesheet" href="assets/common.css">
+  <title>文渊时报 · 慢新闻周末版 — 02 复古报纸与文学期刊</title>
+  <link rel="stylesheet" href="/creative-blogs/assets/common.css">
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@600;900&family=Noto+Serif+SC:wght@300;400;600;700;900&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@600;800;900&family=Noto+Serif+SC:wght@300;400;600;700;900&family=Playfair+Display:ital,wght@0,700;1,600&display=swap" rel="stylesheet">
   <style>
     :root {
-      --paper-bg: #f5efe3;
-      --paper-ink: #221f1d;
-      --paper-sub: #5a544c;
-      --paper-border: #221f1d;
-      --paper-rule: #d4c8b8;
-      --font-masthead: "Cinzel", "Noto Serif SC", serif;
+      --paper-base: #f6efe1;
+      --paper-sheet: #fbf7ee;
+      --paper-ink: #1e1a17;
+      --paper-muted: #5e564d;
+      --paper-faint: #8e8376;
+      --paper-rule: #c8bba6;
+      --paper-dark-rule: #231f1c;
+      --paper-accent: #8b2616;
+      --paper-accent-gold: #8d6b2c;
+      --paper-selection: #d9cbaf;
+      --font-masthead: "Cinzel", "Playfair Display", "Noto Serif SC", "Songti SC", serif;
       --font-body: "Noto Serif SC", "Songti SC", "SimSun", serif;
     }
 
@@ -25,81 +30,225 @@
       padding: 0;
     }
 
+    ::selection {
+      background: var(--paper-selection);
+      color: var(--paper-ink);
+    }
+
     body {
-      background-color: var(--paper-bg);
+      background-color: var(--paper-base);
       color: var(--paper-ink);
       font-family: var(--font-body);
-      line-height: 1.8;
-      background-image: radial-gradient(rgba(34, 31, 29, 0.04) 1px, transparent 0);
-      background-size: 24px 24px;
-      padding: 24px 16px;
+      line-height: 1.85;
+      background-image: 
+        radial-gradient(rgba(30, 26, 23, 0.05) 1px, transparent 0),
+        linear-gradient(to right, rgba(0,0,0,0.02) 1px, transparent 1px);
+      background-size: 28px 28px, 120px 100%;
+      padding: 24px 12px 64px;
+      min-height: 100vh;
     }
 
     .broadsheet-wrapper {
-      max-width: 1240px;
+      max-width: 1280px;
       margin: 0 auto;
-      background: #fbf7ee;
-      padding: 40px;
-      box-shadow: 0 4px 25px rgba(0, 0, 0, 0.08), 0 0 0 1px rgba(0, 0, 0, 0.05);
-      border: 1px solid #e2d7c5;
-    }
-
-    /* 报头顶条 */
-    .masthead-topbar {
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-      border-top: 1px solid var(--paper-border);
-      border-bottom: 1px solid var(--paper-border);
-      padding: 6px 0;
-      font-size: 13px;
-      font-weight: 600;
-      letter-spacing: 1px;
-    }
-
-    /* 报纸巨幅刊头 */
-    .masthead-main {
-      text-align: center;
-      padding: 28px 0 16px;
+      background: var(--paper-sheet);
+      padding: 42px 48px;
+      box-shadow: 
+        0 12px 36px rgba(40, 30, 20, 0.12),
+        0 2px 8px rgba(40, 30, 20, 0.06),
+        0 0 0 1px #ded3c0,
+        inset 0 0 80px rgba(180, 160, 130, 0.12);
+      border: 1px solid #d4c5ae;
       position: relative;
     }
 
+    /* 装饰角标 */
+    .broadsheet-wrapper::before,
+    .broadsheet-wrapper::after {
+      content: "✦";
+      position: absolute;
+      font-size: 14px;
+      color: var(--paper-faint);
+    }
+    .broadsheet-wrapper::before { top: 12px; left: 16px; }
+    .broadsheet-wrapper::after { top: 12px; right: 16px; }
+
+    /* 报头第一栏 */
+    .masthead-meta-bar {
+      display: grid;
+      grid-template-columns: 1fr auto 1fr;
+      align-items: center;
+      gap: 16px;
+      border-top: 2px solid var(--paper-dark-rule);
+      border-bottom: 1px solid var(--paper-dark-rule);
+      padding: 6px 4px;
+      font-size: 12.5px;
+      font-weight: 600;
+      letter-spacing: 1.5px;
+      color: var(--paper-muted);
+      text-transform: uppercase;
+    }
+    .meta-center {
+      text-align: center;
+      font-weight: 700;
+      color: var(--paper-accent);
+      padding: 0 12px;
+      border-left: 1px solid var(--paper-rule);
+      border-right: 1px solid var(--paper-rule);
+      white-space: nowrap;
+    }
+    .meta-right {
+      text-align: right;
+    }
+
+    /* 主报头 */
+    .masthead-main {
+      text-align: center;
+      padding: 24px 0 14px;
+    }
+    .masthead-english {
+      font-family: var(--font-masthead);
+      font-size: 13px;
+      letter-spacing: 7px;
+      color: var(--paper-muted);
+      text-transform: uppercase;
+      margin-bottom: 4px;
+    }
     .masthead-title {
       font-family: var(--font-masthead);
-      font-size: clamp(36px, 7vw, 76px);
+      font-size: clamp(38px, 7.5vw, 84px);
       font-weight: 900;
-      letter-spacing: 6px;
+      letter-spacing: 10px;
       line-height: 1.05;
-      margin-bottom: 8px;
+      color: var(--paper-ink);
+      text-shadow: 1px 1px 0 rgba(0,0,0,0.15);
+      margin: 2px 0 6px;
     }
-
-    .masthead-sub {
+    .masthead-subtitle {
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      gap: 20px;
       font-size: 14px;
       letter-spacing: 4px;
-      text-transform: uppercase;
-      color: var(--paper-sub);
+      font-weight: 600;
+      color: var(--paper-accent-gold);
+    }
+    .masthead-subtitle span {
+      display: inline-block;
+    }
+    .masthead-subtitle::before,
+    .masthead-subtitle::after {
+      content: "";
+      display: inline-block;
+      width: 48px;
+      height: 1px;
+      background: var(--paper-rule);
     }
 
-    /* 粗细双线 */
-    .double-rule {
+    /* 装饰线 */
+    .rule-heavy-double {
       border: none;
-      border-top: 3px solid var(--paper-border);
-      border-bottom: 1px solid var(--paper-border);
-      height: 6px;
+      border-top: 4px solid var(--paper-dark-rule);
+      border-bottom: 1px solid var(--paper-dark-rule);
+      height: 7px;
       margin: 12px 0 24px;
     }
-
-    .single-rule {
+    .rule-thin {
       border: none;
       border-top: 1px solid var(--paper-rule);
+      margin: 24px 0;
+    }
+    .rule-dashed {
+      border: none;
+      border-top: 1px dashed var(--paper-rule);
       margin: 20px 0;
     }
 
-    /* 头版布局网格 */
-    .front-page-grid {
+    /* 交互工具条（油墨互动、剪报、翻版） */
+    .ink-controls-bar {
+      display: flex;
+      flex-wrap: wrap;
+      justify-content: space-between;
+      align-items: center;
+      gap: 12px;
+      padding: 10px 16px;
+      background: #f1e7d4;
+      border: 1px solid #dfd2be;
+      margin-bottom: 24px;
+      font-size: 13px;
+    }
+    .ink-notice {
+      font-style: italic;
+      color: var(--paper-muted);
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+    .ink-actions {
+      display: flex;
+      gap: 10px;
+    }
+    .btn-press {
+      background: var(--paper-sheet);
+      border: 1px solid var(--paper-dark-rule);
+      color: var(--paper-ink);
+      padding: 5px 14px;
+      font-family: var(--font-body);
+      font-size: 12.5px;
+      font-weight: 600;
+      cursor: pointer;
+      box-shadow: 2px 2px 0 var(--paper-dark-rule);
+      transition: transform 0.1s, box-shadow 0.1s, background-color 0.2s;
+    }
+    .btn-press:hover {
+      background: #fff;
+      transform: translate(-1px, -1px);
+      box-shadow: 3px 3px 0 var(--paper-dark-rule);
+    }
+    .btn-press:active {
+      transform: translate(1px, 1px);
+      box-shadow: 1px 1px 0 var(--paper-dark-rule);
+    }
+    .btn-press:focus-visible {
+      outline: 2px solid var(--paper-accent);
+      outline-offset: 2px;
+    }
+
+    /* 剪报夹弹出抽屉/提示 */
+    .scrapbook-toast {
+      position: fixed;
+      bottom: 24px;
+      right: 24px;
+      background: #231f1c;
+      color: #fbf7ee;
+      padding: 14px 20px;
+      border-radius: 2px;
+      box-shadow: 0 8px 24px rgba(0,0,0,0.3);
+      font-size: 13px;
+      z-index: 10000;
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      transform: translateY(120%);
+      transition: transform 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+    }
+    .scrapbook-toast.active {
+      transform: translateY(0);
+    }
+    .scrapbook-count {
+      background: var(--paper-accent);
+      color: #fff;
+      padding: 2px 8px;
+      font-weight: 900;
+      font-size: 12px;
+    }
+
+    /* 头版主体布局：2/3 主叙事，1/3 边栏与版画 */
+    .broadsheet-front-grid {
       display: grid;
-      grid-template-columns: 2fr 1fr;
-      gap: 36px;
+      grid-template-columns: minmax(0, 2fr) minmax(0, 1fr);
+      gap: 40px;
     }
 
     /* 头条特稿 */
@@ -107,361 +256,1095 @@
       border-right: 1px solid var(--paper-rule);
       padding-right: 36px;
     }
-
     .story-kicker {
-      font-size: 13px;
-      font-weight: 700;
-      letter-spacing: 2px;
-      color: #8c2d19;
-      text-transform: uppercase;
-      margin-bottom: 6px;
-    }
-
-    .lead-title {
-      font-size: clamp(28px, 4vw, 42px);
+      display: inline-block;
+      font-size: 12px;
       font-weight: 900;
-      line-height: 1.25;
-      margin-bottom: 16px;
+      letter-spacing: 3px;
+      color: var(--paper-accent);
+      text-transform: uppercase;
+      border-bottom: 1px solid var(--paper-accent);
+      padding-bottom: 2px;
+      margin-bottom: 10px;
+    }
+    .lead-headline {
+      font-size: clamp(28px, 4.2vw, 44px);
+      font-weight: 900;
+      line-height: 1.22;
       letter-spacing: -0.5px;
+      margin-bottom: 14px;
+      color: #171311;
     }
-
-    .lead-deck {
-      font-size: 18px;
-      color: var(--paper-sub);
+    .lead-subdeck {
+      font-size: 17px;
+      line-height: 1.65;
+      color: var(--paper-muted);
+      border-left: 3px solid var(--paper-accent);
+      padding-left: 16px;
+      margin-bottom: 20px;
       font-style: italic;
-      margin-bottom: 24px;
-      line-height: 1.6;
-      border-left: 3px solid var(--paper-border);
-      padding-left: 14px;
+      background: rgba(139, 38, 22, 0.03);
+      padding-top: 8px;
+      padding-bottom: 8px;
     }
-
-    .story-byline {
+    .lead-byline {
+      display: flex;
+      justify-content: space-between;
+      border-top: 1px solid var(--paper-rule);
+      border-bottom: 1px solid var(--paper-rule);
+      padding: 6px 0;
+      margin-bottom: 22px;
       font-size: 12px;
       font-weight: 600;
-      color: var(--paper-sub);
-      margin-bottom: 20px;
-      text-transform: uppercase;
+      color: var(--paper-muted);
       letter-spacing: 1px;
     }
 
-    /* 报纸多栏排版 */
-    .multi-column-text {
+    /* 完整报道三部曲 */
+    .narrative-trilogy {
+      display: flex;
+      flex-direction: column;
+      gap: 24px;
+    }
+    .narrative-chapter {
+      position: relative;
+    }
+    .chapter-heading {
+      font-size: 17px;
+      font-weight: 800;
+      margin-bottom: 10px;
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      color: var(--paper-ink);
+    }
+    .chapter-tag {
+      font-size: 11px;
+      font-weight: 700;
+      background: var(--paper-dark-rule);
+      color: #fff;
+      padding: 2px 6px;
+      letter-spacing: 1px;
+    }
+    .two-column-prose {
       column-count: 2;
       column-gap: 28px;
-      column-rule: 1px solid var(--paper-rule);
+      column-rule: 1px dashed #ded4c3;
       text-align: justify;
-      font-size: 15px;
+      font-size: 14.5px;
       line-height: 1.85;
+      color: #26221f;
     }
 
-    /* 首字下沉 Drop Cap */
-    .drop-cap::first-letter {
-      font-family: var(--font-masthead);
+    /* 首字下沉 */
+    .drop-cap-chapter::first-letter {
       float: left;
-      font-size: 58px;
-      line-height: 50px;
+      font-family: var(--font-masthead);
+      font-size: 54px;
+      line-height: 44px;
       padding-top: 4px;
       padding-right: 10px;
       padding-bottom: 2px;
       font-weight: 900;
-      color: var(--paper-ink);
+      color: var(--paper-accent);
     }
 
-    /* 侧栏评论与副刊 */
+    /* 读者来信函件盒 */
+    .letter-box {
+      background: #f2ebd9;
+      border: 1px solid #d5c8b2;
+      padding: 18px 20px;
+      position: relative;
+      margin-top: 6px;
+    }
+    .letter-box::before {
+      content: "“";
+      position: absolute;
+      top: -12px;
+      left: 14px;
+      font-size: 48px;
+      color: #c4b49b;
+      font-family: var(--font-masthead);
+      line-height: 1;
+    }
+    .letter-content {
+      font-size: 14px;
+      font-style: italic;
+      color: #38322c;
+      line-height: 1.75;
+      margin-bottom: 8px;
+    }
+    .letter-signer {
+      text-align: right;
+      font-size: 12px;
+      font-weight: 700;
+      color: var(--paper-muted);
+      letter-spacing: 1px;
+    }
+
+    /* 侧栏 */
     .side-column {
       display: flex;
       flex-direction: column;
-      gap: 28px;
+      gap: 26px;
+    }
+    .woodcut-card {
+      border: 2px solid var(--paper-dark-rule);
+      padding: 10px;
+      background: #fff;
+    }
+    .woodcut-img-wrapper {
+      border: 1px solid #d0c5b4;
+      background: #f7f2e7;
+      overflow: hidden;
+    }
+    .woodcut-img {
+      width: 100%;
+      height: auto;
+      display: block;
+      filter: sepia(0.28) contrast(1.1) brightness(0.96);
+      transition: filter 0.3s;
+    }
+    .woodcut-caption {
+      font-size: 12px;
+      color: var(--paper-muted);
+      padding: 10px 4px 4px;
+      text-align: justify;
+      line-height: 1.6;
+      border-top: 1px solid #eee5d3;
+      margin-top: 8px;
+    }
+    .woodcut-caption strong {
+      color: var(--paper-ink);
     }
 
-    .woodcut-frame {
-      border: 1px solid var(--paper-border);
-      padding: 18px;
-      background: rgba(0, 0, 0, 0.02);
+    /* 边栏引语盒 */
+    .epigraph-box {
+      border-top: 2px solid var(--paper-dark-rule);
+      border-bottom: 2px solid var(--paper-dark-rule);
+      padding: 18px 12px;
       text-align: center;
+      background: rgba(0,0,0,0.015);
     }
-    .woodcut-quote {
+    .epigraph-text {
       font-size: 16px;
       font-weight: 700;
       line-height: 1.6;
       margin-bottom: 8px;
+      color: var(--paper-ink);
     }
-    .woodcut-author {
+    .epigraph-source {
       font-size: 12px;
-      color: var(--paper-sub);
+      letter-spacing: 2px;
+      color: var(--paper-muted);
+      text-transform: uppercase;
     }
 
-    .side-article {
-      border-bottom: 1px dashed var(--paper-rule);
-      padding-bottom: 20px;
+    /* 续版 A3 折叠区域 */
+    .expansion-section {
+      background: #f5eedf;
+      border: 1px solid #d8cbba;
+      padding: 20px;
+      margin-top: 24px;
+      display: none;
+      animation: fadeIn 0.4s ease-in-out;
     }
-    .side-article:last-child {
-      border-bottom: none;
+    .expansion-section.open {
+      display: block;
+    }
+    .expansion-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      border-bottom: 1px solid var(--paper-rule);
+      padding-bottom: 8px;
+      margin-bottom: 14px;
+    }
+    .expansion-title {
+      font-size: 15px;
+      font-weight: 900;
+      letter-spacing: 1px;
+      color: var(--paper-accent);
     }
 
-    .side-title {
-      font-size: 20px;
-      font-weight: 800;
-      line-height: 1.3;
-      margin-bottom: 10px;
-    }
-    .side-title a {
-      color: inherit;
-      text-decoration: none;
-    }
-    .side-title a:hover {
-      text-decoration: underline;
-    }
-
-    .side-snippet {
-      font-size: 14px;
-      color: #444;
-      line-height: 1.7;
-    }
-
-    /* 底部三栏副刊区域 */
-    .supplement-grid {
+    /* 次级栏目三列网格 */
+    .secondary-columns-grid {
       display: grid;
       grid-template-columns: repeat(3, 1fr);
-      gap: 30px;
-      margin-top: 24px;
+      gap: 32px;
+      margin: 28px 0;
     }
-
-    .supp-card {
-      border-top: 1px solid var(--paper-border);
-      padding-top: 16px;
+    .column-panel {
+      border-top: 3px solid var(--paper-dark-rule);
+      padding-top: 14px;
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
     }
-    .supp-section {
+    .column-rubric {
       font-size: 11px;
       font-weight: 900;
-      letter-spacing: 2px;
+      letter-spacing: 2.5px;
+      color: var(--paper-accent);
       text-transform: uppercase;
-      margin-bottom: 8px;
-      color: #8c2d19;
+      margin-bottom: 6px;
     }
-    .supp-title {
-      font-size: 18px;
+    .column-title {
+      font-size: 19px;
       font-weight: 800;
-      margin-bottom: 10px;
       line-height: 1.35;
+      margin-bottom: 12px;
+      color: var(--paper-ink);
     }
-    .supp-desc {
+    .column-body {
       font-size: 14px;
-      color: #555;
-      line-height: 1.7;
+      line-height: 1.8;
+      color: #332d28;
+      text-align: justify;
+      margin-bottom: 14px;
+    }
+    .column-meta {
+      font-size: 11.5px;
+      color: var(--paper-muted);
+      border-top: 1px dashed var(--paper-rule);
+      padding-top: 8px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
     }
 
-    /* 底部版权与版印 */
-    .newspaper-colophon {
-      margin-top: 36px;
-      padding-top: 20px;
-      border-top: 1px solid var(--paper-border);
-      text-align: center;
+    /* 资料模块：今日索引 + 复古分类广告 */
+    .gazetteer-section {
+      border: 2px solid var(--paper-dark-rule);
+      background: #fbf8f2;
+      padding: 24px 28px;
+      margin-top: 32px;
+    }
+    .section-banner {
+      display: flex;
+      justify-content: space-between;
+      align-items: baseline;
+      border-bottom: 2px solid var(--paper-dark-rule);
+      padding-bottom: 8px;
+      margin-bottom: 20px;
+    }
+    .section-banner-title {
+      font-size: 18px;
+      font-weight: 900;
+      letter-spacing: 3px;
+    }
+    .section-banner-subtitle {
       font-size: 12px;
-      color: var(--paper-sub);
+      color: var(--paper-muted);
+      font-family: monospace;
       letter-spacing: 1px;
     }
 
-    @media (max-width: 900px) {
+    /* 今日索引 4 栏 */
+    .index-grid {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 20px;
+      border-bottom: 1px solid var(--paper-rule);
+      padding-bottom: 22px;
+      margin-bottom: 22px;
+    }
+    .index-col {
+      border-left: 2px solid #e1d5c2;
+      padding-left: 14px;
+    }
+    .index-category {
+      font-size: 13px;
+      font-weight: 900;
+      color: var(--paper-accent-gold);
+      letter-spacing: 1.5px;
+      margin-bottom: 8px;
+      text-transform: uppercase;
+    }
+    .index-items {
+      list-style: none;
+      font-size: 12.5px;
+      line-height: 1.7;
+      color: #443c35;
+    }
+    .index-items li {
+      margin-bottom: 6px;
+      position: relative;
+    }
+    .index-items li::before {
+      content: "·";
+      font-weight: bold;
+      margin-right: 4px;
+    }
+    .index-items strong {
+      color: var(--paper-ink);
+    }
+
+    /* 分类广告 3 则 */
+    .classifieds-header {
+      font-size: 13px;
+      font-weight: 900;
+      letter-spacing: 2px;
+      margin-bottom: 14px;
+      color: var(--paper-muted);
+      text-transform: uppercase;
+      text-align: center;
+      display: flex;
+      align-items: center;
+      gap: 14px;
+    }
+    .classifieds-header::before,
+    .classifieds-header::after {
+      content: "";
+      flex: 1;
+      height: 1px;
+      background: var(--paper-rule);
+    }
+    .classifieds-grid {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 20px;
+    }
+    .classified-box {
+      border: 1px dashed var(--paper-dark-rule);
+      padding: 14px;
+      background: #f7f0e3;
+      font-size: 13px;
+      line-height: 1.7;
+      position: relative;
+    }
+    .classified-tag {
+      display: inline-block;
+      font-size: 11px;
+      font-weight: 900;
+      padding: 2px 6px;
+      margin-bottom: 6px;
+      color: #fff;
+    }
+    .tag-blue { background: #264a7f; }
+    .tag-green { background: #2d6a4f; }
+    .tag-amber { background: #8c581a; }
+
+    /* 收尾区：主编短评与报印 */
+    .editorial-colophon-wrap {
+      margin-top: 36px;
+      border-top: 3px double var(--paper-dark-rule);
+      padding-top: 24px;
+    }
+    .editor-remark-card {
+      background: #f0e6d2;
+      border: 1px solid #d9ccb6;
+      padding: 20px 28px;
+      text-align: center;
+      margin-bottom: 24px;
+    }
+    .editor-remark-title {
+      font-size: 13px;
+      font-weight: 900;
+      letter-spacing: 3px;
+      color: var(--paper-accent);
+      margin-bottom: 6px;
+      text-transform: uppercase;
+    }
+    .editor-remark-quote {
+      font-size: 20px;
+      font-weight: 900;
+      line-height: 1.5;
+      color: var(--paper-ink);
+      margin-bottom: 8px;
+      letter-spacing: 1px;
+    }
+    .editor-remark-sub {
+      font-size: 13px;
+      color: var(--paper-muted);
+      font-style: italic;
+    }
+
+    .colophon-grid {
+      display: grid;
+      grid-template-columns: 1fr 2fr 1fr;
+      align-items: center;
+      gap: 16px;
+      border-top: 1px solid var(--paper-rule);
+      padding-top: 16px;
+      font-size: 12px;
+      color: var(--paper-muted);
+      text-align: center;
+    }
+    .colophon-left { text-align: left; }
+    .colophon-right { text-align: right; }
+
+    /* 剪报夹侧栏抽屉 (交互视图) */
+    .clip-drawer {
+      position: fixed;
+      top: 0;
+      right: 0;
+      bottom: 0;
+      width: min(380px, 90vw);
+      background: #fbf7ee;
+      border-left: 2px solid var(--paper-dark-rule);
+      box-shadow: -10px 0 30px rgba(0,0,0,0.15);
+      z-index: 10001;
+      transform: translateX(105%);
+      transition: transform 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+      display: flex;
+      flex-direction: column;
+      padding: 24px;
+    }
+    .clip-drawer.open {
+      transform: translateX(0);
+    }
+    .clip-drawer-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      border-bottom: 2px solid var(--paper-dark-rule);
+      padding-bottom: 12px;
+      margin-bottom: 16px;
+    }
+    .clip-drawer-title {
+      font-size: 16px;
+      font-weight: 900;
+      letter-spacing: 2px;
+    }
+    .clip-list {
+      flex: 1;
+      overflow-y: auto;
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+      padding-right: 4px;
+    }
+    .clip-item {
+      background: #f4ecdc;
+      border: 1px dashed var(--paper-dark-rule);
+      padding: 12px;
+      font-size: 13px;
+      position: relative;
+    }
+    .clip-item-title {
+      font-weight: 800;
+      margin-bottom: 4px;
+      color: var(--paper-ink);
+    }
+    .clip-item-snippet {
+      font-size: 12px;
+      color: var(--paper-muted);
+      line-height: 1.6;
+    }
+    .btn-remove-clip {
+      position: absolute;
+      top: 6px;
+      right: 8px;
+      background: none;
+      border: none;
+      font-size: 16px;
+      cursor: pointer;
+      color: var(--paper-faint);
+    }
+    .btn-remove-clip:hover {
+      color: var(--paper-accent);
+    }
+
+    @keyframes fadeIn {
+      from { opacity: 0; transform: translateY(-8px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+
+    /* 响应式断点 */
+    @media (max-width: 1024px) {
       .broadsheet-wrapper {
-        padding: 20px 14px;
+        padding: 30px 24px;
       }
-      .front-page-grid {
+      .front-page-grid,
+      .broadsheet-front-grid {
         grid-template-columns: 1fr;
+        gap: 32px;
       }
       .lead-story {
         border-right: none;
         padding-right: 0;
         border-bottom: 1px solid var(--paper-rule);
-        padding-bottom: 28px;
+        padding-bottom: 32px;
       }
-      .multi-column-text {
+      .secondary-columns-grid {
+        grid-template-columns: 1fr;
+        gap: 24px;
+      }
+      .index-grid {
+        grid-template-columns: repeat(2, 1fr);
+        gap: 20px;
+      }
+      .classifieds-grid {
+        grid-template-columns: 1fr;
+      }
+    }
+
+    @media (max-width: 640px) {
+      body {
+        padding: 12px 6px 40px;
+      }
+      .broadsheet-wrapper {
+        padding: 20px 14px;
+      }
+      .masthead-meta-bar {
+        grid-template-columns: 1fr;
+        text-align: center;
+        gap: 6px;
+      }
+      .meta-right {
+        text-align: center;
+      }
+      .meta-center {
+        border: none;
+        padding: 4px 0;
+      }
+      .two-column-prose {
         column-count: 1;
       }
-      .supplement-grid {
+      .colophon-grid {
         grid-template-columns: 1fr;
+        gap: 8px;
+        text-align: center;
+      }
+      .colophon-left, .colophon-right {
+        text-align: center;
+      }
+      .ink-controls-bar {
+        flex-direction: column;
+        align-items: stretch;
+      }
+      .ink-actions {
+        justify-content: stretch;
+      }
+      .ink-actions .btn-press {
+        flex: 1;
+        text-align: center;
+      }
+      .index-grid {
+        grid-template-columns: 1fr;
+      }
+    }
+
+    @media (prefers-reduced-motion: reduce) {
+      *, *::before, *::after {
+        animation-duration: 0.01ms !important;
+        animation-iteration-count: 1 !important;
+        transition-duration: 0.01ms !important;
+        scroll-behavior: auto !important;
+      }
+      #inkCanvas {
+        display: none !important;
       }
     }
   </style>
 </head>
 <body>
 
-  <div class="broadsheet-wrapper">
-    <!-- 顶栏状态 -->
-    <div class="masthead-topbar">
-      <div>第 壹 卷 · 第 拾 贰 期</div>
-      <div>丙午年 · 庚申月 · 今日晴朗 · 适合深读</div>
-      <div>文学与独立手志 · 自由阅览</div>
-    </div>
-
-    <!-- 刊头 -->
-    <header class="masthead-main">
-      <div class="masthead-sub">THE CHRONICLE & ESSAY REVIEW</div>
-      <h1 class="masthead-title">文 淵 時 報</h1>
-      <div class="masthead-sub">文学 · 科技 · 哲思 · 独立出版</div>
+  <!-- 报刊主容器 -->
+  <div class="broadsheet-wrapper" role="region" aria-label="文渊时报报纸页面">
+    
+    <!-- 报头顶条：期号、日期、天气、未经算法排序 -->
+    <header class="masthead-meta-bar" aria-label="报头元数据">
+      <div class="meta-left">
+        <strong>第 壹 卷 · 第 拾 贰 期</strong> · 创刊号存案
+      </div>
+      <div class="meta-center">
+        ✧ 丙午年 · 霜降初候 · 今日微阴有薄雾 · 未经算法排序 ✧
+      </div>
+      <div class="meta-right">
+        慢新闻周末版 · 纸寿千年 墨润万言
+      </div>
     </header>
 
-    <hr class="double-rule">
+    <!-- 刊头大标 -->
+    <section class="masthead-main">
+      <div class="masthead-english">The Chronicle & Essay Review · Weekend Edition</div>
+      <h1 class="masthead-title">文淵時報</h1>
+      <div class="masthead-subtitle">
+        <span>文学慢读</span>
+        <span>器具志林</span>
+        <span>排印考工</span>
+        <span>独立手志</span>
+      </div>
+    </section>
 
-    <!-- 主版面 -->
-    <div class="front-page-grid">
-      <!-- 左侧头条特稿 -->
-      <main class="lead-story">
+    <hr class="rule-heavy-double">
+
+    <!-- 报房交互微文案工具条 -->
+    <nav class="ink-controls-bar" aria-label="排印交互工具">
+      <div class="ink-notice">
+        <span>📜 互动备忘：</span>
+        <strong>油墨尚未干透，请慢慢翻页</strong>
+      </div>
+      <div class="ink-actions">
+        <button type="button" class="btn-press" id="btnFoldA3" aria-expanded="false" aria-controls="expansionPanel" aria-label="展开续版 A3 特刊内容">
+          展开续版 A3 ▾
+        </button>
+        <button type="button" class="btn-press" id="btnClipLead" aria-label="把头版特稿剪进报刊夹">
+          ✂ 把这篇剪进报刊夹
+        </button>
+        <button type="button" class="btn-press" id="btnOpenDrawer" aria-label="打开我的报刊夹">
+          报刊夹 (<span id="clipCounter">0</span>)
+        </button>
+      </div>
+    </nav>
+
+    <!-- 续版 A3 展开面板 -->
+    <div class="expansion-section" id="expansionPanel" role="region" aria-label="续版 A3 深度补充版面">
+      <div class="expansion-header">
+        <div class="expansion-title">【 续版 A3 · 铅字时代的手工校样手记 】</div>
+        <span style="font-size:12px; color:var(--paper-muted);">排版工匠口述实录 · 整理自1984年铅排车间</span>
+      </div>
+      <p style="font-size:14px; line-height:1.8; color:#332d28; text-align:justify; margin-bottom:10px;">
+        在激光照排普及之前，每个汉字都是一枚实打实的铅块合金。排字工人的手指因常年摩挲铅字而磨出坚硬的厚茧。头版三号字重八钱，正文五号字重三钱。整块版面由成千上万枚沉重的金属块拼合，用木楔与铁框锁紧。若在搬运去压印机的路上不慎磕碰散版，那便是“字山倾倒”，需要三位师傅连夜伏案重排。这种沉重的物理羁绊，让每一位编辑在落笔定稿前，都抱有对字词近乎苛刻的敬畏。
+      </p>
+      <div style="text-align:right;">
+        <button type="button" class="btn-press" id="btnCloseA3" style="font-size:11.5px;">收起续版 ▴</button>
+      </div>
+    </div>
+
+    <!-- 头版主叙事区 -->
+    <div class="broadsheet-front-grid">
+      <!-- 左侧：头版特稿（编辑手记 + 街头观察 + 读者来信） -->
+      <main class="lead-story" id="leadStoryArticle">
         <div class="story-kicker">【 头版特稿 · 深度观察 】</div>
-        <h2 class="lead-title">数字媒介时代的「深阅读挽歌」与重构指南</h2>
+        <h2 class="lead-headline">在通知声里重建深阅读</h2>
         <div class="lead-deck">
-          “当我们习惯了被十五秒短视频和碎片信息流冲刷，我们是否还拥有构建万字宏大叙事与深度逻辑链条的定力？”
-        </div>
-        <div class="story-byline">本报主笔：特约观察员 · 发自数字书斋 · 约 2,800 字</div>
-
-        <!-- 19世纪木刻版画插图 -->
-        <div style="margin: 18px 0; border: 2px solid #2b261f; padding: 6px; background: #fffcf5;">
-          <img src="assets/images/newspaper_woodcut.jpg" alt="古籍图书馆学者木刻版画" style="width:100%; height:auto; display:block; filter: sepia(0.2) contrast(1.05);">
-          <div style="font-size: 11px; text-align: center; color: #6b6357; margin-top: 6px; font-style: italic;">
-            【图版一】古籍书斋中的伏案长思 · 19世纪铜版雕刻手艺复刻
-          </div>
+          从每秒钟弹出的震动红点中夺回注意力的主权，重塑一段完整沉潜、富有肌理的文字漫游之旅。
         </div>
 
-        <div class="multi-column-text drop-cap">
-          铅字印刷时代的报章，每一道油墨与纸张的凹凸都凝结着斟酌与克制。在排字工人的铅盘中，字符拥有重量、温度与物理摩擦阻力。而如今，指尖轻触屏幕即可生成海量字节，但信息的丰裕却往往伴随着意义的贫瘠。
-          <br><br>
-          重构深度阅读的核心，并不在于抵制现代数字终端，而在于为阅读者创造具有「仪式感」的静止空间。本博客之所以采用传统报纸的纵向分栏与衬线字阶，正是试图在喧嚣的数字世界中，为读者辟出一块呼吸平稳的文字飞地。
-          <br><br>
-          文字不仅是思想的容器，更是思维律动的投射。当我们重新学会凝视一段结构紧凑的段落，思维的深潜便在静默中发生。
+        <div class="lead-byline">
+          <span>本报主笔：周默生</span>
+          <span>发自城南排版所</span>
+          <span>阅读预计：9 分钟</span>
         </div>
+
+        <!-- 报道三段论叙事 -->
+        <article class="narrative-trilogy">
+          
+          <!-- 第一段：编辑手记 -->
+          <section class="narrative-chapter">
+            <h3 class="chapter-heading">
+              <span class="chapter-tag">壹</span>
+              编辑手记：铅字消逝之后的注意力流散
+            </h3>
+            <div class="two-column-prose drop-cap-chapter">
+              我们有多久不曾完整读完一本没有插图、没有即时反馈的长篇著述了？在当下的数字生态里，算法为每一次滑动量身定制了多巴胺的触发点，信息如同暴风雨般拍打着屏幕，却极少能渗入心智的深层土壤。本期《文渊时报》之所以执意保留古朴的报章排印构架与双栏铅字比例，并非出于无病呻吟的复古怀旧，而是试图通过物理排版的仪式感，为读者构建一道阻隔信息洪流的防波堤。
+              <br><br>
+              文字在纸页上的展开是线性的、克制的、需要呼吸的。当你凝视一段紧凑的衬线铅字，大脑不再被跳动的弹窗所驱赶，思维才得以在段落与段落的留白间驻足回甘。
+            </div>
+          </section>
+
+          <hr class="rule-dashed">
+
+          <!-- 第二段：街头观察 -->
+          <section class="narrative-chapter">
+            <h3 class="chapter-heading">
+              <span class="chapter-tag">贰</span>
+              街头观察：地铁车厢与梧桐树下的两种时速
+            </h3>
+            <div class="two-column-prose">
+              清晨八点半的二号线地铁车厢里，数百张面孔被同一种微弱的冷光屏幕照亮。人们的大拇指以每秒两次的频率匀速上滑，短视频的音效与即时消息的提示音交织成一种现代生活的白噪音。而在三个街区之外的旧书肆门廊下，一位老人正戴着老花镜翻阅泛黄的文史月刊，偶尔用红铅笔在句读之间轻轻划下一道细线。
+              <br><br>
+              这两种截然不同的场景构成了当下信息消费的隐喻：我们在数字高速公路上狂奔，收集了海量的碎片，却在不知不觉中遗失了将碎片缝合为宏大认知框架的能力。深阅读不是对抗现代生活，而是在奔跑中留出片刻的静止，让灵魂追赶上躯体的速度。
+            </div>
+          </section>
+
+          <hr class="rule-dashed">
+
+          <!-- 第三段：读者来信 -->
+          <section class="narrative-chapter">
+            <h3 class="chapter-heading">
+              <span class="chapter-tag">叁</span>
+              读者来信：在喧嚣中寻得的一处静默庇护所
+            </h3>
+            <div class="letter-box">
+              <div class="letter-content">
+                “上个月我关闭了所有社交软件的实时通知，每天晚餐后在书桌前展开贵报的慢新闻版。起初几日手指仍会下意识地摸索手机，但当读到关于木活字与排版室的故事时，内心竟奇迹般地平静下来。原来看完一篇两千字的沉静叙事，比刷两小时碎片动态更能抚平焦虑。”
+              </div>
+              <div class="letter-signer">—— 读者 陆怀安 来信 · 发自城东书舍</div>
+            </div>
+          </section>
+
+        </article>
       </main>
 
-      <!-- 右侧副栏 -->
-      <aside class="side-column">
-        <!-- 名言框 -->
-        <div class="woodcut-frame">
-          <div class="woodcut-quote">“书籍与报章是人类灵魂的避风港，在那里，时间不再催促你奔跑。”</div>
-          <div class="woodcut-author">—— 随笔摘录 · 2026年夏</div>
+      <!-- 右侧副栏：版画木刻插图与名言 -->
+      <aside class="side-column" aria-label="副刊视点与插图">
+        
+        <!-- 19世纪木刻版画插图 -->
+        <figure class="woodcut-card">
+          <div class="woodcut-img-wrapper">
+            <img src="/creative-blogs/assets/images/newspaper_woodcut.jpg" alt="19世纪欧洲古典图书馆与学者伏案读书的木刻铜版画" class="woodcut-img">
+          </div>
+          <figcaption class="woodcut-caption">
+            <strong>【图版·木刻铜雕】</strong> 伏案沉思的学者与古籍书架。原版藏于老城印刷所，重现了手摇压印时代人类对文本字斟句酌的敬意。
+          </figcaption>
+        </figure>
+
+        <!-- 刊物铭言盒 -->
+        <div class="epigraph-box">
+          <div class="epigraph-text">
+            “当书页在指间翻动时，不仅是字符在传递意旨，更是时间在纸纹里留下的呼吸。”
+          </div>
+          <div class="epigraph-source">—— 《纸页工坊杂记》卷四</div>
         </div>
 
-        <!-- 观察文章 1 -->
-        <div class="side-article">
-          <div class="story-kicker">【 技术前沿 】</div>
-          <h3 class="side-title"><a href="#">从自然语言到代码具象：大模型时代的编程美学演变</a></h3>
-          <p class="side-snippet">
-            编程语言曾是人与机器的晦涩协议，而今自然语言正成为最高阶的编译指令。我们正在见证人机交互范式的百年巨变。
+        <!-- 侧栏短评：纸质媒介的温度 -->
+        <div style="border: 1px solid var(--paper-rule); padding: 16px; background: #fffcf7;">
+          <div style="font-size:11px; font-weight:900; color:var(--paper-accent); letter-spacing:2px; margin-bottom:6px;">【 墨痕微语 】</div>
+          <h4 style="font-size:16px; font-weight:800; margin-bottom:8px; line-height:1.4;">纸张的触觉，是抵御遗忘的锚点</h4>
+          <p style="font-size:13px; color:#443f3a; line-height:1.7; text-align:justify;">
+            神经生物学研究证实，物理介质的空间位置感（哪一页、在页面的左上还是右下）能极大地强化记忆锚定。屏幕的无限滚动抹去了空间的边界，而书本与报纸正是通过折痕与重量，帮助我们筑牢思维的大厦。
           </p>
         </div>
 
-        <!-- 观察文章 2 -->
-        <div class="side-article">
-          <div class="story-kicker">【 读书札记 】</div>
-          <h3 class="side-title"><a href="#">重读博尔赫斯《沙之书》：无限与虚构的迷宫</a></h3>
-          <p class="side-snippet">
-            一本没有第一页也找不到最后一页的书，恰如我们在互联网中无限延伸的超链接海洋……
-          </p>
-        </div>
       </aside>
     </div>
 
-    <hr class="double-rule">
+    <hr class="rule-heavy-double">
 
-    <!-- 底部三栏副刊 -->
-    <section class="supplement-grid">
-      <div class="supp-card">
-        <div class="supp-section">副刊 · 城市漫步</div>
-        <h4 class="supp-title">雨夜漫步：霓虹倒影下的声光切片</h4>
-        <p class="supp-desc">在雨水洗刷过的柏油路面上，车灯拉出长长的光带。记录下城市深夜里那些微小而真实的静谧瞬间。</p>
-      </div>
-
-      <div class="supp-card">
-        <div class="supp-section">副刊 · 器具志</div>
-        <h4 class="supp-title">机械键盘与敲击韵律：触觉的复兴</h4>
-        <p class="supp-desc">在触控屏泛滥的今天，我们为何依然迷恋段落轴清脆的反馈？关于物理触感与生产力的深度思考。</p>
-      </div>
-
-      <div class="supp-card">
-        <div class="supp-section">副刊 · 茶余杂谈</div>
-        <h4 class="supp-title">咖啡因、多巴胺与深夜灵感的交织</h4>
-        <p class="supp-desc">为什么大多数出色的架构设计与文学构思总是在凌晨两点破土而出？探寻心流状态的生物学秘密。</p>
-      </div>
-    </section>
-
-    <!-- 号外与趣味分类广告栏目 -->
-    <section style="margin-top: 32px; border: 2px solid var(--paper-border); padding: 20px; background: #fffcf5;">
-      <div style="display: flex; justify-content: space-between; align-items: baseline; border-bottom: 2px solid var(--paper-border); padding-bottom: 8px; margin-bottom: 16px;">
-        <div style="font-weight: 900; font-size: 16px; letter-spacing: 2px;">【 號 外 特 刊 · 技 藝 分 類 啓 事 】</div>
-        <span style="font-size: 11px; color: var(--paper-sub); font-family: monospace;">CLASSIFIEDS & DISPATCHES</span>
-      </div>
-      <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(240px, 1fr)); gap: 20px; font-size: 13px; line-height: 1.7;">
-        <div style="border-right: 1px dashed var(--paper-rule); padding-right: 14px;">
-          <strong style="color: #8b1e0f;">【求购启事】</strong> 求购 19 世纪精装版《百科全书》全套与铸铁古董印刷机一台。要求字模完好，能正常出墨者为佳。
-        </div>
-        <div style="border-right: 1px dashed var(--paper-rule); padding-right: 14px;">
-          <strong style="color: #1c52a3;">【极客寻友】</strong> 诚寻对 Rust 异步运行时底层、eBPF 监控与机械排版有共同狂热的同道中人，共谋开源盛举。
-        </div>
+    <!-- 三个次级栏目 -->
+    <section class="secondary-columns-grid" aria-label="次级深度栏目">
+      
+      <!-- 次级栏目 1 -->
+      <article class="column-panel">
         <div>
-          <strong style="color: #2e7d32;">【气象与航运】</strong> 本周数字书斋风平浪静，算力微风徐徐，最宜伏案长读，偶有灵感雨阵过境。
+          <div class="column-rubric">栏目 · 访书肆</div>
+          <h3 class="column-title">一间只卖旧书的小店</h3>
+          <p class="column-body">
+            斜街深处的老樟树下，没有门牌，也没有扫码点单的荧光牌。店主陈先生在此守了三十六年。店里只收民国到上世纪八十年代的旧书与泛黄杂志。在这里，每一本书都带有前主人的批注与温度：红蓝圆珠笔写下的读书摘录、夹在扉页里的干枯银杏叶。陈先生说：“旧书不仅承载作者的思想，还记录着另一段早已消逝的人生轨迹。”
+          </p>
         </div>
+        <div class="column-meta">
+          <span>文 / 柳青寻</span>
+          <span>寻访记事 · 约 1,200 字</span>
+        </div>
+      </article>
+
+      <!-- 次级栏目 2 -->
+      <article class="column-panel">
+        <div>
+          <div class="column-rubric">栏目 · 认知志</div>
+          <h3 class="column-title">被折角的页面为什么更容易记住</h3>
+          <p class="column-body">
+            我们在读到惊艳之句时折下的书角，在认知心理学中被称为“物理记忆具身化”。手部对纸张施加的压力、纸张纤维撕裂时发出的微弱脆响，与视网膜捕捉到的三角几何阴影，共同在海马体中建立起多维感知映射。当你数月后重新翻开这一页，身体会先于大脑唤醒当时的感悟。
+          </p>
+        </div>
+        <div class="column-meta">
+          <span>文 / 顾原教授</span>
+          <span>心智随笔 · 约 1,500 字</span>
+        </div>
+      </article>
+
+      <!-- 次级栏目 3 -->
+      <article class="column-panel">
+        <div>
+          <div class="column-rubric">栏目 · 车间纪事</div>
+          <h3 class="column-title">凌晨两点的排版室</h3>
+          <p class="column-body">
+            夜深人静时，城南老印刷厂的三楼排版室依然灯火通明。窗外偶有夜班电车滑过铁轨的铮铮声，屋内只有打字机连贯的敲击声与校对红笔在样张上沙沙作响。排版师傅正用放大镜仔细核对铅字字间距的微米级误差。这份工作要求极度的冷静与耐性，因为每一个被铅锤定型的字符，都将直面黎明后的数十万双眼睛。
+          </p>
+        </div>
+        <div class="column-meta">
+          <span>文 / 柯铭</span>
+          <span>车间观察 · 约 1,100 字</span>
+        </div>
+      </article>
+
+    </section>
+
+    <!-- 资料模块：“今日索引”与“复古分类广告” -->
+    <section class="gazetteer-section" aria-label="今日索引与分类广告">
+      
+      <div class="section-banner">
+        <h3 class="section-banner-title">【 本 期 资 料 · 今 日 索 引 】</h3>
+        <span class="section-banner-subtitle">GAZETTEER & ESSENTIAL INDEX</span>
+      </div>
+
+      <!-- 今日索引 4 栏 -->
+      <div class="index-grid">
+        <div class="index-col">
+          <div class="index-category">文化 / Culture</div>
+          <ul class="index-items">
+            <li><strong>宋代蜀刻本</strong> 刊刻刀法与版框考辨</li>
+            <li><strong>活字传承</strong> 浙江瑞安木活字印刷谱系</li>
+            <li><strong>文人书斋</strong> 明代高濂《遵生八笺》器具志</li>
+          </ul>
+        </div>
+        <div class="index-col">
+          <div class="index-category">技术 / Technology</div>
+          <ul class="index-items">
+            <li><strong>排印算法</strong> 现代排版引擎的 Knuth-Plass 折行术</li>
+            <li><strong>衬线渲染</strong> 像素栅格化中的字体次像素抗锯齿</li>
+            <li><strong>电子纸演进</strong> 电泳墨水屏刷新率与残影控制</li>
+          </ul>
+        </div>
+        <div class="index-col">
+          <div class="index-category">生活 / Living</div>
+          <ul class="index-items">
+            <li><strong>慢行指南</strong> 城南三座老茶馆与听雨窗位</li>
+            <li><strong>手作墨水</strong> 栎瘿鞣酸铁黑墨水配制笔记</li>
+            <li><strong>书房温湿</strong> 纸质书刊避光与通风防潮守则</li>
+          </ul>
+        </div>
+        <div class="index-col">
+          <div class="index-category">书评 / Review</div>
+          <ul class="index-items">
+            <li><strong>《装订之美》</strong> 从羊皮纸到布面烫金工艺史</li>
+            <li><strong>《夜航船》</strong> 张岱眼中的晚明百科知识图谱</li>
+            <li><strong>《字间距》</strong> 一位排印大师的七十年版面自白</li>
+          </ul>
+        </div>
+      </div>
+
+      <!-- 复古分类广告 3 则（有趣、不涉及真实交易） -->
+      <div class="classifieds-header">
+        <span>副刊分类小启事 · 趣味集萃</span>
+      </div>
+      <div class="classifieds-grid">
+        
+        <div class="classified-box">
+          <span class="classified-tag tag-blue">【文人招募】</span>
+          <div>
+            <strong>城东听雨阁征诗客：</strong>
+            凡能于暴雨倾盆之夜，不燃电灯、仅凭烛光手写五言绝句三首且字迹不漫溢者，可获赠陈年黄山毛峰一罐与古法手漉皮纸半刀。
+          </div>
+        </div>
+
+        <div class="classified-box">
+          <span class="classified-tag tag-green">【器具寻物】</span>
+          <div>
+            <strong>求购二手古董铅字盘：</strong>
+            需带楠木外框与黄铜隔条，各号宋体字模齐全者为佳。若附带手摇滚筒压墨样机一台，愿以全套精装文集相赠酬谢。
+          </div>
+        </div>
+
+        <div class="classified-box">
+          <span class="classified-tag tag-amber">【气象启事】</span>
+          <div>
+            <strong>本周末数字书斋气象：</strong>
+            算力微风二级，无外部通知干扰。书房气压稳定，极其适宜伏案长读与温水煮茶。偶有灵感雨阵过境，请备好吸墨纸。
+          </div>
+        </div>
+
       </div>
     </section>
 
-    <!-- 版印 -->
-    <footer class="newspaper-colophon">
-      <div>本刊独立编撰 · 排版灵感源自 19 世纪欧洲宽幅报刊与传统宋体木活字</div>
-      <div style="margin-top: 4px;">THE CHRONICLE &copy; 2026 · ALL THOUGHTS RESERVED</div>
+    <!-- 收尾区：主编短评与版印 -->
+    <footer class="editorial-colophon-wrap" aria-label="主编短评与版印">
+      
+      <div class="editor-remark-card">
+        <div class="editor-remark-title">主编短评 · 卷末随感</div>
+        <blockquote class="editor-remark-quote">
+          “重要的内容，经得起晚一天抵达。”
+        </blockquote>
+        <div class="editor-remark-sub">
+          在人人追求“即时推送”的时代，我们选择把步调放缓，让思想在油墨与纸张里充分沉淀。
+        </div>
+      </div>
+
+      <div class="colophon-grid">
+        <div class="colophon-left">
+          <strong>文渊时报社 · 独立出版</strong><br>
+          慢新闻编辑部 承印
+        </div>
+        <div class="colophon-center">
+          排版字体：Noto Serif SC & Cinzel · 灵感源自十九世纪宽幅报章与传统宋体刻本<br>
+          THE CHRONICLE & ESSAY REVIEW &copy; 2026 · 慢阅读计划
+        </div>
+        <div class="colophon-right">
+          <strong>纸寿千年 · 墨韵犹存</strong><br>
+          未经许可，谢绝算法抓取
+        </div>
+      </div>
     </footer>
+
   </div>
 
-  <!-- 油墨晕染动效 Canvas -->
-  <canvas id="inkCanvas" style="position: fixed; inset: 0; pointer-events: none; z-index: 999;"></canvas>
+  <!-- 剪报夹侧栏抽屉 -->
+  <aside class="clip-drawer" id="clipDrawer" aria-label="我的剪报夹" aria-hidden="true">
+    <div class="clip-drawer-header">
+      <div class="clip-drawer-title">📂 我的报刊剪报夹</div>
+      <button type="button" class="btn-press" id="btnCloseDrawer" aria-label="关闭剪报夹">关闭 ✕</button>
+    </div>
+    <div class="clip-list" id="clipListContainer">
+      <div style="font-size:13px; color:var(--paper-muted); text-align:center; padding:30px 0;">
+        剪报夹目前空空如也<br>点击顶部的“剪进报刊夹”收藏本版文章。
+      </div>
+    </div>
+  </aside>
 
-  <script src="assets/nav-bar.js"></script>
+  <!-- 剪报成功轻量提示 Toast -->
+  <div class="scrapbook-toast" id="clipToast" role="status" aria-live="polite">
+    <span>✂ 已成功剪切并放入报刊夹！</span>
+    <span class="scrapbook-count" id="toastCountBadge">1 篇</span>
+  </div>
+
+  <!-- 油墨晕染轻量动效 Canvas -->
+  <canvas id="inkCanvas" style="position: fixed; inset: 0; pointer-events: none; z-index: 9999;" aria-hidden="true"></canvas>
+
+  <!-- 引用公共导航栏 -->
+  <script src="/creative-blogs/assets/nav-bar.js"></script>
+
   <script>
     (function() {
-      const canvas = document.getElementById('inkCanvas');
-      const ctx = canvas.getContext('2d');
-      let w, h;
+      // 1. 续版 A3 折叠交互
+      const btnFoldA3 = document.getElementById('btnFoldA3');
+      const btnCloseA3 = document.getElementById('btnCloseA3');
+      const expansionPanel = document.getElementById('expansionPanel');
 
-      function resize() {
-        w = canvas.width = window.innerWidth;
-        h = canvas.height = window.innerHeight;
+      function toggleA3() {
+        const isOpen = expansionPanel.classList.toggle('open');
+        btnFoldA3.setAttribute('aria-expanded', isOpen ? 'true' : 'false');
+        btnFoldA3.textContent = isOpen ? '收起续版 A3 ▴' : '展开续版 A3 ▾';
       }
-      window.addEventListener('resize', resize);
-      resize();
 
-      const drops = [];
+      if (btnFoldA3 && expansionPanel) {
+        btnFoldA3.addEventListener('click', toggleA3);
+      }
+      if (btnCloseA3 && expansionPanel) {
+        btnCloseA3.addEventListener('click', toggleA3);
+      }
 
-      window.addEventListener('click', (e) => {
-        for (let i = 0; i < 6; i++) {
-          drops.push({
-            x: e.clientX + (Math.random() - 0.5) * 20,
-            y: e.clientY + (Math.random() - 0.5) * 20,
-            radius: 2 + Math.random() * 4,
-            maxRadius: 18 + Math.random() * 25,
-            opacity: 0.35 + Math.random() * 0.2,
-            speed: 0.8 + Math.random() * 1.2
-          });
+      // 2. 剪报夹系统
+      const clips = [
+        {
+          id: 'lead-article',
+          title: '在通知声里重建深阅读',
+          snippet: '从每秒钟弹出的震动红点中夺回注意力的主权，重塑一段完整沉潜的文字漫游……'
         }
-      });
+      ];
+      let storedClips = [];
 
-      function animate() {
-        ctx.clearRect(0, 0, w, h);
+      const btnClipLead = document.getElementById('btnClipLead');
+      const btnOpenDrawer = document.getElementById('btnOpenDrawer');
+      const btnCloseDrawer = document.getElementById('btnCloseDrawer');
+      const clipDrawer = document.getElementById('clipDrawer');
+      const clipCounter = document.getElementById('clipCounter');
+      const clipListContainer = document.getElementById('clipListContainer');
+      const clipToast = document.getElementById('clipToast');
+      const toastCountBadge = document.getElementById('toastCountBadge');
 
-        for (let i = drops.length - 1; i >= 0; i--) {
-          const d = drops[i];
-          d.radius += d.speed;
-          d.opacity -= 0.008;
+      function renderClips() {
+        clipCounter.textContent = storedClips.length;
+        if (storedClips.length === 0) {
+          clipListContainer.innerHTML = `
+            <div style="font-size:13px; color:var(--paper-muted); text-align:center; padding:30px 0;">
+              剪报夹目前空空如也<br>点击“把这篇剪进报刊夹”即可收藏。
+            </div>
+          `;
+          return;
+        }
 
-          if (d.opacity <= 0 || d.radius >= d.maxRadius) {
-            drops.splice(i, 1);
-            continue;
+        clipListContainer.innerHTML = storedClips.map((item, idx) => `
+          <div class="clip-item">
+            <button class="btn-remove-clip" data-index="${idx}" aria-label="移除此条剪报">×</button>
+            <div class="clip-item-title">${item.title}</div>
+            <div class="clip-item-snippet">${item.snippet}</div>
+          </div>
+        `).join('');
+
+        const removeBtns = clipListContainer.querySelectorAll('.btn-remove-clip');
+        removeBtns.forEach(btn => {
+          btn.addEventListener('click', (e) => {
+            const i = parseInt(e.currentTarget.getAttribute('data-index'), 10);
+            storedClips.splice(i, 1);
+            renderClips();
+          });
+        });
+      }
+
+      function showToast(text) {
+        toastCountBadge.textContent = `${storedClips.length} 篇`;
+        clipToast.classList.add('active');
+        setTimeout(() => {
+          clipToast.classList.remove('active');
+        }, 2400);
+      }
+
+      if (btnClipLead) {
+        btnClipLead.addEventListener('click', () => {
+          const leadData = clips[0];
+          const exists = storedClips.some(c => c.id === leadData.id);
+          if (!exists) {
+            storedClips.push(leadData);
+            renderClips();
+            showToast();
+          } else {
+            showToast();
+          }
+        });
+      }
+
+      function openDrawer() {
+        clipDrawer.classList.add('open');
+        clipDrawer.setAttribute('aria-hidden', 'false');
+      }
+      function closeDrawer() {
+        clipDrawer.classList.remove('open');
+        clipDrawer.setAttribute('aria-hidden', 'true');
+      }
+
+      if (btnOpenDrawer) btnOpenDrawer.addEventListener('click', openDrawer);
+      if (btnCloseDrawer) btnCloseDrawer.addEventListener('click', closeDrawer);
+
+      // 3. 报纸油墨水滴轻量动画 (尊重 prefers-reduced-motion)
+      const prefersReduced = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+      const canvas = document.getElementById('inkCanvas');
+      if (canvas && !prefersReduced) {
+        const ctx = canvas.getContext('2d');
+        let w, h;
+
+        function resize() {
+          w = canvas.width = window.innerWidth;
+          h = canvas.height = window.innerHeight;
+        }
+        window.addEventListener('resize', resize);
+        resize();
+
+        const drops = [];
+
+        window.addEventListener('click', (e) => {
+          // 若点击了可交互控件则减少粒子
+          const isButton = e.target.closest('button, a, input');
+          const count = isButton ? 2 : 5;
+          for (let i = 0; i < count; i++) {
+            drops.push({
+              x: e.clientX + (Math.random() - 0.5) * 16,
+              y: e.clientY + (Math.random() - 0.5) * 16,
+              radius: 1.5 + Math.random() * 3,
+              maxRadius: 12 + Math.random() * 16,
+              opacity: 0.28 + Math.random() * 0.15,
+              speed: 0.6 + Math.random() * 0.8
+            });
+          }
+        });
+
+        function animate() {
+          ctx.clearRect(0, 0, w, h);
+
+          for (let i = drops.length - 1; i >= 0; i--) {
+            const d = drops[i];
+            d.radius += d.speed;
+            d.opacity -= 0.009;
+
+            if (d.opacity <= 0 || d.radius >= d.maxRadius) {
+              drops.splice(i, 1);
+              continue;
+            }
+
+            ctx.beginPath();
+            ctx.arc(d.x, d.y, d.radius, 0, Math.PI * 2);
+            ctx.fillStyle = `rgba(35, 31, 28, ${d.opacity})`;
+            ctx.fill();
           }
 
-          ctx.beginPath();
-          ctx.arc(d.x, d.y, d.radius, 0, Math.PI * 2);
-          ctx.fillStyle = `rgba(34, 31, 29, ${d.opacity})`;
-          ctx.fill();
+          requestAnimationFrame(animate);
         }
-
-        requestAnimationFrame(animate);
+        animate();
       }
-      animate();
     })();
   </script>
 </body>

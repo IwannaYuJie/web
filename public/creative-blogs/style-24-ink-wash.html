@@ -3,25 +3,33 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>墨韵千秋 — 24 水墨国风与卷轴画卷</title>
-  <link rel="stylesheet" href="assets/common.css">
+  <title>墨韵千秋 · 四时游观卷 — 24 水墨国风与卷轴画卷</title>
+  <link rel="stylesheet" href="/creative-blogs/assets/common.css">
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Ma+Shan+Zheng&family=Noto+Serif+SC:wght@300;400;600;900&family=ZCOOL+XiaoWei&display=swap" rel="stylesheet">
   <style>
     :root {
-      --ink-paper: #f4eee2;
-      --ink-paper-dark: #e8ded0;
-      --ink-black: #1c1a17;
-      --ink-gray: #4a463f;
-      --ink-light-gray: #8c867a;
-      --vermilion: #b92b27;
-      --vermilion-light: #d64541;
-      --pine-green: #2d4f3e;
-      --border-ink: rgba(28, 26, 23, 0.2);
+      --ink-paper: #f7f2e7;
+      --ink-paper-warm: #eee5d3;
+      --ink-paper-dark: #ded2bd;
+      --ink-paper-border: #c8b99d;
+      --ink-black: #1a1714;
+      --ink-dense: #2c2722;
+      --ink-heavy: #484138;
+      --ink-light: #7a7062;
+      --ink-clear: #ab9f8c;
+      --vermilion: #b8332a;
+      --vermilion-glow: rgba(184, 51, 42, 0.22);
+      --vermilion-soft: #d34e45;
+      --indigo-ink: #2b3942;
+      --pine-ink: #28382c;
+      --gold-accent: #c49a45;
       --font-kai: "Ma Shan Zheng", "STKaiti", "KaiTi", serif;
-      --font-song: "Noto Serif SC", "Songti SC", serif;
+      --font-song: "Noto Serif SC", "Songti SC", "SimSun", serif;
       --font-xiaowei: "ZCOOL XiaoWei", serif;
+      --scroll-roller: #6e4e37;
+      --scroll-roller-dark: #473223;
     }
 
     * {
@@ -31,346 +39,1307 @@
     }
 
     body {
-      background-color: var(--ink-paper);
+      background-color: #211c18;
+      background-image: 
+        radial-gradient(circle at 50% 20%, rgba(200, 185, 157, 0.08) 0%, transparent 60%),
+        linear-gradient(to bottom, #1d1815, #27211d 50%, #1a1512);
       color: var(--ink-black);
       font-family: var(--font-song);
       line-height: 1.85;
-      background-image: 
-        radial-gradient(rgba(28, 26, 23, 0.03) 1px, transparent 0),
-        linear-gradient(to right, rgba(28, 26, 23, 0.02) 1px, transparent 1px);
-      background-size: 24px 24px, 120px 100%;
       min-height: 100vh;
       position: relative;
+      overflow-x: hidden;
     }
 
-    /* 卷轴装饰轴杆 */
-    .scroll-shell {
-      max-width: 1200px;
-      margin: 32px auto 80px;
+    /* 顶部卷轴气韵条 */
+    .ink-header-banner {
+      max-width: 1280px;
+      margin: 20px auto 0;
+      padding: 12px 24px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      color: var(--ink-paper-warm);
+      font-family: var(--font-xiaowei);
+      font-size: 14px;
+      letter-spacing: 0.15em;
+      border-bottom: 1px solid rgba(238, 229, 211, 0.15);
+    }
+
+    .ink-header-tag {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      color: var(--gold-accent);
+      font-weight: 600;
+    }
+
+    /* 主卷轴外壳与装裱杆 */
+    .scroll-chassis {
+      max-width: 1300px;
+      margin: 24px auto 70px;
       padding: 0 24px;
       position: relative;
     }
 
-    .scroll-container {
-      background: var(--ink-paper);
-      border: 3px double var(--ink-black);
-      border-radius: 4px;
-      box-shadow: 0 16px 40px rgba(40, 30, 20, 0.12), 0 2px 6px rgba(0, 0, 0, 0.06);
+    .scroll-roller-top,
+    .scroll-roller-bottom {
+      height: 22px;
+      background: linear-gradient(90deg, #382417 0%, var(--scroll-roller) 15%, #926a4c 50%, var(--scroll-roller) 85%, #382417 100%);
+      border-radius: 11px;
+      box-shadow: 0 6px 16px rgba(0, 0, 0, 0.5), inset 0 2px 3px rgba(255, 255, 255, 0.2);
       position: relative;
-      overflow: hidden;
-      padding: 48px 56px;
+      z-index: 3;
     }
 
-    /* 宣纸四角仿绫绢包边 */
-    .scroll-container::before,
-    .scroll-container::after {
+    .scroll-roller-top::before,
+    .scroll-roller-top::after,
+    .scroll-roller-bottom::before,
+    .scroll-roller-bottom::after {
       content: "";
       position: absolute;
-      width: 48px;
-      height: 48px;
-      pointer-events: none;
-      border: 2px solid var(--vermilion);
+      top: -3px;
+      width: 18px;
+      height: 28px;
+      background: radial-gradient(circle, #e2c082 0%, #875c2b 100%);
+      border-radius: 4px;
+      box-shadow: 0 2px 6px rgba(0,0,0,0.6);
     }
-    .scroll-container::before { top: 12px; left: 12px; border-right: none; border-bottom: none; }
-    .scroll-container::after { bottom: 12px; right: 12px; border-left: none; border-top: none; }
+    .scroll-roller-top::before,
+    .scroll-roller-bottom::before { left: -8px; }
+    .scroll-roller-top::after,
+    .scroll-roller-bottom::after { right: -8px; }
 
-    /* 顶部题头 */
-    .scroll-header {
-      display: flex;
-      justify-content: space-between;
-      align-items: flex-start;
-      border-bottom: 1px solid var(--border-ink);
-      padding-bottom: 28px;
-      margin-bottom: 36px;
+    .silk-border {
+      background: #736352 url("data:image/svg+xml,%3Csvg width='32' height='32' viewBox='0 0 32 32' xmlns='http://www.w3.org/2000/svg'%3E%3Cpath d='M0 16 L16 0 L32 16 L16 32 Z' fill='%23665747' fill-opacity='0.4'/%3E%3C/svg%3E");
+      padding: 18px 16px;
+      box-shadow: 0 20px 50px rgba(0, 0, 0, 0.45);
+      border-left: 2px solid #57493b;
+      border-right: 2px solid #57493b;
+    }
+
+    /* 真正画心宣纸 */
+    .xuan-paper {
+      background-color: var(--ink-paper);
+      background-image: 
+        radial-gradient(rgba(44, 39, 34, 0.035) 1px, transparent 0),
+        linear-gradient(to right, rgba(44, 39, 34, 0.02) 1px, transparent 1px);
+      background-size: 28px 28px, 140px 100%;
+      border: 1px solid var(--ink-paper-border);
+      box-shadow: inset 0 0 40px rgba(171, 159, 140, 0.35);
+      padding: 48px 52px;
       position: relative;
     }
 
-    .header-main-title {
+    /* 宣纸四角吉祥纹样 */
+    .corner-deco {
+      position: absolute;
+      width: 32px;
+      height: 32px;
+      border: 2px solid var(--vermilion);
+      opacity: 0.85;
+      pointer-events: none;
+    }
+    .corner-tl { top: 14px; left: 14px; border-right: none; border-bottom: none; }
+    .corner-tr { top: 14px; right: 14px; border-left: none; border-bottom: none; }
+    .corner-bl { bottom: 14px; left: 14px; border-right: none; border-top: none; }
+    .corner-br { bottom: 14px; right: 14px; border-left: none; border-top: none; }
+
+    /* 卷首题引 */
+    .juan-head {
+      display: grid;
+      grid-template-columns: 1fr auto;
+      gap: 32px;
+      align-items: start;
+      border-bottom: 2px solid rgba(44, 39, 34, 0.15);
+      padding-bottom: 32px;
+      margin-bottom: 40px;
+    }
+
+    .juan-meta-kicker {
+      font-size: 13px;
+      letter-spacing: 0.3em;
+      color: var(--vermilion);
+      font-weight: 700;
+      margin-bottom: 8px;
+    }
+
+    .juan-main-title {
       font-family: var(--font-kai);
-      font-size: clamp(38px, 6vw, 64px);
+      font-size: clamp(34px, 5.2vw, 58px);
+      letter-spacing: 0.12em;
       color: var(--ink-black);
-      line-height: 1.15;
-      letter-spacing: 0.1em;
-      text-shadow: 2px 2px 0 rgba(185, 43, 39, 0.15);
+      line-height: 1.2;
+      text-shadow: 2px 2px 0 rgba(184, 51, 42, 0.1);
     }
 
-    .header-sub-meta {
-      font-size: 14px;
-      color: var(--ink-light-gray);
-      margin-top: 10px;
-      letter-spacing: 0.15em;
+    .juan-subtitle {
+      font-family: var(--font-xiaowei);
+      font-size: 16px;
+      color: var(--ink-heavy);
+      margin-top: 12px;
+      letter-spacing: 0.18em;
     }
 
-    /* 朱砂闲章印记 */
-    .seal-stamp {
+    .seals-cluster {
+      display: flex;
+      flex-direction: column;
+      align-items: flex-end;
+      gap: 12px;
+    }
+
+    .seal-box {
       display: inline-flex;
       align-items: center;
       justify-content: center;
-      width: 48px;
-      height: 48px;
       border: 2px solid var(--vermilion);
-      border-radius: 4px;
       color: var(--vermilion);
       font-family: var(--font-kai);
+      padding: 6px 8px;
       font-size: 16px;
       line-height: 1.1;
-      padding: 4px;
       text-align: center;
-      transform: rotate(-4deg);
-      box-shadow: inset 0 0 4px rgba(185, 43, 39, 0.2);
       cursor: pointer;
       user-select: none;
-      transition: transform 0.2s ease;
+      box-shadow: inset 0 0 5px var(--vermilion-glow), 0 2px 5px rgba(0,0,0,0.06);
+      transition: transform 0.2s cubic-bezier(0.175, 0.885, 0.32, 1.275);
     }
-    .seal-stamp:hover {
-      transform: rotate(0deg) scale(1.08);
+    .seal-box:hover {
+      transform: rotate(2deg) scale(1.08);
+    }
+    .seal-box.round {
+      border-radius: 50%;
+      width: 48px;
+      height: 48px;
+      padding: 0;
     }
 
-    /* 水墨画卷大图展示 */
-    .ink-banner-wrapper {
-      margin-bottom: 40px;
-      border-radius: 4px;
-      border: 1px solid var(--border-ink);
-      overflow: hidden;
+    /* 水墨四季画卷轮播/视差展台 */
+    .ink-panorama-stage {
       position: relative;
-      box-shadow: 0 8px 24px rgba(28, 26, 23, 0.08);
+      border: 1px solid var(--ink-paper-border);
+      border-radius: 2px;
+      overflow: hidden;
+      margin-bottom: 44px;
+      box-shadow: 0 12px 30px rgba(44, 39, 34, 0.12);
+      background: #dfd5c2;
     }
 
-    .ink-banner-img {
+    .ink-panorama-canvas {
       width: 100%;
       height: 380px;
-      object-fit: cover;
       display: block;
-      filter: contrast(1.05) saturate(0.95);
-      transition: transform 0.6s ease;
-    }
-    .ink-banner-wrapper:hover .ink-banner-img {
-      transform: scale(1.03);
+      background: radial-gradient(circle at 60% 40%, #eee5d3 0%, #d8caa9 100%);
     }
 
-    .ink-banner-caption {
+    .ink-scene-overlay {
       position: absolute;
-      bottom: 0;
-      left: 0;
-      right: 0;
-      padding: 16px 24px;
-      background: linear-gradient(to top, rgba(28, 26, 23, 0.85), transparent);
-      color: var(--ink-paper);
+      inset: 0;
+      pointer-events: none;
+      background: linear-gradient(180deg, rgba(247,242,231,0.1) 0%, rgba(26,23,20,0.7) 100%);
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
+      padding: 24px 30px;
+      color: #fff;
+    }
+
+    .scene-badge-top {
+      align-self: flex-start;
+      background: rgba(26, 23, 20, 0.7);
+      border: 1px solid var(--gold-accent);
+      padding: 4px 14px;
+      font-family: var(--font-xiaowei);
+      font-size: 13px;
+      letter-spacing: 0.2em;
+      color: var(--ink-paper-warm);
+      backdrop-filter: blur(4px);
+    }
+
+    .scene-meta-bottom {
       display: flex;
       justify-content: space-between;
       align-items: flex-end;
-      font-family: var(--font-xiaowei);
+      flex-wrap: wrap;
+      gap: 12px;
+    }
+
+    .scene-title-large {
+      font-family: var(--font-kai);
+      font-size: 28px;
+      letter-spacing: 0.15em;
+      color: #fff;
+      text-shadow: 0 2px 8px rgba(0,0,0,0.8);
+    }
+
+    .scene-desc-lead {
+      font-size: 14px;
+      color: #e5dccb;
+      letter-spacing: 0.08em;
+      max-width: 600px;
+    }
+
+    /* 四季画卷展开游观栏 */
+    .seasons-nav-ribbon {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 12px;
+      margin-bottom: 40px;
+    }
+
+    .season-tab-btn {
+      background: var(--ink-paper-warm);
+      border: 1px solid var(--ink-paper-border);
+      padding: 14px 16px;
+      cursor: pointer;
+      text-align: left;
+      transition: all 0.25s ease;
+      display: flex;
+      flex-direction: column;
+      gap: 4px;
+      position: relative;
+    }
+    .season-tab-btn:hover {
+      background: #e4d8bf;
+      border-color: var(--ink-heavy);
+    }
+    .season-tab-btn.active {
+      background: var(--ink-dense);
+      border-color: var(--gold-accent);
+      color: var(--ink-paper-warm);
+      transform: translateY(-2px);
+      box-shadow: 0 6px 14px rgba(0,0,0,0.18);
+    }
+    .season-tab-btn.active .season-num {
+      color: var(--gold-accent);
+    }
+    .season-tab-btn.active .season-sub {
+      color: #b9ad9b;
+    }
+
+    .season-num {
+      font-size: 11px;
+      letter-spacing: 0.2em;
+      color: var(--vermilion);
+      font-weight: 700;
+    }
+    .season-name {
+      font-family: var(--font-kai);
+      font-size: 18px;
+      letter-spacing: 0.1em;
+    }
+    .season-sub {
+      font-size: 12px;
+      color: var(--ink-light);
+      letter-spacing: 0.05em;
+    }
+
+    /* 主叙事章节内容卡 */
+    .main-narrative-box {
+      background: rgba(255, 255, 255, 0.4);
+      border: 1px solid var(--ink-paper-border);
+      padding: 36px 40px;
+      margin-bottom: 48px;
+      box-shadow: inset 0 0 20px rgba(222, 210, 189, 0.5);
+      position: relative;
+    }
+
+    .chapter-heading {
+      display: flex;
+      align-items: center;
+      gap: 16px;
+      margin-bottom: 24px;
+      border-bottom: 1px dashed var(--ink-paper-border);
+      padding-bottom: 16px;
+    }
+
+    .chapter-mark {
+      width: 8px;
+      height: 28px;
+      background: var(--vermilion);
+    }
+
+    .chapter-title {
+      font-family: var(--font-kai);
+      font-size: 26px;
+      color: var(--ink-dense);
       letter-spacing: 0.1em;
     }
 
-    /* 双栏正文布局：日式/国风竖排引文与现代横排混排 */
-    .ink-content-grid {
-      display: grid;
-      grid-template-columns: 2fr 1fr;
-      gap: 48px;
-    }
-
-    .article-lead {
-      font-size: 19px;
+    .narrative-lead {
+      font-size: 18px;
       font-weight: 600;
-      color: var(--ink-black);
-      line-height: 1.9;
-      margin-bottom: 24px;
+      color: var(--ink-dense);
+      line-height: 2;
+      margin-bottom: 20px;
       border-left: 3px solid var(--vermilion);
       padding-left: 18px;
     }
 
-    .article-body p {
+    .narrative-text p {
       font-size: 16.5px;
-      color: var(--ink-gray);
-      margin-bottom: 20px;
-      text-indent: 2em;
+      color: var(--ink-heavy);
+      margin-bottom: 18px;
+      text-indent: 2.2em;
+      text-align: justify;
+      line-height: 1.95;
     }
 
-    .side-poetry-scroll {
-      background: var(--ink-paper-dark);
-      border: 1px solid var(--border-ink);
-      border-radius: 4px;
-      padding: 24px;
+    .quote-scroll-block {
+      background: var(--ink-paper-warm);
+      border-left: 4px solid var(--vermilion);
+      padding: 18px 24px;
+      margin: 24px 0;
+      font-family: var(--font-xiaowei);
+      font-size: 16px;
+      color: var(--ink-dense);
+      letter-spacing: 0.08em;
+    }
+
+    /* 次级栏目三列 */
+    .sub-columns-section {
+      margin-bottom: 54px;
+    }
+
+    .sub-section-title {
+      text-align: center;
+      font-family: var(--font-kai);
+      font-size: 30px;
+      letter-spacing: 0.2em;
+      margin-bottom: 28px;
+      position: relative;
+      color: var(--ink-dense);
+    }
+    .sub-section-title::before,
+    .sub-section-title::after {
+      content: "——";
+      color: var(--vermilion);
+      margin: 0 16px;
+      font-family: var(--font-song);
+      opacity: 0.6;
+    }
+
+    .sub-columns-grid {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 24px;
+    }
+
+    .sub-card {
+      background: var(--ink-paper-warm);
+      border: 1px solid var(--ink-paper-border);
+      padding: 26px 22px;
       display: flex;
       flex-direction: column;
-      align-items: center;
-      box-shadow: inset 0 0 12px rgba(0, 0, 0, 0.04);
+      transition: transform 0.2s ease, box-shadow 0.2s ease;
+      position: relative;
+    }
+    .sub-card:hover {
+      transform: translateY(-4px);
+      box-shadow: 0 10px 24px rgba(44, 39, 34, 0.12);
+      border-color: var(--ink-heavy);
     }
 
-    .vertical-poetry {
-      writing-mode: vertical-rl;
-      text-orientation: upright;
+    .sub-card-tag {
+      font-size: 11px;
+      color: var(--vermilion);
+      letter-spacing: 0.2em;
+      font-weight: 700;
+      margin-bottom: 8px;
+    }
+
+    .sub-card-title {
       font-family: var(--font-kai);
-      font-size: 20px;
-      letter-spacing: 0.35em;
-      line-height: 2.2;
-      color: var(--ink-black);
-      max-height: 400px;
-      margin: 16px 0;
+      font-size: 21px;
+      color: var(--ink-dense);
+      line-height: 1.35;
+      margin-bottom: 14px;
+      border-bottom: 1px solid rgba(44, 39, 34, 0.12);
+      padding-bottom: 10px;
     }
 
-    /* 互动落款盖印栏 */
-    .stamp-interactive-bar {
-      margin-top: 48px;
-      padding: 24px;
-      border-top: 1px dashed var(--border-ink);
+    .sub-card-desc {
+      font-size: 14.5px;
+      color: var(--ink-heavy);
+      line-height: 1.85;
+      text-align: justify;
+      flex: 1;
+    }
+
+    /* 资料模块：文房四宝小谱、皴法、题跋释义、印章语境 */
+    .compendium-section {
+      background: #ede3ce;
+      border: 1px solid var(--ink-paper-border);
+      padding: 36px 32px;
+      margin-bottom: 50px;
+    }
+
+    .compendium-tabs {
       display: flex;
-      align-items: center;
+      gap: 12px;
+      border-bottom: 2px solid var(--ink-paper-border);
+      padding-bottom: 12px;
+      margin-bottom: 24px;
+      flex-wrap: wrap;
+    }
+
+    .comp-tab-btn {
+      background: transparent;
+      border: none;
+      font-family: var(--font-kai);
+      font-size: 18px;
+      color: var(--ink-light);
+      cursor: pointer;
+      padding: 6px 16px;
+      border-radius: 4px;
+      transition: all 0.2s;
+      letter-spacing: 0.1em;
+    }
+    .comp-tab-btn.active {
+      background: var(--ink-dense);
+      color: var(--ink-paper-warm);
+    }
+
+    .comp-panel {
+      display: none;
+    }
+    .comp-panel.active {
+      display: block;
+      animation: fadeIn 0.3s ease;
+    }
+
+    @keyframes fadeIn {
+      from { opacity: 0; transform: translateY(6px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+
+    /* 资料网格 */
+    .data-grid-4 {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 18px;
+    }
+    .data-grid-2 {
+      display: grid;
+      grid-template-columns: repeat(2, 1fr);
+      gap: 20px;
+    }
+
+    .data-item-box {
+      background: var(--ink-paper);
+      border: 1px solid var(--ink-paper-border);
+      padding: 18px;
+      border-radius: 2px;
+    }
+    .data-item-header {
+      font-family: var(--font-kai);
+      font-size: 18px;
+      color: var(--vermilion);
+      margin-bottom: 8px;
+      display: flex;
       justify-content: space-between;
+      align-items: center;
+    }
+    .data-item-content {
+      font-size: 13.5px;
+      color: var(--ink-heavy);
+      line-height: 1.75;
+    }
+
+    /* 互动微文案与盖印操作台 */
+    .interactive-scroll-dock {
+      background: var(--ink-paper-warm);
+      border: 2px dashed var(--ink-paper-border);
+      padding: 28px 32px;
+      margin-bottom: 48px;
+      display: flex;
+      flex-direction: column;
+      gap: 20px;
+    }
+
+    .dock-upper-actions {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
       flex-wrap: wrap;
       gap: 16px;
     }
 
-    .btn-stamp-action {
+    .btn-ink-primary {
       display: inline-flex;
       align-items: center;
-      gap: 8px;
-      padding: 10px 22px;
+      gap: 10px;
+      padding: 12px 26px;
       background: var(--vermilion);
       color: #fff;
       border: none;
-      border-radius: 4px;
       font-family: var(--font-song);
       font-size: 15px;
       font-weight: 600;
+      letter-spacing: 0.1em;
       cursor: pointer;
-      box-shadow: 0 4px 12px rgba(185, 43, 39, 0.3);
+      box-shadow: 0 4px 14px rgba(184, 51, 42, 0.35);
       transition: all 0.2s ease;
     }
-    .btn-stamp-action:hover {
-      background: var(--vermilion-light);
+    .btn-ink-primary:hover {
+      background: var(--vermilion-soft);
       transform: translateY(-2px);
     }
 
-    .stamps-collection {
-      display: flex;
-      gap: 12px;
+    .btn-ink-secondary {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      padding: 11px 22px;
+      background: var(--ink-dense);
+      color: var(--ink-paper-warm);
+      border: 1px solid var(--gold-accent);
+      font-family: var(--font-song);
+      font-size: 14px;
+      letter-spacing: 0.1em;
+      cursor: pointer;
+      transition: all 0.2s ease;
+    }
+    .btn-ink-secondary:hover {
+      background: #3c342d;
+      transform: translateY(-2px);
     }
 
-    @media (max-width: 840px) {
-      .scroll-container {
+    .custom-seals-tray {
+      display: flex;
+      align-items: center;
+      gap: 16px;
+      flex-wrap: wrap;
+      padding-top: 12px;
+      border-top: 1px solid rgba(44, 39, 34, 0.1);
+    }
+
+    .tray-label {
+      font-size: 13px;
+      color: var(--ink-light);
+      letter-spacing: 0.1em;
+    }
+
+    .stamps-live-pool {
+      display: flex;
+      gap: 14px;
+      flex-wrap: wrap;
+    }
+
+    /* 收尾题跋大块 */
+    .epilogue-mount {
+      background: linear-gradient(135deg, var(--ink-paper-warm) 0%, var(--ink-paper) 100%);
+      border: 2px solid var(--ink-heavy);
+      padding: 40px 48px;
+      display: grid;
+      grid-template-columns: 1fr 200px;
+      gap: 36px;
+      align-items: center;
+      position: relative;
+    }
+
+    .epilogue-text {
+      font-family: var(--font-kai);
+      font-size: 24px;
+      line-height: 1.8;
+      color: var(--ink-dense);
+      letter-spacing: 0.15em;
+    }
+
+    .epilogue-sub {
+      font-family: var(--font-song);
+      font-size: 14px;
+      color: var(--ink-light);
+      margin-top: 14px;
+      letter-spacing: 0.1em;
+    }
+
+    .epilogue-seal-col {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 12px;
+      border-left: 1px dashed var(--ink-paper-border);
+      padding-left: 24px;
+    }
+
+    .epilogue-seal-large {
+      width: 72px;
+      height: 72px;
+      border: 3px solid var(--vermilion);
+      color: var(--vermilion);
+      font-family: var(--font-kai);
+      font-size: 22px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      text-align: center;
+      line-height: 1.1;
+      box-shadow: inset 0 0 8px var(--vermilion-glow);
+      cursor: pointer;
+      user-select: none;
+      transition: transform 0.2s ease;
+    }
+    .epilogue-seal-large:hover {
+      transform: scale(1.1) rotate(-3deg);
+    }
+
+    /* 墨水通知浮层 */
+    .ink-toast {
+      position: fixed;
+      bottom: 40px;
+      right: 40px;
+      background: var(--ink-dense);
+      color: var(--ink-paper-warm);
+      border: 1px solid var(--gold-accent);
+      padding: 12px 24px;
+      font-family: var(--font-xiaowei);
+      font-size: 15px;
+      letter-spacing: 0.15em;
+      box-shadow: 0 10px 30px rgba(0,0,0,0.4);
+      z-index: 9999;
+      opacity: 0;
+      transform: translateY(20px);
+      pointer-events: none;
+      transition: all 0.3s ease;
+    }
+    .ink-toast.show {
+      opacity: 1;
+      transform: translateY(0);
+    }
+
+    /* 响应式微调 */
+    @media (max-width: 992px) {
+      .xuan-paper {
         padding: 32px 24px;
       }
-      .ink-content-grid {
+      .sub-columns-grid {
         grid-template-columns: 1fr;
-        gap: 32px;
       }
-      .vertical-poetry {
-        writing-mode: horizontal-tb;
-        max-height: none;
+      .data-grid-4 {
+        grid-template-columns: repeat(2, 1fr);
       }
-      .ink-banner-img {
-        height: 240px;
+      .seasons-nav-ribbon {
+        grid-template-columns: repeat(2, 1fr);
+      }
+      .epilogue-mount {
+        grid-template-columns: 1fr;
+      }
+      .epilogue-seal-col {
+        border-left: none;
+        border-top: 1px dashed var(--ink-paper-border);
+        padding-left: 0;
+        padding-top: 20px;
+        flex-direction: row;
+        justify-content: center;
+      }
+    }
+
+    @media (max-width: 640px) {
+      .juan-head {
+        grid-template-columns: 1fr;
+      }
+      .seals-cluster {
+        flex-direction: row;
+        align-items: center;
+      }
+      .data-grid-4, .data-grid-2 {
+        grid-template-columns: 1fr;
+      }
+      .seasons-nav-ribbon {
+        grid-template-columns: 1fr;
+      }
+      .ink-panorama-canvas {
+        height: 260px;
+      }
+      .scroll-chassis {
+        padding: 0 10px;
+      }
+      .dock-upper-actions {
+        flex-direction: column;
+        align-items: stretch;
+      }
+    }
+
+    @media (prefers-reduced-motion: reduce) {
+      * {
+        animation: none !important;
+        transition: none !important;
       }
     }
   </style>
 </head>
 <body>
-  <div class="scroll-shell">
-    <div class="scroll-container">
-      <!-- 顶部题头 -->
-      <header class="scroll-header">
-        <div>
-          <div style="font-size: 12px; color: var(--vermilion); letter-spacing: 0.2em; font-weight: 700; margin-bottom: 6px;">
-            ✦ 风格第二十四 · 水墨文人志 ✦
+
+  <!-- 顶部刊头栏 -->
+  <aside class="ink-header-banner" aria-label="刊物顶栏">
+    <div class="ink-header-tag">
+      <span>✦ 风格第二十四 · 墨韵千秋</span>
+      <span style="opacity: 0.5;">|</span>
+      <span>四时游观卷</span>
+    </div>
+    <div style="opacity: 0.85;">歲在丙午 · 宣紙生香 · 觀景通神</div>
+  </aside>
+
+  <!-- 卷轴装裱主体 -->
+  <main class="scroll-chassis" id="scrollChassis">
+    <!-- 上卷轴天杆 -->
+    <div class="scroll-roller-top" aria-hidden="true"></div>
+
+    <div class="silk-border">
+      <div class="xuan-paper">
+        <!-- 宣纸四角仿古边花 -->
+        <div class="corner-deco corner-tl" aria-hidden="true"></div>
+        <div class="corner-deco corner-tr" aria-hidden="true"></div>
+        <div class="corner-deco corner-bl" aria-hidden="true"></div>
+        <div class="corner-deco corner-br" aria-hidden="true"></div>
+
+        <!-- 卷首题头 -->
+        <header class="juan-head">
+          <div>
+            <div class="juan-meta-kicker">墨 韵 千 秋 · 四 時 游 觀 卷</div>
+            <h1 class="juan-main-title">山水微茫，澄怀观道</h1>
+            <p class="juan-subtitle">以虚白御玄黑 · 以寸楮纳万象 · 笔墨漫谈</p>
           </div>
-          <h1 class="header-main-title">山水微茫 · 澄怀观道</h1>
-          <div class="header-sub-meta">歲在丙午年秋 · 筆墨漫談 · 卷之壹</div>
-        </div>
-        <div style="display: flex; gap: 8px; align-items: center;">
-          <div class="seal-stamp" title="点击盖印" onclick="stampClick(this)">橘貓<br>之印</div>
-          <div class="seal-stamp" style="border-radius: 50%;" title="点击盖印" onclick="stampClick(this)">澄<br>懷</div>
-        </div>
-      </header>
+          <div class="seals-cluster" aria-label="长卷引首印章">
+            <div class="seal-box" onclick="stampClick(this)" title="点击盖印" aria-label="澄怀印章">澄<br>懷</div>
+            <div class="seal-box round" onclick="stampClick(this)" title="点击盖印" aria-label="观道印章">觀<br>道</div>
+          </div>
+        </header>
 
-      <!-- 水墨长卷配图 -->
-      <div class="ink-banner-wrapper">
-        <img src="assets/images/ink_scroll.jpg" alt="传统水墨山水长卷" class="ink-banner-img">
-        <div class="ink-banner-caption">
-          <span>《秋山策杖图》· 仿宋元笔意</span>
-          <span>远山如黛 · 云水空濛</span>
-        </div>
-      </div>
+        <!-- 水墨四季长卷实时交互视差画卷 -->
+        <section class="ink-panorama-stage" aria-label="四时水墨动态长卷">
+          <canvas id="scrollLandscapeCanvas" class="ink-panorama-canvas" width="1200" height="380" aria-label="四时水墨山水画卷图"></canvas>
+          <div class="ink-scene-overlay">
+            <div class="scene-badge-top" id="sceneSeasonBadge">卷之一 · 春山听雨</div>
+            <div class="scene-meta-bottom">
+              <div>
+                <div class="scene-title-large" id="sceneTitle">空翠湿衣 · 远山带雨</div>
+                <div class="scene-desc-lead" id="sceneSubDesc">细雨如丝，泼墨以水破墨，群峰隐于岚烟浩渺之中，笔法虚灵而气韵流动。</div>
+              </div>
+              <div style="font-family: var(--font-xiaowei); font-size: 13px; letter-spacing: 0.15em; color: var(--gold-accent);">
+                ✦ 画意生发 · 四时递转
+              </div>
+            </div>
+          </div>
+        </section>
 
-      <!-- 双栏正文与竖排诗文 -->
-      <div class="ink-content-grid">
-        <div class="article-body">
-          <div class="article-lead">
+        <!-- 四季章节切换选择带 -->
+        <nav class="seasons-nav-ribbon" aria-label="四季章节切换">
+          <button class="season-tab-btn active" onclick="switchSeason(0)" aria-label="切换至第一章：春山听雨">
+            <span class="season-num">壹 · SPRING</span>
+            <strong class="season-name">春山听雨</strong>
+            <span class="season-sub">润物细无声 · 泼墨点染</span>
+          </button>
+          <button class="season-tab-btn" onclick="switchSeason(1)" aria-label="切换至第二章：夏窗观云">
+            <span class="season-num">贰 · SUMMER</span>
+            <strong class="season-name">夏窗观云</strong>
+            <span class="season-sub">积墨叠翠 · 浩气磅礴</span>
+          </button>
+          <button class="season-tab-btn" onclick="switchSeason(2)" aria-label="切换至第三章：秋林策杖">
+            <span class="season-num">叁 · AUTUMN</span>
+            <strong class="season-name">秋林策杖</strong>
+            <span class="season-sub">枯笔焦墨 · 霜林疏朗</span>
+          </button>
+          <button class="season-tab-btn" onclick="switchSeason(3)" aria-label="切换至第四章：冬夜读帖">
+            <span class="season-num">肆 · WINTER</span>
+            <strong class="season-name">冬夜读帖</strong>
+            <span class="season-sub">留白为雪 · 寒江独钓</span>
+          </button>
+        </nav>
+
+        <!-- 主叙事内容区 -->
+        <article class="main-narrative-box" id="narrativeSection" aria-label="主叙事正文">
+          <div class="chapter-heading">
+            <div class="chapter-mark"></div>
+            <h2 class="chapter-title" id="chapterHeadingText">第一章：春山听雨 · 润含春雨</h2>
+          </div>
+
+          <div class="narrative-lead" id="chapterLeadText">
             夫水墨之道，非独施赭墨于素绢，实乃以虚白御玄黑，以寸楮纳万象。留白处皆成妙境，笔不到而意已周。
           </div>
-          <p>
-            观宋人格物之精，一叶落而知天下秋。今人治学码字，亦如枯笔着墨。代码之架构，讲求疏密有致，过繁则滞，过简则空。恰似山水之布白，密不透风，疏可走马。
-          </p>
-          <p>
-            世间万物皆有其节律。静坐案前，窗外微雨初霁，点一杯清茗，于键盘之上敲击方块文字，便如挥毫于生宣之上。墨色洇散开来，层次分明，浅绛淡著，自有一番超然之乐。
-          </p>
 
-          <div style="border-top: 1px dashed var(--border-ink); border-bottom: 1px dashed var(--border-ink); padding: 18px 0; margin: 20px 0;">
-            <div style="font-family: var(--font-kai); font-size: 20px; color: var(--vermilion); margin-bottom: 8px;">【 墨 法 析 理 · 筆 意 入 神 】</div>
-            <p style="font-size: 15px; line-height: 1.9;">
-              董源披麻，写尽江南土山郁茂；李唐斧劈，顿见北方崇山苍劲。今之计算机着色器（Shader），借由法线贴图与柏林噪声模拟墨晕渐变，亦是在数字世界重铸“气韵生动”之六法。
+          <div class="narrative-text" id="chapterBodyText">
+            <p>
+              观宋人格物之精，一叶落而知天下秋。今人治学码字，亦如枯笔着墨。代码之架构，讲求疏密有致，过繁则滞，过简则空。恰似山水之布白，密不透风，疏可走马。
+            </p>
+            <p>
+              世间万物皆有其节律。静坐案前，窗外微雨初霁，点一杯清茗，于键盘之上敲击方块文字，便如挥毫于生宣之上。墨色洇散开来，层次分明，浅绛淡著，自有一番超然之乐。
+            </p>
+            <div class="quote-scroll-block">
+              “董源披麻，写尽江南土山郁茂；李唐斧劈，顿见北方崇山苍劲。今之计算机着色器，借由法线贴图与柏林噪声模拟墨晕渐变，亦是在数字世界重铸‘气韵生动’之六法。”
+            </div>
+            <p>
+              以极简之形，表深邃之意。无论千百年光阴流转，黑白与朱砂的对话，始终在东方美学的血脉中静静流淌。当春水初生，墨入温水，山峦如梦苏醒，此乃澄怀而观道之始。
             </p>
           </div>
+        </article>
 
-          <p>
-            以极简之形，表深邃之意。无论千百年光阴流转，黑白与朱砂的对话，始终在东方美学的血脉中静静流淌。
-          </p>
-        </div>
+        <!-- 次级栏目三列 -->
+        <section class="sub-columns-section" aria-label="次级赏析栏目">
+          <h2 class="sub-section-title">画 学 探 微</h2>
+          <div class="sub-columns-grid">
+            <article class="sub-card">
+              <span class="sub-card-tag">墨法玄微 · 壹</span>
+              <h3 class="sub-card-title">五色墨如何只用黑表现</h3>
+              <p class="sub-card-desc">
+                古人云“运墨五色，焦浓重淡清”。仅凭松烟油烟与清水之配比，通过宿墨之沉、泼墨之润、破墨之融，使单一的黑色显现出干湿浓淡的丰富光谱。黑不是色彩的缺席，而是包罗万象的母体。
+              </p>
+            </article>
 
-        <aside class="side-poetry-scroll">
-          <div style="font-size: 12px; color: var(--vermilion); letter-spacing: 0.2em; margin-bottom: 8px;">【 題 跋 】</div>
-          <div class="vertical-poetry" id="poetryText">
-            行到水穷处<br>
-            坐看云起时<br>
-            偶然值林叟<br>
-            谈笑无还期
+            <article class="sub-card">
+              <span class="sub-card-tag">布白奥义 · 贰</span>
+              <h3 class="sub-card-title">留白不是空白</h3>
+              <p class="sub-card-desc">
+                “计白当黑，虚实相生。”画面中不着一笔的素绢，可以是奔涌之江河，可以是弥漫之天云，亦可以是观者遐想之无垠宇宙。留白非偷懒之弃置，而是为画面留下呼吸吐纳之命脉。
+              </p>
+            </article>
+
+            <article class="sub-card">
+              <span class="sub-card-tag">朱墨相映 · 叁</span>
+              <h3 class="sub-card-title">一枚闲章在画面里的分量</h3>
+              <p class="sub-card-desc">
+                当全幅皆沉浸于玄黑与素白之沉静，一抹殷红朱砂闲章如孤舟火光，瞬间唤醒整幅画作的气局。印章不仅是署名信物，更是调和视觉重心、破除呆滞的“压角之石”与点睛之笔。
+              </p>
+            </article>
           </div>
-          <div style="font-size: 11px; color: var(--ink-light-gray); margin-top: 12px;">唐 · 王维《终南别业》</div>
-        </aside>
+        </section>
+
+        <!-- 资料模块：文房小谱、皴法、题跋、印章语境 -->
+        <section class="compendium-section" aria-label="资料模块与文房知识谱系">
+          <div class="compendium-tabs" role="tablist">
+            <button class="comp-tab-btn active" role="tab" onclick="switchCompTab(0, this)">文房四宝小谱</button>
+            <button class="comp-tab-btn" role="tab" onclick="switchCompTab(1, this)">传统皴法卡片</button>
+            <button class="comp-tab-btn" role="tab" onclick="switchCompTab(2, this)">题跋释义考</button>
+            <button class="comp-tab-btn" role="tab" onclick="switchCompTab(3, this)">四枚印章与使用语境</button>
+          </div>
+
+          <!-- 文房小谱 -->
+          <div class="comp-panel active" id="compPanel0">
+            <div class="data-grid-4">
+              <div class="data-item-box">
+                <div class="data-item-header"><span>筆 · 宣笔紫毫</span><small style="font-size:12px;color:var(--ink-light);">锋颖锐利</small></div>
+                <div class="data-item-content">取皖南兔毫与狼毫兼揉，讲求“尖、齐、圆、健”四德，提按顿挫间自见金石风骨。</div>
+              </div>
+              <div class="data-item-box">
+                <div class="data-item-header"><span>墨 · 徽州油烟</span><small style="font-size:12px;color:var(--ink-light);">一点如漆</small></div>
+                <div class="data-item-content">以桐油桐烟掺入皮胶、麝香精捣万杵，落纸如漆，经久不褪，入水晕散富有温润层次。</div>
+              </div>
+              <div class="data-item-box">
+                <div class="data-item-header"><span>紙 · 泾县生宣</span><small style="font-size:12px;color:var(--ink-light);">水晕天成</small></div>
+                <div class="data-item-content">青檀皮与沙田稻草百道工序所成。生宣吸水迅疾，墨分五色尽显；熟宣胶矾定形，宜工细勾描。</div>
+              </div>
+              <div class="data-item-box">
+                <div class="data-item-header"><span>硯 · 歙州金星</span><small style="font-size:12px;color:var(--ink-light);">发墨如膏</small></div>
+                <div class="data-item-content">石质坚润细密，呵气生云，磨墨无声而发墨极快，不伤毫颖，乃文人书斋传家之宝。</div>
+              </div>
+            </div>
+          </div>
+
+          <!-- 皴法卡片 -->
+          <div class="comp-panel" id="compPanel1">
+            <div class="data-grid-4">
+              <div class="data-item-box">
+                <div class="data-item-header"><span>披麻皴</span><small style="font-size:12px;color:var(--ink-light);">董源 · 巨然</small></div>
+                <div class="data-item-content">线条柔韧连绵，状如散麻，专写江南土石山峦圆润郁茂之态，苍茫温厚。</div>
+              </div>
+              <div class="data-item-box">
+                <div class="data-item-header"><span>斧劈皴</span><small style="font-size:12px;color:var(--ink-light);">李唐 · 马远</small></div>
+                <div class="data-item-content">笔锋倾侧下按，如利斧斫木，表现北方花岗岩与石质悬崖峭壁的坚硬刚烈。</div>
+              </div>
+              <div class="data-item-box">
+                <div class="data-item-header"><span>米点皴</span><small style="font-size:12px;color:var(--ink-light);">米芾 · 米友仁</small></div>
+                <div class="data-item-content">以饱含水分之扁笔横点层层叠加，表现烟雨迷蒙、树木茂密之江南雨景。</div>
+              </div>
+              <div class="data-item-box">
+                <div class="data-item-header"><span>折带皴</span><small style="font-size:12px;color:var(--ink-light);">倪瓒</small></div>
+                <div class="data-item-content">侧锋卧笔横拉后折转下收，宛如折叠之带，专写太湖一带沉积岩岸之空灵冷逸。</div>
+              </div>
+            </div>
+          </div>
+
+          <!-- 题跋释义 -->
+          <div class="comp-panel" id="compPanel2">
+            <div class="data-grid-2">
+              <div class="data-item-box">
+                <div class="data-item-header"><span>【 題 】· 标举主旨于画前</span></div>
+                <div class="data-item-content">
+                  “题”原指卷首额书或画上命名诗句。作者或收藏家在画心、隔水处书写诗文，阐释作画机缘、胸中丘壑或唱和之意，使绘画从单纯视觉造型升华为文人意境之综合体。
+                </div>
+              </div>
+              <div class="data-item-box">
+                <div class="data-item-header"><span>【 跋 】· 随感品鉴于卷尾</span></div>
+                <div class="data-item-content">
+                  “跋”多缀于画卷尾部或拖尾纸上。后世文人墨客鉴赏流传之时，挥毫评析笔墨高下、追述画史传承。历代题跋重叠，使一卷长卷成为跨越千年的时空对话长廊。
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- 印章语境 -->
+          <div class="comp-panel" id="compPanel3">
+            <div class="data-grid-4">
+              <div class="data-item-box">
+                <div class="data-item-header"><span>怡然</span><small style="font-size:12px;color:var(--vermilion);">闲章 · 引首</small></div>
+                <div class="data-item-content">语出陶渊明“黄发垂髫，并怡然自乐”。多用于卷首右上方，表达心无挂碍、游于艺境的安然心绪。</div>
+              </div>
+              <div class="data-item-box">
+                <div class="data-item-header"><span>得趣</span><small style="font-size:12px;color:var(--vermilion);">闲章 · 压角</small></div>
+                <div class="data-item-content">意指在山林微茫中自得其趣。钤于画幅下角疏朗处，稳固视觉重心，寓意笔随意到、偶有所得。</div>
+              </div>
+              <div class="data-item-box">
+                <div class="data-item-header"><span>澄怀</span><small style="font-size:12px;color:var(--vermilion);">斋馆 · 鉴赏</small></div>
+                <div class="data-item-content">取宗炳“澄怀味象，澄怀观道”。多盖于正文启承处，指洗尽胸中俗尘杂念，方能洞见天地本真。</div>
+              </div>
+              <div class="data-item-box">
+                <div class="data-item-header"><span>观道</span><small style="font-size:12px;color:var(--vermilion);">名号 · 结款</small></div>
+                <div class="data-item-content">以天地大美为师，借笔墨探寻万物运行之大道。用于卷尾题款之下，标志整幅心象之完备圆融。</div>
+              </div>
+            </div>
+          </div>
+        </section>
+
+        <!-- 专属互动微文案与盖印操作台 -->
+        <section class="interactive-scroll-dock" aria-label="长卷互动台">
+          <div class="dock-upper-actions">
+            <div style="display: flex; gap: 12px; flex-wrap: wrap;">
+              <button class="btn-ink-primary" onclick="nextSeasonRoll()" aria-label="展开长卷下一景">
+                <span>📜 展开长卷下一景</span>
+              </button>
+              <button class="btn-ink-secondary" onclick="addCustomStamp('怡然')" aria-label="加盖怡然闲章">
+                <span>💮 加盖“怡然”闲章</span>
+              </button>
+              <button class="btn-ink-secondary" onclick="addCustomStamp('得趣')" aria-label="加盖得趣闲章">
+                <span>💮 加盖“得趣”闲章</span>
+              </button>
+            </div>
+            <div style="display: flex; gap: 12px;">
+              <button class="btn-ink-secondary" onclick="toastInkWait()" style="background: transparent; color: var(--ink-heavy);" aria-label="提示墨迹未干">
+                <span>⏳ 墨迹未干，请稍候</span>
+              </button>
+              <button class="btn-ink-secondary" onclick="closeScrollPrompt()" aria-label="收卷提示">
+                <span>🔒 收卷，留待下次再观</span>
+              </button>
+            </div>
+          </div>
+
+          <div class="custom-seals-tray">
+            <span class="tray-label">已加盖朱砂闲章印池（点击印章可使其神采焕发）：</span>
+            <div class="stamps-live-pool" id="stampsPool">
+              <div class="seal-box" onclick="stampClick(this)" title="怡然闲章">怡<br>然</div>
+              <div class="seal-box round" onclick="stampClick(this)" title="得趣闲章">得<br>趣</div>
+              <div class="seal-box" onclick="stampClick(this)" title="神品闲章">神<br>品</div>
+            </div>
+          </div>
+        </section>
+
+        <!-- 卷尾收尾题跋 -->
+        <footer class="epilogue-mount" aria-label="长卷收尾题跋">
+          <div>
+            <div style="font-size: 13px; color: var(--vermilion); letter-spacing: 0.2em; font-weight: 700; margin-bottom: 8px;">
+              【 卷 尾 題 跋 】
+            </div>
+            <div class="epilogue-text">
+              “行至画外，心仍在山中。”
+            </div>
+            <p class="epilogue-sub">
+              墨痕虽歇，画意无涯。万壑松风与澄澈幽怀，皆随君行，归于日常。
+            </p>
+          </div>
+          <div class="epilogue-seal-col">
+            <div class="epilogue-seal-large" onclick="stampClick(this)" title="点击加盖终卷宝印">
+              千秋<br>墨華
+            </div>
+            <span style="font-size: 11px; color: var(--ink-light); font-family: var(--font-xiaowei);">歲在丙午秋立</span>
+          </div>
+        </footer>
       </div>
-
-      <!-- 底部互动落款 -->
-      <footer class="stamp-interactive-bar">
-        <div style="display: flex; align-items: center; gap: 12px;">
-          <button class="btn-stamp-action" onclick="addCustomStamp()">
-            <span>💮 临池泼墨盖印</span>
-          </button>
-          <span style="font-size: 13px; color: var(--ink-light-gray);">点击印章或按钮可在卷轴上加盖朱砂闲章</span>
-        </div>
-        <div class="stamps-collection" id="stampsPool">
-          <div class="seal-stamp" onclick="stampClick(this)">怡<br>然</div>
-          <div class="seal-stamp" onclick="stampClick(this)">得<br>趣</div>
-        </div>
-      </footer>
     </div>
-  </div>
 
-  <!-- 宣纸水墨烟云拖尾 Canvas -->
+    <!-- 下卷轴地杆 -->
+    <div class="scroll-roller-bottom" aria-hidden="true"></div>
+  </main>
+
+  <!-- 提示弹窗微文案 -->
+  <div class="ink-toast" id="inkToast" role="status" aria-live="polite">墨迹未干，请稍候</div>
+
+  <!-- 水墨游烟粒子背景 -->
   <canvas id="inkSmokeCanvas" style="position: fixed; inset: 0; pointer-events: none; z-index: 998; mix-blend-mode: multiply;"></canvas>
 
-  <script src="assets/nav-bar.js"></script>
+  <script src="/creative-blogs/assets/nav-bar.js"></script>
   <script>
+    // 四季章节数据
+    const seasonsData = [
+      {
+        badge: "卷之一 · 春山听雨",
+        title: "空翠湿衣 · 远山带雨",
+        sub: "细雨如丝，泼墨以水破墨，群峰隐于岚烟浩渺之中，笔法虚灵而气韵流动。",
+        chapterHeading: "第一章：春山听雨 · 润含春雨",
+        lead: "夫水墨之道，非独施赭墨于素绢，实乃以虚白御玄黑，以寸楮纳万象。留白处皆成妙境，笔不到而意已周。",
+        p1: "观宋人格物之精，一叶落而知天下秋。今人治学码字，亦如枯笔着墨。代码之架构，讲求疏密有致，过繁则滞，过简则空。恰似山水之布白，密不透风，疏可走马。",
+        p2: "世间万物皆有其节律。静坐案前，窗外微雨初霁，点一杯清茗，于键盘之上敲击方块文字，便如挥毫于生宣之上。墨色洇散开来，层次分明，浅绛淡著，自有一番超然之乐。",
+        quote: "“董源披麻，写尽江南土山郁茂；李唐斧劈，顿见北方崇山苍劲。今之计算机着色器，借由法线贴图与柏林噪声模拟墨晕渐变，亦是在数字世界重铸‘气韵生动’之六法。”",
+        p3: "以极简之形，表深邃之意。无论千百年光阴流转，黑白与朱砂的对话，始终在东方美学的血脉中静静流淌。当春水初生，墨入温水，山峦如梦苏醒，此乃澄怀而观道之始。",
+        hue: "#3d4f40"
+      },
+      {
+        badge: "卷之二 · 夏窗观云",
+        title: "云涌千叠 · 积墨沉雄",
+        sub: "夏木阴阴，以层层积墨见万仞崇山之厚重，浓黑重叠处金石作响，白云如龙破空而出。",
+        chapterHeading: "第二章：夏窗观云 · 万壑雷鸣",
+        lead: "盛夏雷雨将至，浓云密布于苍穹。水墨之积墨法，如层云重叠，黑而不死，厚而不浊。",
+        p1: "作画如筑高阁，先立其骨，后敷其肉。夏山之骨，在刚劲苍润。层层点染需待前墨半干之时，方能使墨色浑厚华滋，呈现天地阴阳蒸腾之磅礴生气。",
+        p2: "凭窗远眺，白云变幻万千。古人以白粉染云，或以烘染留白显云气。数字界面中光影之渐变，亦如夏云之生生不息，虚实相生，动静相成。",
+        quote: "“黄宾虹晚年双目虽障，而以宿墨、焦墨层层积染数十遍，山川浑厚，草木华滋。墨黑如漆而透光如玉，此积墨之极诣也。”",
+        p3: "于酷暑中得片刻清凉，在浓墨重彩中寻静穆之气。夏窗观云，观的不单是天象，更是心境在喧嚣人世中的从容吞吐。",
+        hue: "#2b3b4a"
+      },
+      {
+        badge: "卷之三 · 秋林策杖",
+        title: "霜林尽染 · 枯笔苍茫",
+        sub: "秋风萧瑟，以焦墨枯笔勾勒疏林坡石，笔力雄健，落落大方，尽显文人高士之幽独意趣。",
+        chapterHeading: "第三章：秋林策杖 · 霜林独步",
+        lead: "秋山萧寺，策杖独行。枯藤老树之间，每一笔枯墨皆蕴含千钧之力，如折钗股，如锥画沙。",
+        p1: "秋之水墨，在于减法。褪去夏日之蓊郁，山川骨相毕露。倪云林惜墨如金，聊写胸中逸气，一河两岸，数株萧疏古木，便胜却人间繁华无数。",
+        p2: "枯笔渴墨并非干涸无味，而是“干裂秋风，润含春雨”。在宣纸微涩之纹理上飞速掠过，飞白四溅，苍劲而富有动感，恰如代码重构后的精纯利落。",
+        quote: "“云林画法，大抵以干笔皴擦，简中寓繁。世人谓之孤高冷逸，实乃看透繁华之后对本真之执着追求。”",
+        p3: "策杖行于红叶黄花之间，脚下是厚重泥土，眼前是无际秋水。以秋之澄澈，照见本心之丰盈。",
+        hue: "#63472c"
+      },
+      {
+        badge: "卷之四 · 冬夜读帖",
+        title: "雪满千山 · 寒江独照",
+        sub: "天地一白，计白当黑。以极简之笔触勾画寒林孤舟，整幅画卷归于纯净永恒之宁静。",
+        chapterHeading: "第四章：冬夜读帖 · 归于虚极",
+        lead: "万籁俱寂，雪夜围炉。案头残墨未干，古帖清辉犹在。留白至极处，天地皆归于一。",
+        p1: "冬景山水最重布白。王维《雪溪图》、马远《寒江独钓》，皆以宣纸本色为漫天飞雪与浩淼寒江。少许淡墨勾勒断岸古刹，清冷之气扑面而来。",
+        p2: "读帖如晤古人。黄庭坚之长枪大戟，米芾之沉着痛快，在寂静冬夜里化作心中的无声波澜。黑与白的纯粹，是生命褪去一切装饰后的终极归宿。",
+        quote: "“孤舟蓑笠翁，独钓寒江雪。千古留白之最高境界，在于不见一雪花，而满幅皆苍茫飞雪；不见一语，而千言万语尽在不言中。”",
+        p3: "当长卷翻至最后一页，四时流转复归于宁静。合上画卷，心中的山水却已永远化作前行路上的从容底色。",
+        hue: "#3b3e47"
+      }
+    ];
+
+    let currentSeasonIndex = 0;
+
+    function switchSeason(index) {
+      currentSeasonIndex = index;
+      const data = seasonsData[index];
+
+      // 更新按钮状态
+      const btns = document.querySelectorAll('.season-tab-btn');
+      btns.forEach((b, i) => {
+        b.classList.toggle('active', i === index);
+      });
+
+      // 更新全景覆盖层
+      document.getElementById('sceneSeasonBadge').textContent = data.badge;
+      document.getElementById('sceneTitle').textContent = data.title;
+      document.getElementById('sceneSubDesc').textContent = data.sub;
+
+      // 更新叙事文章
+      document.getElementById('chapterHeadingText').textContent = data.chapterHeading;
+      document.getElementById('chapterLeadText').textContent = data.lead;
+      
+      const bodyHtml = `
+        <p>${data.p1}</p>
+        <p>${data.p2}</p>
+        <div class="quote-scroll-block">${data.quote}</div>
+        <p>${data.p3}</p>
+      `;
+      document.getElementById('chapterBodyText').innerHTML = bodyHtml;
+
+      // 重绘长卷Canvas
+      drawLandscape(index);
+    }
+
+    function nextSeasonRoll() {
+      const next = (currentSeasonIndex + 1) % seasonsData.length;
+      switchSeason(next);
+      showToast(`已展开：${seasonsData[next].badge}`);
+    }
+
+    // 资料栏目Tab切换
+    function switchCompTab(index, btn) {
+      document.querySelectorAll('.comp-tab-btn').forEach(b => b.classList.remove('active'));
+      btn.classList.add('active');
+
+      document.querySelectorAll('.comp-panel').forEach((panel, i) => {
+        panel.classList.toggle('active', i === index);
+      });
+    }
+
+    // 盖印点击效果
     function stampClick(el) {
-      el.style.transform = "scale(1.25) rotate(" + (Math.random() * 10 - 5) + "deg)";
+      const angle = (Math.random() * 8 - 4);
+      el.style.transform = `scale(1.22) rotate(${angle * 1.5}deg)`;
       setTimeout(() => {
-        el.style.transform = "rotate(" + (Math.random() * 8 - 4) + "deg)";
-      }, 200);
+        el.style.transform = `rotate(${angle}deg)`;
+      }, 180);
+      showToast("朱砂印泥生香 · 金石之趣已钤");
     }
 
-    function addCustomStamp() {
-      const texts = ["神品", "清賞", "妙契", "偶得", "讀畫", "松風", "煙雨", "墨禪"];
-      const t = texts[Math.floor(Math.random() * texts.length)];
+    // 动态添加闲章
+    function addCustomStamp(text) {
       const pool = document.getElementById("stampsPool");
-      const newStamp = document.createElement("div");
-      newStamp.className = "seal-stamp";
-      newStamp.innerHTML = t.charAt(0) + "<br>" + t.charAt(1);
-      newStamp.onclick = function() { stampClick(this); };
-      pool.appendChild(newStamp);
-      stampClick(newStamp);
+      const stamp = document.createElement("div");
+      stamp.className = "seal-box" + (Math.random() > 0.5 ? " round" : "");
+      stamp.innerHTML = text.charAt(0) + "<br>" + text.charAt(1);
+      stamp.onclick = function() { stampClick(this); };
+      stamp.title = `${text}闲章`;
+      pool.appendChild(stamp);
+      stampClick(stamp);
+      showToast(`已加盖“${text}”朱砂闲章`);
     }
 
-    // 鼠标水墨烟云拖尾
+    function toastInkWait() {
+      showToast("墨迹未干，请稍候；静候水汽蒸腾，层次自显。");
+    }
+
+    function closeScrollPrompt() {
+      showToast("收卷，留待下次再观。行至画外，心仍在山中。");
+    }
+
+    let toastTimer;
+    function showToast(msg) {
+      const toast = document.getElementById('inkToast');
+      toast.textContent = msg;
+      toast.classList.add('show');
+      clearTimeout(toastTimer);
+      toastTimer = setTimeout(() => {
+        toast.classList.remove('show');
+      }, 2400);
+    }
+
+    // 水墨长卷 Canvas 动态山水生成
+    const landscapeCanvas = document.getElementById('scrollLandscapeCanvas');
+    const landCtx = landscapeCanvas.getContext('2d');
+
+    function drawLandscape(seasonIdx) {
+      const w = landscapeCanvas.width = landscapeCanvas.parentElement.clientWidth || 1200;
+      const h = landscapeCanvas.height = 380;
+      landCtx.clearRect(0, 0, w, h);
+
+      // 背景宣纸米色底
+      const bgGrad = landCtx.createLinearGradient(0, 0, 0, h);
+      if (seasonIdx === 0) { // 春
+        bgGrad.addColorStop(0, '#ebe4d5');
+        bgGrad.addColorStop(1, '#dad1be');
+      } else if (seasonIdx === 1) { // 夏
+        bgGrad.addColorStop(0, '#e5ded0');
+        bgGrad.addColorStop(1, '#c5baa5');
+      } else if (seasonIdx === 2) { // 秋
+        bgGrad.addColorStop(0, '#ebe1cf');
+        bgGrad.addColorStop(1, '#cfbe9f');
+      } else { // 冬
+        bgGrad.addColorStop(0, '#f2ede4');
+        bgGrad.addColorStop(1, '#ddd7cb');
+      }
+      landCtx.fillStyle = bgGrad;
+      landCtx.fillRect(0, 0, w, h);
+
+      // 远山 (淡墨)
+      drawMountainLayer(w, h, h * 0.45, h * 0.25, 'rgba(60, 55, 48, 0.18)', 40, seasonIdx);
+
+      // 中景山 (重墨)
+      drawMountainLayer(w, h, h * 0.65, h * 0.35, 'rgba(40, 36, 30, 0.45)', 60, seasonIdx + 1);
+
+      // 近景山水 (焦墨/浓墨与树木)
+      drawMountainLayer(w, h, h * 0.82, h * 0.45, 'rgba(25, 22, 18, 0.85)', 90, seasonIdx + 2);
+
+      // 点景：古松与远舟
+      drawInkBoat(w * 0.72, h * 0.76);
+      drawPineTrees(w, h, seasonIdx);
+    }
+
+    function drawMountainLayer(w, h, baseY, amplitude, color, segments, seed) {
+      landCtx.beginPath();
+      landCtx.moveTo(0, h);
+      landCtx.lineTo(0, baseY);
+
+      const step = w / segments;
+      for (let i = 0; i <= segments; i++) {
+        const x = i * step;
+        const noise = Math.sin(i * 0.15 + seed) * Math.cos(i * 0.08 + seed * 2) * amplitude;
+        const noise2 = Math.sin(i * 0.35 + seed) * (amplitude * 0.3);
+        const y = baseY - Math.abs(noise + noise2);
+        landCtx.lineTo(x, y);
+      }
+
+      landCtx.lineTo(w, h);
+      landCtx.closePath();
+      landCtx.fillStyle = color;
+      landCtx.fill();
+    }
+
+    function drawInkBoat(x, y) {
+      landCtx.save();
+      landCtx.fillStyle = 'rgba(20, 18, 15, 0.9)';
+      landCtx.beginPath();
+      // 小舟
+      landCtx.ellipse(x, y, 22, 4, -0.05, 0, Math.PI * 2);
+      landCtx.fill();
+      // 渔翁与钓竿
+      landCtx.beginPath();
+      landCtx.arc(x - 4, y - 6, 3, 0, Math.PI * 2);
+      landCtx.fill();
+      landCtx.strokeStyle = 'rgba(20, 18, 15, 0.9)';
+      landCtx.lineWidth = 1.2;
+      landCtx.beginPath();
+      landCtx.moveTo(x - 4, y - 6);
+      landCtx.lineTo(x + 16, y - 18);
+      landCtx.stroke();
+      landCtx.restore();
+    }
+
+    function drawPineTrees(w, h, seasonIdx) {
+      landCtx.save();
+      landCtx.strokeStyle = 'rgba(20, 18, 15, 0.9)';
+      landCtx.fillStyle = seasonIdx === 3 ? 'rgba(50, 45, 40, 0.7)' : (seasonIdx === 0 ? 'rgba(45, 65, 48, 0.8)' : 'rgba(20, 18, 15, 0.85)');
+      
+      const treeX = w * 0.18;
+      const treeY = h * 0.82;
+
+      // 树干
+      landCtx.lineWidth = 4;
+      landCtx.beginPath();
+      landCtx.moveTo(treeX, treeY);
+      landCtx.quadraticCurveTo(treeX - 15, treeY - 40, treeX - 5, treeY - 80);
+      landCtx.stroke();
+
+      // 枝丫
+      landCtx.lineWidth = 2;
+      landCtx.beginPath();
+      landCtx.moveTo(treeX - 10, treeY - 50);
+      landCtx.lineTo(treeX - 35, treeY - 65);
+      landCtx.moveTo(treeX - 8, treeY - 65);
+      landCtx.lineTo(treeX + 20, treeY - 75);
+      landCtx.stroke();
+
+      // 松针簇
+      const clusters = [
+        { x: treeX - 5, y: treeY - 82 },
+        { x: treeX - 35, y: treeY - 67 },
+        { x: treeX + 22, y: treeY - 77 },
+        { x: treeX - 18, y: treeY - 95 }
+      ];
+      clusters.forEach(c => {
+        landCtx.beginPath();
+        landCtx.arc(c.x, c.y, 14, 0, Math.PI * 2);
+        landCtx.fill();
+      });
+
+      landCtx.restore();
+    }
+
+    window.addEventListener('resize', () => {
+      drawLandscape(currentSeasonIndex);
+    });
+
+    // 初始化画卷
+    drawLandscape(0);
+
+    // 鼠标水墨烟云拖尾 Canvas
     (function() {
       const canvas = document.getElementById('inkSmokeCanvas');
       const ctx = canvas.getContext('2d');
@@ -387,12 +1356,12 @@
       window.addEventListener('mousemove', (e) => {
         for (let i = 0; i < 2; i++) {
           particles.push({
-            x: e.clientX + (Math.random() - 0.5) * 8,
-            y: e.clientY + (Math.random() - 0.5) * 8,
-            vx: (Math.random() - 0.5) * 0.5,
-            vy: (Math.random() - 0.5) * 0.5,
-            radius: 10 + Math.random() * 18,
-            opacity: 0.18 + Math.random() * 0.1
+            x: e.clientX + (Math.random() - 0.5) * 10,
+            y: e.clientY + (Math.random() - 0.5) * 10,
+            vx: (Math.random() - 0.5) * 0.4,
+            vy: (Math.random() - 0.5) * 0.4,
+            radius: 12 + Math.random() * 18,
+            opacity: 0.16 + Math.random() * 0.08
           });
         }
       });
@@ -403,18 +1372,18 @@
           const p = particles[i];
           p.x += p.vx;
           p.y += p.vy;
-          p.radius += 0.4;
-          p.opacity -= 0.005;
+          p.radius += 0.45;
+          p.opacity -= 0.0045;
 
-          if (p.opacity <= 0 || p.radius > 50) {
+          if (p.opacity <= 0 || p.radius > 54) {
             particles.splice(i, 1);
             continue;
           }
 
           const grad = ctx.createRadialGradient(p.x, p.y, 0, p.x, p.y, p.radius);
-          grad.addColorStop(0, `rgba(28, 26, 23, ${p.opacity})`);
-          grad.addColorStop(0.6, `rgba(45, 79, 62, ${p.opacity * 0.5})`);
-          grad.addColorStop(1, 'rgba(28, 26, 23, 0)');
+          grad.addColorStop(0, `rgba(32, 28, 24, ${p.opacity})`);
+          grad.addColorStop(0.5, `rgba(45, 60, 50, ${p.opacity * 0.4})`);
+          grad.addColorStop(1, 'rgba(32, 28, 24, 0)');
           ctx.fillStyle = grad;
 
           ctx.beginPath();

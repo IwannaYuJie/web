@@ -54,7 +54,7 @@
 
 ### 其他入口
 
-- `/creative`：创意工坊，集中展示 23 套独立博客排版方案及其完整预览。
+- `/creative`：创意工坊，集中展示 30 套独立博客排版方案及其完整预览。
 - `/toolbox`：实用工具箱。
 - `/games`：小游戏中心。
 
@@ -185,6 +185,7 @@ npm run start:api
 - [docs/ORACLE_MIGRATION.md](docs/ORACLE_MIGRATION.md)
 - [docs/KV_SETUP_GUIDE.md](docs/KV_SETUP_GUIDE.md)
 - [docs/SECURITY_CHECKLIST.md](docs/SECURITY_CHECKLIST.md)
+- [docs/CREATIVE_WORKSHOP_CONTENT_DESIGN.md](docs/CREATIVE_WORKSHOP_CONTENT_DESIGN.md)（30 主题的内容与验收设计稿）
 
 ## 设计约定
 

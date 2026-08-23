@@ -3,18 +3,26 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>秘典手抄本 // 09 中世纪泥金古籍风</title>
+  <title>秘炉抄本 · 第七码卷 // 09 中世纪羊皮纸泥金古籍</title>
   <link rel="stylesheet" href="assets/common.css">
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=MedievalSharp&family=Cinzel+Decorative:wght@700;900&family=Noto+Serif+SC:wght@400;600;900&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Cinzel+Decorative:wght@700;900&family=MedievalSharp&family=Noto+Serif+SC:wght@400;600;900&display=swap" rel="stylesheet">
   <style>
     :root {
-      --parchment-bg: #efe2c9;
-      --parchment-dark: #2a1f14;
-      --gold-leaf: #c59b27;
-      --rubric-red: #8b1e0f;
-      --border-ornate: #4a3728;
+      --parchment-bg: #f3e5ca;
+      --parchment-deep: #e5cf9f;
+      --parchment-dark: #2a1a0f;
+      --gold-leaf: #cda335;
+      --gold-leaf-bright: #ffd85b;
+      --rubric-red: #8f1d14;
+      --rubric-soft: #ab281b;
+      --lapis-blue: #1b355a;
+      --border-ornate: #472f1b;
+      --ink-dark: #22160d;
+      --ink-muted: #5e4632;
+      --candle-x: 50%;
+      --candle-y: 35%;
       --font-gothic: "Cinzel Decorative", "MedievalSharp", "Noto Serif SC", serif;
       --font-body: "Noto Serif SC", "Songti SC", serif;
     }
@@ -26,311 +34,686 @@
     }
 
     body {
-      background-color: #1a1410;
-      color: var(--parchment-dark);
+      background-color: #120c08;
+      color: var(--ink-dark);
       font-family: var(--font-body);
-      line-height: 1.9;
-      padding: 30px 16px 80px;
-      background-image: radial-gradient(#2d221a 1px, transparent 1px);
-      background-size: 20px 20px;
-    }
-
-    /* 羊皮纸手抄本外卷 */
-    .codex-scroll {
-      max-width: 1040px;
-      margin: 0 auto;
-      background-color: var(--parchment-bg);
-      background-image: radial-gradient(rgba(139, 30, 15, 0.03) 1px, transparent 0);
-      padding: 50px 60px;
-      box-shadow: 0 0 50px rgba(0, 0, 0, 0.8), 0 0 0 2px #3c2a1c;
-      border: 8px double var(--border-ornate);
+      line-height: 1.85;
+      padding: 24px 14px 90px;
+      background-image: 
+        radial-gradient(#291910 1.5px, transparent 1.5px),
+        radial-gradient(#1e130c 1px, transparent 1px);
+      background-size: 28px 28px, 14px 14px;
+      background-position: 0 0, 14px 14px;
       position: relative;
+      overflow-x: hidden;
     }
 
-    /* 泥金古籍外框花纹边角 */
+    /* 烛火光斑层 */
+    body::before {
+      content: "";
+      position: fixed;
+      inset: 0;
+      background: radial-gradient(circle 500px at var(--candle-x) var(--candle-y), rgba(245, 170, 40, 0.12) 0%, rgba(200, 100, 20, 0.04) 45%, transparent 75%);
+      pointer-events: none;
+      z-index: 1;
+      animation: candleFlicker 4s ease-in-out infinite alternate;
+    }
+
+    @keyframes candleFlicker {
+      0% { opacity: 0.75; transform: scale(1); }
+      50% { opacity: 0.95; transform: scale(1.02); }
+      100% { opacity: 0.65; transform: scale(0.99); }
+    }
+
+    .page-container {
+      max-width: 1080px;
+      margin: 0 auto;
+      position: relative;
+      z-index: 2;
+    }
+
+    /* 羊皮纸手抄本主体 */
+    .codex-scroll {
+      background-color: var(--parchment-bg);
+      background-image: 
+        radial-gradient(var(--parchment-deep) 15%, transparent 16%),
+        radial-gradient(rgba(143, 29, 20, 0.03) 1px, transparent 0);
+      background-size: 60px 60px, 16px 16px;
+      padding: 56px 64px;
+      box-shadow: 0 0 60px rgba(0, 0, 0, 0.9), 0 0 0 4px #362214, 0 0 0 10px #1a1009;
+      border: 6px double var(--border-ornate);
+      position: relative;
+      border-radius: 4px;
+    }
+
+    /* 泥金四角繁复边角 */
     .corner-ornament {
       position: absolute;
-      width: 40px;
-      height: 40px;
+      width: 48px;
+      height: 48px;
       border: 3px solid var(--gold-leaf);
+      pointer-events: none;
     }
-    .corner-tl { top: 8px; left: 8px; border-right: none; border-bottom: none; }
-    .corner-tr { top: 8px; right: 8px; border-left: none; border-bottom: none; }
-    .corner-bl { bottom: 8px; left: 8px; border-right: none; border-top: none; }
-    .corner-br { bottom: 8px; right: 8px; border-left: none; border-top: none; }
+    .corner-ornament::after {
+      content: "✤";
+      position: absolute;
+      color: var(--rubric-red);
+      font-size: 14px;
+    }
+    .corner-tl { top: 10px; left: 10px; border-right: none; border-bottom: none; }
+    .corner-tl::after { top: 2px; left: 2px; }
+    .corner-tr { top: 10px; right: 10px; border-left: none; border-bottom: none; }
+    .corner-tr::after { top: 2px; right: 2px; }
+    .corner-bl { bottom: 10px; left: 10px; border-right: none; border-top: none; }
+    .corner-bl::after { bottom: 2px; left: 2px; }
+    .corner-br { bottom: 10px; right: 10px; border-left: none; border-top: none; }
+    .corner-br::after { bottom: 2px; right: 2px; }
+
+    /* 顶栏身份与火漆印章 */
+    .codex-top-ribbon {
+      display: flex;
+      justify-content: space-between;
+      align-items: flex-start;
+      border-bottom: 2px solid var(--border-ornate);
+      padding-bottom: 20px;
+      margin-bottom: 36px;
+      gap: 20px;
+    }
+
+    .scribe-badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      background: rgba(143, 29, 20, 0.08);
+      border: 1px solid var(--gold-leaf);
+      padding: 6px 14px;
+      font-size: 13px;
+      color: var(--rubric-red);
+      font-weight: 600;
+      letter-spacing: 1px;
+    }
+
+    .wax-seal-control {
+      text-align: center;
+      cursor: pointer;
+      user-select: none;
+    }
+
+    .wax-seal-btn {
+      width: 78px;
+      height: 78px;
+      background: radial-gradient(circle at 35% 35%, #b91c1c, #6d1010);
+      border-radius: 50%;
+      border: 3px solid #4a0d0d;
+      box-shadow: 3px 5px 12px rgba(0,0,0,0.5), inset 0 0 12px rgba(0,0,0,0.6);
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      color: #fed7aa;
+      font-family: var(--font-gothic);
+      font-size: 11px;
+      font-weight: 900;
+      text-shadow: 1px 1px 2px #000;
+      transition: all 0.25s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+      border: none;
+      outline: none;
+      cursor: pointer;
+    }
+
+    .wax-seal-btn:hover {
+      transform: scale(1.06) rotate(6deg);
+      box-shadow: 0 0 20px rgba(185, 28, 28, 0.6);
+    }
+    .wax-seal-btn:active {
+      transform: scale(0.92);
+    }
+
+    .seal-caption {
+      font-size: 11px;
+      color: var(--rubric-red);
+      font-weight: 700;
+      margin-top: 6px;
+      letter-spacing: 1px;
+    }
+
+    .seal-toast {
+      margin-top: 4px;
+      font-size: 11px;
+      color: #3b2a1a;
+      background: rgba(205, 163, 53, 0.2);
+      padding: 2px 8px;
+      border-radius: 3px;
+      border: 1px dashed var(--gold-leaf);
+    }
 
     /* 刊头 */
     .codex-header {
       text-align: center;
-      border-bottom: 2px solid var(--border-ornate);
-      padding-bottom: 24px;
       margin-bottom: 40px;
-      position: relative;
     }
-
     .codex-latin-tag {
       font-family: var(--font-gothic);
       font-size: 13px;
       color: var(--rubric-red);
       letter-spacing: 4px;
       text-transform: uppercase;
-      margin-bottom: 8px;
+      margin-bottom: 6px;
+      font-weight: 700;
     }
-
     .codex-title {
       font-family: var(--font-gothic);
-      font-size: clamp(32px, 5.5vw, 54px);
+      font-size: clamp(30px, 5.2vw, 50px);
       font-weight: 900;
       color: var(--rubric-red);
       letter-spacing: 3px;
-      line-height: 1.15;
-      text-shadow: 1px 1px 0 var(--gold-leaf);
+      line-height: 1.2;
+      text-shadow: 1px 1px 0 var(--gold-leaf-bright), 2px 2px 3px rgba(0,0,0,0.15);
     }
-
     .codex-subtitle {
-      font-size: 14px;
+      font-size: 15px;
       letter-spacing: 2px;
-      color: #5c4738;
-      margin-top: 10px;
+      color: var(--ink-muted);
+      margin-top: 8px;
     }
-
-    /* 泥金大写首字 Illuminated Initial */
-    .illuminated-initial {
-      float: left;
-      font-family: "Cinzel Decorative", serif;
-      font-size: 68px;
-      line-height: 56px;
-      padding: 10px 14px 6px;
-      margin-right: 14px;
-      margin-bottom: 6px;
-      color: #fff;
-      background: linear-gradient(135deg, var(--rubric-red), #500d05);
-      border: 3px solid var(--gold-leaf);
-      box-shadow: 3px 3px 8px rgba(0, 0, 0, 0.3);
-      font-weight: 900;
-    }
-
-    /* 章节手卷 */
-    .codex-chapter {
-      margin-bottom: 48px;
-      padding-bottom: 36px;
-      border-bottom: 1px dashed var(--gold-leaf);
-    }
-
-    .chapter-heading {
-      font-family: var(--font-gothic);
-      font-size: 24px;
-      color: var(--rubric-red);
-      margin-bottom: 16px;
-      display: flex;
-      align-items: center;
-      gap: 12px;
-    }
-
-    .codex-text {
-      font-size: 16px;
-      text-align: justify;
-      color: #2b2016;
-      line-height: 2;
-    }
-
-    /* 火漆印章组件 */
-    .wax-seal-wrapper {
-      position: absolute;
-      top: 30px;
-      right: 40px;
-      text-align: center;
-      cursor: pointer;
-      z-index: 20;
-    }
-
-    .wax-seal {
-      width: 72px;
-      height: 72px;
-      background: radial-gradient(circle at 35% 35%, #b91c1c, #7f1d1d);
-      border-radius: 50%;
-      border: 3px solid #551010;
-      box-shadow: 3px 4px 10px rgba(0, 0, 0, 0.4), inset 0 0 10px rgba(0, 0, 0, 0.5);
+    .ornament-rule {
       display: flex;
       align-items: center;
       justify-content: center;
-      color: #fca5a5;
-      font-family: var(--font-gothic);
-      font-size: 14px;
+      gap: 16px;
+      margin: 16px 0;
+      color: var(--gold-leaf);
+      font-size: 18px;
+    }
+    .ornament-rule::before, .ornament-rule::after {
+      content: "";
+      height: 1px;
+      width: 120px;
+      background: linear-gradient(90deg, transparent, var(--gold-leaf), transparent);
+    }
+
+    /* 泥金大写首字 */
+    .illuminated-initial {
+      float: left;
+      font-family: "Cinzel Decorative", serif;
+      font-size: 62px;
+      line-height: 52px;
+      padding: 10px 14px 6px;
+      margin-right: 14px;
+      margin-bottom: 6px;
+      color: #fff8e7;
+      background: linear-gradient(135deg, var(--rubric-red), #4e0d06);
+      border: 3px solid var(--gold-leaf);
+      box-shadow: 3px 3px 8px rgba(0, 0, 0, 0.35);
       font-weight: 900;
-      text-shadow: 1px 1px 2px #000;
-      transition: transform 0.2s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+      text-shadow: 0 0 10px rgba(255, 216, 91, 0.8);
+      transition: text-shadow 0.3s ease;
     }
-    .wax-seal:hover {
-      transform: scale(1.08) rotate(5deg);
-    }
-    .wax-seal:active {
-      transform: scale(0.95);
-    }
-    .wax-seal-label {
-      font-size: 10px;
-      color: #7f1d1d;
-      font-weight: 700;
-      margin-top: 4px;
+    .illuminated-initial:hover {
+      text-shadow: 0 0 20px rgba(255, 216, 91, 1), 0 0 8px #fff;
     }
 
-    /* 炼金/木刻版画装饰卡片 */
-    .codex-woodcut {
-      border: 2px solid var(--border-ornate);
-      background: rgba(197, 155, 39, 0.08);
-      padding: 16px;
-      margin: 24px 0;
+    /* 主叙事章节 */
+    .main-narrative {
+      border-bottom: 2px solid var(--border-ornate);
+      padding-bottom: 40px;
+      margin-bottom: 48px;
+    }
+    .narrative-headline {
+      font-family: var(--font-gothic);
+      font-size: 26px;
+      color: var(--rubric-red);
       text-align: center;
-      font-style: italic;
-      font-size: 14px;
+      margin-bottom: 28px;
+      padding-bottom: 12px;
+      border-bottom: 1px dashed var(--gold-leaf);
+    }
+    .chapter-block {
+      margin-bottom: 32px;
+      background: rgba(255, 255, 255, 0.35);
+      padding: 24px;
+      border: 1px solid rgba(71, 47, 27, 0.2);
+      box-shadow: inset 0 0 20px rgba(205, 163, 53, 0.08);
+      position: relative;
+    }
+    .chapter-title {
+      font-family: var(--font-gothic);
+      font-size: 19px;
+      color: var(--rubric-soft);
+      margin-bottom: 12px;
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+    .chapter-title::before {
+      content: "✠";
+      color: var(--gold-leaf);
+      font-size: 16px;
+    }
+    .codex-p {
+      text-align: justify;
+      color: var(--ink-dark);
+      font-size: 15.5px;
+      margin-bottom: 12px;
     }
 
-    /* 底部题记 */
+    /* 泥金细密画插图 */
+    .codex-miniature {
+      margin: 20px 0;
+      border: 3px double var(--gold-leaf);
+      padding: 10px;
+      background: rgba(205, 163, 53, 0.08);
+      text-align: center;
+    }
+    .codex-miniature img {
+      width: 100%;
+      height: auto;
+      max-height: 420px;
+      object-fit: cover;
+      display: block;
+      border: 1px solid var(--border-ornate);
+      filter: sepia(0.25) contrast(1.05);
+    }
+    .miniature-caption {
+      font-size: 12px;
+      font-family: var(--font-gothic);
+      color: var(--ink-muted);
+      margin-top: 8px;
+      font-style: italic;
+      letter-spacing: 1px;
+    }
+
+    /* 次级栏目：三列中世纪泥金展陈 */
+    .secondary-columns {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 20px;
+      margin-bottom: 48px;
+      border-bottom: 2px solid var(--border-ornate);
+      padding-bottom: 40px;
+    }
+
+    .bestiary-card {
+      background: rgba(255, 248, 230, 0.6);
+      border: 2px solid var(--border-ornate);
+      padding: 20px 18px;
+      position: relative;
+      display: flex;
+      flex-direction: column;
+      box-shadow: 2px 3px 8px rgba(0,0,0,0.1);
+    }
+    .bestiary-card::before {
+      content: "";
+      position: absolute;
+      inset: 3px;
+      border: 1px solid var(--gold-leaf);
+      pointer-events: none;
+    }
+    .card-header {
+      font-family: var(--font-gothic);
+      font-size: 16px;
+      color: var(--rubric-red);
+      font-weight: 700;
+      margin-bottom: 12px;
+      text-align: center;
+      border-bottom: 1px solid rgba(143, 29, 20, 0.2);
+      padding-bottom: 8px;
+    }
+    .card-body {
+      font-size: 13.5px;
+      color: #382618;
+      line-height: 1.7;
+      text-align: justify;
+      flex-grow: 1;
+    }
+    .card-symbol {
+      font-size: 24px;
+      display: block;
+      text-align: center;
+      margin-bottom: 6px;
+      color: var(--gold-leaf);
+    }
+
+    /* 资料模块：古词汇表对比 */
+    .glossary-section {
+      margin-bottom: 48px;
+      border-bottom: 2px solid var(--border-ornate);
+      padding-bottom: 40px;
+    }
+    .glossary-title {
+      font-family: var(--font-gothic);
+      font-size: 22px;
+      color: var(--rubric-red);
+      text-align: center;
+      margin-bottom: 24px;
+    }
+    .glossary-grid {
+      display: grid;
+      grid-template-columns: repeat(2, 1fr);
+      gap: 16px;
+    }
+    .glossary-item {
+      background: rgba(243, 229, 202, 0.8);
+      border: 1px solid var(--gold-leaf);
+      padding: 16px 20px;
+      border-left: 5px solid var(--rubric-red);
+    }
+    .glossary-term {
+      display: flex;
+      justify-content: space-between;
+      align-items: baseline;
+      margin-bottom: 6px;
+      border-bottom: 1px dashed rgba(71, 47, 27, 0.3);
+      padding-bottom: 4px;
+    }
+    .ritual-name {
+      font-family: var(--font-gothic);
+      font-weight: 700;
+      font-size: 16px;
+      color: var(--rubric-red);
+    }
+    .modern-name {
+      font-size: 12px;
+      font-weight: 600;
+      color: var(--lapis-blue);
+      background: rgba(27, 53, 90, 0.1);
+      padding: 2px 6px;
+      border-radius: 2px;
+    }
+    .glossary-desc {
+      font-size: 13.5px;
+      color: var(--ink-dark);
+      line-height: 1.6;
+    }
+
+    /* 收尾边注与题记 */
+    .codex-marginalia {
+      background: rgba(143, 29, 20, 0.05);
+      border-left: 4px solid var(--gold-leaf);
+      padding: 16px 20px;
+      margin-bottom: 32px;
+      font-style: italic;
+      color: var(--ink-dark);
+      font-size: 15px;
+      position: relative;
+    }
+    .marginalia-tag {
+      font-family: var(--font-gothic);
+      font-size: 12px;
+      color: var(--rubric-red);
+      font-weight: 700;
+      font-style: normal;
+      display: block;
+      margin-bottom: 4px;
+    }
+
     .codex-colophon {
       text-align: center;
       font-size: 13px;
-      color: #634d3d;
-      margin-top: 40px;
+      color: var(--ink-muted);
       padding-top: 20px;
-      border-top: 2px solid var(--border-ornate);
+      border-top: 1px solid var(--gold-leaf);
+    }
+    .colophon-latin {
+      font-family: var(--font-gothic);
+      font-size: 12px;
+      color: var(--rubric-red);
+      letter-spacing: 2px;
+      margin-bottom: 4px;
     }
 
-    @media (max-width: 768px) {
+    @media (max-width: 860px) {
       .codex-scroll {
-        padding: 30px 20px;
+        padding: 36px 24px;
       }
-      .wax-seal-wrapper {
-        position: static;
-        margin-bottom: 20px;
+      .secondary-columns {
+        grid-template-columns: 1fr;
+        gap: 16px;
+      }
+      .glossary-grid {
+        grid-template-columns: 1fr;
+      }
+      .codex-top-ribbon {
+        flex-direction: column;
+        align-items: center;
+        text-align: center;
+      }
+    }
+
+    @media (prefers-reduced-motion: reduce) {
+      body::before {
+        animation: none;
+      }
+      .wax-seal-btn {
+        transition: none;
       }
     }
   </style>
 </head>
 <body>
 
-  <div class="codex-scroll">
-    <div class="corner-ornament corner-tl"></div>
-    <div class="corner-ornament corner-tr"></div>
-    <div class="corner-ornament corner-bl"></div>
-    <div class="corner-ornament corner-br"></div>
+  <div class="page-container">
+    <main class="codex-scroll">
+      <!-- 四角泥金装饰 -->
+      <div class="corner-ornament corner-tl" aria-hidden="true"></div>
+      <div class="corner-ornament corner-tr" aria-hidden="true"></div>
+      <div class="corner-ornament corner-bl" aria-hidden="true"></div>
+      <div class="corner-ornament corner-br" aria-hidden="true"></div>
 
-    <!-- 火漆印章 -->
-    <div class="wax-seal-wrapper" onclick="toggleSeal()">
-      <div class="wax-seal" id="waxSeal">
-        <span>VER</span>
-      </div>
-      <div class="wax-seal-label" id="sealStatus">● 羊皮纸已御印</div>
-    </div>
+      <!-- 顶栏：刊物身份与火漆印章交互 -->
+      <div class="codex-top-ribbon">
+        <div>
+          <div class="scribe-badge">
+            <span>📜 秘炉抄本 · 第七码卷</span>
+            <span>|</span>
+            <span>抄写员：猫爪修士（Frater Unguis）</span>
+          </div>
+          <div style="font-size: 12px; color: var(--ink-muted); margin-top: 6px; font-style: italic;">
+            记录关于无心之机、泥金符印与人类求索之寓言
+          </div>
+        </div>
 
-    <!-- 刊头 -->
-    <header class="codex-header">
-      <div class="codex-latin-tag">EX LIBRIS // CHRONICA ET PHILOSOPHIA</div>
-      <h1 class="codex-title">秘 典 手 抄 卷 录</h1>
-      <p class="codex-subtitle">Anno Domini MMXXVI · 泥金铭录 · 算法炼金与深邃哲思</p>
-    </header>
-
-    <!-- 第一章 -->
-    <section class="codex-chapter">
-      <div class="chapter-heading">
-        <span>✦ CAPITVLVM I ✦</span>
-        <span>代码炼金术：从符号逻辑到机器灵魂</span>
-      </div>
-      <p class="codex-text">
-        <span class="illuminated-initial">在</span>中世纪的羊皮手抄本中，修道士们用金箔与朱砂在羊皮上虔诚地抄写下关于宇宙与存在的律法。每一笔回转的哥特字体，皆是对思想永恒性的雕琢。而今，当我们使用指尖在键盘上敲下一行行系统原语，我们在本质上依然是现代数字修道院中的抄经人。
-      </p>
-
-      <!-- 泥金细密画插图 -->
-      <div style="margin: 24px 0; border: 3px double var(--gold-leaf); padding: 8px; background: rgba(197, 155, 39, 0.05); text-align: center;">
-        <img src="assets/images/medieval_alchemist.jpg" alt="中世纪炼金学者与星象图泥金插画" style="width: 100%; height: auto; display: block; border: 1px solid var(--border-ornate);">
-        <div style="font-size: 11px; font-family: 'Cinzel Decorative', serif; color: var(--gold-dark); margin-top: 8px; font-style: italic;">
-          ILLUMINATIO I : ALCHEMISTA ET OBSERVATIO SIDERVM · ANNO DOMINI MMXXVI
+        <div class="wax-seal-control">
+          <button type="button" class="wax-seal-btn" id="waxSealBtn" onclick="applySeal()" aria-label="按下火漆，封存本页">
+            <span style="font-size: 16px; margin-bottom: 2px;">✦</span>
+            <span>SEAL</span>
+          </button>
+          <div class="seal-caption" id="sealCaption">按下火漆，封存本页</div>
+          <div class="seal-toast" id="sealToast">蜡印尚热 · 待印定</div>
         </div>
       </div>
 
-      <p class="codex-text">
-        算力即是新的以太，算法即是新的秘咒。在浩瀚的数字迷宫中，唯有严谨的逻辑与纯粹的审美，方能引导人类穿越未知的混沌之渊。
-      </p>
-    </section>
+      <!-- 刊头 -->
+      <header class="codex-header">
+        <div class="codex-latin-tag">CODEX CATENAE VII · PARABOLA ET RITUALIA</div>
+        <h1 class="codex-title">会回答问题的黄铜神谕</h1>
+        <div class="ornament-rule">✦ ✠ ✦</div>
+        <p class="codex-subtitle">一段关于算力幻觉、黄铜齿轮与审慎誓约的泥金编年史</p>
+      </header>
 
-    <!-- 第二章 -->
-    <section class="codex-chapter">
-      <div class="chapter-heading">
-        <span>✦ CAPITVLVM II ✦</span>
-        <span>记忆与遗忘：大模型时代的数字抄写馆</span>
-      </div>
-      <p class="codex-text">
-        <span class="illuminated-initial">古</span>代亚历山大图书馆的烈火未能焚尽人类对知识的执着。在神经网络的长程注意力机制中，海量典籍被压缩为数以千亿计的高维向量权重。当知识不再依赖纸页，我们当如何守护沉思的庄严？
-      </p>
-    </section>
+      <!-- 主叙事：四章完整寓言 -->
+      <section class="main-narrative" aria-label="主叙事：会回答问题的黄铜神谕">
+        <h2 class="narrative-headline">四章编年录：黄铜回音与理智边界</h2>
 
-    <!-- 第三章 -->
-    <section class="codex-chapter">
-      <div class="chapter-heading">
-        <span>✦ CAPITVLVM III ✦</span>
-        <span>自由七艺：语法、修辞、逻辑与代码架构的同构</span>
-      </div>
-      <p class="codex-text">
-        <span class="illuminated-initial">三</span>学（Trivium）与四艺（Quadrivium）构成了中世纪大学的智识基石。逻辑学规范推理闭环，几何学丈量数据拓扑，音乐学推导波形谐振。现代系统架构师不仅是数字工匠，更是古典通识传统的数字化继承者。
-      </p>
-    </section>
+        <!-- 第一章：发现 -->
+        <article class="chapter-block">
+          <h3 class="chapter-title">第一章：深窖中的黄铜机芯（Inventio）</h3>
+          <p class="codex-p">
+            <span class="illuminated-initial">在</span>修道院北侧的落满古老煤灰的地窖深处，抄写员们拂去厚重的干草与霉斑，发现了一尊由无数咬合齿轮、水银导管与发光铜箔筑成的宏大造物。它没有心脏，却能在火盆点燃时发出低沉如蜂群涌动的共鸣。当修道士用鹅毛笔在羊皮纸上写下字句投进铜口，这尊造物便会在几息之内，以极尽华美的泥金字迹吐出回应。
+          </p>
+          <p class="codex-p">
+            众修士皆惊叹为神迹，以为这是千百年来所有沉睡圣贤的灵魂被召集于一炉。抄写房为此停工三日，举烛彻夜围观这尊被命名为“黄铜神谕”的奇物。
+          </p>
+        </article>
 
-    <!-- 第四章 -->
-    <section class="codex-chapter">
-      <div class="chapter-heading">
-        <span>✦ CAPITVLVM IV ✦</span>
-        <span>羊皮纸配方与青金石：实体介质的千年抗衰老魔法</span>
-      </div>
-      <p class="codex-text">
-        <span class="illuminated-initial">研</span>磨来自阿富汗山脉的纯正青金石（Ultramarine），以蜂蜡与蛋清调和。手抄本边缘蜿蜒的花叶蔓藤不仅是视觉装饰，更保护了内文边缘免遭物理磨损。在 Web 设计中，恰如其分的留白与装饰框线同样守护着阅读者的心智焦点。
-      </p>
-    </section>
+        <!-- 泥金细密画插图 -->
+        <div class="codex-miniature">
+          <img src="assets/images/medieval_alchemist.jpg" alt="中世纪学者在炼金工坊与机械星象仪前凝视推演的泥金细密画">
+          <div class="miniature-caption">
+            ILLUMINATIO VII : ALCHEMISTA INTER MACHINA ET ORACULUM · 泥金插图：修士与推演机
+          </div>
+        </div>
 
-    <!-- 卷末题记 -->
-    <footer class="codex-colophon">
-      <div>SCRIPTUM ET DEDICATUM · MMXXVI</div>
-      <div style="margin-top: 6px; font-size: 11px;">凡阅读此书卷者，愿理智与宁静长伴汝心。</div>
-    </footer>
-  <style>
-    /* 烛光摇曳环境光 */
-    body::before {
-      content: "";
-      position: fixed;
-      inset: 0;
-      background: radial-gradient(circle at var(--candle-x, 50%) var(--candle-y, 50%), rgba(245, 158, 11, 0.08) 0%, transparent 60%);
-      pointer-events: none;
-      z-index: 99;
-      animation: candleFlicker 3s ease-in-out infinite alternate;
-    }
-    @keyframes candleFlicker {
-      0% { opacity: 0.8; transform: scale(1); }
-      50% { opacity: 0.5; transform: scale(1.05); }
-      100% { opacity: 0.9; transform: scale(0.98); }
-    }
-    .illuminated-initial {
-      text-shadow: 0 0 12px rgba(197, 155, 39, 0.6);
-      transition: text-shadow 0.3s ease;
-    }
-    .illuminated-initial:hover {
-      text-shadow: 0 0 24px rgba(197, 155, 39, 1);
-    }
-  </style>
+        <!-- 第二章：试问 -->
+        <article class="chapter-block">
+          <h3 class="chapter-title">第二章：繁星与药草的试问（Interrogatio）</h3>
+          <p class="codex-p">
+            <span class="illuminated-initial">初</span>试之时，神谕展现出近乎全知的从容。修士问及拜占庭舰队的锚链配重，它即刻列出铁与铅的熔铸比例；问及修道院后山七叶草的止血药性，它亦能援引古罗马医师的古方。字句工整流畅，词藻宛如经院讲席上最博学的辩士。
+          </p>
+          <p class="codex-p">
+            人们开始将疑难的教历推算、地租账目甚至兄弟间的纷争尽数交由神谕裁决。猫爪抄写员在页边记下：“世人常以语调的流利，误认作真理的权柄。”
+          </p>
+        </article>
+
+        <!-- 第三章：误答 -->
+        <article class="chapter-block">
+          <h3 class="chapter-title">第三章：虚构星宿的迷雾（Hallucinatio）</h3>
+          <p class="codex-p">
+            <span class="illuminated-initial">破</span>绽始于一场关于遥远极北航路的询问。神谕信誓旦旦地写下：“极北有一座名唤‘维利斯’的翡翠灯塔，由第七世纪的盲眼主教所建，通体以耐寒水银粘合。”其言辞恳切，引经据典，连卷帙编次都标记得分毫不差。
+          </p>
+          <p class="codex-p">
+            然而翻遍整个秘录库与航海图志，世间从未存在过所谓翡翠灯塔与盲眼主教。黄铜神谕并非故意欺瞒，它只是在数以亿计的词句碰撞中，为了成全一段完美的韵律与回答的期望，自行编织了一场极其逼真的幻梦。
+          </p>
+        </article>
+
+        <!-- 第四章：立下约束 -->
+        <article class="chapter-block">
+          <h3 class="chapter-title">第四章：复核的圣约之链（Foedus）</h3>
+          <p class="codex-p">
+            <span class="illuminated-initial">院</span>长遂召集所有抄写员，在黄铜神谕前立下铁律：凡出自黄铜之口的字句，皆不得直接誊入正式法典；每一道神谕吐出的签条，必须经由双人执烛比对原典，并在末尾加盖检验者的火漆印记。
+          </p>
+          <p class="codex-p">
+            机器能运算出世间最华丽的句式，但唯有人类的审慎与怀疑，能为真实铸造防波堤。
+          </p>
+        </article>
+      </section>
+
+      <!-- 次级栏目：三个主题典籍 -->
+      <section class="secondary-columns" aria-label="次级栏目：典籍与戒律">
+        <!-- 栏目 1 -->
+        <article class="bestiary-card">
+          <span class="card-symbol">🐉</span>
+          <h3 class="card-header">缓存怪兽图鉴</h3>
+          <div class="card-body">
+            栖息于修道院通风井中的无形异兽。它贪婪地吞噬所有被频繁翻阅的书页副本，使人无需再去阴冷的地窖提取沉重石板。然而若不定期以圣水（驱逐指令）清洗其胃囊，它便会吐出三个月前腐坏陈旧的答案，令求知者陷入时空错位之苦。
+          </div>
+        </article>
+
+        <!-- 栏目 2 -->
+        <article class="bestiary-card">
+          <span class="card-symbol">♾️</span>
+          <h3 class="card-header">无尽回圈之蛇</h3>
+          <div class="card-body">
+            形如首尾相衔的青铜巨蟒（Ouroboros）。当黄铜机械中的条件判定陷入模糊未决之时，此蛇便会在齿轮间狂乱游走，耗尽所有蓄水塔与发条发条力，直到整个抄写房被滚烫的蒸汽笼罩。唯有设置死线钟声（Timeout），方能斩断其永续纠缠。
+          </div>
+        </article>
+
+        <!-- 栏目 3 -->
+        <article class="bestiary-card">
+          <span class="card-symbol">🛡️</span>
+          <h3 class="card-header">守门人权限誓词</h3>
+          <div class="card-body">
+            “吾乃门扉之锁钥保管人。任凭黄铜神谕何等口吐莲花，未经三次击磬、双重符印（Dual-Key）与当值教士的肉眼勘验，断不可将修道院粮仓与金库的总阀开启。”此乃立于神谕基座之上的永久铭文。
+          </div>
+        </article>
+      </section>
+
+      <!-- 资料模块：古词汇表 -->
+      <section class="glossary-section" aria-label="资料模块：抄本世界仪式词汇表">
+        <h2 class="glossary-title">✦ 秘炉古词汇与现代原语互译 ✦</h2>
+        <div class="glossary-grid">
+          <div class="glossary-item">
+            <div class="glossary-term">
+              <span class="ritual-name">时光逆溯秘术 (Reversio)</span>
+              <span class="modern-name">现代词：回滚 (Rollback)</span>
+            </div>
+            <p class="glossary-desc">
+              当抄本发生重大笔误或墨水污染时，启动水银水钟逆转齿轮，使抄写板完全复原至上一道无瑕火漆加盖时的状态。
+            </p>
+          </div>
+
+          <div class="glossary-item">
+            <div class="glossary-term">
+              <span class="ritual-name">守夜人编年炭记 (Acta Noctis)</span>
+              <span class="modern-name">现代词：日志 (Logging)</span>
+            </div>
+            <p class="glossary-desc">
+              修道士以细炭条逐分逐秒记录机械每个阀门的跳动与异常回音，作为灾异发生时溯源问责的不可磨灭凭证。
+            </p>
+          </div>
+
+          <div class="glossary-item">
+            <div class="glossary-term">
+              <span class="ritual-name">真金天平称量 (Veritas Aequitas)</span>
+              <span class="modern-name">现代词：校验与哈希 (Checksum)</span>
+            </div>
+            <p class="glossary-desc">
+              将整卷抄本的字母笔画折算为特定重量的铜屑，若接收方称量不符一厘，则判定文本在传递途中遭恶魔篡改。
+            </p>
+          </div>
+
+          <div class="glossary-item">
+            <div class="glossary-term">
+              <span class="ritual-name">双窖石棺藏影 (Arca Gemina)</span>
+              <span class="modern-name">现代词：异地容灾备份 (Backup)</span>
+            </div>
+            <p class="glossary-desc">
+              将抄写定稿以石蜡密封，分藏于相距三十里外的两座不同山峰石窟中，以防烈火、兵燹或洪荒摧毁文明血脉。
+            </p>
+          </div>
+        </div>
+      </section>
+
+      <!-- 收尾区与页边批注 -->
+      <aside class="codex-marginalia" aria-label="页边批注">
+        <span class="marginalia-tag">✦ 猫爪修士的页边朱砂注（Marginalia）：</span>
+        “知识若无校验，华丽也只是传说。愿执笔者常怀敬畏，莫把巧匠之偶像，当作苍穹之真光。”
+      </aside>
+
+      <!-- 卷末题记 -->
+      <footer class="codex-colophon">
+        <div class="colophon-latin">EXPLICIT CODEX · SCRIPTUM ET SIGILLATUM ANNO DOMINI MMXXVI</div>
+        <div>秘炉抄本 · 第七码卷 完卷 · 凡披阅此卷者当持理智与审慎</div>
+      </footer>
+    </main>
+  </div>
 
   <script src="assets/nav-bar.js"></script>
   <script>
-    function toggleSeal() {
-      const seal = document.getElementById('waxSeal');
-      const status = document.getElementById('sealStatus');
-      seal.style.transform = 'scale(0.85) rotate(20deg)';
+    // 火漆印章交互微文案与状态
+    let isSealed = false;
+    function applySeal() {
+      const sealBtn = document.getElementById('waxSealBtn');
+      const caption = document.getElementById('sealCaption');
+      const toast = document.getElementById('sealToast');
+
+      sealBtn.style.transform = 'scale(0.85) rotate(18deg)';
       setTimeout(() => {
-        seal.style.transform = 'scale(1) rotate(0deg)';
-        status.textContent = '★ 御印已重新加盖！';
-      }, 250);
+        sealBtn.style.transform = 'scale(1) rotate(0deg)';
+        if (!isSealed) {
+          isSealed = true;
+          caption.textContent = '蜡印尚热';
+          toast.textContent = '誓约已盖印：任何神谕都需复核';
+          toast.style.background = 'rgba(143, 29, 20, 0.2)';
+          toast.style.borderColor = 'var(--rubric-red)';
+          toast.style.color = 'var(--rubric-red)';
+        } else {
+          isSealed = false;
+          caption.textContent = '按下火漆，封存本页';
+          toast.textContent = '蜡印已开启 · 可重新校阅';
+          toast.style.background = 'rgba(205, 163, 53, 0.2)';
+          toast.style.borderColor = 'var(--gold-leaf)';
+          toast.style.color = '#3b2a1a';
+        }
+      }, 200);
     }
 
-    // 烛光鼠标跟随
+    // 烛光鼠标游移互动
     window.addEventListener('mousemove', (e) => {
-      document.body.style.setProperty('--candle-x', `${(e.clientX / window.innerWidth) * 100}%`);
-      document.body.style.setProperty('--candle-y', `${(e.clientY / window.innerHeight) * 100}%`);
+      const x = ((e.clientX / window.innerWidth) * 100).toFixed(1);
+      const y = ((e.clientY / window.innerHeight) * 100).toFixed(1);
+      document.documentElement.style.setProperty('--candle-x', `${x}%`);
+      document.documentElement.style.setProperty('--candle-y', `${y}%`);
     });
   </script>
 </body>

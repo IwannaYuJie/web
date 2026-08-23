@@ -3,20 +3,29 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>DWG // 12 建筑工程蓝图制图风</title>
+  <title>SYSTEM PLAN A-12 / 高可用架构施工图</title>
   <link rel="stylesheet" href="assets/common.css">
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Share+Tech+Mono&family=Noto+Sans+SC:wght@400;600;800&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Share+Tech+Mono&family=Noto+Sans+SC:wght@400;500;700;900&display=swap" rel="stylesheet">
   <style>
     :root {
-      --cad-blue: #0a2540;
-      --cad-grid-major: rgba(255, 255, 255, 0.15);
-      --cad-grid-minor: rgba(255, 255, 255, 0.05);
-      --cad-white: #ffffff;
-      --cad-cyan: #38bdf8;
+      --cad-bg: #071e3d;
+      --cad-dark: #041226;
+      --cad-grid-major: rgba(56, 189, 248, 0.22);
+      --cad-grid-minor: rgba(56, 189, 248, 0.08);
+      --cad-line: #38bdf8;
+      --cad-line-dim: rgba(56, 189, 248, 0.4);
+      --cad-text: #f0f9ff;
+      --cad-text-muted: #93c5fd;
       --cad-yellow: #fde047;
-      --font-cad: "Share Tech Mono", monospace, "Noto Sans SC", sans-serif;
+      --cad-red: #f87171;
+      --cad-green: #4ade80;
+      --cad-stamp: #ef4444;
+      --cad-border: 1px solid rgba(56, 189, 248, 0.5);
+      --cad-border-thick: 2px solid #38bdf8;
+      --font-mono: "Share Tech Mono", monospace;
+      --font-main: "Share Tech Mono", "Noto Sans SC", -apple-system, monospace;
     }
 
     * {
@@ -26,341 +35,975 @@
     }
 
     body {
-      background-color: var(--cad-blue);
-      color: var(--cad-white);
-      font-family: var(--font-cad);
+      background-color: var(--cad-bg);
+      color: var(--cad-text);
+      font-family: var(--font-main);
       min-height: 100vh;
-      padding: 30px 20px 80px;
-      line-height: 1.7;
+      padding: 24px 16px 80px;
+      line-height: 1.65;
       background-image: 
         linear-gradient(var(--cad-grid-minor) 1px, transparent 1px),
         linear-gradient(90deg, var(--cad-grid-minor) 1px, transparent 1px),
         linear-gradient(var(--cad-grid-major) 1px, transparent 1px),
         linear-gradient(90deg, var(--cad-grid-major) 1px, transparent 1px);
       background-size: 20px 20px, 20px 20px, 100px 100px, 100px 100px;
+      background-attachment: fixed;
     }
 
-    .cad-sheet {
-      max-width: 1240px;
+    /* 外框与图幅图框 */
+    .blueprint-wrapper {
+      max-width: 1280px;
       margin: 0 auto;
-      border: 2px solid var(--cad-white);
-      padding: 24px;
+      border: var(--cad-border-thick);
+      padding: 16px;
+      background: rgba(7, 30, 61, 0.94);
+      box-shadow: 0 0 50px rgba(0, 0, 0, 0.7), inset 0 0 30px rgba(56, 189, 248, 0.08);
       position: relative;
-      background: rgba(10, 37, 64, 0.85);
-      box-shadow: 0 0 30px rgba(0, 0, 0, 0.6);
     }
 
-    /* 顶栏标尺 */
-    .cad-top-rule {
+    .blueprint-inner-border {
+      border: 1px solid rgba(56, 189, 248, 0.6);
+      padding: 20px;
+      position: relative;
+    }
+
+    /* 对齐十字角标 */
+    .cad-corner {
+      position: absolute;
+      width: 14px;
+      height: 14px;
+      border-color: var(--cad-yellow);
+      pointer-events: none;
+    }
+    .corner-tl { top: -7px; left: -7px; border-top: 2px solid var(--cad-yellow); border-left: 2px solid var(--cad-yellow); }
+    .corner-tr { top: -7px; right: -7px; border-top: 2px solid var(--cad-yellow); border-right: 2px solid var(--cad-yellow); }
+    .corner-bl { bottom: -7px; left: -7px; border-bottom: 2px solid var(--cad-yellow); border-left: 2px solid var(--cad-yellow); }
+    .corner-br { bottom: -7px; right: -7px; border-bottom: 2px solid var(--cad-yellow); border-right: 2px solid var(--cad-yellow); }
+
+    /* 顶栏图纸状态条 */
+    .cad-top-bar {
       display: flex;
+      flex-wrap: wrap;
       justify-content: space-between;
-      border-bottom: 1px solid var(--cad-white);
-      padding-bottom: 8px;
-      margin-bottom: 24px;
+      align-items: center;
+      gap: 12px;
+      border-bottom: 1px dashed var(--cad-line);
+      padding-bottom: 12px;
+      margin-bottom: 20px;
       font-size: 11px;
-      color: var(--cad-cyan);
+      color: var(--cad-text-muted);
     }
 
-    /* 标题区域 */
+    .cad-top-tag {
+      background: rgba(56, 189, 248, 0.15);
+      color: var(--cad-line);
+      padding: 3px 8px;
+      border: 1px solid var(--cad-line);
+      font-weight: bold;
+      letter-spacing: 0.5px;
+    }
+
+    /* 头部大标题 */
     .cad-header {
-      margin-bottom: 36px;
-      border-bottom: 1px dashed var(--cad-cyan);
-      padding-bottom: 20px;
+      margin-bottom: 24px;
+      position: relative;
     }
 
-    .cad-doc-code {
+    .cad-sub-id {
+      font-size: 13px;
+      color: var(--cad-yellow);
+      letter-spacing: 2px;
+      margin-bottom: 4px;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .cad-title-main {
+      font-size: clamp(26px, 4vw, 42px);
+      font-weight: 900;
+      color: #ffffff;
+      line-height: 1.25;
+      text-transform: uppercase;
+      letter-spacing: 1px;
+      text-shadow: 0 0 12px rgba(56, 189, 248, 0.5);
+    }
+
+    .cad-lead-metaphor {
+      margin-top: 10px;
+      padding: 10px 14px;
+      background: rgba(14, 116, 144, 0.2);
+      border-left: 3px solid var(--cad-yellow);
+      font-size: 13px;
+      color: #bae6fd;
+    }
+
+    .cad-lead-metaphor strong {
+      color: var(--cad-yellow);
+    }
+
+    /* 互动控制栏 */
+    .cad-control-dock {
+      background: rgba(4, 18, 38, 0.85);
+      border: 1px solid var(--cad-line);
+      padding: 12px 16px;
+      margin-bottom: 24px;
+      display: flex;
+      flex-wrap: wrap;
+      align-items: center;
+      justify-content: space-between;
+      gap: 12px;
+    }
+
+    .control-label {
       font-size: 12px;
       color: var(--cad-yellow);
-      margin-bottom: 6px;
+      display: flex;
+      align-items: center;
+      gap: 6px;
     }
 
-    .cad-title {
-      font-size: clamp(28px, 4.5vw, 44px);
-      font-weight: 800;
+    .control-buttons {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 8px;
+    }
+
+    .cad-btn {
+      background: transparent;
+      border: 1px solid var(--cad-line);
+      color: var(--cad-text);
+      font-family: inherit;
+      font-size: 12px;
+      padding: 6px 14px;
+      cursor: pointer;
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      transition: all 0.2s ease;
+    }
+
+    .cad-btn:hover, .cad-btn.active {
+      background: rgba(56, 189, 248, 0.25);
+      border-color: #fff;
+      color: #fff;
+      box-shadow: 0 0 8px rgba(56, 189, 248, 0.4);
+    }
+
+    .cad-stamp-badge {
+      border: 2px dashed var(--cad-stamp);
+      color: var(--cad-stamp);
+      padding: 4px 10px;
+      font-size: 12px;
+      font-weight: bold;
       letter-spacing: 1px;
-      line-height: 1.2;
+      transform: rotate(-2deg);
+      display: inline-block;
     }
 
-    /* 尺寸标注线 */
+    /* 尺寸标注条组件 */
     .dimension-line {
       display: flex;
       align-items: center;
       margin: 16px 0;
-      color: var(--cad-cyan);
+      color: var(--cad-line);
       font-size: 11px;
+      user-select: none;
+      transition: opacity 0.2s ease;
     }
-    .dim-arrow-left { border-right: 6px solid var(--cad-cyan); border-top: 3px solid transparent; border-bottom: 3px solid transparent; }
-    .dim-arrow-right { border-left: 6px solid var(--cad-cyan); border-top: 3px solid transparent; border-bottom: 3px solid transparent; }
-    .dim-line { flex: 1; height: 1px; background: var(--cad-cyan); }
-    .dim-text { padding: 0 8px; }
+    .dimension-line.hidden-dim {
+      opacity: 0.15;
+    }
+    .dim-arrow-l { border-right: 6px solid var(--cad-line); border-top: 4px solid transparent; border-bottom: 4px solid transparent; }
+    .dim-arrow-r { border-left: 6px solid var(--cad-line); border-top: 4px solid transparent; border-bottom: 4px solid transparent; }
+    .dim-axis { flex: 1; height: 1px; background: var(--cad-line); position: relative; }
+    .dim-tag { padding: 0 10px; white-space: nowrap; font-weight: bold; }
 
-    /* 主网格 */
-    .cad-grid {
+    /* 主布局 */
+    .blueprint-grid {
       display: grid;
-      grid-template-columns: 2fr 1fr;
-      gap: 30px;
+      grid-template-columns: 1fr 340px;
+      gap: 24px;
+      margin-bottom: 24px;
     }
 
-    /* 图纸卡片 */
-    .cad-module {
-      border: 1px solid var(--cad-white);
-      padding: 24px;
-      margin-bottom: 24px;
+    /* 四张主施工图纸网格 */
+    .drawings-container {
+      display: flex;
+      flex-direction: column;
+      gap: 22px;
+    }
+
+    .drawing-sheet {
+      border: 1px solid rgba(56, 189, 248, 0.4);
+      background: rgba(4, 18, 38, 0.6);
+      padding: 18px;
       position: relative;
     }
 
-    .cad-module::before {
-      content: "+";
-      position: absolute;
-      top: -8px;
-      left: -5px;
-      color: var(--cad-cyan);
-      font-size: 16px;
+    .drawing-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: baseline;
+      border-bottom: 1px solid rgba(56, 189, 248, 0.3);
+      padding-bottom: 8px;
+      margin-bottom: 12px;
+    }
+
+    .drawing-id {
+      font-size: 12px;
+      color: var(--cad-yellow);
       font-weight: bold;
     }
 
-    .cad-mod-header {
+    .drawing-scale {
+      font-size: 11px;
+      color: var(--cad-text-muted);
+    }
+
+    .drawing-title {
+      font-size: 18px;
+      font-weight: 700;
+      color: #fff;
+      margin-bottom: 8px;
+    }
+
+    .drawing-desc {
+      font-size: 13.5px;
+      color: #cbd5e1;
+      line-height: 1.7;
+      margin-bottom: 12px;
+    }
+
+    /* 隐喻注释与审查批注 */
+    .metaphor-badge {
+      display: inline-block;
+      padding: 2px 6px;
+      font-size: 11px;
+      background: rgba(253, 224, 71, 0.15);
+      border: 1px solid var(--cad-yellow);
+      color: var(--cad-yellow);
+      margin-bottom: 8px;
+    }
+
+    .review-annotation {
+      margin-top: 10px;
+      padding: 8px 12px;
+      background: rgba(248, 113, 113, 0.12);
+      border-left: 3px solid var(--cad-red);
       font-size: 12px;
-      color: var(--cad-cyan);
-      border-bottom: 1px solid rgba(255, 255, 255, 0.2);
+      color: #fca5a5;
+      display: none;
+    }
+    .review-annotation.active-note {
+      display: block;
+    }
+
+    /* 结构施工图示意框 */
+    .cad-schematic-box {
+      border: 1px dashed rgba(56, 189, 248, 0.4);
+      background: rgba(0, 15, 35, 0.5);
+      padding: 12px;
+      margin: 12px 0;
+      font-family: var(--font-mono);
+      font-size: 12px;
+    }
+
+    .cad-schematic-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(130px, 1fr));
+      gap: 8px;
+      margin-top: 8px;
+    }
+
+    .schematic-node {
+      border: 1px solid var(--cad-line);
+      padding: 8px;
+      text-align: center;
+      background: rgba(56, 189, 248, 0.08);
+    }
+    .schematic-node strong {
+      display: block;
+      color: var(--cad-yellow);
+      font-size: 11px;
+    }
+
+    /* 次级栏目：工程专栏 */
+    .sub-columns-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+      gap: 16px;
+      margin: 24px 0;
+    }
+
+    .sub-col-card {
+      border: 1px solid rgba(56, 189, 248, 0.5);
+      background: rgba(4, 18, 38, 0.7);
+      padding: 16px;
+      position: relative;
+    }
+
+    .sub-col-header {
+      font-size: 11px;
+      color: var(--cad-yellow);
+      margin-bottom: 6px;
+    }
+
+    .sub-col-title {
+      font-size: 16px;
+      font-weight: 700;
+      color: #ffffff;
+      margin-bottom: 10px;
+    }
+
+    .sub-col-text {
+      font-size: 13px;
+      color: #cbd5e1;
+      line-height: 1.65;
+    }
+
+    .sub-col-boundary {
+      margin-top: 10px;
+      padding-top: 8px;
+      border-top: 1px dotted var(--cad-line);
+      font-size: 11px;
+      color: var(--cad-line);
+    }
+
+    /* 侧边栏：材料表 BOM 与 修订栏 Revision */
+    .cad-sidebar {
+      display: flex;
+      flex-direction: column;
+      gap: 20px;
+    }
+
+    .sidebar-panel {
+      border: 1px solid var(--cad-line);
+      background: rgba(4, 18, 38, 0.8);
+      padding: 16px;
+    }
+
+    .panel-title {
+      font-size: 13px;
+      font-weight: bold;
+      color: var(--cad-yellow);
+      border-bottom: 1px solid rgba(56, 189, 248, 0.4);
       padding-bottom: 6px;
       margin-bottom: 12px;
       display: flex;
       justify-content: space-between;
     }
 
-    .cad-article-title {
-      font-size: 22px;
-      font-weight: 700;
-      margin-bottom: 12px;
-      color: #fff;
+    /* 材料表样式 */
+    .bom-table {
+      width: 100%;
+      border-collapse: collapse;
+      font-size: 11.5px;
     }
 
-    .cad-article-body {
-      font-size: 14px;
-      color: #cbd5e1;
-      line-height: 1.8;
-      margin-bottom: 16px;
+    .bom-table th {
+      text-align: left;
+      border-bottom: 1px solid var(--cad-line);
+      padding: 4px 6px;
+      color: var(--cad-line);
     }
 
-    /* 工程图签 Title Block */
-    .cad-title-block {
-      border: 2px solid var(--cad-white);
-      margin-top: 30px;
-      display: grid;
-      grid-template-columns: repeat(4, 1fr);
+    .bom-table td {
+      border-bottom: 1px dashed rgba(56, 189, 248, 0.2);
+      padding: 6px;
+      color: #e2e8f0;
+      vertical-align: top;
+    }
+
+    .bom-tag {
+      display: inline-block;
+      padding: 1px 4px;
+      font-size: 10px;
+      border-radius: 2px;
+      background: rgba(56, 189, 248, 0.15);
+      color: var(--cad-line);
+    }
+
+    /* 修订栏样式 */
+    .revision-item {
+      padding: 8px 0;
+      border-bottom: 1px dashed rgba(56, 189, 248, 0.2);
+      font-size: 12px;
+    }
+    .revision-item:last-child {
+      border-bottom: none;
+    }
+
+    .rev-head {
+      display: flex;
+      justify-content: space-between;
+      margin-bottom: 3px;
+    }
+
+    .rev-tag {
+      font-weight: bold;
+      color: var(--cad-yellow);
+    }
+
+    .rev-date {
+      color: var(--cad-text-muted);
       font-size: 11px;
     }
 
-    .title-cell {
-      border-right: 1px solid var(--cad-white);
-      border-bottom: 1px solid var(--cad-white);
-      padding: 8px;
-    }
-    .title-cell:last-child {
-      border-right: none;
-    }
-    .title-cell strong {
-      display: block;
-      color: var(--cad-cyan);
-      margin-bottom: 2px;
+    .rev-desc {
+      color: #cbd5e1;
+      font-size: 12px;
+      line-height: 1.5;
     }
 
-    @media (max-width: 860px) {
-      .cad-grid {
+    /* 交付清单收尾模块 */
+    .cad-delivery-checklist {
+      border: 1px solid var(--cad-line);
+      background: rgba(4, 18, 38, 0.9);
+      padding: 20px;
+      margin-top: 24px;
+    }
+
+    .checklist-title {
+      font-size: 15px;
+      font-weight: 700;
+      color: var(--cad-yellow);
+      margin-bottom: 12px;
+      border-bottom: 1px solid rgba(56, 189, 248, 0.4);
+      padding-bottom: 6px;
+    }
+
+    .checklist-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+      gap: 14px;
+    }
+
+    .check-card {
+      border: 1px solid rgba(56, 189, 248, 0.3);
+      padding: 12px;
+      background: rgba(56, 189, 248, 0.04);
+    }
+
+    .check-item-head {
+      font-size: 13px;
+      font-weight: bold;
+      color: #fff;
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      margin-bottom: 6px;
+    }
+
+    .check-item-body {
+      font-size: 12px;
+      color: #cbd5e1;
+      line-height: 1.6;
+    }
+
+    /* 底部工程图签 Title Block */
+    .cad-title-block {
+      border: 2px solid var(--cad-line);
+      margin-top: 28px;
+      display: grid;
+      grid-template-columns: 2fr 1.5fr 1.5fr 1fr;
+      background: var(--cad-dark);
+      font-size: 11px;
+    }
+
+    .tb-cell {
+      border-right: 1px solid var(--cad-line);
+      padding: 10px 12px;
+    }
+    .tb-cell:last-child {
+      border-right: none;
+    }
+
+    .tb-label {
+      color: var(--cad-line);
+      font-size: 10px;
+      text-transform: uppercase;
+      margin-bottom: 2px;
+      display: block;
+    }
+
+    .tb-val {
+      font-weight: bold;
+      color: #fff;
+    }
+
+    /* 准星十字线与扫描效果 */
+    #cadLaserCrosshairH {
+      position: fixed;
+      left: 0;
+      width: 100vw;
+      height: 1px;
+      background: rgba(56, 189, 248, 0.3);
+      pointer-events: none;
+      z-index: 9990;
+    }
+    #cadLaserCrosshairV {
+      position: fixed;
+      top: 0;
+      height: 100vh;
+      width: 1px;
+      background: rgba(56, 189, 248, 0.3);
+      pointer-events: none;
+      z-index: 9990;
+    }
+    #cadLaserReticle {
+      position: fixed;
+      width: 24px;
+      height: 24px;
+      border: 1px solid rgba(253, 224, 71, 0.7);
+      border-radius: 50%;
+      pointer-events: none;
+      z-index: 9991;
+      transform: translate(-50%, -50%);
+      transition: transform 0.04s ease-out;
+    }
+
+    @media (max-width: 960px) {
+      .blueprint-grid {
         grid-template-columns: 1fr;
       }
       .cad-title-block {
         grid-template-columns: 1fr 1fr;
+      }
+      .tb-cell:nth-child(2) {
+        border-right: none;
+      }
+      .tb-cell:nth-child(1), .tb-cell:nth-child(2) {
+        border-bottom: 1px solid var(--cad-line);
+      }
+    }
+
+    @media (prefers-reduced-motion: reduce) {
+      #cadLaserReticle {
+        transition: none;
       }
     }
   </style>
 </head>
 <body>
 
-  <div class="cad-sheet">
-    <div class="cad-top-rule">
-      <span>📐 CAD SCALE: 1:100 // GRID: 20mm</span>
-      <span>TOLERANCE: ±0.05mm</span>
-      <span>STATUS: APPROVED FOR PUBLISH</span>
-    </div>
+  <!-- CAD 准星 -->
+  <div id="cadLaserCrosshairH" aria-hidden="true"></div>
+  <div id="cadLaserCrosshairV" aria-hidden="true"></div>
+  <div id="cadLaserReticle" aria-hidden="true"></div>
 
-    <!-- 标题 -->
-    <header class="cad-header">
-      <div class="cad-doc-code">DWG NO. 2026-ARCH-001 // SHEET 01 OF 01</div>
-      <h1 class="cad-title">系统架构测绘与工程制图手记</h1>
-    </header>
+  <div class="blueprint-wrapper">
+    <div class="blueprint-inner-border">
+      <!-- 四角十字对齐标 -->
+      <div class="cad-corner corner-tl" aria-hidden="true"></div>
+      <div class="cad-corner corner-tr" aria-hidden="true"></div>
+      <div class="cad-corner corner-bl" aria-hidden="true"></div>
+      <div class="cad-corner corner-br" aria-hidden="true"></div>
 
-    <!-- 尺寸标注 -->
-    <div class="dimension-line">
-      <div class="dim-arrow-left"></div>
-      <div class="dim-line"></div>
-      <span class="dim-text">SECTION A-A: CORE ARCHITECTURE (1200.00mm)</span>
-      <div class="dim-line"></div>
-      <div class="dim-arrow-right"></div>
-    </div>
+      <!-- 顶栏状态 -->
+      <header class="cad-top-bar">
+        <div>
+          <span class="cad-top-tag">DWG CLASSIFICATION: TOPOLOGY SPEC</span>
+          <span style="margin-left: 8px;">SCALE: 1:50 // TOLERANCE: ±0.001s</span>
+        </div>
+        <div id="cadLiveCoords">COORD: X=0480.00mm | Y=0210.00mm</div>
+        <div>STATION: HA-PRODUCTION-01</div>
+      </header>
 
-    <!-- 主图纸内容 -->
-    <div class="cad-grid">
-      <!-- 左侧图纸模块 -->
-      <main>
-        <section class="cad-module">
-          <div class="cad-mod-header">
-            <span>[DETAIL 01.A] // ISOMETRIC SCHEMATIC</span>
-            <span>REV: B.2</span>
+      <!-- 头部大标题与工程隐喻 -->
+      <div class="cad-header">
+        <div class="cad-sub-id">
+          <span>📐 SYSTEM PLAN A-12</span>
+          <span>//</span>
+          <span>高可用架构施工图</span>
+        </div>
+        <h1 class="cad-title-main">一座不会因单点裂缝整体坍塌的服务</h1>
+        <div class="cad-lead-metaphor">
+          <strong>【建筑与系统隐喻注记】</strong> 
+          将分布式软件的高可用设计映射为现代抗震建筑施工工程：承重墙即主存储节点，伸缩缝即故障隔离域，疏散通道即降级兜底网关，巡检管道即分布式遥测探针。任何单点裂纹必须被几何隔离，严禁应力级联扩散。
+        </div>
+      </div>
+
+      <!-- 互动控制坞 -->
+      <div class="cad-control-dock" role="region" aria-label="工程图纸交互控制台">
+        <div class="control-label">
+          <span>⚙️ CAD 图层与审查交互：</span>
+        </div>
+        <div class="control-buttons">
+          <button class="cad-btn active" id="btnToggleDim" onclick="toggleDimensions()" aria-pressed="true">
+            📏 显示尺寸标注
+          </button>
+          <button class="cad-btn" id="btnToggleNotes" onclick="toggleReviewNotes()" aria-pressed="false">
+            ✍️ 切换审查批注
+          </button>
+          <button class="cad-btn" onclick="toggleBoundaryNotice()" aria-label="查看故障边界说明">
+            🚧 此处不是装饰线，是故障边界
+          </button>
+        </div>
+        <div class="cad-stamp-badge" id="stampStatus" title="当前图纸版本已由架构委员会盖章定稿">
+          ✔ R2 图纸已盖章 (SEALED)
+        </div>
+      </div>
+
+      <!-- 尺寸标尺 01 -->
+      <div class="dimension-line" id="dimLineTop" aria-hidden="true">
+        <div class="dim-arrow-l"></div>
+        <div class="dim-axis"></div>
+        <div class="dim-tag">SECTION A-A : FAULT CONTAINMENT SPAN (2400.00mm)</div>
+        <div class="dim-axis"></div>
+        <div class="dim-arrow-r"></div>
+      </div>
+
+      <!-- 主网格：4张主图纸 + 侧边栏（材料表与修订栏） -->
+      <div class="blueprint-grid">
+        <!-- 主叙事 4 张图纸 -->
+        <main class="drawings-container">
+          <!-- 图纸 01：基础图纸 -->
+          <article class="drawing-sheet" id="sheet-01">
+            <div class="drawing-header">
+              <span class="drawing-id">[DWG SHEET 01/04] 基础图纸 // FOUNDATION SOIL</span>
+              <span class="drawing-scale">SCALE 1:20 · COLD STORAGE</span>
+            </div>
+            <span class="metaphor-badge">工程隐喻：地基灌浆 ⇋ 多副本共识持久层</span>
+            <h2 class="drawing-title">01. 基础工程：多副本共识与零信任地基</h2>
+            <p class="drawing-desc">
+              摩天大楼的抗倾覆能力取决于桩基是否打入岩石层。在分布式高可用架构中，基础图纸确立了基于 Raft / Paxos 协议的持久化仲裁池。主节点不仅依赖本地 NVMe 写入，更需跨可用区（AZ）完成法定多数派（Quorum）同步确认。地基不设单点桩，任何单个机房地陷（断网断电）均能由其余节点在 3 秒内完成主脑自愈，杜绝脑裂与脏写渗水。
+            </p>
+            <div class="cad-schematic-box">
+              <div>// 桩基冗余拓扑 (QUORUM GEOMETRY)</div>
+              <div class="cad-schematic-grid">
+                <div class="schematic-node"><strong>AZ-1 桩基</strong> 主节点 (R/W)<br><span style="color:var(--cad-green);">● ACTIVE</span></div>
+                <div class="schematic-node"><strong>AZ-2 桩基</strong> 同步副本 (R)<br><span style="color:var(--cad-green);">● SYNCED</span></div>
+                <div class="schematic-node"><strong>AZ-3 桩基</strong> 见证仲裁 (VOTE)<br><span style="color:var(--cad-yellow);">● QUORUM</span></div>
+              </div>
+            </div>
+            <div class="review-annotation">
+              <strong>[R1 审查批注 · 结构师 CHEN]：</strong> 
+              地基承压验算需补充极端光纤挖断场景下的仲裁超时重试退避算法，避免震荡选举耗尽线程池。
+            </div>
+          </article>
+
+          <!-- 图纸 02：承重图纸 -->
+          <article class="drawing-sheet" id="sheet-02">
+            <div class="drawing-header">
+              <span class="drawing-id">[DWG SHEET 02/04] 承重图纸 // LOAD-BEARING FRAME</span>
+              <span class="drawing-scale">SCALE 1:50 · CONCURRENCY MATRIX</span>
+            </div>
+            <span class="metaphor-badge">工程隐喻：剪力墙与阻尼器 ⇋ 核心交易流与背压限流</span>
+            <h2 class="drawing-title">02. 承重工程：单元化剪力墙与流量阻尼器</h2>
+            <p class="drawing-desc">
+              传统单体如筒体结构，一旦主梁断裂全楼垮塌。施工图纸将系统横向划分为独立运行的「单元化舱室（Cell-Based Architecture）」。每个单元拥有完整的业务闭环与独立承重墙。当某个大促热点请求激增 10 倍，调谐质量阻尼器（TMD —— 即自适应滑动窗口限流与 Token Bucket）迅速介入，在毫秒级吸收冲击能量，确保主承重梁绝对形变处于弹性极限内。
+            </p>
+            <div class="review-annotation">
+              <strong>[R0 草案批注 · 校验员 ZHANG]：</strong> 
+              承重计算要求单 Cell 吞吐上限严控在 12,000 QPS，超限自动溢流至降级通道，禁止跨单元借调算力。
+            </div>
+          </article>
+
+          <!-- 尺寸标尺 02 -->
+          <div class="dimension-line" aria-hidden="true">
+            <div class="dim-arrow-l"></div>
+            <div class="dim-axis"></div>
+            <div class="dim-tag">SECTION B-B : EXPANSION JOINT CLEARANCE (600.00mm)</div>
+            <div class="dim-axis"></div>
+            <div class="dim-arrow-r"></div>
           </div>
-          <div style="margin: 10px 0 14px; border: 1px solid rgba(255,255,255,0.4); background: #002244;">
-            <img src="assets/images/blueprint_cad.jpg" alt="CAD 建筑等轴测立面工程图" style="width: 100%; height: auto; display: block;">
-            <div style="font-size: 10px; color: var(--cad-cyan); padding: 4px 8px; font-family: monospace;">
-              FIG 1.0 : STRUCTURAL GLASS PAVILION ISOMETRIC CAD BLUEPRINT (SCALE 1:100)
+
+          <!-- 图纸 03：疏散图纸 -->
+          <article class="drawing-sheet" id="sheet-03">
+            <div class="drawing-header">
+              <span class="drawing-id">[DWG SHEET 03/04] 疏散图纸 // EMERGENCY EVACUATION</span>
+              <span class="drawing-scale">SCALE 1:100 · DEGRADATION ROUTE</span>
+            </div>
+            <span class="metaphor-badge">工程隐喻：防火门与逃生梯 ⇋ 熔断降级与静态兜底网关</span>
+            <h2 class="drawing-title">03. 疏散工程：防火隔断门与静默旁路通道</h2>
+            <p class="drawing-desc">
+              发生火灾时，防火门自动下落封锁火势。当推荐系统、个性化排序或风控子系统发生异常延迟时，熔断器即刻断开级联依赖，疏散通道立即将流量引向轻量静态兜底缓存（Static Fallback Stubs）。用户端依然能浏览基础商品或收到优雅降级排队凭证，主干道交通畅通，核心支付履约流程受到防火墙严密保护。
+            </p>
+            <div class="review-annotation">
+              <strong>[R2 定稿批注 · 总工 LIU]：</strong> 
+              疏散通道必须每日自动化模拟开启（Chaos Drill），防止防火门轨道生锈（兜底数据过期或格式不兼容）。
+            </div>
+          </article>
+
+          <!-- 图纸 04：检修图纸 -->
+          <article class="drawing-sheet" id="sheet-04">
+            <div class="drawing-header">
+              <span class="drawing-id">[DWG SHEET 04/04] 检修图纸 // MAINTENANCE SHAFTS</span>
+              <span class="drawing-scale">SCALE 1:25 · TELEMETRY SENSORS</span>
+            </div>
+            <span class="metaphor-badge">工程隐喻：建筑巡检竖井 ⇋ 统一可观测与动态探针网络</span>
+            <h2 class="drawing-title">04. 检修工程：全息竖井管廊与应力传感器探针</h2>
+            <p class="drawing-desc">
+              现代智能建筑在混凝土内部埋设光纤应变传感器与内窥检查井。本图纸规划了全链路分布式追踪（Trace ID 透传）、eBPF 无侵入内核探针与毫秒级度量汇聚管廊。任何微小的微服务接口抖动或 TCP 重传激增，均会在中控室 BIM 数字孪生大屏上精确定位至具体机架与线程，实现故障先于用户感知的预警与热插拔替换。
+            </p>
+          </article>
+        </main>
+
+        <!-- 侧边栏：材料表 (BOM) 与 修订栏 (Revisions) -->
+        <aside class="cad-sidebar">
+          <!-- 材料表 -->
+          <div class="sidebar-panel">
+            <div class="panel-title">
+              <span>📋 工程材料清单 (BOM)</span>
+              <span style="font-size:10px; color:var(--cad-text-muted);">SPEC-2026</span>
+            </div>
+            <table class="bom-table" aria-label="高可用系统材料清单">
+              <thead>
+                <tr>
+                  <th>构件隐喻</th>
+                  <th>技术实体</th>
+                  <th>规格/工况</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr>
+                  <td><strong>主受力柱</strong></td>
+                  <td>分布式数据库<br><span class="bom-tag">CockroachDB / TiDB</span></td>
+                  <td>多副本 Raft<br>RPO=0, RTO&lt;5s</td>
+                </tr>
+                <tr>
+                  <td><strong>应力分流管</strong></td>
+                  <td>高吞吐消息队列<br><span class="bom-tag">Apache Kafka</span></td>
+                  <td>分区持久化<br>百万级背压削峰</td>
+                </tr>
+                <tr>
+                  <td><strong>外立面储藏</strong></td>
+                  <td>对象存储网格<br><span class="bom-tag">Ceph / S3 Pool</span></td>
+                  <td>纠删码 8+4<br>冷热分层生命周期</td>
+                </tr>
+                <tr>
+                  <td><strong>建筑传感器</strong></td>
+                  <td>监控遥测矩阵<br><span class="bom-tag">Prometheus + eBPF</span></td>
+                  <td>全采样指标<br>10s 异常热力图扫描</td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+
+          <!-- 修订栏 -->
+          <div class="sidebar-panel">
+            <div class="panel-title">
+              <span>📑 图纸修订记录 (REVISIONS)</span>
+              <span style="font-size:10px; color:var(--cad-yellow);">CURRENT: R2</span>
+            </div>
+            <div class="revision-item">
+              <div class="rev-head">
+                <span class="rev-tag">[R2 定稿] ARCH-FINAL</span>
+                <span class="rev-date">2026-08-22</span>
+              </div>
+              <div class="rev-desc">通过多活跨城灾备演练，全链路压测达标，正式交付施工团队签署生效。</div>
+            </div>
+            <div class="revision-item">
+              <div class="rev-head">
+                <span class="rev-tag">[R1 审查] REVIEW-PASS</span>
+                <span class="rev-date">2026-07-15</span>
+              </div>
+              <div class="rev-desc">修正跨可用区网络抖动下的重试风暴隐患，补充自适应限流阻尼器模块。</div>
+            </div>
+            <div class="revision-item">
+              <div class="rev-head">
+                <span class="rev-tag">[R0 草案] INITIAL-DRAFT</span>
+                <span class="rev-date">2026-06-01</span>
+              </div>
+              <div class="rev-desc">确立单元化舱室物理拓扑与基础持久层三副本方案初始草案。</div>
             </div>
           </div>
-          <h2 class="cad-article-title">高可用系统蓝图：微服务解耦与故障隔离拓扑</h2>
-          <p class="cad-article-body">
-            正如现代建筑利用伸缩缝与阻尼器吸收地震能量，软件架构中的断路器（Circuit Breaker）与背压机制（Backpressure）亦是为了在流量洪峰下保护核心承重墙不受损毁。
-          </p>
-          <div style="font-size: 12px; color: var(--cad-yellow);">▶ SPECS: RUST 1.82 · LINUX KERNEL 6.8 · ZERO-COPY IO</div>
-        </section>
 
-        <section class="cad-module">
-          <div class="cad-mod-header">
-            <span>[DETAIL 01.B] // STRUCTURAL CALCULATION</span>
-            <span>REV: A.0</span>
+          <!-- 专栏快捷导览卡片 -->
+          <div class="sidebar-panel" style="border-color: var(--cad-yellow);">
+            <div class="panel-title" style="color:var(--cad-yellow);">
+              <span>⚡ 现场施工规范 (ON-SITE RULES)</span>
+            </div>
+            <div style="font-size: 11.5px; color: #bae6fd; line-height: 1.7;">
+              1. 严禁未经金丝雀（Canary）灰度直接进行全量结构承重加载。<br>
+              2. 伸缩缝两侧严禁存在跨域共享内存与强同步 RPC 耦合。<br>
+              3. 发生三级警报必须在 60 秒内无条件切断异常子系统回路。
+            </div>
           </div>
-          <h2 class="cad-article-title">数据管道应力分析：流计算状态存储的容量规划</h2>
-          <p class="cad-article-body">
-            推导每秒 50 万并发事件下的 RocksDB 写放大系数与 LSM-Tree 压实延迟数学模型，给出最优分层系数与内存缓冲区分配方案。
-          </p>
-        </section>
+        </aside>
+      </div>
 
-        <!-- 篇章 3 -->
-        <section class="cad-section">
-          <div class="cad-sec-id">DWG // 03.STRUCTURAL_ISOLATION</div>
-          <h2 class="cad-article-title">高可用系统的「承重墙」设计：故障域隔离与多活机房拓扑</h2>
-          <p class="cad-article-body">
-            类比土木工程中的剪力墙结构，探讨如何在分布式系统出现级联故障（Cascading Failure）时，通过断路器与单元化部署（Cell-based Architecture）将爆炸半径精确控制在单个单元之内。
-          </p>
-        </section>
-
-        <!-- 篇章 4 -->
-        <section class="cad-section">
-          <div class="cad-sec-id">DWG // 04.HYDRAULIC_PIPELINES</div>
-          <h2 class="cad-article-title">微服务管网拓扑与流量反压模型：流体力学在后端工程中的隐喻</h2>
-          <p class="cad-article-body">
-            高并发请求如高压液体穿过弯头与节流阀。深入解析 Reactive Streams 的背压拉取机制（Backpressure Pull）与 TCP 拥塞控制在 RPC 网关层的工程映射。
-          </p>
-        </section>
-
-        <!-- 交互组件：CAD 图层管理器 -->
-        <div style="border: 1px solid var(--cad-cyan); padding: 20px; margin: 24px 0; background: rgba(56, 189, 248, 0.06);">
-          <div style="display: flex; justify-content: space-between; align-items: center; border-bottom: 1px solid var(--cad-cyan); padding-bottom: 10px; margin-bottom: 14px;">
-            <div style="font-weight: 800; font-size: 14px; color: var(--cad-yellow);">[CAD LAYER MANAGER // 图层控制台]</div>
-            <span style="font-size: 11px; color: var(--cad-cyan);">ACTIVE LAYERS: 4/4</span>
+      <!-- 次级栏目 3 个专栏 -->
+      <section>
+        <div style="font-size: 12px; color: var(--cad-yellow); margin-bottom: 4px; font-weight: bold;">
+          [ENGINEERING SPECIAL SECTIONS // 结构专项验算报告]
+        </div>
+        <div class="sub-columns-grid">
+          <!-- 专栏 1 -->
+          <div class="sub-col-card">
+            <div class="sub-col-header">DETAIL SECTION // 01.HYDRAULICS</div>
+            <h3 class="sub-col-title">数据管道的压力测试</h3>
+            <p class="sub-col-text">
+              流式数据管道如同高压输水管网。当突发每秒 80 万条日志冲入管道时，管壁阻尼（网络吞吐）与阀门开度（Consumer 线程池）若失衡，将产生破坏性的「水锤效应（Buffer Overflow OOM）」。测试表明采用反应式拉取（Reactive Pull）可将瞬时管道峰值压力均化 65%。
+            </p>
+            <div class="sub-col-boundary">
+              // 极限压测荷载: 1,200,000 EPS · 压降 &lt; 4.2%
+            </div>
           </div>
-          <div style="display: flex; gap: 10px; flex-wrap: wrap;">
-            <button class="layer-btn active" onclick="toggleCadLayer('layer-struct', this)" style="background: rgba(56,189,248,0.2); border: 1px solid var(--cad-cyan); color: #fff; padding: 6px 14px; font-family: inherit; font-size: 12px; cursor: pointer;">🧱 结构层 (STRUCTURE)</button>
-            <button class="layer-btn active" onclick="toggleCadLayer('layer-pipe', this)" style="background: rgba(56,189,248,0.2); border: 1px solid var(--cad-cyan); color: #fff; padding: 6px 14px; font-family: inherit; font-size: 12px; cursor: pointer;">⚡ 管网层 (PIPELINES)</button>
-            <button class="layer-btn active" onclick="toggleCadLayer('layer-sensor', this)" style="background: rgba(56,189,248,0.2); border: 1px solid var(--cad-cyan); color: #fff; padding: 6px 14px; font-family: inherit; font-size: 12px; cursor: pointer;">📡 探针层 (TELEMETRY)</button>
+
+          <!-- 专栏 2 -->
+          <div class="sub-col-card">
+            <div class="sub-col-header">DETAIL SECTION // 02.THERMODYNAMICS</div>
+            <h3 class="sub-col-title">缓存层的热胀冷缩</h3>
+            <p class="sub-col-text">
+              内存缓存空间在业务昼夜波动下呈现热力膨胀与收缩。冷启动时的缓存击穿如同极寒导致的钢筋脆断。通过预热流水线与一致性哈希虚拟节点动态伸缩算法，系统能够在集群扩容 400% 时保持命中率平滑波动在 ±1.5% 的设计公差之内。
+            </p>
+            <div class="sub-col-boundary">
+              // 热胀公差: 8TB 内存池 · 淘汰算法: TinyLFU
+            </div>
           </div>
-          <div id="cadLayerStatus" style="font-size: 12px; color: var(--cad-cyan); margin-top: 12px; font-family: monospace;">
-            ▶ 全部工程图层已锁定就绪。网格间距: 20.00mm | 投影: 正交透视
+
+          <!-- 专栏 3 -->
+          <div class="sub-col-card">
+            <div class="sub-col-header">DETAIL SECTION // 03.STRUCTURAL_JOINT</div>
+            <h3 class="sub-col-title">故障域之间必须留伸缩缝</h3>
+            <p class="sub-col-text">
+              超长建筑必须设置变形缝以释放温度与地基不均匀沉降应力。微服务之间严禁直连共享数据库，所有跨域通信必须通过具备异步重试与超时间隔的隔离消息管道。伸缩缝的存在保证了单服务崩溃绝不拉垮上下游核心骨架。
+            </p>
+            <div class="sub-col-boundary" style="color: var(--cad-yellow);">
+              // 此处不是装饰线，是故障边界 (CRITICAL BOUNDARY)
+            </div>
           </div>
         </div>
-      </main>
+      </section>
 
-      <!-- 右侧图纸规范 -->
-      <aside>
-        <div class="cad-module">
-          <div class="cad-mod-header">
-            <span>[GENERAL NOTES]</span>
-            <span>STANDARDS</span>
+      <!-- 收尾：交付清单 -->
+      <section class="cad-delivery-checklist" aria-label="工程交付验收清单">
+        <h3 class="checklist-title">📦 系统完工交付验收清单 (PROJECT HANDOVER CHECKLIST)</h3>
+        <div class="checklist-grid">
+          <div class="check-card">
+            <div class="check-item-head">
+              <span style="color:var(--cad-green);">[✓ 验讫]</span>
+              <span>1. 容量指标 (CAPACITY)</span>
+            </div>
+            <div class="check-item-body">
+              核定承载 500,000 QPS 稳态并发，已预留 3.2 倍峰值弹性扩容储备池；单机 CPU 水位锁死在 ≤ 65% 安全线。
+            </div>
           </div>
-          <div style="font-size: 12px; line-height: 1.8;">
-            1. 所有系统设计严格遵循 ISO 9001 软件质量规范与 CAP 定理。<br>
-            2. 未注公差尺寸按 IT12 级执行。<br>
-            3. 主笔工程师：CHIEF ARCHITECT。<br>
-            4. 材质：纯净 Rust/Go 代码与严密数学逻辑。
+          <div class="check-card">
+            <div class="check-item-head">
+              <span style="color:var(--cad-green);">[✓ 验讫]</span>
+              <span>2. 可观测覆盖 (OBSERVABILITY)</span>
+            </div>
+            <div class="check-item-body">
+              全域黄金指标覆盖率 100%，分布式追踪采样率支持动态热加载，告警收敛风暴抑制规则已校验通过。
+            </div>
+          </div>
+          <div class="check-card">
+            <div class="check-item-head">
+              <span style="color:var(--cad-green);">[✓ 验讫]</span>
+              <span>3. 一键回滚机制 (ROLLBACK)</span>
+            </div>
+            <div class="check-item-body">
+              蓝绿发布与金丝雀切流具备秒级单键回退指令；数据库 DDL/DML 变更预置双向补偿反向脚本。
+            </div>
+          </div>
+          <div class="check-card">
+            <div class="check-item-head">
+              <span style="color:var(--cad-green);">[✓ 验讫]</span>
+              <span>4. 混沌演练 (CHAOS DRILL)</span>
+            </div>
+            <div class="check-item-body">
+              已完成突发单 AZ 断网、磁盘写满、核心节点随机注毒等 14 项破坏性测试，系统自动收敛愈合时间均值 &lt; 8.4 秒。
+            </div>
           </div>
         </div>
+      </section>
 
-        <div class="cad-module">
-          <div class="cad-mod-header">
-            <span>[PROJECT SPECS]</span>
-            <span>METRICS</span>
-          </div>
-          <div style="font-size: 12px; line-height: 1.8; color: var(--cad-cyan);">
-            <div>• SLA: 99.999% (年停机 &lt; 5.26m)</div>
-            <div>• P99 延迟目标: &lt; 8.5ms</div>
-            <div>• 节点规模: 1024 物理核心集群</div>
-          </div>
+      <!-- 底部工程图签 Title Block -->
+      <footer class="cad-title-block">
+        <div class="tb-cell">
+          <span class="tb-label">PROJECT NAME / 工程名称</span>
+          <div class="tb-val">SYSTEM PLAN A-12 高可用架构施工图</div>
         </div>
-      </aside>
+        <div class="tb-cell">
+          <span class="tb-label">CHIEF ARCHITECT / 审查总工</span>
+          <div class="tb-val">INFRA COMMITTEE // APPROVED</div>
+        </div>
+        <div class="tb-cell">
+          <span class="tb-label">DRAWING NO. / 图号与版次</span>
+          <div class="tb-val">2026-HA-DWG-0012 [REV: R2]</div>
+        </div>
+        <div class="tb-cell">
+          <span class="tb-label">PAGE RATIO / 比例幅面</span>
+          <div class="tb-val">A0 FULL / 1:100</div>
+        </div>
+      </footer>
     </div>
-
-    <!-- 底部工程图签 Title Block -->
-    <footer class="cad-title-block">
-      <div class="title-cell">
-        <strong>PROJECT:</strong>
-        ENGINEERING BLUEPRINT LOG
-      </div>
-      <div class="title-cell">
-        <strong>DESIGNER:</strong>
-        CHIEF ARCHITECT
-      </div>
-      <div class="title-cell">
-        <strong>DATE:</strong>
-        2026-08-22
-      </div>
-      <div class="title-cell" id="cadCoordCell">
-        <strong>COORDS:</strong>
-        X: 0.00mm | Y: 0.00mm
-      </div>
-    </footer>
   </div>
-
-  <!-- CAD 激光准星与扫描线 -->
-  <div id="cadLaserScan" style="position: fixed; left: 0; right: 0; height: 2px; background: rgba(56, 189, 248, 0.4); box-shadow: 0 0 8px #38bdf8; pointer-events: none; z-index: 998; animation: cadScan 8s linear infinite;"></div>
-  <div id="cadCrossH" style="position: fixed; left: 0; width: 100vw; height: 1px; background: rgba(56, 189, 248, 0.4); pointer-events: none; z-index: 999;"></div>
-  <div id="cadCrossV" style="position: fixed; top: 0; height: 100vh; width: 1px; background: rgba(56, 189, 248, 0.4); pointer-events: none; z-index: 999;"></div>
-  <div id="cadTarget" style="position: fixed; width: 30px; height: 30px; border: 1px solid rgba(56, 189, 248, 0.7); border-radius: 50%; pointer-events: none; z-index: 999; transform: translate(-50%, -50%); transition: transform 0.05s ease-out;"></div>
-
-  <style>
-    @keyframes cadScan {
-      0% { top: 0; opacity: 0.8; }
-      50% { opacity: 0.3; }
-      100% { top: 100vh; opacity: 0.8; }
-    }
-  </style>
 
   <script src="assets/nav-bar.js"></script>
   <script>
-    (function() {
-      const crossH = document.getElementById('cadCrossH');
-      const crossV = document.getElementById('cadCrossV');
-      const target = document.getElementById('cadTarget');
-      const coordCell = document.getElementById('cadCoordCell');
+    // 准星追踪与实时坐标测绘
+    (function initCadLaser() {
+      const crossH = document.getElementById('cadLaserCrosshairH');
+      const crossV = document.getElementById('cadLaserCrosshairV');
+      const reticle = document.getElementById('cadLaserReticle');
+      const liveCoords = document.getElementById('cadLiveCoords');
 
       window.addEventListener('mousemove', (e) => {
-        crossH.style.top = e.clientY + 'px';
-        crossV.style.left = e.clientX + 'px';
-        target.style.top = e.clientY + 'px';
-        target.style.left = e.clientX + 'px';
+        const x = e.clientX;
+        const y = e.clientY;
 
-        if (coordCell) {
-          coordCell.innerHTML = `<strong>COORDS:</strong> X: ${(e.clientX * 0.264).toFixed(2)}mm | Y: ${(e.clientY * 0.264).toFixed(2)}mm`;
+        if (crossH) crossH.style.top = y + 'px';
+        if (crossV) crossV.style.left = x + 'px';
+        if (reticle) {
+          reticle.style.left = x + 'px';
+          reticle.style.top = y + 'px';
+        }
+
+        if (liveCoords) {
+          const mmX = (x * 0.264).toFixed(2).padStart(7, '0');
+          const mmY = (y * 0.264).toFixed(2).padStart(7, '0');
+          liveCoords.textContent = `COORD: X=${mmX}mm | Y=${mmY}mm`;
         }
       });
     })();
 
-    function toggleCadLayer(layerName, btn) {
-      btn.classList.toggle('active');
-      const isActive = btn.classList.contains('active');
-      btn.style.background = isActive ? 'rgba(56,189,248,0.2)' : 'transparent';
-      btn.style.color = isActive ? '#fff' : '#64748b';
-      const status = document.getElementById('cadLayerStatus');
-      if (status) {
-        status.innerHTML = `▶ 图层状态变更: <strong>${btn.textContent}</strong> 已切换为 [${isActive ? 'VIS_ON' : 'VIS_OFF'}]`;
+    // 交互 1：尺寸标注显隐
+    let dimVisible = true;
+    function toggleDimensions() {
+      dimVisible = !dimVisible;
+      const dimLines = document.querySelectorAll('.dimension-line');
+      const btn = document.getElementById('btnToggleDim');
+      
+      dimLines.forEach(line => {
+        if (dimVisible) {
+          line.classList.remove('hidden-dim');
+        } else {
+          line.classList.add('hidden-dim');
+        }
+      });
+
+      if (btn) {
+        btn.classList.toggle('active', dimVisible);
+        btn.setAttribute('aria-pressed', dimVisible ? 'true' : 'false');
+        btn.innerHTML = dimVisible ? '📏 显示尺寸标注' : '📏 隐藏尺寸标注';
       }
+    }
+
+    // 交互 2：切换审查批注显隐
+    let notesVisible = false;
+    function toggleReviewNotes() {
+      notesVisible = !notesVisible;
+      const notes = document.querySelectorAll('.review-annotation');
+      const btn = document.getElementById('btnToggleNotes');
+
+      notes.forEach(note => {
+        note.classList.toggle('active-note', notesVisible);
+      });
+
+      if (btn) {
+        btn.classList.toggle('active', notesVisible);
+        btn.setAttribute('aria-pressed', notesVisible ? 'true' : 'false');
+      }
+    }
+
+    // 交互 3：故障边界通知
+    function toggleBoundaryNotice() {
+      const boundaryMsg = "🚧【施工令提示】\n此处不是装饰线，是严格的故障边界（Bulkhead / Fault Domain）！\n任何跨越该边界的调用均被熔断器、隔离舱与异步事件总线物理阻隔。";
+      alert(boundaryMsg);
     }
   </script>
 </body>

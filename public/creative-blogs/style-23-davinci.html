@@ -3,21 +3,25 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>CODEX DA VINCI // 23 达芬奇文艺复兴手稿发明志</title>
+  <title>CODEX ORANGE // 23 达芬奇手稿与发明志</title>
   <link rel="stylesheet" href="assets/common.css">
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Italianno&family=Cinzel:wght@600;800;900&family=Noto+Serif+SC:wght@400;600;900&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@600;700;900&family=Noto+Serif+SC:ital,wght@0,400;0,600;0,900;1,400&family=Italianno&display=swap" rel="stylesheet">
   <style>
     :root {
-      --parchment-dark: #d8c29d;
-      --parchment-light: #f5eedb;
-      --sepia-ink: #3b2a1a;
-      --red-chalk: #8c2d19;
-      --border-ancient: #8a6a4b;
-      --font-renaissance-title: 'Cinzel', serif;
-      --font-mirror: 'Italianno', cursive, 'Noto Serif SC', serif;
-      --font-davinci-body: 'Noto Serif SC', serif;
+      --bg-desk: #1b120c;
+      --parchment-base: #f4ebd9;
+      --parchment-deep: #e2d2b4;
+      --parchment-edge: #c2aa82;
+      --ink-sepia: #2e1d11;
+      --ink-faded: #5a412c;
+      --red-sanguine: #8f2d18;
+      --lead-silver: #4d5c68;
+      --gold-calc: #c98e32;
+      --font-title: 'Cinzel', serif;
+      --font-body: 'Noto Serif SC', 'Songti SC', serif;
+      --font-mirror: 'Italianno', 'Noto Serif SC', cursive, serif;
     }
 
     * {
@@ -27,309 +31,857 @@
     }
 
     body {
-      background-color: #2b1f14;
-      color: var(--sepia-ink);
-      font-family: var(--font-davinci-body);
+      background-color: var(--bg-desk);
+      background-image: 
+        radial-gradient(ellipse at center, rgba(64, 40, 22, 0.5) 0%, rgba(16, 9, 5, 0.95) 100%),
+        repeating-linear-gradient(45deg, rgba(255,255,255,0.015) 0px, rgba(255,255,255,0.015) 1px, transparent 1px, transparent 12px);
+      color: var(--ink-sepia);
+      font-family: var(--font-body);
       line-height: 1.85;
-      padding-bottom: 100px;
+      padding-bottom: 120px;
+      overflow-x: hidden;
     }
 
-    /* 手稿羊皮纸大卷轴画布 */
-    .codex-parchment-sheet {
-      max-width: 1180px;
-      margin: 30px auto;
-      background: var(--parchment-light);
-      border: 1px solid var(--border-ancient);
-      box-shadow: 0 15px 50px rgba(0,0,0,0.8), inset 0 0 80px rgba(138, 106, 75, 0.3);
-      padding: 40px 45px;
-      border-radius: 4px;
+    /* 手稿工作台主容器 */
+    .davinci-workbench {
+      max-width: 1260px;
+      margin: 28px auto 60px;
+      padding: 0 16px;
+    }
+
+    /* 羊皮纸手卷容器 */
+    .parchment-folio {
+      background: var(--parchment-base);
+      background-image: 
+        radial-gradient(circle at 10% 20%, rgba(200, 160, 110, 0.25) 0%, transparent 40%),
+        radial-gradient(circle at 90% 80%, rgba(140, 45, 24, 0.08) 0%, transparent 45%),
+        repeating-linear-gradient(0deg, rgba(138, 106, 75, 0.04) 0px, rgba(138, 106, 75, 0.04) 1px, transparent 1px, transparent 28px);
+      border: 1px solid var(--parchment-edge);
+      box-shadow: 0 25px 60px rgba(0, 0, 0, 0.85), inset 0 0 100px rgba(120, 85, 50, 0.25);
+      border-radius: 6px;
+      padding: 42px 48px;
       position: relative;
+      transition: filter 0.4s ease;
     }
 
-    /* 达芬奇刊头 */
-    .davinci-header {
-      border-bottom: 2px solid var(--sepia-ink);
-      padding-bottom: 20px;
-      margin-bottom: 36px;
+    /* 辅助线图层 Overlay */
+    .geom-grid-overlay {
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      pointer-events: none;
+      opacity: 0;
+      transition: opacity 0.4s ease;
+      background-image: 
+        linear-gradient(to right, rgba(143, 45, 24, 0.12) 1px, transparent 1px),
+        linear-gradient(to bottom, rgba(143, 45, 24, 0.12) 1px, transparent 1px);
+      background-size: 32px 32px;
+      z-index: 5;
+    }
+    .show-geom .geom-grid-overlay {
+      opacity: 1;
+    }
+
+    /* 刊头 */
+    .folio-header {
+      border-bottom: 2px solid var(--ink-sepia);
+      padding-bottom: 22px;
+      margin-bottom: 32px;
       display: flex;
+      flex-wrap: wrap;
       justify-content: space-between;
-      align-items: center;
+      align-items: flex-end;
+      gap: 20px;
     }
-    .davinci-title {
-      font-family: var(--font-renaissance-title);
-      font-size: 32px;
+
+    .folio-badge {
+      display: inline-block;
+      font-family: var(--font-title);
+      font-size: 11px;
+      letter-spacing: 3px;
+      font-weight: 700;
+      color: var(--red-sanguine);
+      text-transform: uppercase;
+      margin-bottom: 4px;
+    }
+
+    .folio-title-main {
+      font-family: var(--font-title);
+      font-size: clamp(26px, 3.5vw, 36px);
       font-weight: 900;
-      color: var(--sepia-ink);
-      letter-spacing: 2px;
+      color: var(--ink-sepia);
+      letter-spacing: 1.5px;
+      line-height: 1.15;
     }
-    .davinci-subtitle {
-      font-size: 13px;
-      color: var(--red-chalk);
+
+    .folio-subtitle {
+      font-size: 14px;
+      color: var(--ink-faded);
+      margin-top: 6px;
       font-style: italic;
     }
 
-    /* 镜面解密切换按钮 */
-    .mirror-toggle-btn {
-      background: rgba(140, 45, 25, 0.1);
-      border: 2px solid var(--red-chalk);
-      color: var(--red-chalk);
-      font-family: var(--font-renaissance-title);
-      font-size: 12px;
-      font-weight: 800;
-      padding: 6px 16px;
-      cursor: pointer;
+    /* 工具控制栏 */
+    .codex-toolbar {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 10px;
+      align-items: center;
+      background: rgba(143, 45, 24, 0.05);
+      border: 1px dashed var(--parchment-edge);
+      padding: 8px 14px;
       border-radius: 4px;
+    }
+
+    .tool-btn {
+      background: var(--parchment-deep);
+      border: 1px solid var(--parchment-edge);
+      color: var(--ink-sepia);
+      font-family: var(--font-title);
+      font-size: 12px;
+      font-weight: 700;
+      padding: 6px 14px;
+      border-radius: 3px;
+      cursor: pointer;
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      transition: all 0.2s ease;
+    }
+    .tool-btn:hover {
+      background: var(--red-sanguine);
+      color: #fff;
+      border-color: var(--red-sanguine);
+    }
+    .tool-btn.active {
+      background: var(--red-sanguine);
+      color: #fff;
+      box-shadow: inset 0 2px 4px rgba(0,0,0,0.3);
+    }
+
+    /* 镜面文字翻转状态 */
+    .mirror-script {
+      display: inline-block;
+      transition: transform 0.4s ease, filter 0.4s ease;
+    }
+    .mirror-flipped .mirror-script {
+      transform: scaleX(-1);
+      unicode-bidi: bidi-override;
+    }
+
+    /* 主叙事五页分步布局：从鸟翼到扑翼机 */
+    .master-narrative-box {
+      border: 2px solid var(--parchment-edge);
+      background: rgba(255, 255, 255, 0.35);
+      border-radius: 4px;
+      padding: 28px;
+      margin-bottom: 40px;
+      position: relative;
+      z-index: 2;
+    }
+
+    .narrative-kicker {
+      display: flex;
+      justify-content: space-between;
+      align-items: baseline;
+      border-bottom: 1px solid var(--parchment-edge);
+      padding-bottom: 12px;
+      margin-bottom: 20px;
+    }
+
+    .narrative-h2 {
+      font-family: var(--font-title);
+      font-size: clamp(20px, 2.4vw, 28px);
+      font-weight: 900;
+      color: var(--ink-sepia);
+    }
+
+    .narrative-tag {
+      font-size: 12px;
+      color: var(--red-sanguine);
+      font-weight: 600;
+    }
+
+    /* 五页分步选项卡 */
+    .folio-stepper {
+      display: flex;
+      gap: 6px;
+      overflow-x: auto;
+      padding-bottom: 8px;
+      margin-bottom: 20px;
+      scrollbar-width: thin;
+    }
+
+    .step-tab {
+      background: var(--parchment-deep);
+      border: 1px solid var(--parchment-edge);
+      padding: 6px 14px;
+      font-size: 13px;
+      font-family: var(--font-title);
+      font-weight: 700;
+      color: var(--ink-faded);
+      cursor: pointer;
+      white-space: nowrap;
+      border-radius: 3px;
       transition: all 0.2s;
     }
-    .mirror-toggle-btn:hover {
-      background: var(--red-chalk);
-      color: #fff;
+    .step-tab:hover, .step-tab.active {
+      background: var(--ink-sepia);
+      color: var(--parchment-base);
+      border-color: var(--ink-sepia);
     }
 
-    /* 机械扑翼翼展手稿 Hero 卡片 */
-    .ornithopter-hero-box {
-      border: 2px solid var(--border-ancient);
-      padding: 24px;
-      margin-bottom: 40px;
-      background: rgba(255, 255, 255, 0.4);
-      display: grid;
-      grid-template-columns: 1.4fr 1fr;
-      gap: 32px;
+    .step-panel {
+      display: none;
+      grid-template-columns: 1.1fr 1.3fr;
+      gap: 28px;
       align-items: center;
+      animation: fadeInFolio 0.35s ease forwards;
+    }
+    .step-panel.active {
+      display: grid;
     }
 
-    .hero-sketch-frame {
-      border: 1px solid var(--border-ancient);
-      box-shadow: 0 4px 15px rgba(0,0,0,0.1);
+    @keyframes fadeInFolio {
+      from { opacity: 0; transform: translateY(6px); }
+      to { opacity: 1; transform: translateY(0); }
     }
-    .hero-sketch-frame img {
+
+    .folio-visual-box {
+      border: 1px solid var(--parchment-edge);
+      background: #eee3cf;
+      padding: 14px;
+      position: relative;
+      border-radius: 3px;
+      box-shadow: 0 4px 12px rgba(0,0,0,0.08);
+    }
+
+    .folio-visual-box img {
       width: 100%;
       height: auto;
       display: block;
+      border: 1px solid rgba(138, 106, 75, 0.4);
+      filter: sepia(0.2) contrast(1.05);
     }
 
-    .sketch-latin-kicker {
-      font-family: var(--font-renaissance-title);
+    .folio-visual-caption {
       font-size: 12px;
-      color: var(--red-chalk);
-      letter-spacing: 2px;
-      margin-bottom: 8px;
+      color: var(--red-sanguine);
+      margin-top: 8px;
+      text-align: center;
+      font-style: italic;
     }
-    .sketch-heading {
-      font-family: var(--font-renaissance-title);
-      font-size: 26px;
-      color: var(--sepia-ink);
-      line-height: 1.3;
+
+    .step-article-content h3 {
+      font-family: var(--font-title);
+      font-size: 20px;
+      color: var(--red-sanguine);
+      margin-bottom: 12px;
+    }
+
+    .step-article-content p {
+      font-size: 15px;
+      color: var(--ink-sepia);
       margin-bottom: 14px;
     }
 
-    /* 镜面手迹效果 */
-    .mirror-text {
-      transition: transform 0.3s ease;
+    .hypothesis-correction-box {
+      background: rgba(143, 45, 24, 0.07);
+      border-left: 3px solid var(--red-sanguine);
+      padding: 10px 14px;
+      font-size: 13.5px;
+      color: var(--ink-sepia);
+      margin-top: 14px;
+    }
+
+    /* 辅助线叠层（几何矢量线） */
+    .geom-sketch-lines {
+      position: absolute;
+      top: 14px;
+      left: 14px;
+      right: 14px;
+      bottom: 34px;
+      pointer-events: none;
+      opacity: 0;
+      transition: opacity 0.3s ease;
+    }
+    .show-geom .geom-sketch-lines {
+      opacity: 0.85;
+    }
+
+    /* 三个次级栏目网格 */
+    .sub-columns-grid {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 24px;
+      margin-bottom: 40px;
+      position: relative;
+      z-index: 2;
+    }
+
+    .sub-column-card {
+      background: rgba(255, 255, 255, 0.28);
+      border: 1px solid var(--parchment-edge);
+      border-radius: 4px;
+      padding: 22px;
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
+    }
+
+    .sub-card-header {
+      border-bottom: 1px solid rgba(138, 106, 75, 0.4);
+      padding-bottom: 10px;
+      margin-bottom: 14px;
+    }
+
+    .sub-folio-id {
+      font-family: var(--font-title);
+      font-size: 11px;
+      color: var(--red-sanguine);
+      font-weight: 700;
+      letter-spacing: 1px;
+    }
+
+    .sub-card-title {
+      font-family: var(--font-title);
+      font-size: 18px;
+      font-weight: 800;
+      color: var(--ink-sepia);
+      margin-top: 4px;
+      line-height: 1.35;
+    }
+
+    .sub-card-body {
+      font-size: 14px;
+      color: var(--ink-faded);
+      line-height: 1.75;
+      margin-bottom: 16px;
+    }
+
+    .sub-card-footer {
+      font-size: 12px;
+      border-top: 1px dashed var(--parchment-edge);
+      padding-top: 10px;
+      color: var(--red-sanguine);
+      font-style: italic;
+    }
+
+    /* 资料与猜想模块 */
+    .data-and-proof-section {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 28px;
+      margin-bottom: 40px;
+      position: relative;
+      z-index: 2;
+    }
+
+    .data-panel-card {
+      border: 1px solid var(--parchment-edge);
+      background: rgba(230, 215, 190, 0.35);
+      border-radius: 4px;
+      padding: 22px;
+    }
+
+    .data-panel-head {
+      font-family: var(--font-title);
+      font-size: 16px;
+      font-weight: 800;
+      color: var(--ink-sepia);
+      border-bottom: 1px solid var(--parchment-edge);
+      padding-bottom: 8px;
+      margin-bottom: 14px;
+      display: flex;
+      justify-content: space-between;
+    }
+
+    .material-table {
+      width: 100%;
+      border-collapse: collapse;
+      font-size: 13.5px;
+    }
+    .material-table th, .material-table td {
+      padding: 8px 10px;
+      border-bottom: 1px solid rgba(138, 106, 75, 0.25);
+      text-align: left;
+    }
+    .material-table th {
+      font-family: var(--font-title);
+      color: var(--red-sanguine);
+      font-weight: 700;
+    }
+
+    .hypothesis-list {
+      list-style: none;
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+    }
+
+    .hypothesis-item {
+      border-left: 2px solid var(--lead-silver);
+      padding-left: 12px;
+      font-size: 13.5px;
+    }
+    .hypothesis-badge {
+      display: inline-block;
+      background: rgba(143, 45, 24, 0.12);
+      color: var(--red-sanguine);
+      font-size: 11px;
+      padding: 1px 6px;
+      border-radius: 2px;
+      font-weight: 700;
+      margin-bottom: 4px;
+    }
+
+    /* 失败草图展示遮罩切换 */
+    .failed-sketch-alert {
+      display: none;
+      background: rgba(143, 45, 24, 0.12);
+      border: 1px dashed var(--red-sanguine);
+      padding: 12px 16px;
+      margin-top: 14px;
+      border-radius: 4px;
+      font-size: 13px;
+      color: var(--red-sanguine);
+    }
+    .show-failed .failed-sketch-alert {
       display: block;
     }
-    .mirror-active .mirror-text {
-      transform: scaleX(-1);
+
+    /* 收尾边注 */
+    .codex-margin-epilogue {
+      border-top: 2px solid var(--ink-sepia);
+      padding-top: 24px;
+      margin-top: 20px;
+      display: flex;
+      flex-wrap: wrap;
+      justify-content: space-between;
+      align-items: center;
+      gap: 20px;
+      position: relative;
+      z-index: 2;
     }
 
-    /* 手稿分栏 */
-    .codex-study-grid {
-      display: grid;
-      grid-template-columns: 2fr 1fr;
-      gap: 36px;
+    .motto-banner {
+      font-family: var(--font-title);
+      font-size: clamp(18px, 2vw, 22px);
+      font-weight: 900;
+      color: var(--red-sanguine);
+      letter-spacing: 2px;
     }
 
-    .study-entry {
-      border-bottom: 1px dashed var(--border-ancient);
-      padding-bottom: 28px;
-      margin-bottom: 28px;
-    }
-    .study-entry:last-child {
-      border-bottom: none;
-    }
-
-    .study-folio-num {
-      font-family: var(--font-renaissance-title);
+    .motto-latin {
       font-size: 13px;
-      color: var(--red-chalk);
-      margin-bottom: 6px;
-    }
-    .study-title {
-      font-size: 22px;
-      font-weight: 700;
-      color: var(--sepia-ink);
-      margin-bottom: 12px;
-    }
-    .study-desc {
-      font-size: 15px;
-      color: #4a3625;
-      line-height: 1.85;
+      color: var(--ink-faded);
+      font-style: italic;
     }
 
-    /* 侧边几何比例研究 */
-    .geometry-side-card {
-      border: 1px solid var(--border-ancient);
-      padding: 20px;
-      background: rgba(138, 106, 75, 0.08);
-      margin-bottom: 24px;
-    }
-    .side-title-ancient {
-      font-family: var(--font-renaissance-title);
-      font-size: 16px;
-      color: var(--sepia-ink);
-      border-bottom: 1px solid var(--border-ancient);
-      padding-bottom: 6px;
-      margin-bottom: 12px;
+    .page-index-box {
+      font-family: var(--font-title);
+      font-size: 12px;
+      color: var(--ink-faded);
+      display: flex;
+      gap: 16px;
     }
 
-    @media (max-width: 860px) {
-      .ornithopter-hero-box, .codex-study-grid {
+    /* 黄金比例装饰角标 */
+    .fibonacci-bg-svg {
+      position: absolute;
+      right: 20px;
+      bottom: 20px;
+      width: 220px;
+      height: 220px;
+      opacity: 0.08;
+      pointer-events: none;
+      z-index: 1;
+    }
+
+    /* 响应式断点 */
+    @media (max-width: 980px) {
+      .sub-columns-grid {
         grid-template-columns: 1fr;
+      }
+      .data-and-proof-section {
+        grid-template-columns: 1fr;
+      }
+      .step-panel {
+        grid-template-columns: 1fr;
+      }
+    }
+
+    @media (max-width: 640px) {
+      .parchment-folio {
+        padding: 24px 18px;
+      }
+      .master-narrative-box {
+        padding: 16px;
+      }
+      .folio-header {
+        flex-direction: column;
+        align-items: flex-start;
+      }
+      .codex-toolbar {
+        width: 100%;
+      }
+      .tool-btn {
+        flex: 1 1 calc(50% - 6px);
+        justify-content: center;
+      }
+    }
+
+    @media (prefers-reduced-motion: reduce) {
+      * {
+        animation-duration: 0.01ms !important;
+        transition-duration: 0.01ms !important;
       }
     }
   </style>
 </head>
 <body>
 
-  <div class="codex-parchment-sheet" id="codexSheet">
-    <!-- 刊头 -->
-    <header class="davinci-header">
-      <div>
-        <div class="davinci-title">CODEX LEICESTER & FLIGHT // 达芬奇发明手稿</div>
-        <div class="davinci-subtitle">MECHANICA · ANATOMIA · PROPORTIO DIVINA · MMXXVI</div>
-      </div>
-      <button class="mirror-toggle-btn" onclick="toggleMirror()">
-        🔄 切换镜面手稿模式 (MIRROR SCRIPT)
-      </button>
-    </header>
+  <div class="davinci-workbench" id="workbench">
+    <main class="parchment-folio" id="parchmentFolio">
+      <!-- 几何网格背景 Overlay -->
+      <div class="geom-grid-overlay" aria-hidden="true"></div>
 
-    <!-- 扑翼机构大草图 Hero -->
-    <section class="ornithopter-hero-box">
-      <div class="hero-sketch-frame">
-        <img src="assets/images/davinci_sketch.jpg" alt="达芬奇扑翼机构与人体比例手稿草图">
-      </div>
-      <div>
-        <div class="sketch-latin-kicker">STUDIA DE VOLATU AVIVM // 鸟类飞行力学</div>
-        <h1 class="sketch-heading">
-          模仿之翼：从解剖学骨骼肌理到飞行机械连杆
-        </h1>
-        <p class="study-desc">
-          <span class="mirror-text">
-            鸟类扑击空气的原理，正如桨叶划动流水。倘若人类能够利用杠杆与滑轮系统将胸肌力量放大十倍，人亦能乘着上升热气流翱翔于群峰之上。
-          </span>
-        </p>
-      </div>
-    </section>
+      <!-- 斐波那契/黄金螺旋背景线 -->
+      <svg class="fibonacci-bg-svg" viewBox="0 0 100 100" aria-hidden="true">
+        <path d="M 50,50 A 5,5 0 0,1 55,50 A 10,10 0 0,1 45,50 A 20,20 0 0,1 65,50 A 35,35 0 0,1 30,50 A 55,55 0 0,1 85,50" fill="none" stroke="currentColor" stroke-width="1.2" stroke-dasharray="2 2"/>
+      </svg>
 
-    <!-- 手稿文章研究 -->
-    <div class="codex-study-grid">
-      <!-- 左侧发明篇章 -->
-      <main>
-        <article class="study-entry">
-          <div class="study-folio-num">FOLIO 84-R // ALGORITHMIC GEOMETRY</div>
-          <h2 class="study-title">黄金分割与神圣比例：系统架构中的平衡美学</h2>
-          <p class="study-desc">
-            <span class="mirror-text">
-              无论在人体的维特鲁威比例中，还是在大教堂的拱顶跨度中，极度优美的数学比例往往天然伴随着极高的物理结构稳定性。现代软件工程中对高内聚、低耦合的追求，本质上是对系统内在神圣秩序的探寻。
-            </span>
-          </p>
-        </article>
+      <!-- 刊头区 -->
+      <header class="folio-header">
+        <div>
+          <div class="folio-badge">CODEX ORANGE // 观察与发明手稿</div>
+          <h1 class="folio-title-main">达芬奇手稿与发明志</h1>
+          <p class="folio-subtitle">跨学科观察而非天才神话 · 实验与纠错之记录 · FOLIO ANNO 1505–2026</p>
+        </div>
 
-        <article class="study-entry">
-          <div class="study-folio-num">FOLIO 92-V // HYDRODYNAMICS & FLUIDS</div>
-          <h2 class="study-title">水流旋涡与湍流模拟：流计算管道的反压与阻力模型</h2>
-          <p class="study-desc">
-            <span class="mirror-text">
-              观察溪流绕过巨石产生的双螺旋涡流。阻力并非凭空消散，而是转化为更小尺度的微涡旋转。在分布式实时计算流中，背压缓冲区的构建正是模仿了河流回水湾的自然调节机制。
-            </span>
-          </p>
-        </article>
+        <!-- 交互工具微文案栏 -->
+        <div class="codex-toolbar" role="toolbar" aria-label="手稿解密工具栏">
+          <button class="tool-btn" id="btnMirror" onclick="toggleMirror()" aria-pressed="false">
+            <span>🪞</span> <span class="tool-text">翻转镜面字迹</span>
+          </button>
+          <button class="tool-btn" id="btnGeom" onclick="toggleGeom()" aria-pressed="false">
+            <span>📐</span> <span class="tool-text">叠加几何辅助线</span>
+          </button>
+          <button class="tool-btn" id="btnFail" onclick="toggleFailed()" aria-pressed="false">
+            <span>❌</span> <span class="tool-text">查看失败草图</span>
+          </button>
+        </div>
+      </header>
 
-        <!-- 篇章 3 -->
-        <article class="study-entry">
-          <div class="study-folio-num">FOLIO 108-R // ANATOMIA & CORPORE</div>
-          <h2 class="study-title">维特鲁威人与骨骼杠杆：人体工程学中的力矩平衡</h2>
-          <p class="study-desc">
-            <span class="mirror-text">
-              手臂屈曲时的肱二头肌拉力点与肘关节支点构成第三类杠杆。以微小的肌肉收缩换取肢体末端的大范围快速运动。在机器人关节电机控制中，这一几何配置依然是最优雅的动力学解法。
-            </span>
-          </p>
-        </article>
+      <!-- 主叙事：从鸟翼到扑翼机（五页记录） -->
+      <section class="master-narrative-box" aria-labelledby="narrativeTitle">
+        <div class="narrative-kicker">
+          <h2 class="narrative-h2" id="narrativeTitle">《从鸟翼到扑翼机：一个错误假设如何被风纠正》</h2>
+          <span class="narrative-tag">五阶段演化记录 // OBSERVARE ET EXPERIRI</span>
+        </div>
 
-        <!-- 篇章 4 -->
-        <article class="study-entry">
-          <div class="study-folio-num">FOLIO 114-V // VOLATILIS ET MACHINAE</div>
-          <h2 class="study-title">鸟类扑翼与空气动力学：跨学科发明的直觉与实证</h2>
-          <p class="study-desc">
-            <span class="mirror-text">
-              “一旦你尝试过飞行，你行走在陆地上时也将仰望天空，因为那是你曾经到过并渴望回去的地方。”通过观察海鸥翼尖羽毛的微调开合，设计出最早的变曲率机翼雏形。
-            </span>
-          </p>
-        </article>
-      </main>
+        <!-- 五页切换器 -->
+        <div class="folio-stepper" role="tablist" aria-label="手稿五页步骤">
+          <button class="step-tab active" role="tab" aria-selected="true" aria-controls="step-1" onclick="switchStep(0)">第 I 页 · 观察 (Observation)</button>
+          <button class="step-tab" role="tab" aria-selected="false" aria-controls="step-2" onclick="switchStep(1)">第 II 页 · 草图 (Sketch)</button>
+          <button class="step-tab" role="tab" aria-selected="false" aria-controls="step-3" onclick="switchStep(2)">第 III 页 · 模型 (Scale Model)</button>
+          <button class="step-tab" role="tab" aria-selected="false" aria-controls="step-4" onclick="switchStep(3)">第 IV 页 · 失败 (Failure)</button>
+          <button class="step-tab" role="tab" aria-selected="false" aria-controls="step-5" onclick="switchStep(4)">第 V 页 · 修订 (Revision)</button>
+        </div>
 
-      <!-- 右侧几何笔记 -->
-      <aside>
-        <div class="geometry-side-card">
-          <div class="side-title-ancient">📐 PROPORTIO ET GEOMETRIA</div>
-          <div style="font-size:13px; color:#5c432d; line-height:2;">
-            <div>• 黄金比例 (Phi): 1 : 1.618033</div>
-            <div>• 阿基米德螺线转角</div>
-            <div>• 凸轮与齿轮联动比: 3 : 1</div>
-            <div>• 墨水配方: 橡木瘿与硫酸亚铁</div>
+        <!-- Step 1 -->
+        <div class="step-panel active" id="step-1" role="tabpanel">
+          <div class="folio-visual-box">
+            <img src="assets/images/davinci_sketch.jpg" alt="达芬奇关于鸟类翅膀解剖与飞行动作的观察手稿">
+            <svg class="geom-sketch-lines" viewBox="0 0 400 300" aria-hidden="true">
+              <line x1="20" y1="150" x2="380" y2="150" stroke="#8f2d18" stroke-width="1.5" stroke-dasharray="4 4" />
+              <circle cx="200" cy="150" r="80" fill="none" stroke="#8f2d18" stroke-width="1" />
+              <line x1="80" y1="50" x2="320" y2="250" stroke="#8f2d18" stroke-width="1" />
+            </svg>
+            <div class="folio-visual-caption">草图标注：鸢与海鸥在托斯卡纳山谷中的滑翔解剖</div>
+          </div>
+          <div class="step-article-content">
+            <h3>阶段 I：自然鸟翼的解剖与力学假设</h3>
+            <p class="mirror-script">
+              “重力与空气之间并无仇恨，空气是一张致密且有弹性的网。”1505年春，于佛罗伦萨北郊的天鹅山观察红鸢飞翔。最初的假说极其质朴：如果人体的四肢能以同样的频率拍打覆羽，空气对双翼的反作用力足以托起一百四十磅的人体。
+            </p>
+            <div class="hypothesis-correction-box">
+              <strong>假设原点：</strong>认为人类只需通过滑轮组成倍放大胸肌输出，就能完全复刻鸟类扑击空气的升力路径。
+            </div>
           </div>
         </div>
 
-        <div class="geometry-side-card">
-          <div class="side-title-ancient">📜 CODICES IN VATICANO</div>
-          <div style="font-size:13px; color:#5c432d; line-height:2;">
-            <div>▶ 大西洋古抄本 (Codex Atlanticus)</div>
-            <div>▶ 鸟类飞行手稿 (Codex on the Flight)</div>
-            <div>▶ 马德里手稿 (Codex Madrid)</div>
+        <!-- Step 2 -->
+        <div class="step-panel" id="step-2" role="tabpanel">
+          <div class="folio-visual-box">
+            <img src="assets/images/davinci_sketch.jpg" alt="机械连杆扑翼机构的几何设计草图">
+            <svg class="geom-sketch-lines" viewBox="0 0 400 300" aria-hidden="true">
+              <rect x="50" y="40" width="300" height="220" fill="none" stroke="#8f2d18" stroke-width="1.5" stroke-dasharray="3 3"/>
+              <line x1="50" y1="40" x2="350" y2="260" stroke="#8f2d18" stroke-width="1"/>
+            </svg>
+            <div class="folio-visual-caption">手稿标注：由冷轧熟铁、山毛榉木铰链构成的曲柄机构</div>
+          </div>
+          <div class="step-article-content">
+            <h3>阶段 II：草图绘制与连杆传动设计</h3>
+            <p class="mirror-script">
+              在《鸟类飞行手稿》第8叶反面，设计了由踏板与手摇绞盘联动的双翼骨架。羽翼采用涂抹亚麻籽油的细密帆布，外缘模拟蝙蝠掌骨结构。以三根相互咬合的木制齿轮将直线下踩动作转化为机翼的上下扇动与小幅扭转。
+            </p>
+            <div class="hypothesis-correction-box">
+              <strong>设计盲区：</strong>图纸忽略了扑翼向下拍击时所产生的巨大下洗涡流对机体平衡的破坏性扰动。
+            </div>
           </div>
         </div>
-      </aside>
-    </div>
-  <style>
-    .golden-spiral-overlay {
-      position: fixed;
-      right: 20px;
-      bottom: 20px;
-      width: 140px;
-      height: 140px;
-      pointer-events: none;
-      opacity: 0.25;
-      z-index: 10;
-      animation: rotateSlow 40s linear infinite;
-    }
-    @keyframes rotateSlow {
-      from { transform: rotate(0deg); }
-      to { transform: rotate(360deg); }
-    }
-    .codex-parchment-sheet {
-      transition: transform 0.6s cubic-bezier(0.16, 1, 0.3, 1), filter 0.6s ease;
-    }
-    .codex-parchment-sheet.mirror-active {
-      transform: scaleX(-1);
-      filter: sepia(0.3) contrast(1.1);
-    }
-  </style>
 
-  <!-- 黄金分割螺旋背景 SVG -->
-  <svg class="golden-spiral-overlay" viewBox="0 0 100 100">
-    <path d="M 50,50 A 5,5 0 0,1 55,50 A 10,10 0 0,1 45,50 A 20,20 0 0,1 65,50 A 35,35 0 0,1 30,50 A 55,55 0 0,1 85,50" fill="none" stroke="#8c2d19" stroke-width="1.2" stroke-dasharray="3 3"/>
-  </svg>
+        <!-- Step 3 -->
+        <div class="step-panel" id="step-3" role="tabpanel">
+          <div class="folio-visual-box">
+            <img src="assets/images/davinci_sketch.jpg" alt="缩比木质模型与升力测试台">
+            <svg class="geom-sketch-lines" viewBox="0 0 400 300" aria-hidden="true">
+              <circle cx="200" cy="150" r="110" fill="none" stroke="#8f2d18" stroke-width="1.2" stroke-dasharray="6 3"/>
+              <line x1="200" y1="20" x2="200" y2="280" stroke="#8f2d18" stroke-width="1"/>
+            </svg>
+            <div class="folio-visual-caption">比例计算：翼展 32 腕尺 (Braccia)，理论升力比 1.618</div>
+          </div>
+          <div class="step-article-content">
+            <h3>阶段 III：缩比木质模型与悬吊测试</h3>
+            <p class="mirror-script">
+              利用细牛皮绳将三分之一比例的扑翼架悬挂在工坊梁木之下。利用沙袋平衡配重，拉动牵引索测试扑打频率。在静止空气中，模型产生短暂向上的拉扯感，记录下“机体轻如芦苇，似可离开地面一掌之距”。
+            </p>
+            <div class="hypothesis-correction-box">
+              <strong>静态误导：</strong>室内静止空气掩盖了室外侧向阵风对大面积帆布翼面的致命倾覆力矩。
+            </div>
+          </div>
+        </div>
+
+        <!-- Step 4 -->
+        <div class="step-panel" id="step-4" role="tabpanel">
+          <div class="folio-visual-box">
+            <img src="assets/images/davinci_sketch.jpg" alt="扑翼机测试断裂与倾覆记录">
+            <svg class="geom-sketch-lines" viewBox="0 0 400 300" aria-hidden="true">
+              <line x1="40" y1="40" x2="360" y2="260" stroke="#8f2d18" stroke-width="2"/>
+              <line x1="360" y1="40" x2="40" y2="260" stroke="#8f2d18" stroke-width="2"/>
+            </svg>
+            <div class="folio-visual-caption">手稿记录：左翼连杆在第三次剧烈下扑时于销钉处撕裂</div>
+          </div>
+          <div class="step-article-content">
+            <h3>阶段 IV：天鹅山试飞断裂与假设崩溃</h3>
+            <p class="mirror-script">
+              助手中有人自蒙特切切里山坡滑出。侧风瞬时将左侧翼面掀翻，机械师肌肉输出完全无法抗衡空气湍流之巨力，机翼骨架于接榫处折断，试飞者坠入荆棘丛中受轻伤。实验证明：人类力量与体重的比例，从根本上无法支持持续扑翼。
+            </p>
+            <div class="failed-sketch-alert">
+              <strong>查看失败草图分析：</strong>“人非鸟类，胸大肌重量占身体比例不足百分之一，而鸟类高达三分之一。靠人力扑打空气纯属虚妄幻想。”
+            </div>
+          </div>
+        </div>
+
+        <!-- Step 5 -->
+        <div class="step-panel" id="step-5" role="tabpanel">
+          <div class="folio-visual-box">
+            <img src="assets/images/davinci_sketch.jpg" alt="转向固定翼滑翔与拱形翼面修订图">
+            <svg class="geom-sketch-lines" viewBox="0 0 400 300" aria-hidden="true">
+              <path d="M 40,180 Q 200,60 360,180" fill="none" stroke="#8f2d18" stroke-width="2"/>
+              <line x1="40" y1="180" x2="360" y2="180" stroke="#8f2d18" stroke-width="1" stroke-dasharray="3 3"/>
+            </svg>
+            <div class="folio-visual-caption">最终修订：抛弃主动扑打，改为固定曲面翼与尾舵滑翔</div>
+          </div>
+          <div class="step-article-content">
+            <h3>阶段 V：被风纠正——转向固定翼滑翔</h3>
+            <p class="mirror-script">
+              风纠正了狂妄的设想。达芬奇最终在手稿中涂改掉复杂的脚踏扑打连杆，转向研究“借助风之坡度而上升”的固定翼滑翔器。他在边注中写道：“当风迎面而来时，鸟翼并不拍打，它仅需微微调整翼尖斜角，风便将其抬升。”
+            </p>
+            <div class="hypothesis-correction-box">
+              <strong>科学结语：</strong>现代空气动力学的种子在此萌发——不是征服空气，而是顺应流体的压力差。
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- 三个次级栏目 -->
+      <section class="sub-columns-grid" aria-label="次级研究专题">
+        <!-- 次级 1 -->
+        <article class="sub-column-card">
+          <div class="sub-card-header">
+            <span class="sub-folio-id">FOLIO 42-V // HYDRODYNAMICA</span>
+            <h3 class="sub-card-title">旋涡中的流体笔记</h3>
+          </div>
+          <p class="sub-card-body mirror-script">
+            观察阿诺河急流绕过桥墩时产生的一对回旋双涡。水流不仅向前奔涌，更在边缘形成自耗散的微小旋转。流体之运动如发丝卷曲，每一个大涡旋内部都孕育着十二个更小、旋转更剧烈的细旋涡，动量在此层层传递。
+          </p>
+          <div class="sub-card-footer">
+            猜想：空气受压之状态与流水完全同构，二者皆遵循连续波动之律。
+          </div>
+        </article>
+
+        <!-- 次级 2 -->
+        <article class="sub-column-card">
+          <div class="sub-card-header">
+            <span class="sub-folio-id">FOLIO 67-R // MECHANICA ET STATICA</span>
+            <h3 class="sub-card-title">人体杠杆与桌椅尺度</h3>
+          </div>
+          <p class="sub-card-body mirror-script">
+            测量百人工匠之骨骼。手臂屈曲时，尺骨为杠杆臂，肘关节为支点，肱二头肌腱为施力点——此乃第三类杠杆，耗力而争速。因此工作台面高度不可随心所欲，必以肘关节自然垂落上提四指宽为准则，方能久劳而不损脊柱。
+          </p>
+          <div class="sub-card-footer">
+            实测：工匠坐姿膝弯与踝骨夹角保持八十五度时，下肢受力最均。
+          </div>
+        </article>
+
+        <!-- 次级 3 -->
+        <article class="sub-column-card">
+          <div class="sub-card-header">
+            <span class="sub-folio-id">FOLIO 89-R // PROPORTIO CRITICA</span>
+            <h3 class="sub-card-title">黄金比例不是万能答案</h3>
+          </div>
+          <p class="sub-card-body mirror-script">
+            维特鲁威之圆与方固然神圣，但机械载荷从不因几何美感而屈服。当齿轮齿宽与径向压力失衡时，即使严格按照 1:1.618 铸造，依然会在三日内磨损剥落。比例是秩序的起点，而非物理强度的免罪符；万物必须经受实载检验。
+          </p>
+          <div class="sub-card-footer">
+            警语：不可因数学之优美而免除重力与摩擦之计算。
+          </div>
+        </article>
+      </section>
+
+      <!-- 资料模块：材料表、比例计算、未证实猜想与“待做实验” -->
+      <section class="data-and-proof-section" aria-label="手稿材料与未证实实验记录">
+        <!-- 左侧：工坊材料与比例参数 -->
+        <div class="data-panel-card">
+          <div class="data-panel-head">
+            <span>⚙️ 工坊造物材料与比例表</span>
+            <small>TABULA MATERIAE</small>
+          </div>
+          <table class="material-table">
+            <thead>
+              <tr>
+                <th>构件 / 测量</th>
+                <th>选用材质与配方</th>
+                <th>受力与比例</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td>机翼主梁</td>
+                <td>老龄山毛榉木（浸泡亚麻油）</td>
+                <td>抗弯刚度：中高</td>
+              </tr>
+              <tr>
+                <td>连杆传动销</td>
+                <td>熟铁锻打淬火三次</td>
+                <td>剪切容限：180 kg</td>
+              </tr>
+              <tr>
+                <td>膜面蒙皮</td>
+                <td>双层漂白亚麻布 + 蜂蜡涂层</td>
+                <td>透气阻隔：94%</td>
+              </tr>
+              <tr>
+                <td>黄金比例校验</td>
+                <td>Phi = (1 + √5) / 2 ≈ 1.618033</td>
+                <td>机翼展弦比参考</td>
+              </tr>
+              <tr>
+                <td>墨水配方</td>
+                <td>栎树虫瘿、硫酸亚铁与阿拉伯树胶</td>
+                <td>耐光性：经百年不退</td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+
+        <!-- 右侧：未证实猜想与待做实验 -->
+        <div class="data-panel-card">
+          <div class="data-panel-head">
+            <span>📜 未证实猜想与“待做实验”</span>
+            <small>EXPERIMENTA PENDENTIA</small>
+          </div>
+          <ul class="hypothesis-list">
+            <li class="hypothesis-item">
+              <span class="hypothesis-badge">猜想尚未证实 · FOLIO 112</span>
+              <p class="mirror-script">“倘若制造一个底边各二十腕尺、高十二腕尺的细密亚麻布金字塔形伞，人从任何高塔跃下皆可不伤筋骨。”（降落伞雏形，待高空落体实测）</p>
+            </li>
+            <li class="hypothesis-item">
+              <span class="hypothesis-badge">待做实验 · FOLIO 118</span>
+              <p class="mirror-script">以水银压力管测量密闭房间内燃烧蜡烛前后的空气体积缩减，探寻空气中是否隐藏“维持呼吸之隐秘精气”。</p>
+            </li>
+            <li class="hypothesis-item">
+              <span class="hypothesis-badge">猜想尚未证实 · FOLIO 125</span>
+              <p class="mirror-script">双层船壳设计：若外层被海怪或撞角击穿，内层木板应能独立防水保持浮力，待在威尼斯造船厂铸模验证。</p>
+            </li>
+          </ul>
+        </div>
+      </section>
+
+      <!-- 收尾：手稿边注 -->
+      <footer class="codex-margin-epilogue">
+        <div>
+          <div class="motto-banner">“先看，再画；先试，再信。”</div>
+          <div class="motto-latin">“Primo vide, deinde pingite; primo tempta, postea crede.” —— 手稿边缘朱砂边注</div>
+        </div>
+
+        <div class="page-index-box">
+          <span>页码索引：CODEX ORANGE · FOLIO 1492–1519</span>
+          <span>手稿藏地：AMBROSIANA & LEICESTER</span>
+        </div>
+      </footer>
+    </main>
+  </div>
 
   <script src="assets/nav-bar.js"></script>
   <script>
+    // 镜面手迹翻转
+    let isMirrored = false;
     function toggleMirror() {
-      const sheet = document.getElementById('codexSheet');
-      sheet.classList.toggle('mirror-active');
-      const isMirrored = sheet.classList.contains('mirror-active');
-      const btn = document.querySelector('.davinci-ctrl-btn');
-      if (btn) {
-        btn.textContent = isMirrored ? '🔄 恢复正向阅读 (ORIGINAL)' : '🔍 解密达芬奇镜面字迹 (MIRROR)';
+      const folio = document.getElementById('parchmentFolio');
+      const btn = document.getElementById('btnMirror');
+      isMirrored = !isMirrored;
+      folio.classList.toggle('mirror-flipped', isMirrored);
+      btn.classList.toggle('active', isMirrored);
+      btn.setAttribute('aria-pressed', isMirrored ? 'true' : 'false');
+      btn.querySelector('.tool-text').textContent = isMirrored ? '恢复正向字迹' : '翻转镜面字迹';
+    }
+
+    // 几何辅助线叠加
+    let isGeomActive = false;
+    function toggleGeom() {
+      const folio = document.getElementById('parchmentFolio');
+      const btn = document.getElementById('btnGeom');
+      isGeomActive = !isGeomActive;
+      folio.classList.toggle('show-geom', isGeomActive);
+      btn.classList.toggle('active', isGeomActive);
+      btn.setAttribute('aria-pressed', isGeomActive ? 'true' : 'false');
+      btn.querySelector('.tool-text').textContent = isGeomActive ? '隐藏几何辅助线' : '叠加几何辅助线';
+    }
+
+    // 失败草图展示
+    let isFailActive = false;
+    function toggleFailed() {
+      const folio = document.getElementById('parchmentFolio');
+      const btn = document.getElementById('btnFail');
+      isFailActive = !isFailActive;
+      folio.classList.toggle('show-failed', isFailActive);
+      btn.classList.toggle('active', isFailActive);
+      btn.setAttribute('aria-pressed', isFailActive ? 'true' : 'false');
+      btn.querySelector('.tool-text').textContent = isFailActive ? '收起失败记录' : '查看失败草图';
+      if (isFailActive) {
+        switchStep(3); // 自动跳到失败页
       }
+    }
+
+    // 主叙事五步骤切换
+    function switchStep(index) {
+      const tabs = document.querySelectorAll('.step-tab');
+      const panels = document.querySelectorAll('.step-panel');
+      
+      tabs.forEach((tab, i) => {
+        const isActive = i === index;
+        tab.classList.toggle('active', isActive);
+        tab.setAttribute('aria-selected', isActive ? 'true' : 'false');
+      });
+
+      panels.forEach((panel, i) => {
+        panel.classList.toggle('active', i === index);
+      });
     }
   </script>
 </body>

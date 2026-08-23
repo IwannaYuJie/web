@@ -3,21 +3,30 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>HERBARIUM FOLIO // 22 皇家自然历史博物馆植物标本志</title>
+  <title>HERBARIUM FOLIO // 22 皇家自然植物标本志 · 城市缝隙植物志</title>
   <link rel="stylesheet" href="assets/common.css">
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,500;0,700;1,400;1,700&family=Playfair+Display:ital,wght@0,700;1,400&family=Noto+Serif+SC:wght@400;600;900&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,400;0,600;0,700;1,400;1,600&family=Playfair+Display:ital,wght@0,600;0,800;1,400&family=Noto+Serif+SC:wght@400;600;700;900&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
   <style>
     :root {
-      --herb-bg: #ece5d8;
-      --herb-paper: #fbf8f1;
-      --herb-ink: #2b2823;
-      --herb-green: #2d5a27;
-      --herb-rust: #8b3a2b;
-      --herb-border: #d5c8b5;
-      --font-botanical-title: 'Playfair Display', 'Noto Serif SC', serif;
-      --font-botanical-body: 'Cormorant Garamond', 'Noto Serif SC', serif;
+      --herb-bg: #ece4d4;
+      --herb-paper: #faf6ee;
+      --herb-paper-dark: #f0e9dc;
+      --herb-ink: #22201c;
+      --herb-ink-muted: #5e584f;
+      --herb-green: #2d5526;
+      --herb-green-soft: #4a7742;
+      --herb-green-subtle: rgba(45, 85, 38, 0.08);
+      --herb-rust: #8b3e2b;
+      --herb-ochre: #b5883e;
+      --herb-border: #d4c7b2;
+      --herb-border-fine: #e3d9c8;
+      --herb-shadow: rgba(43, 36, 26, 0.07);
+      --herb-tape: rgba(230, 218, 192, 0.78);
+      --font-title: 'Playfair Display', 'Noto Serif SC', serif;
+      --font-body: 'Cormorant Garamond', 'Noto Serif SC', Georgia, serif;
+      --font-mono: 'JetBrains Mono', monospace;
     }
 
     * {
@@ -29,278 +38,1125 @@
     body {
       background-color: var(--herb-bg);
       color: var(--herb-ink);
-      font-family: var(--font-botanical-body);
+      font-family: var(--font-body);
       font-size: 19px;
-      line-height: 1.8;
-      padding-bottom: 100px;
-      /* 麻布装帧与标本台纸质感 */
-      background-image: 
-        radial-gradient(circle at 10% 10%, rgba(45, 90, 39, 0.05) 0%, transparent 40%),
-        repeating-linear-gradient(45deg, rgba(0,0,0,0.015) 0px, rgba(0,0,0,0.015) 1px, transparent 1px, transparent 8px);
+      line-height: 1.85;
+      padding-bottom: 120px;
+      background-image:
+        radial-gradient(ellipse at 85% 10%, rgba(45, 85, 38, 0.04) 0%, transparent 50%),
+        radial-gradient(ellipse at 15% 80%, rgba(139, 62, 43, 0.03) 0%, transparent 45%),
+        repeating-linear-gradient(0deg, rgba(0,0,0,0.012) 0px, rgba(0,0,0,0.012) 1px, transparent 1px, transparent 4px),
+        repeating-linear-gradient(90deg, rgba(0,0,0,0.012) 0px, rgba(0,0,0,0.012) 1px, transparent 1px, transparent 4px);
+      -webkit-font-smoothing: antialiased;
     }
 
-    .herb-wrapper {
-      max-width: 1160px;
+    .folio-layout {
+      max-width: 1240px;
       margin: 0 auto;
-      padding: 30px 20px;
+      padding: 24px 20px;
     }
 
-    /* 博物馆档案刊头 */
-    .museum-header {
-      border-bottom: 2px solid var(--herb-ink);
-      padding-bottom: 16px;
-      margin-bottom: 36px;
-      text-align: center;
+    /* 刊头：典雅标本馆档案头 */
+    .folio-masthead {
+      border: 1px solid var(--herb-border);
+      border-bottom: 3px double var(--herb-ink);
+      background: var(--herb-paper);
+      padding: 28px 36px 22px;
+      margin-bottom: 32px;
+      position: relative;
+      box-shadow: 0 4px 18px var(--herb-shadow);
     }
-    .museum-subtitle {
+    .folio-masthead::before, .folio-masthead::after {
+      content: "§";
+      position: absolute;
+      top: 12px;
+      font-family: var(--font-title);
+      font-size: 14px;
+      color: var(--herb-green);
+      opacity: 0.6;
+    }
+    .folio-masthead::before { left: 16px; }
+    .folio-masthead::after { right: 16px; }
+
+    .masthead-meta-bar {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      flex-wrap: wrap;
+      gap: 12px;
       font-size: 13px;
-      letter-spacing: 4px;
+      letter-spacing: 2.5px;
       color: var(--herb-green);
       font-weight: 700;
       text-transform: uppercase;
-    }
-    .museum-title {
-      font-family: var(--font-botanical-title);
-      font-size: 38px;
-      color: var(--herb-ink);
-      letter-spacing: 1px;
-      margin: 6px 0;
-    }
-
-    /* 植物标本大图板 Hero 卡片 */
-    .specimen-hero-plate {
-      background: var(--herb-paper);
-      border: 1px solid var(--herb-border);
-      box-shadow: 0 10px 30px rgba(0,0,0,0.08);
-      padding: 32px;
-      margin-bottom: 48px;
-      display: grid;
-      grid-template-columns: 1.2fr 1fr;
-      gap: 36px;
-      align-items: center;
-      position: relative;
-    }
-
-    .specimen-img-frame {
-      border: 1px solid var(--herb-border);
-      padding: 10px;
-      background: #fff;
-      box-shadow: 0 4px 15px rgba(0,0,0,0.05);
-    }
-    .specimen-img-frame img {
-      width: 100%;
-      height: auto;
-      display: block;
-    }
-
-    .taxonomy-tag {
-      font-size: 13px;
-      color: var(--herb-green);
-      font-style: italic;
-      font-weight: 700;
-      margin-bottom: 8px;
-    }
-    .hero-herb-title {
-      font-family: var(--font-botanical-title);
-      font-size: 32px;
-      color: var(--herb-ink);
-      line-height: 1.25;
+      border-bottom: 1px solid var(--herb-border-fine);
+      padding-bottom: 10px;
       margin-bottom: 16px;
     }
-    .hero-herb-p {
-      font-size: 18px;
-      color: #555047;
-      line-height: 1.75;
-      margin-bottom: 20px;
+    .masthead-main {
+      text-align: center;
+      margin: 10px 0 16px;
     }
-
-    .specimen-label-box {
-      border: 1px dashed var(--herb-border);
-      padding: 12px 16px;
-      background: rgba(45, 90, 39, 0.04);
-      font-size: 14px;
-      color: #4a443c;
+    .masthead-title {
+      font-family: var(--font-title);
+      font-size: clamp(30px, 4.4vw, 46px);
+      font-weight: 800;
+      color: var(--herb-ink);
+      letter-spacing: 0.5px;
+      line-height: 1.2;
     }
-
-    /* 标本集文章列表 */
-    .herb-posts-grid {
-      display: grid;
-      grid-template-columns: 2fr 1fr;
-      gap: 36px;
+    .masthead-tagline {
+      font-size: 16px;
+      color: var(--herb-ink-muted);
+      font-style: italic;
+      margin-top: 6px;
+      letter-spacing: 1px;
     }
-
-    .herb-card {
-      background: var(--herb-paper);
-      border: 1px solid var(--herb-border);
-      padding: 32px;
-      margin-bottom: 30px;
-      box-shadow: 0 6px 20px rgba(0,0,0,0.04);
-    }
-
-    .herb-card-meta {
+    .masthead-motto {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 18px;
       font-size: 13px;
       color: var(--herb-rust);
-      font-style: italic;
+      font-weight: 600;
+      letter-spacing: 1.5px;
+      margin-top: 14px;
+      padding-top: 12px;
+      border-top: 1px dashed var(--herb-border-fine);
+    }
+    .motto-pill {
+      background: rgba(139, 62, 43, 0.08);
+      padding: 2px 10px;
+      border-radius: 2px;
+      font-family: var(--font-mono);
+      font-size: 12px;
+    }
+
+    /* 观察伦理横幅 */
+    .ethics-banner {
+      background: #f4eee2;
+      border-left: 4px solid var(--herb-green);
+      border-right: 1px solid var(--herb-border);
+      border-top: 1px solid var(--herb-border);
       border-bottom: 1px solid var(--herb-border);
-      padding-bottom: 8px;
-      margin-bottom: 14px;
+      padding: 14px 20px;
+      margin-bottom: 34px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      flex-wrap: wrap;
+      gap: 14px;
+      font-size: 15px;
     }
-
-    .herb-card-title {
-      font-family: var(--font-botanical-title);
-      font-size: 26px;
+    .ethics-lead {
+      display: flex;
+      align-items: center;
+      gap: 10px;
       color: var(--herb-ink);
-      margin-bottom: 14px;
-      line-height: 1.3;
+      font-weight: 600;
+    }
+    .ethics-lead svg {
+      color: var(--herb-green);
+      flex-shrink: 0;
+    }
+    .ethics-action-btn {
+      background: var(--herb-paper);
+      border: 1px solid var(--herb-green);
+      color: var(--herb-green);
+      font-family: var(--font-body);
+      font-size: 14px;
+      font-weight: 700;
+      letter-spacing: 1px;
+      padding: 6px 14px;
+      cursor: pointer;
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      transition: all 0.2s ease;
+    }
+    .ethics-action-btn:hover {
+      background: var(--herb-green);
+      color: #fff;
     }
 
-    .herb-card-body {
-      font-size: 18px;
-      color: #443e36;
-      line-height: 1.8;
+    /* 主舞台：蒲公英一生物候大图板与主叙事 */
+    .specimen-stage {
+      display: grid;
+      grid-template-columns: 1.15fr 1fr;
+      gap: 34px;
+      margin-bottom: 46px;
+      align-items: stretch;
     }
 
-    /* 侧边标本分类抽屉 */
-    .herb-drawer-widget {
+    /* 标本装裱台纸 */
+    .herb-mounting-board {
       background: var(--herb-paper);
       border: 1px solid var(--herb-border);
       padding: 24px;
-      margin-bottom: 28px;
+      position: relative;
+      box-shadow: 0 10px 32px var(--herb-shadow);
+      display: flex;
+      flex-direction: column;
     }
-    .drawer-title {
-      font-family: var(--font-botanical-title);
+    /* 仿纸胶带固定效果 */
+    .tape-corner {
+      position: absolute;
+      width: 60px;
+      height: 18px;
+      background: var(--herb-tape);
+      box-shadow: 0 1px 3px rgba(0,0,0,0.08);
+      z-index: 2;
+      opacity: 0.85;
+      transform: rotate(-3deg);
+    }
+    .tape-tl { top: -6px; left: 24px; }
+    .tape-tr { top: -6px; right: 24px; transform: rotate(3deg); }
+
+    .specimen-canvas-frame {
+      border: 1px solid var(--herb-border);
+      background: #ffffff;
+      padding: 14px;
+      position: relative;
+    }
+    .specimen-visual-wrap {
+      position: relative;
+      background: #fdfbf7;
+      border: 1px solid #ede4d5;
+      overflow: hidden;
+    }
+    .specimen-img {
+      width: 100%;
+      height: auto;
+      display: block;
+      filter: saturate(0.92) contrast(1.04);
+      transition: transform 0.4s ease;
+    }
+    .specimen-visual-wrap:hover .specimen-img {
+      transform: scale(1.015);
+    }
+
+    /* 解剖注释层 */
+    .anatomy-overlay {
+      position: absolute;
+      inset: 0;
+      pointer-events: none;
+      transition: opacity 0.3s ease;
+    }
+    .anatomy-overlay.is-hidden {
+      opacity: 0;
+    }
+    .anno-pin {
+      position: absolute;
+      background: rgba(255, 255, 255, 0.95);
+      border: 1px solid var(--herb-rust);
+      color: var(--herb-ink);
+      font-size: 11px;
+      font-family: var(--font-mono);
+      padding: 2px 6px;
+      border-radius: 2px;
+      box-shadow: 0 2px 6px rgba(0,0,0,0.12);
+      pointer-events: auto;
+      cursor: help;
+      display: flex;
+      align-items: center;
+      gap: 4px;
+    }
+    .anno-pin::before {
+      content: "";
+      width: 6px;
+      height: 6px;
+      background: var(--herb-rust);
+      border-radius: 50%;
+      display: inline-block;
+    }
+    .anno-pin-1 { top: 22%; right: 18%; }
+    .anno-pin-2 { top: 58%; left: 16%; }
+    .anno-pin-3 { bottom: 18%; right: 28%; }
+
+    /* 手绘比例尺 */
+    .scale-bar-module {
+      margin-top: 14px;
+      padding: 10px 14px;
+      border-top: 1px dashed var(--herb-border);
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      font-size: 12px;
+      color: var(--herb-ink-muted);
+      font-family: var(--font-mono);
+    }
+    .scale-ruler {
+      display: flex;
+      align-items: flex-end;
+      gap: 0;
+      height: 12px;
+      border-left: 2px solid var(--herb-ink);
+      border-right: 2px solid var(--herb-ink);
+      border-bottom: 1.5px solid var(--herb-ink);
+      width: 140px;
+      position: relative;
+    }
+    .scale-ruler::before {
+      content: "0";
+      position: absolute;
+      top: -14px;
+      left: -4px;
+      font-size: 10px;
+    }
+    .scale-ruler::after {
+      content: "50 mm";
+      position: absolute;
+      top: -14px;
+      right: -8px;
+      font-size: 10px;
+    }
+    .scale-tick {
+      flex: 1;
+      height: 4px;
+      border-right: 1px solid var(--herb-border);
+    }
+
+    /* 观察控制条 */
+    .specimen-controls {
+      margin-top: 16px;
+      display: flex;
+      gap: 10px;
+      flex-wrap: wrap;
+    }
+    .specimen-btn {
+      background: var(--herb-paper-dark);
+      border: 1px solid var(--herb-border);
+      color: var(--herb-ink);
+      font-family: var(--font-body);
+      font-size: 14px;
+      padding: 6px 12px;
+      cursor: pointer;
+      border-radius: 2px;
+      transition: all 0.2s ease;
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+    }
+    .specimen-btn:hover {
+      border-color: var(--herb-green);
+      background: #fff;
+    }
+    .specimen-btn.active {
+      background: var(--herb-green);
+      color: #fff;
+      border-color: var(--herb-green);
+    }
+
+    /* 主叙事右侧栏 */
+    .narrative-card {
+      background: var(--herb-paper);
+      border: 1px solid var(--herb-border);
+      padding: 30px 32px;
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
+      box-shadow: 0 10px 32px var(--herb-shadow);
+    }
+    .narrative-header {
+      border-bottom: 1px solid var(--herb-border-fine);
+      padding-bottom: 16px;
+      margin-bottom: 20px;
+    }
+    .specimen-badge-row {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 8px;
+    }
+    .specimen-code {
+      font-family: var(--font-mono);
+      font-size: 12px;
+      color: var(--herb-green);
+      letter-spacing: 1.5px;
+      background: var(--herb-green-subtle);
+      padding: 2px 8px;
+    }
+    .pheno-phase-indicator {
+      font-size: 12px;
+      color: var(--herb-rust);
+      font-weight: 700;
+      letter-spacing: 1px;
+    }
+    .narrative-title {
+      font-family: var(--font-title);
+      font-size: clamp(24px, 2.6vw, 32px);
+      color: var(--herb-ink);
+      line-height: 1.25;
+      margin: 8px 0;
+    }
+    .scientific-sub {
+      font-size: 15px;
+      color: var(--herb-ink-muted);
+      font-style: italic;
+    }
+
+    /* 四季物候阶段切换器与叙事文案 */
+    .phenology-timeline {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 6px;
+      margin: 18px 0;
+    }
+    .pheno-tab {
+      background: var(--herb-paper-dark);
+      border: 1px solid var(--herb-border);
+      padding: 8px 4px;
+      font-size: 13px;
+      text-align: center;
+      cursor: pointer;
+      color: var(--herb-ink-muted);
+      font-weight: 600;
+      transition: all 0.2s ease;
+    }
+    .pheno-tab.active {
+      background: var(--herb-ink);
+      color: #fff;
+      border-color: var(--herb-ink);
+    }
+
+    .pheno-story-box {
+      background: #fefdfa;
+      border: 1px solid var(--herb-border-fine);
+      padding: 18px 20px;
+      margin-bottom: 20px;
+      min-height: 210px;
+    }
+    .story-title {
+      font-size: 16px;
+      font-weight: 700;
+      color: var(--herb-green);
+      margin-bottom: 8px;
+      display: flex;
+      align-items: center;
+      gap: 6px;
+    }
+    .story-paragraph {
+      font-size: 16.5px;
+      color: #3b3731;
+      line-height: 1.75;
+    }
+    .story-quote {
+      margin-top: 10px;
+      font-size: 14.5px;
+      color: var(--herb-ink-muted);
+      font-style: italic;
+      border-left: 2px solid var(--herb-ochre);
+      padding-left: 10px;
+    }
+
+    /* 观察簿加入状态条 */
+    .add-observation-bar {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding-top: 14px;
+      border-top: 1px dashed var(--herb-border);
+      flex-wrap: wrap;
+      gap: 10px;
+    }
+    .btn-collect-book {
+      background: var(--herb-green);
+      color: #ffffff;
+      border: 1px solid var(--herb-green);
+      font-family: var(--font-body);
+      font-size: 15px;
+      font-weight: 700;
+      letter-spacing: 1px;
+      padding: 8px 18px;
+      cursor: pointer;
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      transition: all 0.2s ease;
+    }
+    .btn-collect-book:hover {
+      background: #20401b;
+    }
+    .collect-status {
+      font-size: 13px;
+      color: var(--herb-ink-muted);
+      font-style: italic;
+    }
+
+    /* 标本资料卡模态 / 抽屉模块 (Taxonomy Data Sheet) */
+    .specimen-data-sheet {
+      background: var(--herb-paper);
+      border: 1px solid var(--herb-border);
+      box-shadow: 0 6px 24px var(--herb-shadow);
+      margin-bottom: 46px;
+      overflow: hidden;
+    }
+    .data-sheet-header {
+      background: #f1ebdE;
+      border-bottom: 1px solid var(--herb-border);
+      padding: 14px 24px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      cursor: pointer;
+    }
+    .data-sheet-title {
+      font-family: var(--font-title);
+      font-size: 19px;
+      color: var(--herb-ink);
+      font-weight: 700;
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+    .data-sheet-toggle-btn {
+      background: transparent;
+      border: 1px solid var(--herb-border);
+      font-family: var(--font-mono);
+      font-size: 12px;
+      padding: 4px 10px;
+      cursor: pointer;
+      color: var(--herb-ink);
+    }
+    .data-sheet-body {
+      padding: 24px;
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+      gap: 20px;
+      background: #faf6ee;
+    }
+    .data-sheet-body.is-collapsed {
+      display: none;
+    }
+    .data-field {
+      border-bottom: 1px dotted var(--herb-border);
+      padding-bottom: 8px;
+    }
+    .field-label {
+      font-size: 11px;
+      letter-spacing: 1.5px;
+      color: var(--herb-rust);
+      font-weight: 700;
+      text-transform: uppercase;
+      font-family: var(--font-mono);
+      display: block;
+      margin-bottom: 2px;
+    }
+    .field-val {
+      font-size: 16px;
+      color: var(--herb-ink);
+      font-weight: 600;
+    }
+    .field-val-latin {
+      font-style: italic;
+      font-family: var(--font-title);
+      font-size: 17px;
+    }
+
+    /* 3 个次级栏目：三大植物哲学与观察专题 */
+    .secondary-columns-title {
+      text-align: center;
+      font-family: var(--font-title);
+      font-size: 24px;
+      color: var(--herb-ink);
+      margin-bottom: 24px;
+      position: relative;
+    }
+    .secondary-columns-title::before, .secondary-columns-title::after {
+      content: "";
+      display: inline-block;
+      width: 40px;
+      height: 1px;
+      background: var(--herb-border);
+      vertical-align: middle;
+      margin: 0 14px;
+    }
+
+    .columns-grid {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 24px;
+      margin-bottom: 46px;
+    }
+    .column-card {
+      background: var(--herb-paper);
+      border: 1px solid var(--herb-border);
+      padding: 28px 24px;
+      box-shadow: 0 6px 20px var(--herb-shadow);
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
+      position: relative;
+    }
+    .column-card::before {
+      content: "";
+      position: absolute;
+      top: 0;
+      left: 0;
+      right: 0;
+      height: 3px;
+      background: var(--herb-border);
+    }
+    .column-card:hover::before {
+      background: var(--herb-green);
+    }
+    .column-meta {
+      font-family: var(--font-mono);
+      font-size: 12px;
+      color: var(--herb-rust);
+      letter-spacing: 1.5px;
+      margin-bottom: 12px;
+    }
+    .column-title {
+      font-family: var(--font-title);
+      font-size: 21px;
+      color: var(--herb-ink);
+      line-height: 1.35;
+      margin-bottom: 14px;
+    }
+    .column-content {
+      font-size: 16.5px;
+      color: #4b453d;
+      line-height: 1.8;
+      margin-bottom: 18px;
+    }
+    .column-tag-wrap {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 6px;
+      padding-top: 12px;
+      border-top: 1px dashed var(--herb-border-fine);
+    }
+    .column-tag {
+      font-size: 12px;
+      font-family: var(--font-mono);
+      background: var(--herb-paper-dark);
+      padding: 2px 8px;
+      color: var(--herb-ink-muted);
+    }
+
+    /* 观察记录抽屉与手绘线描注记 */
+    .herbarium-notebook {
+      background: #fdfbf7;
+      border: 1px solid var(--herb-border);
+      padding: 28px 32px;
+      margin-bottom: 46px;
+      box-shadow: 0 6px 20px var(--herb-shadow);
+    }
+    .notebook-heading {
+      font-family: var(--font-title);
       font-size: 20px;
       color: var(--herb-green);
       border-bottom: 1px solid var(--herb-border);
-      padding-bottom: 8px;
-      margin-bottom: 16px;
-    }
-
-    .drawer-item {
+      padding-bottom: 10px;
+      margin-bottom: 18px;
       display: flex;
       justify-content: space-between;
-      padding: 6px 0;
-      font-size: 15px;
-      border-bottom: 1px dotted rgba(0,0,0,0.1);
+      align-items: center;
+    }
+    .notebook-list {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+      gap: 16px;
+    }
+    .notebook-item {
+      background: #fff;
+      border: 1px solid var(--herb-border-fine);
+      padding: 14px 16px;
+      font-size: 14.5px;
+      line-height: 1.6;
+    }
+    .notebook-item strong {
+      color: var(--herb-rust);
+      display: block;
+      font-family: var(--font-title);
+      font-size: 16px;
+      margin-bottom: 4px;
     }
 
-    @media (max-width: 860px) {
-      .specimen-hero-plate, .herb-posts-grid {
+    /* 馆员札记 / 收尾 */
+    .curator-colophon {
+      border: 2px solid var(--herb-border);
+      background: #f3ece0;
+      padding: 36px 40px;
+      text-align: center;
+      position: relative;
+      box-shadow: 0 10px 28px var(--herb-shadow);
+    }
+    .curator-stamp {
+      display: inline-block;
+      border: 2px solid var(--herb-rust);
+      color: var(--herb-rust);
+      padding: 4px 14px;
+      font-family: var(--font-mono);
+      font-size: 12px;
+      letter-spacing: 2px;
+      text-transform: uppercase;
+      margin-bottom: 16px;
+      transform: rotate(-1.5deg);
+    }
+    .curator-quote {
+      font-family: var(--font-title);
+      font-size: clamp(20px, 2.8vw, 27px);
+      font-weight: 700;
+      color: var(--herb-ink);
+      line-height: 1.45;
+      max-width: 820px;
+      margin: 0 auto 16px;
+    }
+    .curator-sign {
+      font-size: 15px;
+      color: var(--herb-ink-muted);
+      font-style: italic;
+    }
+
+    /* 移动端适配 */
+    @media (max-width: 980px) {
+      .specimen-stage {
         grid-template-columns: 1fr;
+      }
+      .columns-grid {
+        grid-template-columns: 1fr;
+      }
+    }
+    @media (max-width: 640px) {
+      .folio-masthead {
+        padding: 20px 18px;
+      }
+      .masthead-meta-bar {
+        font-size: 11px;
+      }
+      .curator-colophon {
+        padding: 24px 18px;
+      }
+      .phenology-timeline {
+        grid-template-columns: repeat(2, 1fr);
+      }
+    }
+
+    @media (prefers-reduced-motion: reduce) {
+      * {
+        animation-duration: 0.01ms !important;
+        transition-duration: 0.01ms !important;
       }
     }
   </style>
 </head>
 <body>
 
-  <div class="herb-wrapper">
-    <!-- 顶栏 -->
-    <header class="museum-header">
-      <div class="museum-subtitle">ROYAL BOTANIC SOCIETY // HERBARIUM COLLECTION</div>
-      <h1 class="museum-title">皇家自然历史标本与植物志</h1>
-      <div style="font-size: 14px; color: #73695b; font-style: italic;">
-        观察、采集、压制与沉思 · 自然哲学与科学考察手记
+  <div class="folio-layout">
+    <!-- 档案刊头 -->
+    <header class="folio-masthead">
+      <div class="masthead-meta-bar">
+        <span>HERBARIUM FOLIO // VOL. XXII</span>
+        <span>CITY CRACK BOTANY ARCHIVE</span>
+        <span>ETHICAL HERBARIUM PROJECT</span>
+      </div>
+      <div class="masthead-main">
+        <h1 class="masthead-title">皇家自然植物标本志 · 城市缝隙植物志</h1>
+        <div class="masthead-tagline">以尊重采集伦理的观察记录为主 · 观照沥青与红砖之间的微型荒野</div>
+      </div>
+      <div class="masthead-motto">
+        <span class="motto-pill">NON-INVASIVE BOTANY</span>
+        <span>只观察，不打扰 · 每一道裂缝都是生命的温室</span>
+        <span class="motto-pill">OBSERVATION OVER HARVEST</span>
       </div>
     </header>
 
-    <!-- 标本大图板 Hero -->
-    <section class="specimen-hero-plate">
-      <div class="specimen-img-frame">
-        <img src="assets/images/botanical_folio.jpg" alt="高山蕨类与野生兰花植物标本图板">
+    <!-- 观察伦理倡议条 -->
+    <aside class="ethics-banner" aria-label="城市采集伦理提示">
+      <div class="ethics-lead">
+        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+          <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"></path>
+        </svg>
+        <span>城市野草采集伦理守则：不破坏根系，不拔除稀有生境，以手绘、影像与生长日志替代实体剥离。</span>
       </div>
-      <div>
-        <div class="taxonomy-tag">FLORA ALPINA BRITANNICA · PLATE 47</div>
-        <h1 class="hero-herb-title">
-          高山隐花植物的生长几何：从蕨叶脉络到自然算法
-        </h1>
-        <p class="hero-herb-p">
-          一片蕨类的羽状复叶，正是大自然最精妙的分形算法。无论放大多少倍数，局部的分支结构都与整体保持着严密的自相似性。在山林与苔原的静默中，生命早已写就了最高效的几何语言。
-        </p>
-        <div class="specimen-label-box">
-          <strong>标本编号：</strong>SPECIMEN NO. 1294<br>
-          <strong>采集地：</strong>苏格兰高地（海拔 3800 英尺）<br>
-          <strong>状态：</strong>纯手工蜡封压制 · 保存完好
+      <button class="ethics-action-btn" id="btnEthicsConfirm" aria-label="签署观察伦理承诺">
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+          <polyline points="20 6 9 17 4 12"></polyline>
+        </svg>
+        <span id="ethicsBtnText">只观察，不打扰</span>
+      </button>
+    </aside>
+
+    <!-- 主叙事舞台：蒲公英如何完成一年 -->
+    <section class="specimen-stage" aria-labelledby="mainNarrativeTitle">
+      <!-- 左：标本台纸与微观图板 -->
+      <div class="herb-mounting-board">
+        <span class="tape-corner tape-tl" aria-hidden="true"></span>
+        <span class="tape-corner tape-tr" aria-hidden="true"></span>
+        
+        <div class="specimen-canvas-frame">
+          <div class="specimen-visual-wrap">
+            <img src="assets/images/botanical_folio.jpg" alt="皇家标本馆典藏：城市缝隙蒲公英物候与解剖标本图板" class="specimen-img" id="specimenMainImg">
+            
+            <!-- 叶片与头状花序解剖注释层 -->
+            <div class="anatomy-overlay" id="anatomyOverlay" aria-label="叶片解剖注释">
+              <div class="anno-pin anno-pin-1" title="头状花序与舌状小花">A. Capitulum / 头状花序</div>
+              <div class="anno-pin anno-pin-2" title="倒向羽状深裂叶片（倒齿裂）">B. Runcinate Leaf / 倒向羽状裂叶</div>
+              <div class="anno-pin anno-pin-3" title="具冠毛的瘦果与风力扩散单元">C. Pappus Cypsela / 冠毛瘦果</div>
+            </div>
+          </div>
+
+          <div class="scale-bar-module">
+            <span>FIGURE 01 · MORPHOLOGY</span>
+            <div class="scale-ruler" aria-label="50毫米手绘比例尺">
+              <div class="scale-tick"></div>
+              <div class="scale-tick"></div>
+              <div class="scale-tick"></div>
+              <div class="scale-tick"></div>
+            </div>
+            <span>SCALE: 1:1.5</span>
+          </div>
+        </div>
+
+        <div class="specimen-controls">
+          <button class="specimen-btn active" id="btnToggleAnatomy" aria-pressed="true">
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+              <path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"></path>
+              <circle cx="12" cy="12" r="3"></circle>
+            </svg>
+            <span>切换叶片解剖注释</span>
+          </button>
+          <button class="specimen-btn" id="btnToggleLabel">
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+              <rect x="3" y="3" width="18" height="18" rx="2" ry="2"></rect>
+              <line x1="3" y1="9" x2="21" y2="9"></line>
+              <line x1="9" y1="21" x2="9" y2="9"></line>
+            </svg>
+            <span id="labelBtnText">展开采集标签</span>
+          </button>
+        </div>
+      </div>
+
+      <!-- 右：主叙事《墙角的一株蒲公英如何完成一年》 -->
+      <article class="narrative-card">
+        <div>
+          <div class="narrative-header">
+            <div class="specimen-badge-row">
+              <span class="specimen-code">SPECIMEN ARCHIVE NO. 2026-TARAX</span>
+              <span class="pheno-phase-indicator" id="phaseIndicator">PHASE I · 初春萌芽</span>
+            </div>
+            <h2 class="narrative-title" id="mainNarrativeTitle">墙角的一株蒲公英如何完成一年</h2>
+            <div class="scientific-sub">Taraxacum mongolicum Hand.-Mazz. 在人行道伸缩缝的生命史</div>
+          </div>
+
+          <!-- 物候节点切换器 -->
+          <div class="phenology-timeline" role="tablist" aria-label="蒲公英四大物候节点">
+            <button class="pheno-tab active" role="tab" aria-selected="true" data-phase="sprout">🌱 1. 萌芽</button>
+            <button class="pheno-tab" role="tab" aria-selected="false" data-phase="bloom">🌼 2. 开花</button>
+            <button class="pheno-tab" role="tab" aria-selected="false" data-phase="seed">💨 3. 结籽</button>
+            <button class="pheno-tab" role="tab" aria-selected="false" data-phase="dormancy">❄️ 4. 休眠</button>
+          </div>
+
+          <!-- 物候动态解说 -->
+          <div class="pheno-story-box" id="phenoStoryContent" aria-live="polite">
+            <div class="story-title" id="storyTitle">【萌芽期 · 3月】沥青压迫下的莲座状基生</div>
+            <p class="story-paragraph" id="storyParagraph">
+              早春地表解冻，仅两毫米宽的水泥缝隙积存了去年冬天的雨水与微尘。一粒休眠的瘦果吸水膨胀，第一对子叶紧贴粗糙路面呈莲座状展开。倒向羽状深裂的叶形（倒齿状）将有限的光照折射最大化，同时将清晨凝结的露水汇集至直根中心。
+            </p>
+            <div class="story-quote" id="storyQuote">“生命不是在等待完美的环境，而是在最严酷的石缝里创造自己的生态位。”</div>
+          </div>
+        </div>
+
+        <!-- 交互尾部：加入观察簿 -->
+        <div class="add-observation-bar">
+          <button class="btn-collect-book" id="btnAddToLog">
+            <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+              <path d="M19 21l-7-5-7 5V5a2 2 0 0 1 2-2h10a2 2 0 0 1 2 2z"></path>
+            </svg>
+            <span id="logBtnText">加入本季观察簿</span>
+          </button>
+          <span class="collect-status" id="logStatusText">已记录于《城市野花物候手册》第 14 页</span>
+        </div>
+      </article>
+    </section>
+
+    <!-- 资料模块：标本编号与分类详单（可折叠采集标签） -->
+    <section class="specimen-data-sheet" aria-labelledby="dataSheetTitle">
+      <div class="data-sheet-header" id="dataSheetHeader">
+        <h3 class="data-sheet-title" id="dataSheetTitle">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+            <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path>
+            <polyline points="14 2 14 8 20 8"></polyline>
+            <line x1="16" y1="13" x2="8" y2="13"></line>
+            <line x1="16" y1="17" x2="8" y2="17"></line>
+            <polyline points="10 9 9 9 8 9"></polyline>
+          </svg>
+          植物标本档案卡 (SPECIMEN RECORD SHEET)
+        </h3>
+        <button class="data-sheet-toggle-btn" id="sheetToggleBtn" aria-expanded="true">收起标签 [-]</button>
+      </div>
+
+      <div class="data-sheet-body" id="dataSheetBody">
+        <div class="data-field">
+          <span class="field-label">SPECIMEN NO. 标本编号</span>
+          <span class="field-val">HF-2026-URB-0428</span>
+        </div>
+        <div class="data-field">
+          <span class="field-label">CHINESE NAME 中文名</span>
+          <span class="field-val">蒲公英（蒙古蒲公英）</span>
+        </div>
+        <div class="data-field">
+          <span class="field-label">SCIENTIFIC NAME 学名</span>
+          <span class="field-val field-val-latin">Taraxacum mongolicum</span>
+        </div>
+        <div class="data-field">
+          <span class="field-label">FAMILY & GENUS 科属</span>
+          <span class="field-val">菊科 (Asteraceae) / 蒲公英属</span>
+        </div>
+        <div class="data-field">
+          <span class="field-label">HABITAT 观察地类型</span>
+          <span class="field-val">花岗岩人行道伸缩缝与红砖基脚</span>
+        </div>
+        <div class="data-field">
+          <span class="field-label">DATE & TIME 观察日期</span>
+          <span class="field-val">2026-04-18 10:30 CST</span>
+        </div>
+        <div class="data-field">
+          <span class="field-label">WEATHER 气象条件</span>
+          <span class="field-val">晴转微阴 · 18°C · 湿度 52%</span>
+        </div>
+        <div class="data-field">
+          <span class="field-label">LEAF MORPHOLOGY 叶形</span>
+          <span class="field-val">倒向羽状深裂 · 基生平展莲座</span>
+        </div>
+        <div class="data-field">
+          <span class="field-label">BLOOM PERIOD 花期</span>
+          <span class="field-val">4月至9月（多轮次结实）</span>
+        </div>
+        <div class="data-field">
+          <span class="field-label">SCALE RATIO 绘图比例</span>
+          <span class="field-val">1:1.5（实物叶长 11.2 cm）</span>
         </div>
       </div>
     </section>
 
-    <!-- 标本志文章网格 -->
-    <div class="herb-posts-grid">
-      <!-- 左侧手记 -->
-      <main>
-        <article class="herb-card">
-          <div class="herb-card-meta">FOLIO 01 · FIELD OBSERVATION · 2026.08</div>
-          <h2 class="herb-card-title">达尔文的藤蔓与向性运动：植物的慢速计算网络</h2>
-          <p class="herb-card-body">
-            植物虽然没有中枢神经系统，但根系与菌丝构成的地下共生网络（Mycelium Network），正以生长素和钙离子脉冲的形式传递着养分与危险预警。这正是大自然运行了亿万年的分布式共识协议。
+    <!-- 3 个次级栏目 -->
+    <h2 class="secondary-columns-title">城市标本志 · 专题探究</h2>
+    <section class="columns-grid" aria-label="次级栏目专题">
+      <!-- 栏目 1 -->
+      <article class="column-card">
+        <div>
+          <div class="column-meta">ESSAY 01 · MORPHOLOGY & MATH</div>
+          <h3 class="column-title">叶脉中的分形：自然最优输运网络</h3>
+          <p class="column-content">
+            无论是蕨类的羽状自相似，还是双子叶植物的网状脉络，叶脉遵循着莫里法则（Murray's Law）的流体阻力极小化。在人行道缝隙极度匮乏水分的环境中，分形网络让每片叶组织都能在最低蒸发损耗下获得养分滋养。
           </p>
-        </article>
-
-        <article class="herb-card">
-          <div class="herb-card-meta">FOLIO 02 · BOTANICAL TAXONOMY · 2026.07</div>
-          <h2 class="herb-card-title">林奈双名法：人类如何用词语锚定纷繁的生命万象</h2>
-          <p class="herb-card-body">
-            属名与种加词的结合，不仅是植物学分类的基石，更是人类认知体系对混沌大自然的理性驯服。正如代码中清晰的命名空间与类型系统，准确的命名是理解与建构世界的第一步。
-          </p>
-        </article>
-
-        <!-- 文章 3 -->
-        <article class="herb-card">
-          <div class="herb-card-meta">FOLIO 03 · FRACTAL GEOMETRY · 2026.06</div>
-          <h2 class="herb-card-title">叶脉分形与斐波那契叶序：自然界最高效的光照与水分算法</h2>
-          <p class="herb-card-body">
-            从蕨类羽状复叶的自相似性（Self-Similarity）到向日葵种子的双黄金螺旋角（137.5°）。大自然用最优雅的数学数列解决了最大化叶片受光面积与水分输送阻力最小化的双目标优化问题。
-          </p>
-        </article>
-
-        <!-- 文章 4 -->
-        <article class="herb-card">
-          <div class="herb-card-meta">FOLIO 04 · SPECIMEN PRESERVATION · 2026.05</div>
-          <h2 class="herb-card-title">百年标本的生还：无酸纸、干燥压制与纤维固色的物理魔法</h2>
-          <p class="herb-card-body">
-            收藏于邱园（Kew Gardens）跨越两百年的干燥标本，为何至今依然能够清晰辨识细胞壁形态？探索天然植物多酚与纤维素在脱水无氧环境下的稳定机制。
-          </p>
-        </article>
-      </main>
-
-      <!-- 右侧分类抽屉 -->
-      <aside>
-        <div class="herb-drawer-widget">
-          <div class="drawer-title">🌿 HERBARIUM INDEX</div>
-          <div class="drawer-item">
-            <span>Pteridophyta (蕨类门)</span>
-            <span style="color:var(--herb-green); font-style:italic;">18 Spec.</span>
-          </div>
-          <div class="drawer-item">
-            <span>Orchidaceae (兰科)</span>
-            <span style="color:var(--herb-green); font-style:italic;">24 Spec.</span>
-          </div>
-          <div class="drawer-item">
-            <span>Bryophyta (苔藓门)</span>
-            <span style="color:var(--herb-green); font-style:italic;">12 Spec.</span>
-          </div>
-          <div class="drawer-item">
-            <span>Gymnospermae (裸子植物)</span>
-            <span style="color:var(--herb-green); font-style:italic;">09 Spec.</span>
-          </div>
         </div>
-
-        <div class="herb-drawer-widget">
-          <div class="drawer-title">📜 FIELD EQUIPMENT</div>
-          <div style="font-size: 15px; color: #5a5348; line-height: 2;">
-            <div>• 植物采集箱 (Vasculum)</div>
-            <div>• 黄铜放大镜 (10x 放大率)</div>
-            <div>• 吸水棉纸与木制压标板</div>
-          </div>
+        <div class="column-tag-wrap">
+          <span class="column-tag">#分形几何</span>
+          <span class="column-tag">#流体阻力</span>
+          <span class="column-tag">#自相似性</span>
         </div>
-      </aside>
-    </div>
-  <!-- 树影光斑微粒 Canvas -->
-  <canvas id="sunlightCanvas" style="position: fixed; inset: 0; pointer-events: none; z-index: 1; opacity: 0.45;"></canvas>
+      </article>
+
+      <!-- 栏目 2 -->
+      <article class="column-card">
+        <div>
+          <div class="column-meta">ESSAY 02 · TAXONOMY HISTORY</div>
+          <h3 class="column-title">林奈双名法的便利与局限</h3>
+          <p class="column-content">
+            属名与种加词为全球博物学者架起了统一的认知桥梁；然而将连续演化的活体固定为静止的“模式标本”，也常掩盖了城市微生境诱发的丰富表型可塑性（Phenotypic Plasticity）。命名是理性的开端，而非生命的全貌。
+          </p>
+        </div>
+        <div class="column-tag-wrap">
+          <span class="column-tag">#双名法</span>
+          <span class="column-tag">#表型可塑</span>
+          <span class="column-tag">#分类哲学</span>
+        </div>
+      </article>
+
+      <!-- 栏目 3 -->
+      <article class="column-card">
+        <div>
+          <div class="column-meta">ESSAY 03 · URBAN METHODOLOGY</div>
+          <h3 class="column-title">不采摘也能完成的城市观察</h3>
+          <p class="column-content">
+            一把 10 倍黄铜放大镜、一本网格速写簿与一套定点光影记录法，足以构成最严谨的博物学档案。离开植株的叶片在数小时内便会褪色脆化，而留在墙缝里的活体标本，却能在四季流转中展示完整的生存史诗。
+          </p>
+        </div>
+        <div class="column-tag-wrap">
+          <span class="column-tag">#非破坏性</span>
+          <span class="column-tag">#原位观察</span>
+          <span class="column-tag">#物候手记</span>
+        </div>
+      </article>
+    </section>
+
+    <!-- 观察笔记抽屉补充模块 -->
+    <section class="herbarium-notebook" aria-label="标本馆野外观察笔记">
+      <div class="notebook-heading">
+        <span>FIELD NOTES FROM THE PAVEMENT CRACKS</span>
+        <span style="font-size: 13px; font-family: var(--font-mono); color: var(--herb-rust);">CURATOR LOG</span>
+      </div>
+      <div class="notebook-list">
+        <div class="notebook-item">
+          <strong>01. 气温适应</strong>
+          沥青地表在盛夏午后可达 48°C，蒲公英通过深达 40cm 的主根汲取地底潜水，并分泌乳汁蛋白抵抗高温灼伤。
+        </div>
+        <div class="notebook-item">
+          <strong>02. 种子飞行力学</strong>
+          每颗冠毛（Pappus）在空气中形成环状分离涡流，沉降阻力较实心伞面高出 4 倍，可在城市峡谷风中远播数公里。
+        </div>
+        <div class="notebook-item">
+          <strong>03. 人行踩踏缓冲</strong>
+          平贴地面的莲座叶构型避免了剪切力破坏生长点，即使被鞋底反复碾压，根颈仍能迅速萌发新芽。
+        </div>
+      </div>
+    </section>
+
+    <!-- 收尾：馆员札记 -->
+    <footer class="curator-colophon">
+      <div class="curator-stamp">HERBARIUM CURATOR'S NOTE</div>
+      <blockquote class="curator-quote">
+        “分类帮助我们认识生命，敬畏提醒我们保持距离。”
+      </blockquote>
+      <div class="curator-sign">
+        —— 皇家自然历史博物馆 · 城市缝隙植物研究组 · 首席馆员手记 (2026)
+      </div>
+    </footer>
+  </div>
+
+  <!-- 树影光斑微粒 Canvas 背景 -->
+  <canvas id="sunlightCanvas" style="position: fixed; inset: 0; pointer-events: none; z-index: 1; opacity: 0.38;"></canvas>
 
   <script src="assets/nav-bar.js"></script>
   <script>
     (function() {
+      // 1. 物候节点切换数据与交互
+      const phenoData = {
+        sprout: {
+          phaseText: "PHASE I · 初春萌芽",
+          title: "【萌芽期 · 3月】沥青压迫下的莲座状基生",
+          p: "早春地表解冻，仅两毫米宽的水泥缝隙积存了去年冬天的雨水与微尘。一粒休眠的瘦果吸水膨胀，第一对子叶紧贴粗糙路面呈莲座状展开。倒向羽状深裂的叶形（倒齿状）将有限的光照折射最大化，同时将清晨凝结的露水汇集至直根中心。",
+          quote: "“生命不是在等待完美的环境，而是在最严酷的石缝里创造自己的生态位。”"
+        },
+        bloom: {
+          phaseText: "PHASE II · 仲春开花",
+          title: "【开花期 · 4月-5月】由百朵舌状小花汇聚的黄金盘",
+          p: "看似单朵的花朵，实则是由 100 至 200 朵舌状小花密集成的高效头状花序。花葶无叶且中空，具有极高的抗弯曲机械强度；清晨随日照展开，午后或雨天闭合，精准保护花粉免受城市酸雨浸泡。",
+          quote: "“一朵看似微末的野花，是一整个精确运转的光学与受粉工厂。”"
+        },
+        seed: {
+          phaseText: "PHASE III · 初夏结籽",
+          title: "【结籽期 · 6月】微型流体力学奇迹：冠毛降落伞",
+          p: "花瓣凋萎后，花托反卷，总苞片再次闭合孕育瘦果。数日后绽放成完美的白色绒球。每颗种子顶端的冠毛形成多孔微型流阻结构，能够在城市热岛上升气流中漂移，寻找下一个红砖缝隙。",
+          quote: "“借一阵风的力量，把生的渴望散播到整个钢筋水泥的森林。”"
+        },
+        dormancy: {
+          phaseText: "PHASE IV · 严冬休眠",
+          title: "【休眠期 · 11月-2月】蓄力于深扎40厘米的肉质主根",
+          p: "严冬霜冻降临，地上部叶片枯黄萎缩化为腐殖质，肥厚的肉质直根却在砖缝深处的冻土层下安然休眠。根部储存的高浓度果聚糖（菊糖）有效防止细胞结冰破裂，静待来年春风。",
+          quote: "“向地底深扎越坚决，春日破土的光芒就越耀眼。”"
+        }
+      };
+
+      const phenoTabs = document.querySelectorAll('.pheno-tab');
+      const phaseIndicator = document.getElementById('phaseIndicator');
+      const storyTitle = document.getElementById('storyTitle');
+      const storyParagraph = document.getElementById('storyParagraph');
+      const storyQuote = document.getElementById('storyQuote');
+
+      phenoTabs.forEach(tab => {
+        tab.addEventListener('click', () => {
+          phenoTabs.forEach(t => {
+            t.classList.remove('active');
+            t.setAttribute('aria-selected', 'false');
+          });
+          tab.classList.add('active');
+          tab.setAttribute('aria-selected', 'true');
+
+          const phaseKey = tab.getAttribute('data-phase');
+          const data = phenoData[phaseKey];
+          if (data) {
+            phaseIndicator.textContent = data.phaseText;
+            storyTitle.textContent = data.title;
+            storyParagraph.textContent = data.p;
+            storyQuote.textContent = data.quote;
+          }
+        });
+      });
+
+      // 2. 解剖注释显示切换
+      const btnToggleAnatomy = document.getElementById('btnToggleAnatomy');
+      const anatomyOverlay = document.getElementById('anatomyOverlay');
+      let anatomyVisible = true;
+
+      btnToggleAnatomy.addEventListener('click', () => {
+        anatomyVisible = !anatomyVisible;
+        if (anatomyVisible) {
+          anatomyOverlay.classList.remove('is-hidden');
+          btnToggleAnatomy.classList.add('active');
+          btnToggleAnatomy.setAttribute('aria-pressed', 'true');
+        } else {
+          anatomyOverlay.classList.add('is-hidden');
+          btnToggleAnatomy.classList.remove('active');
+          btnToggleAnatomy.setAttribute('aria-pressed', 'false');
+        }
+      });
+
+      // 3. 采集标签折叠与展开切换
+      const btnToggleLabel = document.getElementById('btnToggleLabel');
+      const labelBtnText = document.getElementById('labelBtnText');
+      const sheetToggleBtn = document.getElementById('sheetToggleBtn');
+      const dataSheetBody = document.getElementById('dataSheetBody');
+      const dataSheetHeader = document.getElementById('dataSheetHeader');
+
+      function toggleSheet() {
+        const isCollapsed = dataSheetBody.classList.toggle('is-collapsed');
+        if (isCollapsed) {
+          sheetToggleBtn.textContent = '展开标签 [+]';
+          labelBtnText.textContent = '展开采集标签';
+          sheetToggleBtn.setAttribute('aria-expanded', 'false');
+        } else {
+          sheetToggleBtn.textContent = '收起标签 [-]';
+          labelBtnText.textContent = '收起采集标签';
+          sheetToggleBtn.setAttribute('aria-expanded', 'true');
+        }
+      }
+
+      btnToggleLabel.addEventListener('click', () => {
+        if (dataSheetBody.classList.contains('is-collapsed')) {
+          toggleSheet();
+        }
+        dataSheetBody.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+      });
+
+      dataSheetHeader.addEventListener('click', toggleSheet);
+
+      // 4. 加入观察簿交互
+      const btnAddToLog = document.getElementById('btnAddToLog');
+      const logBtnText = document.getElementById('logBtnText');
+      const logStatusText = document.getElementById('logStatusText');
+      let isLogged = false;
+
+      btnAddToLog.addEventListener('click', () => {
+        isLogged = !isLogged;
+        if (isLogged) {
+          logBtnText.textContent = '已收录于观察簿 ✓';
+          btnAddToLog.style.background = '#20401b';
+          logStatusText.textContent = '物候记录已更新 · 标本编号 HF-2026-URB-0428';
+          logStatusText.style.color = 'var(--herb-green)';
+        } else {
+          logBtnText.textContent = '加入本季观察簿';
+          btnAddToLog.style.background = '';
+          logStatusText.textContent = '已记录于《城市野花物候手册》第 14 页';
+          logStatusText.style.color = '';
+        }
+      });
+
+      // 5. 观察伦理承诺按钮
+      const btnEthicsConfirm = document.getElementById('btnEthicsConfirm');
+      const ethicsBtnText = document.getElementById('ethicsBtnText');
+      btnEthicsConfirm.addEventListener('click', () => {
+        ethicsBtnText.textContent = '已恪守：只观察，不打扰 ✓';
+        btnEthicsConfirm.style.background = 'var(--herb-green)';
+        btnEthicsConfirm.style.color = '#fff';
+      });
+
+      // 6. 自然树影光斑微粒 Canvas 动画（支持降级与低动效偏好）
       const canvas = document.getElementById('sunlightCanvas');
       const ctx = canvas.getContext('2d');
       let w = canvas.width = window.innerWidth;
@@ -311,36 +1167,39 @@
         h = canvas.height = window.innerHeight;
       });
 
-      const dapples = Array.from({ length: 14 }, () => ({
-        x: Math.random() * w,
-        y: Math.random() * h,
-        radius: 40 + Math.random() * 80,
-        opacity: 0.1 + Math.random() * 0.15,
-        speedX: (Math.random() - 0.5) * 0.3,
-        speedY: (Math.random() - 0.5) * 0.3
-      }));
+      const prefersReduced = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+      if (!prefersReduced) {
+        const dapples = Array.from({ length: 16 }, () => ({
+          x: Math.random() * w,
+          y: Math.random() * h,
+          radius: 50 + Math.random() * 90,
+          opacity: 0.08 + Math.random() * 0.12,
+          speedX: (Math.random() - 0.5) * 0.25,
+          speedY: (Math.random() - 0.5) * 0.25
+        }));
 
-      function animate() {
-        ctx.clearRect(0, 0, w, h);
-        dapples.forEach(d => {
-          d.x += d.speedX;
-          d.y += d.speedY;
-          if (d.x < -100) d.x = w + 100;
-          if (d.x > w + 100) d.x = -100;
-          if (d.y < -100) d.y = h + 100;
-          if (d.y > h + 100) d.y = -100;
+        function animate() {
+          ctx.clearRect(0, 0, w, h);
+          dapples.forEach(d => {
+            d.x += d.speedX;
+            d.y += d.speedY;
+            if (d.x < -100) d.x = w + 100;
+            if (d.x > w + 100) d.x = -100;
+            if (d.y < -100) d.y = h + 100;
+            if (d.y > h + 100) d.y = -100;
 
-          const grad = ctx.createRadialGradient(d.x, d.y, 0, d.x, d.y, d.radius);
-          grad.addColorStop(0, `rgba(255, 255, 230, ${d.opacity})`);
-          grad.addColorStop(1, 'rgba(255, 255, 230, 0)');
-          ctx.fillStyle = grad;
-          ctx.beginPath();
-          ctx.arc(d.x, d.y, d.radius, 0, Math.PI * 2);
-          ctx.fill();
-        });
-        requestAnimationFrame(animate);
+            const grad = ctx.createRadialGradient(d.x, d.y, 0, d.x, d.y, d.radius);
+            grad.addColorStop(0, `rgba(255, 252, 235, ${d.opacity})`);
+            grad.addColorStop(1, 'rgba(255, 252, 235, 0)');
+            ctx.fillStyle = grad;
+            ctx.beginPath();
+            ctx.arc(d.x, d.y, d.radius, 0, Math.PI * 2);
+            ctx.fill();
+          });
+          requestAnimationFrame(animate);
+        }
+        animate();
       }
-      animate();
     })();
   </script>
 </body>

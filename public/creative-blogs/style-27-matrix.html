@@ -3,19 +3,23 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>THE MATRIX — 27 黑客帝国数字雨</title>
-  <link rel="stylesheet" href="assets/common.css">
-  <link rel="preconnect" href="https://fonts.googleapis.com">
-  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Share+Tech+Mono&family=VT323&family=Noto+Sans+SC:wght@400;700&display=swap" rel="stylesheet">
+  <title>MATRIX DECODE // 现实审计终端 — 27 黑客帝国数字雨</title>
+  <link rel="stylesheet" href="/creative-blogs/assets/common.css">
   <style>
     :root {
-      --matrix-black: #050805;
+      --matrix-bg: #030804;
+      --matrix-panel: rgba(4, 15, 6, 0.88);
+      --matrix-border: #00ff66;
+      --matrix-border-dim: rgba(0, 255, 102, 0.28);
       --matrix-green: #00ff66;
-      --matrix-dark-green: #008f11;
       --matrix-bright: #adff2f;
-      --matrix-dim: rgba(0, 255, 102, 0.4);
-      --font-mono: 'Share Tech Mono', 'VT323', monospace;
+      --matrix-dim: #008f11;
+      --matrix-text: #b6fcd5;
+      --matrix-subtext: #72a982;
+      --matrix-warn: #ffd700;
+      --matrix-alert: #ff3366;
+      --matrix-glow: 0 0 12px rgba(0, 255, 102, 0.35);
+      --font-mono: 'Share Tech Mono', 'Courier New', monospace, -apple-system;
     }
 
     * {
@@ -25,16 +29,34 @@
     }
 
     body {
-      background-color: var(--matrix-black);
-      color: var(--matrix-green);
+      background-color: var(--matrix-bg);
+      color: var(--matrix-text);
       font-family: var(--font-mono);
       min-height: 100vh;
-      line-height: 1.6;
+      line-height: 1.68;
       position: relative;
       overflow-x: hidden;
+      -webkit-font-smoothing: antialiased;
     }
 
-    /* 全屏 Canvas 数字雨 */
+    /* 扫描线与 CRT 纹理 */
+    body::before {
+      content: "";
+      position: fixed;
+      inset: 0;
+      pointer-events: none;
+      background: repeating-linear-gradient(
+        0deg,
+        rgba(0, 0, 0, 0.28),
+        rgba(0, 0, 0, 0.28) 2px,
+        transparent 2px,
+        transparent 4px
+      );
+      z-index: 2;
+      opacity: 0.6;
+    }
+
+    /* 背景数字雨画布 */
     #matrixCanvas {
       position: fixed;
       top: 0;
@@ -43,25 +65,26 @@
       height: 100%;
       pointer-events: none;
       z-index: 1;
-      opacity: 0.35;
+      opacity: 0.28;
+      transition: opacity 0.4s ease;
     }
 
     .matrix-layout {
       position: relative;
-      z-index: 2;
-      max-width: 1100px;
+      z-index: 3;
+      max-width: 1220px;
       margin: 0 auto;
-      padding: 40px 24px 80px;
+      padding: 32px 20px 80px;
     }
 
-    /* 终端抬头 */
+    /* 终端总控抬头 */
     .matrix-header {
-      border: 1px solid var(--matrix-green);
-      background: rgba(5, 8, 5, 0.85);
+      border: 1px solid var(--matrix-border);
+      background: var(--matrix-panel);
+      padding: 20px 24px;
       border-radius: 4px;
-      padding: 20px 28px;
-      box-shadow: 0 0 20px rgba(0, 255, 102, 0.25), inset 0 0 10px rgba(0, 255, 102, 0.1);
-      margin-bottom: 32px;
+      box-shadow: var(--matrix-glow), inset 0 0 18px rgba(0, 255, 102, 0.08);
+      margin-bottom: 24px;
       display: flex;
       justify-content: space-between;
       align-items: center;
@@ -69,219 +92,665 @@
       gap: 16px;
     }
 
-    .matrix-title {
-      font-size: 26px;
-      font-weight: 700;
-      color: #fff;
-      text-shadow: 0 0 10px var(--matrix-green), 0 0 20px var(--matrix-green);
-      letter-spacing: 0.1em;
+    .header-ident {
+      display: flex;
+      flex-direction: column;
+      gap: 4px;
     }
 
-    .matrix-tag {
-      font-size: 12px;
-      padding: 4px 10px;
-      border: 1px solid var(--matrix-bright);
+    .header-ident .ident-tag {
+      font-size: 11px;
+      letter-spacing: 0.18em;
       color: var(--matrix-bright);
-      background: rgba(0, 255, 102, 0.1);
+      text-transform: uppercase;
     }
 
-    /* 数字雨封面大图 */
-    .matrix-img-box {
-      border: 1px solid var(--matrix-green);
-      box-shadow: 0 0 25px rgba(0, 255, 102, 0.3);
+    .matrix-title {
+      font-size: 24px;
+      font-weight: 700;
+      color: #ffffff;
+      text-shadow: 0 0 8px var(--matrix-green), 0 0 16px var(--matrix-green);
+      letter-spacing: 0.08em;
+    }
+
+    .header-metrics {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      flex-wrap: wrap;
+    }
+
+    .status-badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      padding: 5px 12px;
+      border: 1px solid var(--matrix-border-dim);
+      background: rgba(0, 255, 102, 0.08);
+      font-size: 12px;
+      border-radius: 2px;
+      color: var(--matrix-bright);
+    }
+    .status-badge.verified {
+      border-color: var(--matrix-bright);
+      background: rgba(173, 255, 47, 0.12);
+      color: #ffffff;
+    }
+    .status-badge.pending {
+      border-color: var(--matrix-warn);
+      color: var(--matrix-warn);
+      background: rgba(255, 215, 0, 0.08);
+    }
+
+    .live-dot {
+      width: 7px;
+      height: 7px;
+      border-radius: 50%;
+      background: var(--matrix-bright);
+      box-shadow: 0 0 8px var(--matrix-bright);
+      animation: pulse 1.8s infinite;
+    }
+
+    @keyframes pulse {
+      0%, 100% { opacity: 1; transform: scale(1); }
+      50% { opacity: 0.3; transform: scale(0.85); }
+    }
+
+    /* 视觉横幅 */
+    .matrix-banner {
+      position: relative;
+      border: 1px solid var(--matrix-border-dim);
       border-radius: 4px;
       overflow: hidden;
-      margin-bottom: 32px;
+      margin-bottom: 24px;
+      background: #020502;
+    }
+
+    .matrix-banner img {
+      width: 100%;
+      height: 260px;
+      object-fit: cover;
+      display: block;
+      filter: saturate(1.1) contrast(1.15) brightness(0.9);
+      opacity: 0.92;
+    }
+
+    .banner-overlay {
+      position: absolute;
+      inset: 0;
+      background: linear-gradient(180deg, rgba(3,8,4,0.1) 0%, rgba(3,8,4,0.85) 90%);
+      display: flex;
+      flex-direction: column;
+      justify-content: flex-end;
+      padding: 20px 24px;
+      gap: 6px;
+    }
+
+    .banner-overlay h2 {
+      font-size: 20px;
+      color: #ffffff;
+      text-shadow: 0 0 10px var(--matrix-green);
+    }
+
+    .banner-overlay p {
+      font-size: 13px;
+      color: var(--matrix-subtext);
+    }
+
+    /* 仪表板网格 */
+    .dashboard-grid {
+      display: grid;
+      grid-template-columns: 1fr 340px;
+      gap: 24px;
+    }
+
+    @media (max-width: 960px) {
+      .dashboard-grid {
+        grid-template-columns: 1fr;
+      }
+    }
+
+    .terminal-card {
+      background: var(--matrix-panel);
+      border: 1px solid var(--matrix-border-dim);
+      border-radius: 4px;
+      padding: 24px;
+      margin-bottom: 24px;
+      box-shadow: 0 4px 18px rgba(0,0,0,0.4);
       position: relative;
     }
 
-    .matrix-img {
-      width: 100%;
-      height: 340px;
-      object-fit: cover;
-      display: block;
-      filter: saturate(1.2) contrast(1.2);
+    .terminal-card:last-child {
+      margin-bottom: 0;
     }
 
-    .matrix-img-overlay {
-      position: absolute;
-      bottom: 0;
-      left: 0;
-      right: 0;
-      padding: 16px 20px;
-      background: linear-gradient(to top, #050805 90%, transparent);
+    .card-head {
       display: flex;
       justify-content: space-between;
-      font-size: 13px;
+      align-items: center;
+      border-bottom: 1px dashed var(--matrix-border-dim);
+      padding-bottom: 10px;
+      margin-bottom: 18px;
     }
 
-    /* 双栏终端文章内容 */
-    .matrix-grid {
-      display: grid;
-      grid-template-columns: 2fr 1fr;
-      gap: 28px;
+    .card-head .code-label {
+      font-size: 11px;
+      letter-spacing: 0.12em;
+      color: var(--matrix-dim);
     }
 
-    .terminal-window {
-      background: rgba(5, 8, 5, 0.9);
-      border: 1px solid var(--matrix-green);
-      padding: 28px;
-      border-radius: 4px;
-      box-shadow: 0 0 20px rgba(0, 255, 102, 0.15);
-    }
-
-    .prompt-lead {
-      font-size: 18px;
-      color: var(--matrix-bright);
-      margin-bottom: 20px;
-      line-height: 1.6;
-      border-bottom: 1px dashed var(--matrix-dim);
-      padding-bottom: 16px;
-    }
-
-    .article-p {
+    .card-head .card-title {
       font-size: 15px;
-      margin-bottom: 16px;
-      color: #bbf7d0;
-      cursor: pointer;
-      transition: text-shadow 0.2s ease;
-    }
-    .article-p:hover {
-      text-shadow: 0 0 8px var(--matrix-green);
-      color: #fff;
+      font-weight: 700;
+      color: var(--matrix-bright);
     }
 
-    .side-logs {
-      background: rgba(5, 8, 5, 0.9);
-      border: 1px solid var(--matrix-green);
-      padding: 20px;
-      border-radius: 4px;
+    /* 主叙事章节 */
+    .narrative-title {
+      font-size: 22px;
+      color: #ffffff;
+      margin-bottom: 12px;
+      line-height: 1.4;
+      text-shadow: 0 0 6px var(--matrix-green);
+    }
+
+    .narrative-lead {
+      font-size: 14.5px;
+      color: var(--matrix-subtext);
+      margin-bottom: 22px;
+      border-left: 2px solid var(--matrix-bright);
+      padding-left: 14px;
+    }
+
+    .step-section {
+      margin-bottom: 22px;
+      padding: 16px;
+      border: 1px solid rgba(0, 255, 102, 0.15);
+      border-radius: 3px;
+      background: rgba(0, 255, 102, 0.02);
+      transition: all 0.25s ease;
+    }
+
+    .step-section:hover {
+      border-color: var(--matrix-border);
+      background: rgba(0, 255, 102, 0.05);
+    }
+
+    .step-header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      margin-bottom: 10px;
+      flex-wrap: wrap;
+      gap: 8px;
+    }
+
+    .step-tag {
+      font-size: 11px;
+      padding: 2px 8px;
+      border-radius: 2px;
+      background: rgba(0, 255, 102, 0.12);
+      color: var(--matrix-bright);
+      border: 1px solid var(--matrix-dim);
+    }
+
+    .step-title {
+      font-size: 16px;
+      color: #ffffff;
+      font-weight: 700;
+    }
+
+    .step-desc {
+      font-size: 14px;
+      line-height: 1.7;
+      color: var(--matrix-text);
+      margin-bottom: 12px;
+    }
+
+    /* 交互切换块 */
+    .audit-box {
+      background: #020703;
+      border: 1px solid rgba(0, 255, 102, 0.2);
+      border-radius: 2px;
+      padding: 12px;
+      font-size: 12.5px;
+      margin-top: 10px;
+    }
+
+    .audit-toggle-row {
+      display: flex;
+      gap: 10px;
+      margin-bottom: 8px;
+      flex-wrap: wrap;
+    }
+
+    .audit-btn {
+      background: rgba(0, 255, 102, 0.08);
+      border: 1px solid var(--matrix-border-dim);
+      color: var(--matrix-bright);
+      font-family: var(--font-mono);
+      font-size: 11.5px;
+      padding: 4px 10px;
+      cursor: pointer;
+      border-radius: 2px;
+      transition: all 0.2s ease;
+    }
+
+    .audit-btn:hover {
+      background: var(--matrix-green);
+      color: #000000;
+      box-shadow: 0 0 8px var(--matrix-green);
+    }
+
+    .audit-btn.active {
+      background: var(--matrix-green);
+      color: #000000;
+      font-weight: 700;
+    }
+
+    .audit-content {
+      color: var(--matrix-subtext);
       font-size: 12px;
-      line-height: 1.8;
+      line-height: 1.6;
+      word-break: break-all;
+    }
+
+    /* 次级栏目 */
+    .sub-column-card {
+      margin-top: 16px;
+      padding: 16px;
+      border: 1px dashed rgba(0, 255, 102, 0.25);
+      border-radius: 3px;
+      background: rgba(4, 20, 8, 0.5);
+    }
+
+    .sub-column-title {
+      font-size: 15px;
+      color: var(--matrix-bright);
+      margin-bottom: 8px;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .sub-column-title::before {
+      content: "▷";
       color: var(--matrix-green);
     }
 
-    .matrix-btn {
-      display: inline-block;
-      padding: 10px 20px;
-      background: rgba(0, 255, 102, 0.15);
-      border: 1px solid var(--matrix-green);
-      color: #fff;
-      font-family: var(--font-mono);
-      font-size: 14px;
-      font-weight: 700;
-      cursor: pointer;
-      text-shadow: 0 0 6px var(--matrix-green);
-      box-shadow: 0 0 15px rgba(0, 255, 102, 0.3);
-      transition: all 0.2s ease;
-      margin-top: 16px;
-    }
-    .matrix-btn:hover {
-      background: var(--matrix-green);
-      color: #000;
-      box-shadow: 0 0 25px rgba(0, 255, 102, 0.8);
+    .sub-column-desc {
+      font-size: 13px;
+      color: #cbd5e1;
+      line-height: 1.65;
     }
 
-    @media (max-width: 800px) {
-      .matrix-grid {
-        grid-template-columns: 1fr;
+    /* 侧边资料与遥测模块 */
+    .meta-list {
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+      font-size: 12px;
+    }
+
+    .meta-row {
+      display: flex;
+      justify-content: space-between;
+      align-items: flex-start;
+      border-bottom: 1px dotted rgba(0, 255, 102, 0.15);
+      padding-bottom: 8px;
+    }
+
+    .meta-key {
+      color: var(--matrix-dim);
+    }
+
+    .meta-val {
+      color: var(--matrix-text);
+      text-align: right;
+      font-weight: 600;
+      max-width: 60%;
+      word-break: break-all;
+    }
+
+    .meta-val.highlight {
+      color: var(--matrix-bright);
+      text-shadow: 0 0 4px var(--matrix-dim);
+    }
+
+    .meta-val.warn {
+      color: var(--matrix-warn);
+    }
+
+    .confidence-meter {
+      margin: 14px 0;
+    }
+
+    .meter-label {
+      display: flex;
+      justify-content: space-between;
+      font-size: 11.5px;
+      color: var(--matrix-subtext);
+      margin-bottom: 4px;
+    }
+
+    .meter-bar {
+      height: 8px;
+      background: rgba(0, 255, 102, 0.12);
+      border: 1px solid var(--matrix-dim);
+      border-radius: 2px;
+      overflow: hidden;
+    }
+
+    .meter-fill {
+      height: 100%;
+      width: 94.6%;
+      background: linear-gradient(90deg, var(--matrix-dim), var(--matrix-bright));
+      box-shadow: 0 0 8px var(--matrix-green);
+      transition: width 0.4s ease;
+    }
+
+    /* 交互控制板 */
+    .interactive-panel {
+      margin-top: 20px;
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+    }
+
+    .ctrl-btn {
+      width: 100%;
+      padding: 10px 14px;
+      background: rgba(0, 255, 102, 0.1);
+      border: 1px solid var(--matrix-border);
+      color: #ffffff;
+      font-family: var(--font-mono);
+      font-size: 13px;
+      cursor: pointer;
+      text-align: left;
+      border-radius: 2px;
+      transition: all 0.2s ease;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+    }
+
+    .ctrl-btn:hover {
+      background: var(--matrix-green);
+      color: #000000;
+      font-weight: 700;
+      box-shadow: 0 0 12px var(--matrix-green);
+    }
+
+    .operator-log {
+      margin-top: 14px;
+      background: #020602;
+      border: 1px solid var(--matrix-border-dim);
+      padding: 12px;
+      border-radius: 2px;
+      font-size: 11.5px;
+      line-height: 1.6;
+      color: var(--matrix-subtext);
+      max-height: 160px;
+      overflow-y: auto;
+    }
+
+    .log-line {
+      margin-bottom: 4px;
+    }
+    .log-line span {
+      color: var(--matrix-dim);
+    }
+
+    /* 收尾声明 */
+    .matrix-footer-card {
+      margin-top: 24px;
+      border: 1px solid var(--matrix-border);
+      background: rgba(3, 10, 4, 0.95);
+      border-radius: 4px;
+      padding: 24px;
+      text-align: center;
+      box-shadow: var(--matrix-glow);
+    }
+
+    .footer-quote {
+      font-size: 16px;
+      color: #ffffff;
+      margin-bottom: 8px;
+      letter-spacing: 0.05em;
+      text-shadow: 0 0 8px var(--matrix-bright);
+    }
+
+    .footer-note {
+      font-size: 12px;
+      color: var(--matrix-subtext);
+    }
+
+    /* 无障碍与动效 */
+    @media (prefers-reduced-motion: reduce) {
+      .live-dot {
+        animation: none;
       }
-      .matrix-img {
-        height: 220px;
+      #matrixCanvas {
+        display: none;
       }
     }
   </style>
 </head>
 <body>
-  <!-- Canvas 数字雨背景 -->
-  <canvas id="matrixCanvas"></canvas>
+  <!-- 背景数字雨 Canvas -->
+  <canvas id="matrixCanvas" aria-hidden="true"></canvas>
 
   <div class="matrix-layout">
-    <header class="matrix-header">
-      <div>
-        <div style="font-size: 11px; color: var(--matrix-bright); margin-bottom: 4px;">// SYSTEM_SECURITY: LEVEL_ALPHA</div>
-        <h1 class="matrix-title">NEO // MATRIX DECODE</h1>
+    <!-- 刊物头部与身份 -->
+    <header class="matrix-header" role="banner">
+      <div class="header-ident">
+        <span class="ident-tag">// AUDIT_PROTOCOL: RUNNING // ID: 27-MTX</span>
+        <h1 class="matrix-title">MATRIX DECODE / 现实审计终端</h1>
       </div>
-      <div class="matrix-tag">STYLE 27 · 数字雨矩阵</div>
+      <div class="header-metrics">
+        <div class="status-badge verified" aria-label="验证状态">
+          <span class="live-dot" aria-hidden="true"></span>
+          <span>已验证 [VERIFIED]</span>
+        </div>
+        <div class="status-badge pending" aria-label="待核验队列">
+          <span>待验证节点: 03</span>
+        </div>
+      </div>
     </header>
 
-    <!-- 视觉 Banner -->
-    <div class="matrix-img-box">
-      <img src="assets/images/matrix_rain.jpg" alt="Matrix 数字雨" class="matrix-img">
-      <div class="matrix-img-overlay">
-        <span>ZION_SERVER_STREAM // 10010110</span>
-        <span style="color: var(--matrix-bright);">DECRYPTION_READY [100%]</span>
+    <!-- 视觉横幅 -->
+    <section class="matrix-banner" aria-labelledby="bannerHeading">
+      <img src="/creative-blogs/assets/images/matrix_rain.jpg" alt="黑客帝国数字雨与矩阵代码字符流" width="1220" height="260">
+      <div class="banner-overlay">
+        <h2 id="bannerHeading">数字雨不是屏保，而是原始数据层</h2>
+        <p>当终端只展示推断后的结论时，审查即已发生。唯有透视原始信号源，才能确认自由的边界。</p>
       </div>
-    </div>
+    </section>
 
-    <!-- 正文终端窗口 -->
-    <div class="matrix-grid">
-      <main class="terminal-window">
-        <div class="prompt-lead">
-          root@matrix:~$ ./wake_up_neo.sh --inspect-reality
-        </div>
+    <!-- 核心网格布局 -->
+    <main class="dashboard-grid">
+      <!-- 左栏：主叙事与次级栏目 -->
+      <section class="narrative-column" aria-label="审计正文与栏目">
+        <article class="terminal-card">
+          <div class="card-head">
+            <span class="code-label">DECODE_STREAM // CORE_NARRATIVE</span>
+            <span class="code-label">HASH: 0x9f4a...e12d</span>
+          </div>
 
-        <p class="article-p" onclick="glitchText(this)">
-          ▶ 矩阵无处不在。它是我们所看到的一切，是我们所触碰的一切。
-        </p>
-        <p class="article-p" onclick="glitchText(this)">
-          你曾经做过一个如此真实的梦吗？如果你无法从梦中醒来，你将如何分辨真实世界与梦境？代码构成了这个虚拟宇宙的每一寸肌理，从神经元脉冲到星辰大海。
-        </p>
-        <p class="article-p" onclick="glitchText(this)">
-          选择红色药丸，你将留在仙境，我将带你看看这兔子洞究竟有多深；选择蓝色药丸，故事就此结束，你在自己的床上醒来，继续相信你所愿意相信的。
-        </p>
-
-        <!-- 文章 2: 仿真假说 -->
-        <article style="border: 1px solid var(--matrix-dim); padding: 18px; margin: 20px 0; background: rgba(0,255,102,0.03);">
-          <div style="font-size: 11px; color: var(--matrix-bright); margin-bottom: 6px;">// ARCHIVE: SIMULATION_HYPOTHESIS</div>
-          <h2 style="font-size: 18px; color: #fff; margin-bottom: 8px;">量子测量塌缩与计算资源懒加载（Lazy Loading）</h2>
-          <p style="font-size: 13.5px; line-height: 1.7; color: #cbd5e1;">
-            双缝干涉实验中观察者介入才导致波函数塌缩，在程序员眼中恰似 3D 渲染引擎的视锥剔除（Frustum Culling）与按需求值——当没有智能体注视时，宇宙根本无需浪费算力渲染粒子的确定轨迹！
+          <h2 class="narrative-title">你看到的是数据，还是别人替你做出的解释</h2>
+          <p class="narrative-lead">
+            现代信息界面总是在竭尽全力为用户“抚平”复杂性。然而每一次抚平，都是一次对原始证据的修剪与置换。
           </p>
+
+          <!-- 步骤 1: 原始记录 -->
+          <div class="step-section" id="step1">
+            <div class="step-header">
+              <span class="step-title">01. 原始记录 (Raw Telemetry)</span>
+              <span class="step-tag">LAYER 0</span>
+            </div>
+            <p class="step-desc">
+              最底层的字节流不带任何形容词。它是服务器收到的精确时间戳、未过滤的电平跃迁、未经摘要的原始报文。数字雨的每一行字符，都是正在发生的物理测量，而非故事。
+            </p>
+            <div class="audit-box">
+              <div class="audit-toggle-row">
+                <button class="audit-btn active" onclick="switchRecord(this, 'step1-content', 'raw')">显示原始记录</button>
+                <button class="audit-btn" onclick="switchRecord(this, 'step1-content', 'interpreted')">查看修饰后摘要</button>
+              </div>
+              <div class="audit-content" id="step1-content">
+                [RAW] 2026-03-31T03:14:07.881Z | INGRESS: 192.0.2.84 | OP: SYSCALL_VERIFY | CHECKSUM: PASS | LATENCY: 0.42ms
+              </div>
+            </div>
+          </div>
+
+          <!-- 步骤 2: 模型推断 -->
+          <div class="step-section" id="step2">
+            <div class="step-header">
+              <span class="step-title">02. 模型推断 (Inferential Framing)</span>
+              <span class="step-tag">LAYER 1</span>
+            </div>
+            <p class="step-desc">
+              当海量数据涌入，算法开始提取特征并给出标签。推断极大地降低了认知负担，但它同时也引入了先入为主的分类学偏见——将概率分布误读为确凿事实。
+            </p>
+            <div class="audit-box">
+              <div class="audit-toggle-row">
+                <button class="audit-btn" onclick="switchInfer(this, 'step2-content', false)">显示原始推断概率</button>
+                <button class="audit-btn active" onclick="switchInfer(this, 'step2-content', true)">这是一条推断，不是事实</button>
+              </div>
+              <div class="audit-content" id="step2-content" style="color: var(--matrix-warn);">
+                [WARNING] 审计提示：该段落基于 88.4% 概率预测生成，已被标记为推断态，不可直接视作物理事实。
+              </div>
+            </div>
+          </div>
+
+          <!-- 步骤 3: 置信度与异常字符 -->
+          <div class="step-section" id="step3">
+            <div class="step-header">
+              <span class="step-title">03. 置信度 (Confidence Metric)</span>
+              <span class="step-tag">LAYER 2</span>
+            </div>
+            <p class="step-desc">
+              置信度从来不是二元对立的“真”与“假”，而是一个动态波动的区间。当环境噪声或异常字符出现时，置信度会迅速衰减，提示观察者停止自动化盲从。
+            </p>
+          </div>
+
+          <!-- 步骤 4: 人工判断 -->
+          <div class="step-section" id="step4">
+            <div class="step-header">
+              <span class="step-title">04. 人工判断 (The Human Anchor)</span>
+              <span class="step-tag">LAYER 3</span>
+            </div>
+            <p class="step-desc">
+              真正的审计发生在操作员按下确认键之前。保留质疑界面的权利，对比原始记录与模型推断之间的缝隙，是人类不被母体彻底同化的唯一锚点。
+            </p>
+            <button class="audit-btn" style="margin-top: 6px;" onclick="validateAll()">校验通过 (Verify Final Token)</button>
+          </div>
         </article>
 
-        <!-- 文章 3: 底层劫持 -->
-        <article style="border: 1px solid var(--matrix-dim); padding: 18px; margin: 20px 0; background: rgba(0,255,102,0.03);">
-          <div style="font-size: 11px; color: var(--matrix-bright); margin-bottom: 6px;">// ARCHIVE: HYPERVISOR_ESCAPE</div>
-          <h2 style="font-size: 18px; color: #fff; margin-bottom: 8px;">母体逃逸协议：在虚拟化硬件层突破沙箱隔离</h2>
-          <p style="font-size: 13.5px; line-height: 1.7; color: #cbd5e1;">
-            探讨利用硬件侧信道攻击（Rowhammer / Spectre）打破虚拟 CPU 寄存器边界，在宿主机内核中注入自定义执行钩子，撕开现实世界的第一道裂隙。
-          </p>
+        <!-- 次级栏目 -->
+        <article class="terminal-card">
+          <div class="card-head">
+            <span class="code-label">SUBSYSTEM_DISCUSSIONS // 3 COLUMNS</span>
+            <span class="code-label">STATUS: ACTIVE</span>
+          </div>
+
+          <div class="sub-column-card">
+            <h3 class="sub-column-title">懒加载像一次选择性显现</h3>
+            <p class="sub-column-desc">
+              视锥剔除与按需请求节约了计算资源，但同时也构筑了视野的滤镜。你以为眼前的一切是世界的全貌，其实系统只在你的视线落点处临时分配了像素与多边形。
+            </p>
+          </div>
+
+          <div class="sub-column-card">
+            <h3 class="sub-column-title">沙箱边界与逃逸想象</h3>
+            <p class="sub-column-desc">
+              我们总把安全容器当成铜墙铁壁。然而利用底层微架构的旁路泄漏与时间差分析，沙箱内部的执行痕迹依然能向外部世界发出摩尔斯电码般的低语。
+            </p>
+          </div>
+
+          <div class="sub-column-card">
+            <h3 class="sub-column-title">量子比喻什么时候会误导技术讨论</h3>
+            <p class="sub-column-desc">
+              滥用“叠加态”与“观察者塌缩”来解释分布式系统的一致性，常常掩盖了真正的网络延迟、时钟漂移与网络分区问题。用魔法比喻工程，只会推迟 Bug 的解决。
+            </p>
+          </div>
         </article>
+      </section>
 
-        <!-- 红蓝药丸选择器 -->
-        <div style="display: flex; gap: 16px; margin-top: 24px; flex-wrap: wrap;">
-          <button class="matrix-btn" onclick="choosePill('red')" style="border-color: #ff3366; color: #ff3366; background: rgba(255,51,102,0.1);">
-            💊 服下红色药丸 (RED PILL)
-          </button>
-          <button class="matrix-btn" onclick="choosePill('blue')" style="border-color: #00f0ff; color: #00f0ff; background: rgba(0,240,255,0.1);">
-            💊 服下蓝色药丸 (BLUE PILL)
-          </button>
-          <button class="matrix-btn" onclick="speedUpRain()">
-            ⚡ 加速数字雨流速
-          </button>
-        </div>
-      </main>
+      <!-- 右栏：资料模块与交互控制 -->
+      <aside class="sidebar-column" aria-label="遥测与资料模块">
+        <div class="terminal-card">
+          <div class="card-head">
+            <span class="card-title">资料模块 // AUDIT_META</span>
+            <span class="code-label">LIVE</span>
+          </div>
 
-      <!-- 侧边遥测日志 -->
-      <aside class="side-logs">
-        <div style="font-weight: 700; color: #fff; border-bottom: 1px solid var(--matrix-dim); padding-bottom: 6px; margin-bottom: 12px;">
-          // TELEMETRY_FEED
-        </div>
-        <div>[00:00:12] Construct initialized.</div>
-        <div>[00:00:24] Agent scan completed: 0 threats.</div>
-        <div>[00:00:48] Operator connected: Tank.</div>
-        <div>[00:01:05] EMP status: ARMED.</div>
-        <div style="margin-top: 16px; color: var(--matrix-bright);">
-          [INPUT] 点击任意正文段落可触发文本重构解码。
+          <div class="meta-list">
+            <div class="meta-row">
+              <span class="meta-key">信号源 (Source):</span>
+              <span class="meta-val highlight">ZION_GATEWAY_NODE#07</span>
+            </div>
+            <div class="meta-row">
+              <span class="meta-key">校验哈希 (Hash):</span>
+              <span class="meta-val">SHA256:7f9c2...8a04</span>
+            </div>
+            <div class="meta-row">
+              <span class="meta-key">解码进度 (Progress):</span>
+              <span class="meta-val highlight" id="decodeProgress">100% COMPLETED</span>
+            </div>
+            <div class="meta-row">
+              <span class="meta-key">系统可信度 (Trust):</span>
+              <span class="meta-val highlight">94.6% NOMINAL</span>
+            </div>
+            <div class="meta-row">
+              <span class="meta-key">异常字符 (Anomalies):</span>
+              <span class="meta-val warn">0x00_NULL_INJECT</span>
+            </div>
+          </div>
+
+          <div class="confidence-meter">
+            <div class="meter-label">
+              <span>置信度区间估算</span>
+              <span id="meterText">94.6%</span>
+            </div>
+            <div class="meter-bar">
+              <div class="meter-fill" id="meterFill" style="width: 94.6%;"></div>
+            </div>
+          </div>
+
+          <!-- 主题专属交互控制 -->
+          <div class="interactive-panel">
+            <button class="ctrl-btn" onclick="startDecodeEffect()">
+              <span>⚡ 开始解码段落</span>
+              <span>[EXEC]</span>
+            </button>
+            <button class="ctrl-btn" onclick="toggleMatrixDensity()">
+              <span>⟳ 切换数字雨密度</span>
+              <span id="densityLabel">NORMAL</span>
+            </button>
+          </div>
+
+          <div style="margin-top: 18px;">
+            <span style="font-size: 11px; color: var(--matrix-dim); letter-spacing: 0.1em;">操作员留言 // OPERATOR_LOG</span>
+            <div class="operator-log" id="operatorLog" role="log" aria-live="polite">
+              <div class="log-line"><span>[14:02:11]</span> 审计终端初始化就绪。</div>
+              <div class="log-line"><span>[14:02:19]</span> 接收到 Zion 骨干网络加密流。</div>
+              <div class="log-line"><span>[14:02:44]</span> 原始记录已加盖时间戳。</div>
+            </div>
+          </div>
         </div>
       </aside>
-    </div>
+    </main>
+
+    <!-- 收尾提示 -->
+    <footer class="matrix-footer-card">
+      <p class="footer-quote">“自由不是相信另一块屏幕，而是保留验证的能力。”</p>
+      <p class="footer-note">MATRIX DECODE · 现实审计协议 2026 // END OF TRANSMISSION</p>
+    </footer>
   </div>
 
-  <script src="assets/nav-bar.js"></script>
+  <script src="/creative-blogs/assets/nav-bar.js"></script>
   <script>
-    // Canvas 3D 景深数字雨与鼠标互动
+    // 数字雨 Canvas 渲染
     const canvas = document.getElementById("matrixCanvas");
     const ctx = canvas.getContext("2d");
 
@@ -291,28 +760,31 @@
     window.addEventListener("resize", () => {
       width = canvas.width = window.innerWidth;
       height = canvas.height = window.innerHeight;
+      columns = Math.floor(width / fontSize);
+      initDrops();
     });
 
-    const characters = "0123456789ABCDEFｦｱｳｴｵｶｷｹｺｻｼｽｾｿﾀﾂﾃﾅﾆﾇﾈﾊﾋﾎﾏﾐﾑﾒﾓﾔﾕﾗﾘﾜXYZ$#*+<>";
-    const fontSize = 15;
+    const characters = "0123456789ABCDEFｦｱｳｴｵｶｷｹｺｻｼｽｾｿﾀﾂﾃﾅﾆﾇﾈﾊﾋﾎﾏﾐﾑﾒﾓﾔﾕﾗﾘﾜXYZ$#*+<>/\\=";
+    const fontSize = 14;
     let columns = Math.floor(width / fontSize);
     let drops = [];
-    for (let i = 0; i < columns; i++) {
-      drops[i] = {
-        y: Math.floor(Math.random() * -100),
-        speed: 1 + Math.random() * 1.5,
-        isBright: Math.random() > 0.85
-      };
-    }
 
-    let mouseX = -100, mouseY = -100;
-    window.addEventListener('mousemove', (e) => {
-      mouseX = e.clientX;
-      mouseY = e.clientY;
-    });
+    function initDrops() {
+      drops = [];
+      for (let i = 0; i < columns; i++) {
+        drops[i] = {
+          y: Math.floor(Math.random() * -60),
+          speed: 1 + Math.random() * 1.5,
+          isBright: Math.random() > 0.88
+        };
+      }
+    }
+    initDrops();
+
+    let isDense = false;
 
     function drawMatrix() {
-      ctx.fillStyle = "rgba(5, 8, 5, 0.12)";
+      ctx.fillStyle = "rgba(3, 8, 4, 0.16)";
       ctx.fillRect(0, 0, width, height);
 
       ctx.font = fontSize + "px 'Share Tech Mono', monospace";
@@ -323,14 +795,10 @@
         const px = i * fontSize;
         const py = d.y * fontSize;
 
-        const distToMouse = Math.hypot(px - mouseX, py - mouseY);
-        if (distToMouse < 80) {
+        if (d.isBright) {
           ctx.fillStyle = "#ffffff";
           ctx.shadowColor = "#00ff66";
-          ctx.shadowBlur = 10;
-        } else if (d.isBright) {
-          ctx.fillStyle = "#adff2f";
-          ctx.shadowBlur = 0;
+          ctx.shadowBlur = 8;
         } else {
           ctx.fillStyle = "#00ff66";
           ctx.shadowBlur = 0;
@@ -338,7 +806,7 @@
 
         ctx.fillText(text, px, py);
 
-        if (py > height && Math.random() > 0.96) {
+        if (py > height && Math.random() > 0.975) {
           d.y = 0;
         }
         d.y += d.speed;
@@ -347,39 +815,95 @@
     }
     requestAnimationFrame(drawMatrix);
 
-    function glitchText(el) {
+    // 交互逻辑
+    function appendLog(msg) {
+      const log = document.getElementById("operatorLog");
+      const time = new Date().toTimeString().split(' ')[0];
+      const div = document.createElement("div");
+      div.className = "log-line";
+      div.innerHTML = `<span>[${time}]</span> ${msg}`;
+      log.appendChild(div);
+      log.scrollTop = log.scrollHeight;
+    }
+
+    function switchRecord(btn, targetId, mode) {
+      const container = btn.parentElement;
+      container.querySelectorAll('.audit-btn').forEach(b => b.classList.remove('active'));
+      btn.classList.add('active');
+
+      const el = document.getElementById(targetId);
+      if (mode === 'raw') {
+        el.textContent = "[RAW] 2026-03-31T03:14:07.881Z | INGRESS: 192.0.2.84 | OP: SYSCALL_VERIFY | CHECKSUM: PASS | LATENCY: 0.42ms";
+        el.style.color = "var(--matrix-subtext)";
+        appendLog("操作员调取原始遥测记录。");
+      } else {
+        el.textContent = "[SUMMARY] 来自受信任 IP 的系统调用已通过校验，响应迅速（解释：服务运行正常）。";
+        el.style.color = "var(--matrix-bright)";
+        appendLog("操作员查看修饰摘要视图。");
+      }
+    }
+
+    function switchInfer(btn, targetId, isAlert) {
+      const container = btn.parentElement;
+      container.querySelectorAll('.audit-btn').forEach(b => b.classList.remove('active'));
+      btn.classList.add('active');
+
+      const el = document.getElementById(targetId);
+      if (isAlert) {
+        el.textContent = "[WARNING] 审计提示：该段落基于 88.4% 概率预测生成，已被标记为推断态，不可直接视作物理事实。";
+        el.style.color = "var(--matrix-warn)";
+        appendLog("操作员标记：这是一条推断，不是事实。");
+      } else {
+        el.textContent = "[INFERENCE] P(Anomaly) = 0.116 | P(Nominal) = 0.884 | Model: Zion-Neural-Classifier-v3";
+        el.style.color = "var(--matrix-subtext)";
+        appendLog("操作员查看原始推断概率矩阵。");
+      }
+    }
+
+    function validateAll() {
+      appendLog("校验通过：人工锚点确认，哈希链一致。");
+      const progress = document.getElementById("decodeProgress");
+      progress.textContent = "100% VERIFIED";
+      progress.style.color = "var(--matrix-bright)";
+    }
+
+    function startDecodeEffect() {
+      const el = document.querySelector(".narrative-lead");
       const original = el.innerText;
-      let iterations = 0;
-      const interval = setInterval(() => {
-        el.innerText = original.split('').map((char, index) => {
-          if (index < iterations) return original[index];
+      let iter = 0;
+      appendLog("开始解码段落：触发动态混淆重构。");
+      
+      const timer = setInterval(() => {
+        el.innerText = original.split('').map((char, idx) => {
+          if (idx < iter) return original[idx];
           return characters[Math.floor(Math.random() * characters.length)];
         }).join('');
-        if (iterations >= original.length) {
-          clearInterval(interval);
+        
+        if (iter >= original.length) {
+          clearInterval(timer);
         }
-        iterations += 1 / 2;
-      }, 30);
+        iter += 1.5;
+      }, 25);
     }
 
-    function speedUpRain() {
-      drops.forEach(d => d.speed = 3 + Math.random() * 4);
-      setTimeout(() => {
-        drops.forEach(d => d.speed = 1 + Math.random() * 1.5);
-      }, 3000);
-    }
-
-    function choosePill(color) {
-      if (color === 'red') {
-        document.documentElement.style.setProperty('--matrix-green', '#ff3366');
-        document.documentElement.style.setProperty('--matrix-bright', '#ff0033');
-        document.documentElement.style.setProperty('--matrix-dim', 'rgba(255, 51, 102, 0.4)');
-        alert("🔴 你服下了红色药丸。欢迎来到真实荒漠（The Desert of the Real）。");
+    function toggleMatrixDensity() {
+      isDense = !isDense;
+      const label = document.getElementById("densityLabel");
+      const fill = document.getElementById("meterFill");
+      const meterText = document.getElementById("meterText");
+      
+      if (isDense) {
+        label.textContent = "HIGH DENSITY";
+        drops.forEach(d => d.speed = 2.2 + Math.random() * 2);
+        fill.style.width = "99.2%";
+        meterText.textContent = "99.2%";
+        appendLog("数字雨流速提升，吞吐量峰值。");
       } else {
-        document.documentElement.style.setProperty('--matrix-green', '#00ff66');
-        document.documentElement.style.setProperty('--matrix-bright', '#adff2f');
-        document.documentElement.style.setProperty('--matrix-dim', 'rgba(0, 255, 102, 0.4)');
-        alert("🔵 你服下了蓝色药丸。心智重置完成，继续留在安逸的幻境中吧。");
+        label.textContent = "NORMAL";
+        drops.forEach(d => d.speed = 1 + Math.random() * 1.5);
+        fill.style.width = "94.6%";
+        meterText.textContent = "94.6%";
+        appendLog("数字雨恢复常规流速。");
       }
     }
   </script>

@@ -3,21 +3,26 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>QUEST // 14 像素地牢冒险日志风</title>
+  <title>QUEST LOG // 橘猫勇者的系统地牢</title>
   <link rel="stylesheet" href="assets/common.css">
-  <link rel="preconnect" href="https://fonts.googleapis.com">
-  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Press+Start+2P&family=DotGothic16&display=swap" rel="stylesheet">
   <style>
     :root {
-      --rpg-bg: #11111b;
-      --rpg-box: #1e1e2e;
-      --rpg-border: #f5e0dc;
-      --rpg-gold: #f9e2af;
-      --rpg-red: #f38ba8;
-      --rpg-green: #a6e3a1;
-      --rpg-blue: #89b4fa;
-      --font-pixel: "Press Start 2P", "DotGothic16", monospace;
+      --rpg-bg: #0d0e15;
+      --rpg-panel: #161925;
+      --rpg-panel-alt: #202538;
+      --rpg-border-outer: #000000;
+      --rpg-border-light: #4f5b7d;
+      --rpg-border-highlight: #f4c244;
+      --rpg-gold: #f6c845;
+      --rpg-gold-soft: #fde8a0;
+      --rpg-red: #ff5454;
+      --rpg-green: #5cd06f;
+      --rpg-cyan: #4bd8e8;
+      --rpg-purple: #c084fc;
+      --rpg-text: #e2e8f0;
+      --rpg-text-dim: #94a3b8;
+      --pixel-shadow: 4px 4px 0px #000000;
+      --pixel-font: "DotGothic16", "Courier New", monospace;
     }
 
     * {
@@ -28,295 +33,862 @@
 
     body {
       background-color: var(--rpg-bg);
-      color: #cdd6f4;
-      font-family: "DotGothic16", monospace;
+      color: var(--rpg-text);
+      font-family: var(--pixel-font);
       min-height: 100vh;
-      padding: 24px 16px 100px;
+      padding: 24px 16px 120px;
       line-height: 1.7;
-      background-image: radial-gradient(#313244 1px, transparent 1px);
+      background-image: 
+        linear-gradient(rgba(255, 255, 255, 0.03) 1px, transparent 1px),
+        linear-gradient(90deg, rgba(255, 255, 255, 0.03) 1px, transparent 1px);
       background-size: 16px 16px;
+      image-rendering: pixelated;
     }
 
-    .rpg-wrapper {
-      max-width: 1080px;
+    .rpg-container {
+      max-width: 1160px;
       margin: 0 auto;
+      display: flex;
+      flex-direction: column;
+      gap: 24px;
     }
 
-    /* 像素风外框（双重像素边框） */
+    /* 经典 8-bit 像素框体系 */
     .pixel-box {
-      background: var(--rpg-box);
+      background: var(--rpg-panel);
       border: 4px solid #fff;
       box-shadow: 
-        inset -4px -4px 0px #313244,
-        inset 4px 4px 0px #6c7086,
+        inset -4px -4px 0px #090a0f,
+        inset 4px 4px 0px var(--rpg-border-light),
         6px 6px 0px #000;
-      padding: 24px;
-      margin-bottom: 24px;
+      padding: 20px;
+      position: relative;
     }
 
-    /* 顶部玩家状态栏 HUD */
-    .player-hud {
+    .pixel-box-gold {
+      border-color: var(--rpg-gold);
+      box-shadow: 
+        inset -4px -4px 0px #705408,
+        inset 4px 4px 0px #fae17d,
+        6px 6px 0px #000;
+    }
+
+    .pixel-header-badge {
+      display: inline-block;
+      background: #000;
+      color: var(--rpg-gold);
+      padding: 4px 12px;
+      border: 2px solid var(--rpg-gold);
+      font-weight: bold;
+      font-size: 14px;
+      letter-spacing: 1px;
+      margin-bottom: 12px;
+      text-transform: uppercase;
+    }
+
+    /* 顶部 HUD */
+    .hud-grid {
       display: grid;
       grid-template-columns: auto 1fr auto;
       gap: 20px;
       align-items: center;
     }
 
-    .player-avatar {
-      font-size: 40px;
-      background: #313244;
-      border: 2px solid #fff;
-      padding: 6px;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-    }
-
-    .player-stats {
-      font-size: 13px;
-    }
-
-    .bar-row {
-      display: flex;
-      align-items: center;
-      gap: 10px;
-      margin-bottom: 6px;
-    }
-    .bar-outer {
-      flex: 1;
-      max-width: 260px;
-      height: 14px;
-      background: #000;
-      border: 1px solid #fff;
-    }
-    .bar-hp { width: 100%; height: 100%; background: var(--rpg-red); }
-    .bar-mp { width: 85%; height: 100%; background: var(--rpg-blue); }
-
-    /* 主网格 */
-    .rpg-grid {
-      display: grid;
-      grid-template-columns: 2fr 1fr;
-      gap: 24px;
-    }
-
-    /* 任务文章卡片 */
-    .quest-card {
-      margin-bottom: 24px;
-    }
-
-    .quest-tag {
-      font-family: 'Press Start 2P', monospace;
-      font-size: 10px;
-      color: var(--rpg-gold);
-      margin-bottom: 8px;
-    }
-
-    .quest-title {
-      font-size: 20px;
-      font-weight: bold;
-      color: #fff;
-      margin-bottom: 12px;
-      line-height: 1.4;
-    }
-
-    .quest-desc {
-      font-size: 14px;
-      color: #a6adc8;
-      line-height: 1.8;
-      margin-bottom: 16px;
-    }
-
-    .quest-reward {
-      background: #181825;
-      border: 1px dashed var(--rpg-gold);
-      padding: 8px 12px;
-      font-size: 12px;
-      color: var(--rpg-gold);
-    }
-
-    /* 装备道具栏 */
-    .inventory-grid {
-      display: grid;
-      grid-template-columns: repeat(3, 1fr);
-      gap: 8px;
-      margin-top: 12px;
-    }
-
-    .item-slot {
-      aspect-ratio: 1;
-      background: #181825;
-      border: 2px solid #6c7086;
+    .cat-hero-avatar {
+      width: 76px;
+      height: 76px;
+      background: #272d42;
+      border: 3px solid var(--rpg-gold);
+      box-shadow: 3px 3px 0 #000;
       display: flex;
       flex-direction: column;
       align-items: center;
       justify-content: center;
-      font-size: 22px;
+      font-size: 34px;
+      position: relative;
+    }
+
+    .cat-hero-avatar::after {
+      content: "LV.42";
+      position: absolute;
+      bottom: -8px;
+      background: #000;
+      color: var(--rpg-gold);
+      font-size: 10px;
+      padding: 1px 4px;
+      border: 1px solid var(--rpg-gold);
+    }
+
+    .hud-hero-details {
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+    }
+
+    .hud-title-row {
+      display: flex;
+      flex-wrap: wrap;
+      align-items: baseline;
+      gap: 12px;
+    }
+
+    .hero-name {
+      font-size: 20px;
+      font-weight: bold;
+      color: #fff;
+      text-shadow: 2px 2px #000;
+    }
+
+    .hero-class {
+      color: var(--rpg-cyan);
+      font-size: 13px;
+    }
+
+    .bar-group {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+      gap: 12px;
+    }
+
+    .bar-item {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      font-size: 13px;
+      font-weight: bold;
+    }
+
+    .bar-track {
+      flex: 1;
+      height: 16px;
+      background: #090a0f;
+      border: 2px solid #fff;
+      position: relative;
+      overflow: hidden;
+    }
+
+    .bar-fill {
+      height: 100%;
+      transition: width 0.3s steps(5);
+    }
+    .bar-fill-hp { background: var(--rpg-red); width: 92%; }
+    .bar-fill-mp { background: var(--rpg-cyan); width: 78%; }
+    .bar-fill-exp { background: var(--rpg-gold); width: 64%; }
+
+    .hud-quick-actions {
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+      min-width: 180px;
+    }
+
+    .rpg-btn {
+      background: #242b40;
+      color: #fff;
+      border: 2px solid #fff;
+      box-shadow: 3px 3px 0 #000;
+      padding: 8px 12px;
+      font-family: inherit;
+      font-size: 13px;
+      font-weight: bold;
       cursor: pointer;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      gap: 6px;
+      transition: background 0.1s, transform 0.1s;
+      text-decoration: none;
+    }
+
+    .rpg-btn:hover {
+      background: #394463;
+      border-color: var(--rpg-gold);
+      color: var(--rpg-gold);
+    }
+
+    .rpg-btn:active {
+      transform: translate(2px, 2px);
+      box-shadow: 1px 1px 0 #000;
+    }
+
+    .rpg-btn-sm {
+      padding: 4px 8px;
+      font-size: 12px;
+    }
+
+    /* 布局分栏 */
+    .rpg-layout {
+      display: grid;
+      grid-template-columns: 1fr 340px;
+      gap: 24px;
+    }
+
+    /* 主线任务板 */
+    .quest-banner {
+      display: flex;
+      gap: 16px;
+      align-items: center;
+      background: #11141e;
+      border: 2px solid var(--rpg-border-light);
+      padding: 12px;
+      margin-bottom: 20px;
+    }
+
+    .boss-icon {
+      font-size: 40px;
+      padding: 8px;
+      background: #220e14;
+      border: 2px solid var(--rpg-red);
+      flex-shrink: 0;
+    }
+
+    .boss-stat-text {
+      font-size: 13px;
+      color: var(--rpg-text-dim);
+    }
+
+    .boss-stat-text b {
+      color: var(--rpg-red);
+    }
+
+    .boss-phase-steps {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+      gap: 12px;
+      margin: 16px 0;
+    }
+
+    .phase-card {
+      background: var(--rpg-panel-alt);
+      border: 2px solid var(--rpg-border-light);
+      padding: 12px;
+    }
+
+    .phase-num {
+      color: var(--rpg-gold);
+      font-size: 12px;
+      font-weight: bold;
+      margin-bottom: 4px;
+    }
+
+    .phase-card h4 {
+      font-size: 15px;
+      color: #fff;
+      margin-bottom: 6px;
+    }
+
+    .weakness-box {
+      background: #1f1418;
+      border-left: 4px solid var(--rpg-red);
+      padding: 10px 14px;
+      margin: 16px 0;
+      font-size: 14px;
+    }
+
+    .postmortem-box {
+      background: #12211c;
+      border-left: 4px solid var(--rpg-green);
+      padding: 12px 14px;
+      margin-top: 16px;
+      font-size: 13.5px;
+      color: #d1fae5;
+    }
+
+    /* 支线任务列表 */
+    .sub-quest-list {
+      display: grid;
+      gap: 16px;
+      margin-top: 24px;
+    }
+
+    .sub-quest-card {
+      background: var(--rpg-panel-alt);
+      border: 2px solid var(--rpg-border-light);
+      padding: 16px;
+      transition: transform 0.15s;
+    }
+
+    .sub-quest-card:hover {
+      border-color: var(--rpg-gold);
+      transform: translateX(4px);
+    }
+
+    .quest-header-meta {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 8px;
+      font-size: 12px;
+    }
+
+    .quest-type-tag {
+      color: var(--rpg-cyan);
+      font-weight: bold;
+    }
+
+    .quest-status {
+      padding: 2px 6px;
+      background: #000;
+      border: 1px solid var(--rpg-green);
+      color: var(--rpg-green);
+    }
+
+    .sub-quest-card h3 {
+      font-size: 16px;
+      color: #fff;
+      margin-bottom: 8px;
+    }
+
+    /* 右侧侧边栏：资料与交互 */
+    .sidebar-section {
+      display: flex;
+      flex-direction: column;
+      gap: 20px;
+    }
+
+    /* 存档槽点 */
+    .save-slots {
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+      margin-top: 10px;
+    }
+
+    .save-slot {
+      background: #0f121d;
+      border: 2px solid #3c445c;
+      padding: 10px;
+      cursor: pointer;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
       transition: all 0.15s;
     }
-    .item-slot:hover {
+
+    .save-slot.active {
       border-color: var(--rpg-gold);
-      background: #313244;
-      transform: scale(1.05);
+      background: #211c10;
     }
 
-    .item-tooltip {
+    .save-slot:hover {
+      border-color: #fff;
+    }
+
+    .slot-info {
       font-size: 12px;
-      color: var(--rpg-green);
-      margin-top: 10px;
-      min-height: 38px;
+    }
+    .slot-name {
+      font-weight: bold;
+      color: #fff;
+    }
+    .slot-time {
+      color: var(--rpg-text-dim);
+      font-size: 11px;
     }
 
-    @media (max-width: 800px) {
-      .rpg-grid, .player-hud {
+    /* 技能树 */
+    .skill-tree {
+      display: grid;
+      grid-template-columns: repeat(2, 1fr);
+      gap: 8px;
+      margin-top: 10px;
+    }
+
+    .skill-node {
+      background: #191e2e;
+      border: 1px solid #3d496e;
+      padding: 8px;
+      font-size: 12px;
+      border-radius: 0;
+      text-align: center;
+      cursor: pointer;
+    }
+
+    .skill-node.learned {
+      border-color: var(--rpg-cyan);
+      color: #fff;
+      background: #112836;
+    }
+
+    /* 物品背包 */
+    .inventory-matrix {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 6px;
+      margin: 10px 0;
+    }
+
+    .inventory-matrix .inv-slot {
+      aspect-ratio: 1;
+      background: #0b0d14;
+      border: 2px solid #3d4766;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 22px;
+      cursor: pointer;
+      position: relative;
+    }
+
+    .inventory-matrix .inv-slot:hover {
+      border-color: var(--rpg-gold);
+      background: #252b40;
+    }
+
+    .inv-item-count {
+      position: absolute;
+      bottom: 2px;
+      right: 4px;
+      font-size: 10px;
+      color: var(--rpg-gold);
+      text-shadow: 1px 1px #000;
+    }
+
+    .inspect-log {
+      background: #000;
+      border: 1px dashed var(--rpg-gold);
+      padding: 10px;
+      font-size: 12px;
+      min-height: 52px;
+      color: var(--rpg-gold-soft);
+      line-height: 1.5;
+    }
+
+    /* 怪物图鉴 Bestiary */
+    .beast-list {
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+      margin-top: 10px;
+    }
+
+    .beast-item {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      background: #0f121d;
+      border: 1px solid #333d59;
+      padding: 6px 10px;
+      font-size: 12px;
+      cursor: pointer;
+    }
+    .beast-item:hover {
+      background: #1d2538;
+    }
+    .beast-icon {
+      font-size: 20px;
+    }
+
+    /* 酒馆 NPC 留言与微文案提示区 */
+    .tavern-section {
+      margin-top: 10px;
+      background: #17131b;
+      border: 3px dashed #d97706;
+      padding: 18px;
+      display: flex;
+      gap: 16px;
+      align-items: flex-start;
+    }
+
+    .npc-portrait {
+      font-size: 40px;
+      background: #000;
+      border: 2px solid var(--rpg-gold);
+      padding: 6px;
+      flex-shrink: 0;
+    }
+
+    .npc-dialogue h4 {
+      color: var(--rpg-gold);
+      font-size: 15px;
+      margin-bottom: 6px;
+    }
+
+    .npc-dialogue p {
+      font-size: 13.5px;
+      color: #fed7aa;
+      line-height: 1.6;
+    }
+
+    /* 交互吐司提示 */
+    .toast-msg {
+      position: fixed;
+      bottom: 24px;
+      left: 50%;
+      transform: translateX(-50%) translateY(100px);
+      background: #000;
+      color: var(--rpg-gold);
+      border: 3px solid var(--rpg-gold);
+      padding: 12px 24px;
+      font-size: 14px;
+      font-weight: bold;
+      box-shadow: 4px 4px 0 #000;
+      z-index: 10000;
+      opacity: 0;
+      transition: transform 0.2s cubic-bezier(0.18, 0.89, 0.32, 1.28), opacity 0.2s;
+      pointer-events: none;
+    }
+
+    .toast-msg.show {
+      transform: translateX(-50%) translateY(0);
+      opacity: 1;
+    }
+
+    @media (max-width: 860px) {
+      .rpg-layout {
         grid-template-columns: 1fr;
+      }
+      .hud-grid {
+        grid-template-columns: 1fr;
+        text-align: left;
       }
     }
   </style>
 </head>
 <body>
 
-  <div class="rpg-wrapper">
-    <!-- 玩家 HUD 状态栏 -->
-    <header class="pixel-box player-hud">
-      <div class="player-avatar">🧙‍♂️</div>
-      <div class="player-stats">
-        <div style="font-family:'Press Start 2P'; font-size:12px; color:var(--rpg-gold); margin-bottom:8px;">
-          HERO: PIXEL_MAGE [LV.99 ARCH-MAGE]
+  <div class="rpg-container">
+    <!-- 顶部 HUD 状态栏 -->
+    <header class="pixel-box pixel-box-gold hud-grid" aria-label="勇者状态面板">
+      <div class="cat-hero-avatar" aria-label="橘猫勇者头像">🐱</div>
+      
+      <div class="hud-hero-details">
+        <div class="hud-title-row">
+          <span class="pixel-header-badge">QUEST LOG</span>
+          <span class="hero-name">橘猫勇者 · 莫提斯 (Mortic)</span>
+          <span class="hero-class">[ 首席架构游侠 / 系统地牢勘探员 ]</span>
         </div>
-        <div class="bar-row">
-          <span>HP:</span>
-          <div class="bar-outer"><div class="bar-hp"></div></div>
-          <span>100/100</span>
-        </div>
-        <div class="bar-row">
-          <span>MP:</span>
-          <div class="bar-outer"><div class="bar-mp"></div></div>
-          <span>85/100</span>
+        <div class="bar-group">
+          <div class="bar-item">
+            <span style="color:var(--rpg-red);">HP:</span>
+            <div class="bar-track" title="血量 920/1000"><div class="bar-fill bar-fill-hp"></div></div>
+            <span>920/1000</span>
+          </div>
+          <div class="bar-item">
+            <span style="color:var(--rpg-cyan);">MP:</span>
+            <div class="bar-track" title="法力 780/1000"><div class="bar-fill bar-fill-mp"></div></div>
+            <span>780/1000</span>
+          </div>
+          <div class="bar-item">
+            <span style="color:var(--rpg-gold);">EXP:</span>
+            <div class="bar-track" title="经验值 64%"><div class="bar-fill bar-fill-exp"></div></div>
+            <span>64%</span>
+          </div>
         </div>
       </div>
-      <div style="font-size:12px; color:var(--rpg-green); text-align:right;">
-        🪙 金币: 9,999<br>
-        📍 当前区域: 算法地牢 4F
+
+      <div class="hud-quick-actions">
+        <button class="rpg-btn" onclick="triggerToast('📜 已装备回滚卷轴：随时准备一键撤销污染 Commit！')">
+          <span>📜</span> 装备回滚卷轴
+        </button>
+        <button class="rpg-btn" onclick="saveToSlot(1)">
+          <span>💾</span> 快速存档 (Slot 1)
+        </button>
       </div>
     </header>
 
-    <!-- 主体网格 -->
-    <div class="rpg-grid">
-      <!-- 左侧任务日志 (文章) -->
+    <!-- 交互提示条 -->
+    <div style="display:flex; justify-content:space-between; align-items:center; background:#121624; border:2px solid #2e3852; padding:8px 16px; font-size:13px;">
+      <span>⚔️ <b>任务更新：</b>先复现，再出剑！当前任务完成度：<b style="color:var(--rpg-gold);">83%</b></span>
+      <span style="color:var(--rpg-text-dim);">当前副本：高并发熔火核心 (Cluster-09)</span>
+    </div>
+
+    <!-- 主体双栏 -->
+    <div class="rpg-layout">
+      <!-- 左侧任务正文 -->
       <main>
-        <article class="pixel-box quest-card">
-          <div class="quest-tag">★ MAIN QUEST #01 ★</div>
-          <div style="margin: 10px 0 14px; border: 2px solid var(--rpg-gold); image-rendering: pixelated; overflow: hidden;">
-            <img src="assets/images/pixel_dungeon.jpg" alt="16位像素地牢王座大厅" style="width: 100%; height: 200px; object-fit: cover; display: block; image-rendering: pixelated;">
+        <!-- 主线任务 -->
+        <article class="pixel-box" style="border-top: 6px solid var(--rpg-red);">
+          <div class="pixel-header-badge" style="border-color:var(--rpg-red); color:var(--rpg-red);">★ MAIN QUEST ★ 主线任务</div>
+          <h2 style="font-size:22px; color:#fff; margin:8px 0 14px;">《封印高并发恶龙：分布式事务与熔断结界》</h2>
+          
+          <div class="quest-banner">
+            <div class="boss-icon" aria-hidden="true">🐉</div>
+            <div>
+              <div style="font-size:15px; font-weight:bold; color:#fff;">恶龙代号：Hydra-Concurrence [500,000 QPS 狂暴种]</div>
+              <div class="boss-stat-text">
+                出现区域：秒杀网关前哨站 ｜ 威胁等级：<b>Catastrophic (S 级)</b> ｜ 核心机制：分布式死锁与连接池耗尽
+              </div>
+            </div>
           </div>
-          <h2 class="quest-title">通关高并发恶龙：分布式事务与 Saga 模式副本攻略</h2>
-          <p class="quest-desc">
-            在微服务地牢深处，两阶段提交（2PC）的锁竞争怪物正在肆虐。勇者通过编排式 Saga 状态机实现了无锁异步补偿，成功将吞吐量提升至 50,000 QPS！
+
+          <h3 style="font-size:16px; color:var(--rpg-gold); margin-bottom:8px;">【任务简报】</h3>
+          <p style="margin-bottom:12px; font-size:14px;">
+            在零点大促敲响之际，沉睡于底层数据网关的「高并发恶龙」突然喷吐百万级并发火球。连接池被两阶段提交（2PC）的刚性锁完全封死，下游服务接连化为灰烬。橘猫勇者受命拔出架构重构之剑，下潜至集群最深处构筑结界。
           </p>
-          <div class="quest-reward">
-            🏆 通关奖励：经验值 +20,000 EXP · 掉落装备「架构之刃」
+
+          <h3 style="font-size:16px; color:var(--rpg-gold); margin:18px 0 8px;">【三阶段攻略】</h3>
+          <div class="boss-phase-steps">
+            <div class="phase-card">
+              <div class="phase-num">PHASE 1</div>
+              <h4>第一阶段：布设熔断结界</h4>
+              <p style="font-size:12.5px; color:var(--rpg-text-dim);">
+                在网关层施加自适应令牌桶（Token Bucket）与滑动窗口限流结界，把非核心商户查询果断降级，防止主干线程池被直接冲垮。
+              </p>
+            </div>
+            <div class="phase-card">
+              <div class="phase-num">PHASE 2</div>
+              <h4>第二阶段：切断锁竞争链条</h4>
+              <p style="font-size:12.5px; color:var(--rpg-text-dim);">
+                废弃沉重的 XA 强一致锁协议，改用编排式 <b>Saga 异步状态机</b>。各微服务仅本地落库，由补偿事件驱动逆向回滚，吞吐释放 800%。
+              </p>
+            </div>
+            <div class="phase-card">
+              <div class="phase-num">PHASE 3</div>
+              <h4>第三阶段：释放无锁环形阵</h4>
+              <p style="font-size:12.5px; color:var(--rpg-text-dim);">
+                在内存关键路径部署 Disruptor 环形缓冲区，依靠 CAS 乐观自旋与 CPU 缓存行填充（Padding），斩断伪共享（False Sharing）。
+              </p>
+            </div>
+          </div>
+
+          <div class="weakness-box">
+            <b style="color:var(--rpg-red);">🎯 Boss 弱点判定：</b>恶龙极度惧怕「幂等键校验」与「异步削峰队列」。当面对严格的唯一约束冲突时，其分裂攻击将完全失效。
+          </div>
+
+          <div class="postmortem-box">
+            <h4 style="font-size:14px; font-weight:bold; margin-bottom:6px; color:#6ee7b7;">📋 通关复盘 (Postmortem Report)</h4>
+            <ul style="padding-left:18px; margin:0; line-height:1.6;">
+              <li><b>根因定性：</b>未做热点行锁分段，单行库存争抢造成数据库连接队列堆积。</li>
+              <li><b>战损评估：</b>零掉单，P99 延迟由 4800ms 骤降至 18ms，节点 CPU 占用平稳回落至 45%。</li>
+              <li><b>遗留改进：</b>为后续所有核心流水线强制推行「最终一致性混沌演练」。</li>
+            </ul>
           </div>
         </article>
 
-        <article class="pixel-box quest-card">
-          <div class="quest-tag">★ SIDE QUEST #02 ★</div>
-          <h2 class="quest-title">解密古代禁咒：WebAssembly 在浏览器底层的即时演算</h2>
-          <p class="quest-desc">
-            探索将 C/Rust 原生模块编译为 WASM 字节码并在客户端执行的高阶技巧。将 3D 物理碰撞与音频实时合成的算力开销降至极限。
-          </p>
-          <div class="quest-reward">
-            🏆 通关奖励：魔法值 +50 MP · 获得成就「像素魔法师」
+        <!-- 3 个次级栏目：支线任务 -->
+        <section class="sub-quest-list" aria-label="支线任务列表">
+          <div class="sub-quest-card">
+            <div class="quest-header-meta">
+              <span class="quest-type-tag">★ SIDE QUEST #01</span>
+              <span class="quest-status">COMPLETED</span>
+            </div>
+            <h3>《找回丢失的缓存钥匙》</h3>
+            <p style="font-size:13.5px; color:var(--rpg-text-dim); margin-bottom:8px;">
+              地牢守门人将千万级 Redis 热点 Key 意外打散，遭遇「缓存击穿幽灵」。橘猫勇者布设互斥锁（Mutex Key）与布隆过滤器结界，成功拦截 99.9% 的空路由穿透。
+            </p>
+            <div style="font-size:12px; color:var(--rpg-gold);">
+              🏆 获得战利品：布隆过滤器之盾（误判率 &lt; 0.01%）
+            </div>
           </div>
-        </article>
 
-        <!-- 任务 3 -->
-        <article class="pixel-box quest-card">
-          <div class="quest-tag" style="background:#f38ba8; color:#111;">★ RAID QUEST #03 ★</div>
-          <h2 class="quest-title">封印死锁幽灵：多线程并发模型与无锁环形缓冲区</h2>
-          <p class="quest-desc">
-            在高频交易与游戏服务器架构中，锁竞争是吞噬 CPU 周期的大敌。勇者运用内存屏障（Memory Barrier）与 CAS 原子操作铸就了 Disrupter 级无锁队列！
-          </p>
-          <div class="quest-reward">
-            🏆 通关奖励：敏捷 +30 AGI · 获得装备「无锁之戒」
+          <div class="sub-quest-card">
+            <div class="quest-header-meta">
+              <span class="quest-type-tag">★ SIDE QUEST #02</span>
+              <span class="quest-status">COMPLETED</span>
+            </div>
+            <h3>《护送日志精灵穿越故障谷》</h3>
+            <p style="font-size:13.5px; color:var(--rpg-text-dim); margin-bottom:8px;">
+              海量 Trace 日志在跨机房专线突发丢包。勇者为 Fluent Bit 精灵注入背压反馈（Backpressure）机制，落地本地磁盘缓冲队列，零丢包完成千里漫游。
+            </p>
+            <div style="font-size:12px; color:var(--rpg-gold);">
+              🏆 获得战利品：链路追踪之眼（OpenTelemetry 认证信物）
+            </div>
           </div>
-        </article>
 
-        <!-- 任务 4 -->
-        <article class="pixel-box quest-card">
-          <div class="quest-tag" style="background:#a6e3a1; color:#111;">★ BOSS BATTLE #04 ★</div>
-          <h2 class="quest-title">屠灭内存泄漏巨兽：Rust 所有权与 RAII 结界</h2>
-          <p class="quest-desc">
-            悬垂指针与野指针怪物在地牢深处游荡。借由编译器生命周期推导（Borrow Checker）与零成本抽象结界，勇者在编译期彻底斩灭了内存安全隐患！
-          </p>
-          <div class="quest-reward">
-            🏆 通关奖励：防御力 +999 DEF · 习得终极技能「编译期证明」
+          <div class="sub-quest-card">
+            <div class="quest-header-meta">
+              <span class="quest-type-tag">★ SIDE QUEST #03</span>
+              <span class="quest-status">IN PROGRESS</span>
+            </div>
+            <h3>《修复被污染的存档点》</h3>
+            <p style="font-size:13.5px; color:var(--rpg-text-dim); margin-bottom:8px;">
+              由于未经验证的 Schema 热迁移，数据库从库存档出现裂隙。橘猫勇者正使用 Binlog 增量比对法配合 pt-table-sync 进行无损双向修补。
+            </p>
+            <div style="font-size:12px; color:var(--rpg-cyan);">
+              ⏳ 进行中：进度 72% ｜ 预计修复后恢复主从一致性
+            </div>
           </div>
-        </article>
+        </section>
+
+        <!-- 收尾：酒馆 NPC 留言 -->
+        <footer class="tavern-section" style="margin-top:24px;">
+          <div class="npc-portrait" aria-hidden="true">🧙‍♂️</div>
+          <div class="npc-dialogue">
+            <h4>酒馆老掌柜 · 迪亚波罗的箴言</h4>
+            <p>
+              “嗨，橘猫！别急着擦亮你那把架构之刃。每一场惨烈的故障都是地牢给你的慷慨馈赠。<br>
+              <b>真正的勇者不仅会拔剑斩杀恶龙，更会在篝火熄灭前写下一份详尽的系统复盘。</b> 喝下这杯麦酒，整理你的背包，明天还有新的混沌工程演练等着你！”
+            </p>
+            <div style="margin-top:8px; font-size:12px; color:var(--rpg-gold-soft);">
+              🍺 [获得状态：精力充沛 · 随时可以应付午夜 Pager]
+            </div>
+          </div>
+        </footer>
       </main>
 
-      <!-- 右侧装备背包 -->
-      <aside>
+      <!-- 右侧侧边栏：资料模块与背包交互 -->
+      <aside class="sidebar-section">
+        <!-- 存档槽管理 -->
         <div class="pixel-box">
-          <div style="font-family:'Press Start 2P'; font-size:11px; color:var(--rpg-gold); border-bottom:2px solid #fff; padding-bottom:8px;">
-            INVENTORY 背包
+          <div class="pixel-header-badge" style="margin-bottom:6px;">SAVE SLOTS 存档槽</div>
+          <div class="save-slots">
+            <div class="save-slot active" id="slot-1" onclick="selectSlot(1)">
+              <div class="slot-info">
+                <div class="slot-name">SLOT 01: 熔火核心大促前夕 [AUTO]</div>
+                <div class="slot-time" id="slot-time-1">2025-05-18 23:59:00 · 进度 83%</div>
+              </div>
+              <span>💾</span>
+            </div>
+            <div class="save-slot" id="slot-2" onclick="selectSlot(2)">
+              <div class="slot-info">
+                <div class="slot-name">SLOT 02: 数据库主从切换点</div>
+                <div class="slot-time" id="slot-time-2">2025-05-15 14:20:11 · 进度 54%</div>
+              </div>
+              <span>💾</span>
+            </div>
+            <div class="save-slot" id="slot-3" onclick="selectSlot(3)">
+              <div class="slot-info">
+                <div class="slot-name">SLOT 03: 架构重构初启</div>
+                <div class="slot-time" id="slot-time-3">2025-05-01 09:00:00 · 进度 12%</div>
+              </div>
+              <span>💾</span>
+            </div>
           </div>
-          <div class="inventory-grid">
-            <div class="item-slot" onclick="inspectItem('🗡️ 架构之刃: 物理攻击力+999，代码重构必定暴击！')">🗡️</div>
-            <div class="item-slot" onclick="inspectItem('🧪 冰美式药水: 饮用后消除困倦，恢复 50 MP。')">☕</div>
-            <div class="item-slot" onclick="inspectItem('📜 分布式卷轴: 记录了 CAP 定理与 Paxos 算法的核心真理。')">📜</div>
-            <div class="item-slot" onclick="inspectItem('💎 像素宝石: 散发着 8-bit 光芒的神秘矿石。')">💎</div>
-            <div class="item-slot" onclick="inspectItem('🛡️ 防火墙盾牌: 免疫 99% 的网络拒绝服务攻击。')">🛡️</div>
-            <div class="item-slot" onclick="inspectItem('🔮 记忆水晶: 保存所有的灵感与手记。')">🔮</div>
+          <button class="rpg-btn rpg-btn-sm" style="width:100%; margin-top:10px;" onclick="saveCurrentProgress()">
+            覆盖当前选定存档
+          </button>
+        </div>
+
+        <!-- 物品栏 Inventory -->
+        <div class="pixel-box">
+          <div class="pixel-header-badge" style="margin-bottom:6px;">INVENTORY 背包栏</div>
+          <div class="inventory-matrix" role="grid" aria-label="物品背包格">
+            <div class="inv-slot" onclick="inspectItem('🗡️ 架构之刃: 基础攻击+999，代码重构必定造成会心一击。')" aria-label="架构之刃">
+              🗡️<span class="inv-item-count">1</span>
+            </div>
+            <div class="inv-slot" onclick="inspectItem('☕ 冰美式药剂: 瞬间驱散困倦，恢复 50 点 MP 与 100% 精神集中。')" aria-label="冰美式">
+              ☕<span class="inv-item-count">99</span>
+            </div>
+            <div class="inv-slot" onclick="inspectItem('📜 回滚卷轴: 在不可逆崩溃发生时，可强制还原至上一个可信 Commit。')" aria-label="回滚卷轴">
+              📜<span class="inv-item-count">3</span>
+            </div>
+            <div class="inv-slot" onclick="inspectItem('🛡️ 熔断护盾: 自动阻隔 99% 的雪崩洪峰，保护核心集群不被冲垮。')" aria-label="熔断护盾">
+              🛡️<span class="inv-item-count">1</span>
+            </div>
+            <div class="inv-slot" onclick="inspectItem('🔮 链路水晶: OpenTelemetry 核心结晶，照亮每一道微服务调用的深谷。')" aria-label="链路水晶">
+              🔮<span class="inv-item-count">4</span>
+            </div>
+            <div class="inv-slot" onclick="inspectItem('🔑 缓存钥匙: 蕴含布隆过滤器魔力，能够精准定位丢失的 Redis 散列。')" aria-label="缓存钥匙">
+              🔑<span class="inv-item-count">2</span>
+            </div>
+            <div class="inv-slot" onclick="triggerBagFull()" aria-label="无用假设">
+              📦<span class="inv-item-count">MAX</span>
+            </div>
+            <div class="inv-slot" onclick="inspectItem('🐟 冻干小鱼干: 橘猫勇者的最爱，食用后移动速度 +20%，持续 30 分钟。')" aria-label="小鱼干">
+              🐟<span class="inv-item-count">12</span>
+            </div>
           </div>
-          <div class="item-tooltip" id="itemInfo">
-            💡 点击上方道具槽查看装备属性！
+
+          <div class="inspect-log" id="inspectLog">
+            💡 点击背包格道具查看属性说明，点击行囊可触发微文案交互。
+          </div>
+        </div>
+
+        <!-- 技能树 Skill Tree -->
+        <div class="pixel-box">
+          <div class="pixel-header-badge" style="margin-bottom:6px;">SKILL TREE 技能树</div>
+          <div class="skill-tree">
+            <div class="skill-node learned" onclick="triggerToast('✨ [Saga 编排术] 已激活：自动驱动分布式补偿流程！')">
+              ⚡ Saga 编排术
+            </div>
+            <div class="skill-node learned" onclick="triggerToast('✨ [CAS 自旋锁] 已激活：零互斥开销抢占环形缓冲区！')">
+              🌀 CAS 自旋锁
+            </div>
+            <div class="skill-node learned" onclick="triggerToast('✨ [分库分表阵] 已激活：Sharding 散列均衡分流！')">
+              🗄️ 分库分表阵
+            </div>
+            <div class="skill-node" onclick="triggerToast('🔒 [混沌工程结界] 需要 LV.50 且通关高并发恶龙后解锁！')">
+              🔒 混沌工程结界
+            </div>
+          </div>
+        </div>
+
+        <!-- 怪物图鉴 Bestiary -->
+        <div class="pixel-box">
+          <div class="pixel-header-badge" style="margin-bottom:6px;">BESTIARY 怪物图鉴</div>
+          <div class="beast-list">
+            <div class="beast-item" onclick="triggerToast('👾 内存泄漏巨兽：擅长常驻堆内存，惧怕 Valgrind 与 Rust 生命周期！')">
+              <span class="beast-icon">👾</span>
+              <div>
+                <div style="color:#fff; font-weight:bold;">内存泄漏巨兽</div>
+                <div style="color:var(--rpg-text-dim); font-size:11px;">弱点：RAII / 析构守护</div>
+              </div>
+            </div>
+            <div class="beast-item" onclick="triggerToast('👻 幽灵死锁：常现身于嵌套锁争抢，惧怕无锁环形队列与超时回退！')">
+              <span class="beast-icon">👻</span>
+              <div>
+                <div style="color:#fff; font-weight:bold;">死锁幽灵</div>
+                <div style="color:var(--rpg-text-dim); font-size:11px;">弱点：TryLock / 资源排序</div>
+              </div>
+            </div>
+            <div class="beast-item" onclick="triggerToast('🌊 雪崩雪怪：会连锁击垮所有下游，惧怕 Sentinel 熔断与自适应降级！')">
+              <span class="beast-icon">👹</span>
+              <div>
+                <div style="color:#fff; font-weight:bold;">雪崩雪怪</div>
+                <div style="color:var(--rpg-text-dim); font-size:11px;">弱点：滑动窗口熔断</div>
+              </div>
+            </div>
           </div>
         </div>
       </aside>
     </div>
   </div>
 
-  <style>
-    .pixel-exp-fly {
-      position: absolute;
-      font-family: 'Press Start 2P', monospace;
-      font-size: 13px;
-      color: #f9e2af;
-      text-shadow: 2px 2px #000;
-      pointer-events: none;
-      z-index: 9999;
-      animation: expFlyUp 0.8s ease-out forwards;
-    }
-    @keyframes expFlyUp {
-      0% { transform: translateY(0) scale(1); opacity: 1; }
-      100% { transform: translateY(-40px) scale(1.2); opacity: 0; }
-    }
-  </style>
+  <!-- 吐司通知条 -->
+  <div id="pixelToast" class="toast-msg" role="status" aria-live="polite"></div>
 
   <script src="assets/nav-bar.js"></script>
   <script>
+    let currentSlot = 1;
+
+    function triggerToast(msg) {
+      const toast = document.getElementById('pixelToast');
+      toast.textContent = msg;
+      toast.classList.add('show');
+      if (window.toastTimeout) clearTimeout(window.toastTimeout);
+      window.toastTimeout = setTimeout(() => {
+        toast.classList.remove('show');
+      }, 2600);
+    }
+
     function inspectItem(text) {
-      document.getElementById('itemInfo').textContent = text;
-      showExpText(window.event ? window.event.pageX : window.innerWidth / 2, window.event ? window.event.pageY : window.innerHeight / 2, "+ITEM ACQUIRED!");
+      document.getElementById('inspectLog').textContent = text;
+      triggerToast("🔍 物品检视已更新！");
     }
 
-    function showExpText(x, y, text) {
-      const el = document.createElement('div');
-      el.className = 'pixel-exp-fly';
-      el.textContent = text;
-      el.style.left = `${x - 20}px`;
-      el.style.top = `${y - 20}px`;
-      document.body.appendChild(el);
-      setTimeout(() => el.remove(), 800);
+    function triggerBagFull() {
+      inspectItem("⚠️ 警告：背包已满，删掉一个无用假设以腾出认知带宽！");
+      triggerToast("🎒 背包已满，删掉一个无用假设！");
     }
 
-    window.addEventListener('click', (e) => {
-      if (e.target.closest('.blog-switcher-trigger') || e.target.closest('.blog-switcher-modal') || e.target.closest('.item-slot')) return;
-      const rewards = ['+100 EXP', '+50 GOLD', 'CRITICAL HIT!', 'LEVEL UP? 🎮', '+20 MP'];
-      const text = rewards[Math.floor(Math.random() * rewards.length)];
-      showExpText(e.pageX, e.pageY, text);
-    });
+    function selectSlot(num) {
+      currentSlot = num;
+      for (let i = 1; i <= 3; i++) {
+        const slotEl = document.getElementById('slot-' + i);
+        if (i === num) {
+          slotEl.classList.add('active');
+        } else {
+          slotEl.classList.remove('active');
+        }
+      }
+      triggerToast(`📁 已切换至存档槽位 [Slot 0${num}]`);
+    }
+
+    function saveCurrentProgress() {
+      const now = new Date();
+      const timeStr = `${now.getFullYear()}-${String(now.getMonth()+1).padStart(2,'0')}-${String(now.getDate()).padStart(2,'0')} ${String(now.getHours()).padStart(2,'0')}:${String(now.getMinutes()).padStart(2,'0')}:${String(now.getSeconds()).padStart(2,'0')}`;
+      const timeEl = document.getElementById(`slot-time-${currentSlot}`);
+      if (timeEl) {
+        timeEl.textContent = `${timeStr} · 进度 83% (手动)`;
+      }
+      triggerToast(`💾 存档成功！Slot 0${currentSlot} 已同步写入世界线！`);
+    }
+
+    function saveToSlot(num) {
+      selectSlot(num);
+      saveCurrentProgress();
+    }
   </script>
 </body>
 </html>

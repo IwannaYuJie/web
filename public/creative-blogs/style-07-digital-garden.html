@@ -3,24 +3,33 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>我的数字花园 🌱 — 07 双向链接知识图谱风</title>
+  <title>橘猫的数字花园 / 公开生长中的笔记 — 07 知识图谱与数字花园</title>
   <link rel="stylesheet" href="assets/common.css">
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;500;700&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Fira+Code:wght@400;500;600&family=Plus+Jakarta+Sans:wght@400;500;600;700;800&family=Noto+Serif+SC:wght@400;600;700;900&display=swap" rel="stylesheet">
   <style>
     :root {
-      --garden-bg: #14161f;
-      --garden-sidebar: #10121a;
-      --garden-card: #1c1f2b;
-      --garden-border: #2a2e40;
-      --garden-text: #e2e8f0;
-      --garden-muted: #8492a6;
-      --garden-accent: #7c3aed;
-      --garden-link: #a78bfa;
-      --garden-green: #10b981;
-      --font-garden: "Inter", -apple-system, sans-serif;
-      --font-mono: "JetBrains Mono", monospace;
+      --g-soil: #0e1217;
+      --g-surface: #141a23;
+      --g-elevated: #1a222e;
+      --g-card: #202b3b;
+      --g-border: #2c3a4f;
+      --g-border-subtle: #1e2837;
+      
+      --g-seed: #f59e0b;
+      --g-budding: #06b6d4;
+      --g-evergreen: #10b981;
+      --g-link: #38bdf8;
+      --g-accent: #8b5cf6;
+      
+      --g-text-main: #f1f5f9;
+      --g-text-sub: #94a3b8;
+      --g-text-faint: #64748b;
+      
+      --font-body: "Plus Jakarta Sans", -apple-system, sans-serif;
+      --font-serif: "Noto Serif SC", serif;
+      --font-mono: "Fira Code", monospace;
     }
 
     * {
@@ -30,474 +39,1230 @@
     }
 
     body {
-      background-color: var(--garden-bg);
-      color: var(--garden-text);
-      font-family: var(--font-garden);
-      height: 100vh;
+      background-color: var(--g-soil);
+      color: var(--g-text-main);
+      font-family: var(--font-body);
+      min-height: 100vh;
       display: flex;
       flex-direction: column;
-      overflow: hidden;
+      overflow-x: hidden;
+      line-height: 1.7;
     }
 
-    /* 顶部顶栏 */
-    .garden-header {
-      height: 48px;
-      background: var(--garden-sidebar);
-      border-bottom: 1px solid var(--garden-border);
+    /* 顶部花园气象仪表板与标题 */
+    .garden-topbar {
+      background: rgba(14, 18, 23, 0.85);
+      backdrop-filter: blur(12px);
+      border-bottom: 1px solid var(--g-border);
+      position: sticky;
+      top: 0;
+      z-index: 50;
+      padding: 10px 24px;
       display: flex;
       align-items: center;
       justify-content: space-between;
-      padding: 0 20px;
-      font-size: 13px;
-      flex-shrink: 0;
+      gap: 16px;
     }
 
-    .garden-brand {
+    .garden-brand-badge {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+    }
+
+    .garden-icon-plant {
+      width: 36px;
+      height: 36px;
+      border-radius: 10px;
+      background: linear-gradient(135deg, rgba(16, 185, 129, 0.2), rgba(6, 182, 212, 0.2));
+      border: 1px solid rgba(16, 185, 129, 0.4);
+      display: grid;
+      place-items: center;
+      font-size: 18px;
+    }
+
+    .garden-titles h1 {
+      font-size: 15px;
       font-weight: 700;
+      letter-spacing: -0.2px;
+      color: #fff;
       display: flex;
       align-items: center;
       gap: 8px;
-      color: #fff;
     }
 
-    .vault-status {
+    .garden-titles p {
+      font-size: 11px;
+      color: var(--g-text-faint);
+      font-family: var(--font-mono);
+    }
+
+    .growth-filters {
       display: flex;
       align-items: center;
-      gap: 16px;
-      color: var(--garden-muted);
-    }
-    .vault-pill {
-      background: rgba(124, 58, 237, 0.2);
-      border: 1px solid rgba(124, 58, 237, 0.4);
-      color: var(--garden-link);
-      padding: 2px 8px;
-      border-radius: 4px;
-      font-size: 11px;
-      font-weight: 600;
+      gap: 8px;
     }
 
-    /* 三栏布局 */
-    .garden-main-layout {
+    .stage-pill {
+      font-size: 11px;
+      font-family: var(--font-mono);
+      padding: 4px 10px;
+      border-radius: 999px;
+      border: 1px solid transparent;
+      display: inline-flex;
+      align-items: center;
+      gap: 5px;
+      cursor: default;
+    }
+
+    .stage-seed { background: rgba(245, 158, 11, 0.12); color: #fbbf24; border-color: rgba(245, 158, 11, 0.3); }
+    .stage-budding { background: rgba(6, 182, 212, 0.12); color: #38bdf8; border-color: rgba(6, 182, 212, 0.3); }
+    .stage-evergreen { background: rgba(16, 185, 129, 0.12); color: #34d399; border-color: rgba(16, 185, 129, 0.3); }
+
+    /* 主网格布局：侧栏目录/图谱 + 主叙事与次级文章 + 资料元数据抽屉 */
+    .garden-container {
       flex: 1;
+      max-width: 1560px;
+      margin: 0 auto;
+      width: 100%;
       display: grid;
-      grid-template-columns: 260px 1fr 280px;
-      overflow: hidden;
+      grid-template-columns: 280px 1fr 340px;
+      min-height: calc(100vh - 60px);
     }
 
-    /* 左侧文件树 */
-    .garden-nav-tree {
-      background: var(--garden-sidebar);
-      border-right: 1px solid var(--garden-border);
-      padding: 16px;
+    /* 左侧边栏：土壤根系与植物目录 */
+    .garden-sidebar {
+      border-right: 1px solid var(--g-border);
+      background: var(--g-surface);
+      padding: 24px 16px;
+      display: flex;
+      flex-direction: column;
+      gap: 24px;
       overflow-y: auto;
-      font-size: 13px;
+      max-height: calc(100vh - 60px);
     }
 
-    .tree-section-title {
+    .panel-block-title {
       font-size: 11px;
-      font-weight: 700;
-      color: var(--garden-muted);
+      font-family: var(--font-mono);
       text-transform: uppercase;
       letter-spacing: 1px;
-      margin-bottom: 10px;
-      margin-top: 16px;
+      color: var(--g-text-faint);
+      margin-bottom: 12px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
     }
-    .tree-section-title:first-child { margin-top: 0; }
 
-    .tree-item {
-      padding: 6px 10px;
-      border-radius: 6px;
-      color: var(--garden-muted);
+    .plant-item-tree {
+      display: flex;
+      flex-direction: column;
+      gap: 4px;
+    }
+
+    .tree-node-btn {
+      width: 100%;
+      text-align: left;
+      background: transparent;
+      border: 1px solid transparent;
+      border-radius: 8px;
+      padding: 8px 10px;
+      font-size: 13px;
+      color: var(--g-text-sub);
       cursor: pointer;
       display: flex;
       align-items: center;
       gap: 8px;
-      margin-bottom: 2px;
-      transition: all 0.15s;
+      transition: all 0.2s ease;
+      text-decoration: none;
+      font-family: inherit;
     }
-    .tree-item:hover {
-      background: rgba(255, 255, 255, 0.05);
-      color: var(--garden-text);
+
+    .tree-node-btn:hover {
+      background: var(--g-elevated);
+      color: var(--g-text-main);
+      border-color: var(--g-border);
     }
-    .tree-item.active {
-      background: rgba(124, 58, 237, 0.25);
+
+    .tree-node-btn.active {
+      background: rgba(56, 189, 248, 0.1);
+      border-color: rgba(56, 189, 248, 0.4);
       color: #fff;
       font-weight: 600;
     }
 
-    /* 中间笔记核心内容区 */
-    .garden-content-area {
-      padding: 36px 48px;
-      overflow-y: auto;
-      line-height: 1.8;
-      max-width: 860px;
-      margin: 0 auto;
+    .growth-dot {
+      width: 8px;
+      height: 8px;
+      border-radius: 50%;
+      flex-shrink: 0;
+    }
+    .dot-seed { background: var(--g-seed); box-shadow: 0 0 8px rgba(245,158,11,0.5); }
+    .dot-budding { background: var(--g-budding); box-shadow: 0 0 8px rgba(6,182,212,0.5); }
+    .dot-evergreen { background: var(--g-evergreen); box-shadow: 0 0 8px rgba(16,185,129,0.5); }
+
+    /* 迷你力导向知识图谱预览 */
+    .mini-graph-box {
+      background: #090c10;
+      border: 1px solid var(--g-border);
+      border-radius: 12px;
+      padding: 12px;
+      position: relative;
+      overflow: hidden;
+    }
+
+    .mini-graph-header {
+      font-size: 11px;
+      font-family: var(--font-mono);
+      color: var(--g-text-sub);
+      display: flex;
+      justify-content: space-between;
+      margin-bottom: 8px;
+    }
+
+    #graphCanvas {
       width: 100%;
+      height: 180px;
+      border-radius: 8px;
+      background: radial-gradient(circle at center, #161e2a 0%, #090c10 100%);
+      display: block;
+      cursor: crosshair;
     }
 
-    .note-meta-header {
-      margin-bottom: 28px;
-      padding-bottom: 20px;
-      border-bottom: 1px solid var(--garden-border);
+    .graph-hint {
+      margin-top: 6px;
+      font-size: 10.5px;
+      color: var(--g-text-faint);
+      text-align: center;
+      font-family: var(--font-mono);
     }
 
-    .note-title {
+    /* 中间主体阅读流 */
+    .garden-main-scroll {
+      padding: 40px 48px 80px;
+      overflow-y: auto;
+      max-height: calc(100vh - 60px);
+      background: var(--g-soil);
+    }
+
+    .article-wrap {
+      max-width: 780px;
+      margin: 0 auto;
+    }
+
+    /* 刊物头部徽章与元数据 */
+    .note-status-hero {
+      background: linear-gradient(180deg, var(--g-surface) 0%, rgba(20, 26, 35, 0.4) 100%);
+      border: 1px solid var(--g-border);
+      border-radius: 16px;
+      padding: 24px 28px;
+      margin-bottom: 36px;
+      box-shadow: 0 10px 30px rgba(0,0,0,0.25);
+    }
+
+    .note-status-hero .meta-ribbon {
+      display: flex;
+      flex-wrap: wrap;
+      align-items: center;
+      gap: 12px;
+      font-size: 12px;
+      color: var(--g-text-faint);
+      margin-bottom: 14px;
+      font-family: var(--font-mono);
+    }
+
+    .hero-title {
       font-size: 32px;
       font-weight: 800;
-      color: #fff;
+      color: #ffffff;
+      line-height: 1.3;
       margin-bottom: 12px;
       letter-spacing: -0.5px;
     }
 
-    .note-tags-row {
-      display: flex;
-      gap: 8px;
-      font-size: 12px;
-      color: var(--garden-muted);
+    .hero-subtitle {
+      font-size: 15px;
+      color: var(--g-text-sub);
+      line-height: 1.6;
     }
-    .note-tag {
-      color: var(--garden-link);
-      background: rgba(167, 139, 250, 0.1);
-      padding: 2px 8px;
+
+    /* 双向链接与知识泡泡交互 */
+    .wiki-node {
+      display: inline-flex;
+      align-items: center;
+      gap: 4px;
+      color: #38bdf8;
+      background: rgba(56, 189, 248, 0.1);
+      border: 1px solid rgba(56, 189, 248, 0.25);
+      border-radius: 6px;
+      padding: 0 7px;
+      font-weight: 600;
+      font-size: 0.95em;
+      cursor: pointer;
+      text-decoration: none;
+      transition: all 0.2s ease;
+      vertical-align: baseline;
+    }
+
+    .wiki-node:hover {
+      background: rgba(56, 189, 248, 0.22);
+      border-color: #38bdf8;
+      box-shadow: 0 0 12px rgba(56, 189, 248, 0.3);
+      color: #fff;
+    }
+
+    .wiki-node::before {
+      content: "[";
+      opacity: 0.5;
+    }
+    .wiki-node::after {
+      content: "]";
+      opacity: 0.5;
+    }
+
+    /* 4 个主叙事可互动锚点节点卡片 */
+    .agent-topology-grid {
+      display: grid;
+      grid-template-columns: repeat(2, 1fr);
+      gap: 16px;
+      margin: 28px 0;
+    }
+
+    .topo-card {
+      background: var(--g-surface);
+      border: 1px solid var(--g-border);
+      border-radius: 12px;
+      padding: 16px 18px;
+      transition: all 0.25s ease;
+      cursor: pointer;
+      position: relative;
+      overflow: hidden;
+    }
+
+    .topo-card::before {
+      content: "";
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 4px;
+      height: 100%;
+      background: var(--g-accent);
+      opacity: 0;
+      transition: opacity 0.2s;
+    }
+
+    .topo-card:hover {
+      background: var(--g-elevated);
+      border-color: rgba(139, 92, 246, 0.5);
+      transform: translateY(-2px);
+    }
+
+    .topo-card.active-node {
+      border-color: var(--g-accent);
+      background: rgba(139, 92, 246, 0.08);
+    }
+
+    .topo-card.active-node::before {
+      opacity: 1;
+    }
+
+    .topo-head {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      margin-bottom: 8px;
+    }
+
+    .topo-name {
+      font-weight: 700;
+      font-size: 15px;
+      color: #fff;
+      display: flex;
+      align-items: center;
+      gap: 6px;
+    }
+
+    .topo-status {
+      font-size: 10px;
+      font-family: var(--font-mono);
+      color: var(--g-text-faint);
+      border: 1px solid var(--g-border);
+      padding: 2px 6px;
       border-radius: 4px;
     }
 
-    /* 双向链接与悬浮预览 */
-    .wiki-link {
-      color: var(--garden-link);
-      background: rgba(167, 139, 250, 0.12);
-      border-bottom: 1px dashed var(--garden-link);
-      padding: 0 4px;
-      border-radius: 3px;
-      text-decoration: none;
-      cursor: pointer;
-      position: relative;
-    }
-    .wiki-link:hover {
-      background: rgba(167, 139, 250, 0.25);
+    .topo-desc {
+      font-size: 13px;
+      color: var(--g-text-sub);
+      line-height: 1.5;
     }
 
-    /* Callout 引用框 */
-    .garden-callout {
-      background: rgba(124, 58, 237, 0.08);
-      border-left: 4px solid var(--garden-accent);
-      padding: 16px 20px;
+    /* 正文排版 */
+    .prose-section {
+      font-family: var(--font-serif);
+      font-size: 16px;
+      color: #cbd5e1;
+      margin-bottom: 32px;
+    }
+
+    .prose-section p {
+      margin-bottom: 18px;
+      text-align: justify;
+    }
+
+    .prose-section strong {
+      color: #fff;
+      font-weight: 700;
+      font-family: var(--font-body);
+    }
+
+    .callout-seed {
+      background: rgba(245, 158, 11, 0.08);
+      border-left: 3px solid var(--g-seed);
       border-radius: 0 8px 8px 0;
-      margin: 24px 0;
+      padding: 14px 18px;
+      margin: 20px 0;
       font-size: 14px;
+      font-family: var(--font-body);
+      color: #fed7aa;
     }
-    .garden-callout.tip {
-      background: rgba(16, 185, 129, 0.08);
-      border-left-color: var(--garden-green);
+
+    .callout-seed strong {
+      color: #fbbf24;
     }
-    .callout-title {
+
+    /* 次级专栏：三株侧枝文章 */
+    .secondary-branches {
+      margin-top: 48px;
+      padding-top: 36px;
+      border-top: 1px solid var(--g-border);
+    }
+
+    .branches-header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      margin-bottom: 20px;
+    }
+
+    .branches-header h2 {
+      font-size: 18px;
+      font-weight: 800;
+      color: #fff;
+      letter-spacing: -0.3px;
+    }
+
+    .branch-card {
+      background: var(--g-surface);
+      border: 1px solid var(--g-border);
+      border-radius: 12px;
+      padding: 20px 24px;
+      margin-bottom: 16px;
+      transition: all 0.2s ease;
+    }
+
+    .branch-card:hover {
+      border-color: rgba(56, 189, 248, 0.4);
+      background: var(--g-elevated);
+    }
+
+    .branch-meta {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      font-size: 11px;
+      font-family: var(--font-mono);
+      color: var(--g-text-faint);
+      margin-bottom: 8px;
+    }
+
+    .branch-title {
+      font-size: 16px;
+      font-weight: 700;
+      color: #fff;
+      margin-bottom: 8px;
+      cursor: pointer;
+    }
+
+    .branch-content {
+      font-size: 13.5px;
+      color: var(--g-text-sub);
+      line-height: 1.6;
+    }
+
+    /* 互动区与微文案按扭 */
+    .garden-micro-interactive {
+      margin: 28px 0;
+      display: flex;
+      flex-wrap: wrap;
+      gap: 10px;
+      padding: 16px;
+      border-radius: 12px;
+      background: rgba(255, 255, 255, 0.02);
+      border: 1px dashed var(--g-border);
+    }
+
+    .interactive-badge-btn {
+      background: var(--g-elevated);
+      border: 1px solid var(--g-border);
+      color: var(--g-text-sub);
+      padding: 6px 14px;
+      border-radius: 999px;
+      font-size: 12px;
+      cursor: pointer;
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      transition: all 0.2s;
+      font-family: var(--font-body);
+    }
+
+    .interactive-badge-btn:hover {
+      background: var(--g-card);
+      color: #38bdf8;
+      border-color: #38bdf8;
+      transform: translateY(-1px);
+    }
+
+    /* 园丁日志收尾区 */
+    .gardener-logbook {
+      margin-top: 48px;
+      background: linear-gradient(180deg, #161b24 0%, #10151d 100%);
+      border: 1px solid rgba(16, 185, 129, 0.3);
+      border-radius: 14px;
+      padding: 24px;
+      position: relative;
+    }
+
+    .gardener-logbook::before {
+      content: "GARDENER'S LOG // 修剪记录";
+      position: absolute;
+      top: -10px;
+      left: 20px;
+      background: var(--g-soil);
+      padding: 0 10px;
+      font-size: 10.5px;
+      font-family: var(--font-mono);
+      color: var(--g-evergreen);
+      font-weight: 700;
+      letter-spacing: 1px;
+    }
+
+    .logbook-grid {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 16px;
+      margin-top: 10px;
+    }
+
+    .log-item {
+      background: rgba(255, 255, 255, 0.02);
+      border: 1px solid var(--g-border-subtle);
+      padding: 12px 14px;
+      border-radius: 8px;
+    }
+
+    .log-item-tag {
+      font-size: 11px;
+      font-family: var(--font-mono);
       font-weight: 700;
       margin-bottom: 6px;
       display: flex;
       align-items: center;
       gap: 6px;
     }
+    .log-tag-prune { color: #f87171; }
+    .log-tag-transplant { color: #38bdf8; }
+    .log-tag-sprout { color: #34d399; }
 
-    /* 右侧：交互式关系图谱与反向链接 */
-    .garden-right-panel {
-      background: var(--garden-sidebar);
-      border-left: 1px solid var(--garden-border);
+    .log-item p {
+      font-size: 12px;
+      color: var(--g-text-sub);
+      line-height: 1.5;
+    }
+
+    /* 右侧面板：资料模块、反向链接、修改记录 */
+    .garden-inspector {
+      background: var(--g-surface);
+      border-left: 1px solid var(--g-border);
+      padding: 24px 20px;
       display: flex;
       flex-direction: column;
-      overflow: hidden;
+      gap: 24px;
+      overflow-y: auto;
+      max-height: calc(100vh - 60px);
     }
 
-    .graph-header {
-      padding: 12px 16px;
-      font-size: 12px;
-      font-weight: 700;
-      color: var(--garden-muted);
-      border-bottom: 1px solid var(--garden-border);
+    .inspector-card {
+      background: var(--g-elevated);
+      border: 1px solid var(--g-border);
+      border-radius: 12px;
+      padding: 16px;
+    }
+
+    .maturity-meter {
+      margin-top: 10px;
+    }
+
+    .meter-bar {
+      height: 6px;
+      width: 100%;
+      background: #090c10;
+      border-radius: 3px;
+      overflow: hidden;
+      display: flex;
+      margin: 8px 0;
+    }
+
+    .meter-fill {
+      height: 100%;
+      transition: width 0.4s ease;
+    }
+
+    .meter-stats {
       display: flex;
       justify-content: space-between;
+      font-size: 11px;
+      font-family: var(--font-mono);
+      color: var(--g-text-faint);
     }
 
-    /* Canvas 图谱容器 */
-    .graph-canvas-container {
-      height: 240px;
-      position: relative;
-      background: #0d0f15;
-      border-bottom: 1px solid var(--garden-border);
-    }
-    #graphCanvas {
-      width: 100%;
-      height: 100%;
-    }
-
-    .backlinks-section {
-      flex: 1;
-      padding: 16px;
-      overflow-y: auto;
-    }
-    .backlink-item {
-      background: var(--garden-card);
-      border: 1px solid var(--garden-border);
-      border-radius: 6px;
+    /* 反向链接列表 */
+    .backlink-item-row {
       padding: 10px;
+      border-radius: 8px;
+      background: rgba(255, 255, 255, 0.02);
+      border: 1px solid var(--g-border-subtle);
       margin-bottom: 8px;
       font-size: 12px;
       cursor: pointer;
       transition: all 0.2s;
     }
-    .backlink-item:hover {
-      border-color: var(--garden-link);
+
+    .backlink-item-row:hover {
+      border-color: #38bdf8;
+      background: rgba(56, 189, 248, 0.05);
     }
+
     .backlink-title {
       font-weight: 700;
       color: #fff;
-      margin-bottom: 4px;
-    }
-    .backlink-snippet {
-      color: var(--garden-muted);
-      font-size: 11px;
+      margin-bottom: 3px;
+      display: flex;
+      align-items: center;
+      gap: 6px;
     }
 
-    @media (max-width: 960px) {
-      .garden-main-layout {
-        grid-template-columns: 1fr;
+    .backlink-snippet {
+      color: var(--g-text-faint);
+      font-size: 11px;
+      line-height: 1.4;
+    }
+
+    .concept-tags-cloud {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 6px;
+      margin-top: 8px;
+    }
+
+    .concept-tag {
+      font-size: 11px;
+      font-family: var(--font-mono);
+      background: var(--g-soil);
+      border: 1px solid var(--g-border);
+      color: var(--g-text-sub);
+      padding: 3px 8px;
+      border-radius: 4px;
+      cursor: pointer;
+    }
+
+    .concept-tag:hover {
+      color: #fff;
+      border-color: var(--g-accent);
+    }
+
+    /* 动态弹出的悬浮图谱节点详情 (Modal / Toast) */
+    .node-preview-toast {
+      position: fixed;
+      bottom: 24px;
+      right: 24px;
+      background: #1e293b;
+      border: 1px solid #38bdf8;
+      border-radius: 12px;
+      padding: 14px 18px;
+      max-width: 320px;
+      box-shadow: 0 12px 30px rgba(0, 0, 0, 0.5);
+      z-index: 99;
+      transform: translateY(100px);
+      opacity: 0;
+      transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+      pointer-events: none;
+    }
+
+    .node-preview-toast.show {
+      transform: translateY(0);
+      opacity: 1;
+      pointer-events: auto;
+    }
+
+    /* 响应式调整 */
+    @media (max-width: 1200px) {
+      .garden-container {
+        grid-template-columns: 240px 1fr;
       }
-      .garden-nav-tree, .garden-right-panel {
+      .garden-inspector {
         display: none;
       }
-      .garden-content-area {
-        padding: 20px;
+    }
+
+    @media (max-width: 860px) {
+      .garden-container {
+        grid-template-columns: 1fr;
+      }
+      .garden-sidebar {
+        display: none;
+      }
+      .garden-main-scroll {
+        padding: 24px 16px 60px;
+      }
+      .agent-topology-grid, .logbook-grid {
+        grid-template-columns: 1fr;
+      }
+      .hero-title {
+        font-size: 24px;
+      }
+    }
+
+    @media (prefers-reduced-motion: reduce) {
+      *, ::before, ::after {
+        animation: none !important;
+        transition: none !important;
       }
     }
   </style>
 </head>
 <body>
 
-  <!-- 顶部状态栏 -->
-  <header class="garden-header">
-    <div class="garden-brand">
-      <span>🌱</span>
-      <span>DIGITAL GARDEN // 双向链接知识花园</span>
+  <!-- 顶部花园气象台 -->
+  <header class="garden-topbar">
+    <div class="garden-brand-badge">
+      <div class="garden-icon-plant" aria-hidden="true">🌱</div>
+      <div class="garden-titles">
+        <h1>橘猫的数字花园 <span style="font-size:12px; font-weight:400; color:var(--g-text-faint);">/ 公开生长中的笔记</span></h1>
+        <p>GARDEN VAULT // LIVE BIDIRECTIONAL GRAPH ACTIVE</p>
+      </div>
     </div>
-    <div class="vault-status">
-      <span>Vault: <strong>Main Brain (84 Notes)</strong></span>
-      <span class="vault-pill">Live Graph Active</span>
+
+    <!-- 生长状态过滤指示器 -->
+    <div class="growth-filters" role="status" aria-label="笔记成熟度状态">
+      <span class="stage-pill stage-seed" title="粗粝想法，待验证">🌱 种子笔记 (14)</span>
+      <span class="stage-pill stage-budding" title="已有网状连接与案例">🌿 培育中 (28)</span>
+      <span class="stage-pill stage-evergreen" title="高内聚、原子化、长久有效">🌲 常青笔记 (42)</span>
     </div>
   </header>
 
-  <!-- 三栏主体 -->
-  <div class="garden-main-layout">
-    <!-- 左侧：目录树 -->
-    <aside class="garden-nav-tree">
-      <div class="tree-section-title">📁 核心知识图谱</div>
-      <div class="tree-item active" onclick="loadNote('agents')"><span>📄</span> 自主智能体拓扑.md</div>
-      <div class="tree-item" onclick="loadNote('zettel')"><span>📄</span> 卡片盒笔记与心智模型.md</div>
-      <div class="tree-item" onclick="loadNote('rust')"><span>📄</span> Rust 零开销抽象实践.md</div>
+  <!-- 主布局三栏体系 -->
+  <div class="garden-container">
 
-      <div class="tree-section-title">📁 架构随笔 (ESSAYS)</div>
-      <div class="tree-item" onclick="loadNote('distributed')"><span>📄</span> 分布式系统的确定性边界.md</div>
-      <div class="tree-item" onclick="loadNote('type')"><span>📄</span> 数字排版与信息几何学.md</div>
-
-      <div class="tree-section-title">🏷️ 热门标签云</div>
-      <div style="display: flex; gap: 6px; flex-wrap: wrap; margin-top: 8px;">
-        <span class="note-tag">#Agent</span>
-        <span class="note-tag">#Obsidian</span>
-        <span class="note-tag">#Rust</span>
-        <span class="note-tag">#Typography</span>
+    <!-- 左侧：土壤根系、文件植物树与实时力导向图 -->
+    <aside class="garden-sidebar" aria-label="花园植物索引">
+      
+      <!-- 迷你拓扑图谱 -->
+      <div class="mini-graph-box">
+        <div class="mini-graph-header">
+          <span>🌿 本地拓扑投影</span>
+          <span style="color:var(--g-evergreen);">● 5 活跃节点</span>
+        </div>
+        <canvas id="graphCanvas" aria-label="节点关系力导向图"></canvas>
+        <div class="graph-hint">可拖拽节点探索局部引力</div>
       </div>
-    </aside>
 
-    <!-- 中间：笔记正文 -->
-    <main class="garden-content-area" id="noteBody">
-      <div class="note-meta-header">
-        <h1 class="note-title">自主智能体系统的协同协议与网状拓扑演进</h1>
-        <div class="note-tags-row">
-          <span>📅 最后更新: 2026-08-22</span>
-          <span>•</span>
-          <span class="note-tag">#AI_Agents</span>
-          <span class="note-tag">#Distributed_System</span>
-          <span>• 8 分钟阅读</span>
+      <!-- 笔记分类树 -->
+      <div>
+        <div class="panel-block-title">
+          <span>🌲 常青核心节点</span>
+          <span>(3)</span>
+        </div>
+        <div class="plant-item-tree">
+          <button class="tree-node-btn active" onclick="highlightSection('main-protocol')">
+            <span class="growth-dot dot-evergreen"></span>
+            <span>自治智能体协作协议.md</span>
+          </button>
+          <button class="tree-node-btn" onclick="triggerToast('双向链接拓扑', '探讨反向索引如何消解深层目录的认知损耗。')">
+            <span class="growth-dot dot-evergreen"></span>
+            <span>双向链接拓扑论.md</span>
+          </button>
+          <button class="tree-node-btn" onclick="triggerToast('认知边界收敛', '智能体自主决策的外部阻尼模型。')">
+            <span class="growth-dot dot-evergreen"></span>
+            <span>认知边界与形式化验证.md</span>
+          </button>
         </div>
       </div>
 
-      <p>
-        在传统的软件工程中，系统模块之间的通信依赖于严格定义的 API 与契约。然而，随着具备工具调用与环境感知能力的 <span class="wiki-link" title="点击查看双向关联笔记">[[自主智能体 (Autonomous Agents)]]</span> 的普及，软件协同的范式正在从“静态函数调用”迁移至“目标导向的多智能体博弈与协商”。
-      </p>
-
-      <div class="garden-callout">
-        <div class="callout-title">💡 核心洞见 (Core Insight)</div>
-        每一个 Agent 不应被视为单纯的代码执行器，而应当拥有独立的 <strong>Workspace 边界</strong>、<strong>记忆压缩机制</strong> 以及与其他 Agent 异步通信的 <strong>消息总线</strong>。
+      <div>
+        <div class="panel-block-title">
+          <span>🌿 培育中的枝干</span>
+          <span>(3)</span>
+        </div>
+        <div class="plant-item-tree">
+          <button class="tree-node-btn" onclick="highlightSection('branch-1')">
+            <span class="growth-dot dot-budding"></span>
+            <span>双向链接为何比文件夹诚实.md</span>
+          </button>
+          <button class="tree-node-btn" onclick="highlightSection('branch-2')">
+            <span class="growth-dot dot-budding"></span>
+            <span>一条笔记如何长成文章.md</span>
+          </button>
+          <button class="tree-node-btn" onclick="highlightSection('branch-3')">
+            <span class="growth-dot dot-seed"></span>
+            <span>本周新冒出的三个问题.md</span>
+          </button>
+        </div>
       </div>
 
-      <h2 style="font-size:20px; font-weight:700; margin:24px 0 12px; color:#fff;">双向网状拓扑的优势</h2>
-      <p>
-        当我们引入类似 <span class="wiki-link" title="卡片盒笔记法">[[卡片盒笔记思想 (Zettelkasten)]]</span> 的网状连接时，Agent 之间的依赖不再是脆弱的单链条，而是具备自我修复能力的网状图谱。一旦某一节点推理受阻，依赖 <span class="wiki-link">[[Gossip 协议]]</span> 的临近节点能够迅速接管上下文。
-      </p>
-
-      <div class="garden-callout tip">
-        <div class="callout-title" style="color:var(--garden-green);">⚡ 性能基准</div>
-        在 16 节点并发测试中，去中心化图谱拓扑相比传统的 Master-Worker 架构，在长链路故障时的自愈速度提升了 <strong>42.8%</strong>。
+      <!-- 快速标签 -->
+      <div>
+        <div class="panel-block-title">
+          <span>🏷️ 概念簇 (Clustering)</span>
+        </div>
+        <div class="concept-tags-cloud">
+          <span class="concept-tag" onclick="triggerToast('标签 #Agent', '包含 12 篇智能体协作与状态机相关的原子卡片')">#Agent</span>
+          <span class="concept-tag" onclick="triggerToast('标签 #Topology', '包含 8 篇网状拓扑、非线性寻路笔记')">#Topology</span>
+          <span class="concept-tag" onclick="triggerToast('标签 #Protocol', '包含 6 篇协议与容错恢复规范')">#Protocol</span>
+          <span class="concept-tag" onclick="triggerToast('标签 #Garden', '包含 15 篇数字花园方法论')">#Garden</span>
+        </div>
       </div>
 
-      <h3 style="font-size:16px; font-weight:700; margin:20px 0 8px; color:#fff;">近期行动清单与研究分支</h3>
-      <ul style="padding-left:20px; color:#cbd5e1; line-height:2;">
-        <li>☑ 完成 Agent 消息事件总线重构</li>
-        <li>☑ 引入 Token 上下文蒸馏压缩器</li>
-        <li>☑ 构建卡片盒双向索引与力导向关系网络</li>
-        <li>☐ 在 <span class="wiki-link">[[Rust 底层运行时]]</span> 中实现零拷贝反序列化</li>
-      </ul>
+    </aside>
 
-      <!-- 补充深度思考章节 -->
-      <div style="border-top: 1px solid var(--garden-border); margin-top: 32px; padding-top: 24px;">
-        <h2 style="font-size: 20px; font-weight: 700; color: #fff; margin-bottom: 12px;">🌱 常青笔记（Evergreen Notes）的生长周期</h2>
-        <p style="line-height: 1.8; color: #cbd5e1;">
-          数字花园不同于传统博客的“按时间倒序归档”。每一篇笔记都是一株活体植物：从一颗模糊的<strong>萌芽（Seedling）</strong>，经过不断与其他概念交织修剪，成长为条理分明的<strong>枝干（Budding）</strong>，最终沉淀为高内聚、原子化的<strong>长青之木（Evergreen）</strong>。
-        </p>
+    <!-- 中间：核心主叙事 + 次级栏目 + 园丁日志 -->
+    <main class="garden-main-scroll" id="gardenMain">
+      <div class="article-wrap">
+
+        <!-- 主叙事头部 -->
+        <header class="note-status-hero" id="main-protocol">
+          <div class="meta-ribbon">
+            <span class="stage-pill stage-evergreen">🌲 常青笔记 (Evergreen)</span>
+            <span>📅 播种: 2025-11-14</span>
+            <span>•</span>
+            <span>🌱 最近浇灌: 2026-03-30</span>
+            <span>•</span>
+            <span>💬 反向引用: 4 篇</span>
+          </div>
+          <h1 class="hero-title">自治智能体协作协议：在网状知识与分布式行动之间</h1>
+          <p class="hero-subtitle">
+            当独立的 LLM Agent 开始跨越单次 Prompt 的牢笼，它们所需要的不再是固化的 API 管道，而是一套容错、可回溯、具备明确权限阻尼的有机协议网络。
+          </p>
+        </header>
+
+        <!-- 主叙事：四节点交互拓扑卡片 -->
+        <section aria-labelledby="topo-title">
+          <h2 id="topo-title" style="font-size: 15px; font-family: var(--font-mono); color: var(--g-text-faint); margin-bottom: 12px; letter-spacing: 0.5px; text-transform: uppercase;">
+            ◈ 核心协议挂载节点（点击查看它连接了什么）
+          </h2>
+          <div class="agent-topology-grid">
+            
+            <div class="topo-card" id="node-perm" onclick="focusNode('权限边界', '定义智能体可调用的写操作集与沙盒作用域，防止非受控级联副作用。', 'perm')">
+              <div class="topo-head">
+                <span class="topo-name">🛡️ 权限边界</span>
+                <span class="topo-status">Immutable</span>
+              </div>
+              <p class="topo-desc">
+                严格隔离 Agent 的读写上下文，所有持久化更改必须通过沙盒代理层，禁止跨域无签名操作。
+              </p>
+            </div>
+
+            <div class="topo-card" id="node-log" onclick="focusNode('事件日志', '基于可追加不可变流的 Raft 状态快照，用于全局回溯与因果推理。', 'log')">
+              <div class="topo-head">
+                <span class="topo-name">📜 事件日志</span>
+                <span class="topo-status">Append-Only</span>
+              </div>
+              <p class="topo-desc">
+                记录每一次 Tool Call 的输入、输出与上下文衰减指纹，实现完全透明的决策因果链追踪。
+              </p>
+            </div>
+
+            <div class="topo-card" id="node-fail" onclick="focusNode('失败恢复', '包含指数退避、上下文截断补偿与临近同构智能体接管路由。', 'fail')">
+              <div class="topo-head">
+                <span class="topo-name">⚡ 失败恢复</span>
+                <span class="topo-status">Gossip-Driven</span>
+              </div>
+              <p class="topo-desc">
+                当节点推理陷于幻觉循环时，触发梯度熔断，由监督节点提取上下文并进行三方投票重试。
+              </p>
+            </div>
+
+            <div class="topo-card" id="node-audit" onclick="focusNode('人工复核', '高熵决策与关键资产写权限时的断点挂起机制，赋予人类最终阻尼权。', 'audit')">
+              <div class="topo-head">
+                <span class="topo-name">👁️ 人工复核</span>
+                <span class="topo-status">HITL-Gate</span>
+              </div>
+              <p class="topo-desc">
+                在不可逆动作（如资金流转、删除持久索引）执行前，向管理员通道推送差异摘要与审批门禁。
+              </p>
+            </div>
+
+          </div>
+        </section>
+
+        <!-- 交互微文案行动条 -->
+        <div class="garden-micro-interactive">
+          <button class="interactive-badge-btn" onclick="triggerToast('查看连接', '《自治智能体协作协议》已双向挂载于：[权限边界]、[事件日志]、[失败恢复]、[人工复核]')">
+            🔍 查看它连接了什么
+          </button>
+          <button class="interactive-badge-btn" onclick="scrollToBacklinks()">
+            🔗 展开反向链接 (4)
+          </button>
+          <button class="interactive-badge-btn" onclick="triggerToast('种子状态', '这是一颗种子，还没急着下结论。它正在吸收来自生产环境的日志养分。')">
+            🌱 这是一颗种子，还没急着下结论
+          </button>
+        </div>
+
+        <!-- 正文论述 -->
+        <article class="prose-section">
+          <p>
+            在搭建跨智能体系统时，我们常常陷入一种机械论的执念——试图为每一种输入都穷举确定性的函数流。然而在真实生态中，多个智能体共处一个工作区，类似于花园中相互依存的菌丝网络。正如我们在 <a class="wiki-node" onclick="focusNode('权限边界', '权限边界是智能体安全协议的底线。', 'perm')">权限边界</a> 中阐述的那样，自由度必须与沙盒的作用域严格对齐。
+          </p>
+
+          <div class="callout-seed">
+            <strong>💡 思考碎片 (Garden Thought)：</strong>
+            文件夹强迫你在思考前就先决定分类；而双向链接允许你先记录灵感，等待模式自发涌现。智能体协议同样如此，先让它们在带约束的 <a class="wiki-node" onclick="focusNode('事件日志', '不可变日志是因果溯源的唯一事实来源。', 'log')">事件日志</a> 管道中自由通讯，再根据调用频率提取出正式契约。
+          </div>
+
+          <p>
+            一旦某一节点因为 Prompt 漂移或上下文过载进入非收敛状态，协议中的 <a class="wiki-node" onclick="focusNode('失败恢复', '自愈机制确保系统在部分失能下依然维持服务。', 'fail')">失败恢复</a> 机制会通过 Gossip 协议向相邻节点广播状态快照。若两次重试仍无法收敛至置信区间，便会优雅地降级至 <a class="wiki-node" onclick="focusNode('人工复核', '人类介入作为最终决策守护者。', 'audit')">人工复核</a> 门禁，请求人类园丁的修剪介入。
+          </p>
+        </article>
+
+        <!-- 次级专栏：3 个次级栏目 -->
+        <section class="secondary-branches" aria-label="次级栏目">
+          <div class="branches-header">
+            <h2>🌿 衍生分支与培育栏目 (Secondary Branches)</h2>
+            <span style="font-size: 12px; font-family: var(--font-mono); color: var(--g-text-faint);">3 篇衍生笔记</span>
+          </div>
+
+          <!-- 栏目 1 -->
+          <article class="branch-card" id="branch-1">
+            <div class="branch-meta">
+              <span class="stage-pill stage-budding">🌿 培育中</span>
+              <span>•</span>
+              <span>关联: [[信息拓扑论]] [[分类学的黄昏]]</span>
+            </div>
+            <h3 class="branch-title" onclick="triggerToast('阅读分支', '正在进入《双向链接为何比文件夹更诚实》笔记树...')">
+              《双向链接为何比文件夹更诚实》
+            </h3>
+            <p class="branch-content">
+              树状目录逼迫思想在诞生之初就选边站队，而现实中的灵感往往同时横跨三个不同的领域。双向链接记录的是概念被实际引用的<strong>历史事实</strong>，而不是你在周一早晨一厢情愿的分类幻想。当图谱中的连线自然加密，真正的知识骨干便不言自明。
+            </p>
+          </article>
+
+          <!-- 栏目 2 -->
+          <article class="branch-card" id="branch-2">
+            <div class="branch-meta">
+              <span class="stage-pill stage-budding">🌿 培育中</span>
+              <span>•</span>
+              <span>关联: [[卡片盒笔记法]] [[渐进总结]]</span>
+            </div>
+            <h3 class="branch-title" onclick="triggerToast('阅读分支', '正在进入《一条笔记如何长成文章》笔记树...')">
+              《一条笔记如何长成文章》
+            </h3>
+            <p class="branch-content">
+              一篇 3000 字的长文不该从空白页开始。它始于一行带问号的灵感（种子），在后续的阅读中被贴上三个反向链接（发芽），在与其它笔记的冲突中被反复重构提炼（抽枝），最后把五张相关的卡片串联并润色，文章便自然收获（常青）。
+            </p>
+          </article>
+
+          <!-- 栏目 3 -->
+          <article class="branch-card" id="branch-3">
+            <div class="branch-meta">
+              <span class="stage-pill stage-seed">🌱 种子阶段</span>
+              <span>•</span>
+              <span>关联: [[未决问题]] [[2026 研讨]]</span>
+            </div>
+            <h3 class="branch-title" onclick="triggerToast('阅读分支', '这是一颗种子，还没急着下结论。欢迎在日志中补充观察。')">
+              《本周新冒出的三个问题》
+            </h3>
+            <p class="branch-content">
+              1. 当智能体能自主修改自己的 Prompt 缓存，我们如何定义它的“同一性”？<br>
+              2. 向量数据库的相似度余弦距离，是否压制了非线性的跳跃性联想？<br>
+              3. 如果一篇常青笔记已经一年没有被任何新笔记引用，它应该被归档还是施肥？
+            </p>
+          </article>
+        </section>
+
+        <!-- 收尾区：园丁日志 -->
+        <footer class="gardener-logbook" id="logbook">
+          <div class="logbook-grid">
+            <div class="log-item">
+              <div class="log-item-tag log-tag-prune">
+                <span>✂️ 本周修剪 (Pruned)</span>
+              </div>
+              <p>删除了关于“单体代理主从控制”的过时假设，把原本庞杂的调度单体拆分为 4 个独立的轻量协议节点。</p>
+            </div>
+
+            <div class="log-item">
+              <div class="log-item-tag log-tag-transplant">
+                <span>🪴 本周移栽 (Transplanted)</span>
+              </div>
+              <p>将原本埋在《分布式系统杂记》里的“Gossip 拓扑自愈算法”，移栽至《自治智能体协作协议》作为核心支撑。</p>
+            </div>
+
+            <div class="log-item">
+              <div class="log-item-tag log-tag-sprout">
+                <span>🌱 等待发芽 (Sprouting)</span>
+              </div>
+              <p>埋下了关于“基于 eBPF 的本地智能体系统调用沙盒”的三条引用线索，等待在下次生产压测时补充真实数据。</p>
+            </div>
+          </div>
+        </footer>
+
       </div>
     </main>
 
-    <!-- 右侧：关系图谱与反向链接 -->
-    <aside class="garden-right-panel">
-      <div class="graph-header">
-        <span>INTERACTIVE GRAPH VIEW</span>
-        <span>● 实时物理力导向</span>
-      </div>
-      <!-- 关系图谱 Canvas -->
-      <div class="graph-canvas-container">
-        <canvas id="graphCanvas"></canvas>
+    <!-- 右侧：资料模块、反向链接、修改记录与成熟度 -->
+    <aside class="garden-inspector" aria-label="笔记资料与元数据">
+      
+      <!-- 笔记成熟度与指标 -->
+      <div class="inspector-card">
+        <div class="panel-block-title">
+          <span>📊 笔记成熟度 (Maturity)</span>
+          <span style="color:var(--g-evergreen); font-weight:700;">88%</span>
+        </div>
+        <div class="maturity-meter">
+          <div class="meter-bar">
+            <div class="meter-fill" style="width: 88%; background: linear-gradient(90deg, #38bdf8, #10b981);"></div>
+          </div>
+          <div class="meter-stats">
+            <span>种子 (Seed)</span>
+            <span>培育 (Bud)</span>
+            <span style="color:#34d399; font-weight:700;">常青 (Evergreen)</span>
+          </div>
+        </div>
       </div>
 
       <!-- 反向链接面板 -->
-      <div class="backlinks-section">
-        <div style="font-size: 11px; font-weight: 700; color: var(--garden-muted); margin-bottom: 10px; text-transform: uppercase;">
-          BACKLINKS (引用了本笔记的 3 篇内容)
+      <div class="inspector-card" id="backlinks-panel">
+        <div class="panel-block-title">
+          <span>🔗 反向链接 (Backlinks)</span>
+          <span>(4)</span>
         </div>
-        <div class="backlink-item">
-          <div class="backlink-title">卡片盒笔记与心智模型</div>
-          <div class="backlink-snippet">“...在探讨知识网状连接时，可参考 [[自主智能体系统的协同协议]] 中的分布式图谱设计...”</div>
+
+        <div class="backlink-item-row" onclick="triggerToast('反向引用', '源自《双向链接为何比文件夹更诚实》第 3 节')">
+          <div class="backlink-title">📄 双向链接为何比文件夹更诚实</div>
+          <div class="backlink-snippet">“...在探讨智能体拓扑时，可参考 [[自治智能体协作协议]] 里的非层级通讯模型...”</div>
         </div>
-        <div class="backlink-item">
-          <div class="backlink-title">分布式系统的确定性边界</div>
-          <div class="backlink-snippet">“...Agent 间 Gossip 协议的消息传递保证了最终一致性...”</div>
+
+        <div class="backlink-item-row" onclick="triggerToast('反向引用', '源自《一条笔记如何长成文章》')">
+          <div class="backlink-title">📄 一条笔记如何长成文章</div>
+          <div class="backlink-snippet">“...协作协议从最初的 140 字备忘，逐步吸收了四篇反向链接，成长为长青纲领...”</div>
         </div>
-        <div class="backlink-item">
-          <div class="backlink-title">2026 技术架构全景展望</div>
-          <div class="backlink-snippet">“...多智能体协同正在成为下一代操作系统的核心调度原语...”</div>
+
+        <div class="backlink-item-row" onclick="triggerToast('反向引用', '源自《分布式系统确定性边界》')">
+          <div class="backlink-title">📄 分布式系统确定性边界</div>
+          <div class="backlink-snippet">“...通过 Gossip 协议实现最终状态一致，正是智能体群集应对单点崩溃的关键...”</div>
+        </div>
+
+        <div class="backlink-item-row" onclick="triggerToast('反向引用', '源自《2026 智能体运行沙盒研讨》')">
+          <div class="backlink-title">📄 智能体运行沙盒研讨.md</div>
+          <div class="backlink-snippet">“...权限边界与人工复核门禁构成了最小特权原则的双保险...”</div>
         </div>
       </div>
+
+      <!-- 待整理引用与相关概念 -->
+      <div class="inspector-card">
+        <div class="panel-block-title">
+          <span>📑 待整理引用 (Unlinked Citations)</span>
+        </div>
+        <ul style="font-size:12px; color:var(--g-text-sub); padding-left:16px; line-height:1.8;">
+          <li><span style="color:#fbbf24;">[待核验]</span> RFC 8200 网络包路由启发式</li>
+          <li><span style="color:#fbbf24;">[待提取]</span> 《系统之美》第 4 章层次与动态</li>
+          <li><span style="color:#38bdf8;">[已连接]</span> Actor Model 监督树哲学</li>
+        </ul>
+      </div>
+
+      <!-- 修改历史记录 -->
+      <div class="inspector-card">
+        <div class="panel-block-title">
+          <span>🕒 最近修改记录 (Changelog)</span>
+        </div>
+        <div style="font-size: 11.5px; font-family: var(--font-mono); color: var(--g-text-faint); display: flex; flex-direction: column; gap: 8px;">
+          <div>• <strong>2026-03-30</strong>: 扩充失败恢复节点的 Gossip 广播机制</div>
+          <div>• <strong>2026-02-18</strong>: 拆分权限边界与沙盒隔离域</div>
+          <div>• <strong>2025-11-14</strong>: 播下种子，记录初版 4 个约束点</div>
+        </div>
+      </div>
+
     </aside>
+
+  </div>
+
+  <!-- 浮动通知/节点弹窗 (交互反馈) -->
+  <div class="node-preview-toast" id="nodeToast" role="alert" aria-live="polite">
+    <div style="font-size: 11px; font-family: var(--font-mono); color: #38bdf8; font-weight:700; margin-bottom: 4px;" id="toastCategory">
+      NODE LINK
+    </div>
+    <div style="font-size: 13.5px; font-weight: 700; color: #fff; margin-bottom: 4px;" id="toastTitle">
+      节点名称
+    </div>
+    <div style="font-size: 12px; color: #cbd5e1; line-height: 1.4;" id="toastBody">
+      节点说明文字
+    </div>
   </div>
 
   <script src="assets/nav-bar.js"></script>
   <script>
-    // 物理力导向知识图谱 Canvas 绘制 + 光子流动与鼠标拖拽
+    // 1. 物理力导向关系网络 Canvas 绘制
     const canvas = document.getElementById('graphCanvas');
     const ctx = canvas.getContext('2d');
-    
+
     function resizeCanvas() {
       if (canvas.parentElement) {
-        canvas.width = canvas.parentElement.clientWidth;
-        canvas.height = canvas.parentElement.clientHeight;
+        canvas.width = canvas.parentElement.clientWidth - 24;
+        canvas.height = 180;
       }
     }
     window.addEventListener('resize', resizeCanvas);
     resizeCanvas();
 
-    const nodes = [
-      { id: 'Agent', x: 80, y: 100, vx: 0, vy: 0, r: 8, color: '#a78bfa', label: 'AI Agent' },
-      { id: 'Graph', x: 150, y: 60, vx: 0, vy: 0, r: 6, color: '#7c3aed', label: '知识图谱' },
-      { id: 'Zettel', x: 190, y: 140, vx: 0, vy: 0, r: 7, color: '#10b981', label: '卡片盒' },
-      { id: 'Rust', x: 60, y: 190, vx: 0, vy: 0, r: 6, color: '#f59e0b', label: 'Rust' },
-      { id: 'Distributed', x: 230, y: 80, vx: 0, vy: 0, r: 5, color: '#60a5fa', label: '分布式' }
+    const graphNodes = [
+      { id: 'protocol', label: '协作协议', x: 120, y: 90, vx: 0, vy: 0, r: 8, color: '#10b981', active: true },
+      { id: 'perm', label: '权限边界', x: 50, y: 45, vx: 0, vy: 0, r: 6, color: '#8b5cf6' },
+      { id: 'log', label: '事件日志', x: 190, y: 50, vx: 0, vy: 0, r: 6, color: '#06b6d4' },
+      { id: 'fail', label: '失败恢复', x: 45, y: 135, vx: 0, vy: 0, r: 6, color: '#f59e0b' },
+      { id: 'audit', label: '人工复核', x: 200, y: 135, vx: 0, vy: 0, r: 6, color: '#38bdf8' }
     ];
 
-    const links = [
+    const graphLinks = [
       { from: 0, to: 1, pulse: 0 },
-      { from: 0, to: 2, pulse: 0.3 },
-      { from: 0, to: 3, pulse: 0.6 },
-      { from: 1, to: 4, pulse: 0.2 },
-      { from: 2, to: 4, pulse: 0.8 }
+      { from: 0, to: 2, pulse: 0.25 },
+      { from: 0, to: 3, pulse: 0.5 },
+      { from: 0, to: 4, pulse: 0.75 },
+      { from: 1, to: 2, pulse: 0.1 },
+      { from: 3, to: 4, pulse: 0.6 }
     ];
 
-    let draggedNode = null;
+    let dragged = null;
 
     canvas.addEventListener('mousedown', (e) => {
       const rect = canvas.getBoundingClientRect();
       const mx = e.clientX - rect.left;
       const my = e.clientY - rect.top;
-      nodes.forEach(n => {
-        const dist = Math.hypot(n.x - mx, n.y - my);
-        if (dist < n.r + 6) draggedNode = n;
+      graphNodes.forEach(n => {
+        const d = Math.hypot(n.x - mx, n.y - my);
+        if (d < n.r + 10) dragged = n;
       });
     });
 
     window.addEventListener('mousemove', (e) => {
-      if (!draggedNode) return;
+      if (!dragged) return;
       const rect = canvas.getBoundingClientRect();
-      draggedNode.x = e.clientX - rect.left;
-      draggedNode.y = e.clientY - rect.top;
+      dragged.x = Math.max(10, Math.min(canvas.width - 10, e.clientX - rect.left));
+      dragged.y = Math.max(10, Math.min(canvas.height - 10, e.clientY - rect.top));
     });
 
     window.addEventListener('mouseup', () => {
-      draggedNode = null;
+      if (dragged) {
+        triggerToast(`节点: ${dragged.label}`, `已成功在力导向场中聚焦 [${dragged.label}]`);
+        dragged = null;
+      }
     });
 
-    function drawGraph() {
+    function drawMiniGraph() {
       ctx.clearRect(0, 0, canvas.width, canvas.height);
 
-      // 绘制连线
-      links.forEach(l => {
-        const n1 = nodes[l.from];
-        const n2 = nodes[l.to];
+      // 连线与光子脉冲
+      graphLinks.forEach(l => {
+        const n1 = graphNodes[l.from];
+        const n2 = graphNodes[l.to];
         ctx.beginPath();
         ctx.moveTo(n1.x, n1.y);
         ctx.lineTo(n2.x, n2.y);
-        ctx.strokeStyle = 'rgba(255, 255, 255, 0.12)';
+        ctx.strokeStyle = 'rgba(56, 189, 248, 0.18)';
         ctx.lineWidth = 1;
         ctx.stroke();
 
-        // 连线上的流动光子
-        l.pulse = (l.pulse + 0.015) % 1;
+        l.pulse = (l.pulse + 0.012) % 1;
         const px = n1.x + (n2.x - n1.x) * l.pulse;
         const py = n1.y + (n2.y - n1.y) * l.pulse;
         ctx.beginPath();
-        ctx.arc(px, py, 2, 0, Math.PI * 2);
-        ctx.fillStyle = '#a78bfa';
-        ctx.shadowColor = '#a78bfa';
-        ctx.shadowBlur = 6;
+        ctx.arc(px, py, 1.8, 0, Math.PI * 2);
+        ctx.fillStyle = '#38bdf8';
+        ctx.shadowColor = '#38bdf8';
+        ctx.shadowBlur = 4;
         ctx.fill();
         ctx.shadowBlur = 0;
       });
 
       // 绘制节点
-      nodes.forEach(n => {
+      graphNodes.forEach(n => {
         ctx.beginPath();
         ctx.arc(n.x, n.y, n.r, 0, Math.PI * 2);
         ctx.fillStyle = n.color;
         ctx.shadowColor = n.color;
-        ctx.shadowBlur = 10;
+        ctx.shadowBlur = 8;
         ctx.fill();
-
-        // 标签文字
         ctx.shadowBlur = 0;
+
         ctx.fillStyle = '#cbd5e1';
-        ctx.font = '10px Inter, sans-serif';
-        ctx.fillText(n.label, n.x + 10, n.y + 4);
+        ctx.font = '10px "Fira Code", monospace';
+        ctx.fillText(n.label, n.x + 8, n.y + 3);
       });
     }
 
-    let angle = 0;
-    function animate() {
-      if (!draggedNode) {
-        angle += 0.015;
-        nodes[0].x += Math.sin(angle) * 0.2;
-        nodes[0].y += Math.cos(angle) * 0.2;
-        nodes[1].x -= Math.sin(angle * 0.7) * 0.15;
-        nodes[2].y += Math.cos(angle * 0.9) * 0.15;
+    let angleTick = 0;
+    function animateLoop() {
+      if (!dragged) {
+        angleTick += 0.015;
+        graphNodes[0].x += Math.sin(angleTick) * 0.15;
+        graphNodes[0].y += Math.cos(angleTick) * 0.15;
       }
-      drawGraph();
-      requestAnimationFrame(animate);
+      drawMiniGraph();
+      requestAnimationFrame(animateLoop);
     }
-    animate();
+    animateLoop();
+
+    // 2. 交互 Toast 弹窗与高亮反馈
+    const toast = document.getElementById('nodeToast');
+    const toastCat = document.getElementById('toastCategory');
+    const toastTitle = document.getElementById('toastTitle');
+    const toastBody = document.getElementById('toastBody');
+    let toastTimer = null;
+
+    function triggerToast(title, msg, cat = 'DIGITAL GARDEN INSIGHT') {
+      toastCat.textContent = cat;
+      toastTitle.textContent = title;
+      toastBody.textContent = msg;
+      toast.classList.add('show');
+      clearTimeout(toastTimer);
+      toastTimer = setTimeout(() => {
+        toast.classList.remove('show');
+      }, 3600);
+    }
+
+    function focusNode(name, desc, domId) {
+      document.querySelectorAll('.topo-card').forEach(c => c.classList.remove('active-node'));
+      const el = document.getElementById('node-' + domId);
+      if (el) {
+        el.classList.add('active-node');
+        el.scrollIntoView({ behavior: 'smooth', block: 'center' });
+      }
+      triggerToast(name, desc, '🔗 查看它连接了什么');
+    }
+
+    function scrollToBacklinks() {
+      const panel = document.getElementById('backlinks-panel');
+      if (panel) {
+        panel.scrollIntoView({ behavior: 'smooth' });
+        triggerToast('反向链接 (4)', '已展开引用了当前协作协议的所有原子笔记');
+      }
+    }
+
+    function highlightSection(id) {
+      const el = document.getElementById(id);
+      if (el) {
+        el.scrollIntoView({ behavior: 'smooth', block: 'start' });
+      }
+    }
   </script>
 </body>
 </html>

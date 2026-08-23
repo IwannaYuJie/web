@@ -3,22 +3,20 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>CYBER Y2K — 25 千禧充气金属潮流</title>
+  <title>CYBER BABY 2001 — 25 千禧充气金属潮流</title>
   <link rel="stylesheet" href="assets/common.css">
-  <link rel="preconnect" href="https://fonts.googleapis.com">
-  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@700;900&family=Syne:wght@700;800&family=Noto+Sans+SC:wght@400;700;900&display=swap" rel="stylesheet">
   <style>
     :root {
-      --y2k-bg: #0d091a;
-      --y2k-card: rgba(30, 20, 50, 0.6);
-      --y2k-chrome: linear-gradient(135deg, #ffffff 0%, #e2e8f0 30%, #a855f7 60%, #ec4899 85%, #38bdf8 100%);
+      --y2k-bg: #070314;
+      --y2k-panel: rgba(28, 16, 52, 0.72);
+      --y2k-chrome: linear-gradient(135deg, #ffffff 0%, #d4e7fe 25%, #c084fc 50%, #ff2a85 75%, #00f0ff 100%);
       --y2k-pink: #ff2d87;
       --y2k-cyan: #00f0ff;
+      --y2k-lime: #a3ff00;
       --y2k-purple: #c084fc;
-      --y2k-silver: #d1d5db;
-      --font-display: 'Orbitron', 'Syne', sans-serif;
-      --font-body: 'Noto Sans SC', sans-serif;
+      --y2k-silver: #e2e8f0;
+      --font-display: 'Arial Black', Impact, 'Trebuchet MS', sans-serif;
+      --font-body: 'PingFang SC', 'Microsoft YaHei', sans-serif;
     }
 
     * {
@@ -29,331 +27,1031 @@
 
     body {
       background-color: var(--y2k-bg);
-      color: #ffffff;
+      color: #f1f5f9;
       font-family: var(--font-body);
       min-height: 100vh;
       overflow-x: hidden;
       background-image: 
-        radial-gradient(circle at 20% 15%, rgba(236, 72, 153, 0.25) 0%, transparent 40%),
-        radial-gradient(circle at 80% 80%, rgba(0, 240, 255, 0.2) 0%, transparent 50%),
-        radial-gradient(circle at 50% 50%, rgba(192, 132, 252, 0.15) 0%, transparent 60%);
+        radial-gradient(circle at 15% 15%, rgba(255, 45, 135, 0.28) 0%, transparent 45%),
+        radial-gradient(circle at 85% 75%, rgba(0, 240, 255, 0.22) 0%, transparent 50%),
+        radial-gradient(circle at 50% 50%, rgba(192, 132, 252, 0.18) 0%, transparent 60%),
+        repeating-linear-gradient(0deg, rgba(255,255,255,0.02) 0px, rgba(255,255,255,0.02) 1px, transparent 1px, transparent 4px);
       background-attachment: fixed;
     }
 
-    .y2k-layout {
-      max-width: 1200px;
+    .y2k-container {
+      max-width: 1240px;
       margin: 0 auto;
-      padding: 40px 24px 80px;
+      padding: 30px 20px 90px;
+      position: relative;
+      z-index: 2;
     }
 
-    /* 顶部导航与 Logo */
-    .y2k-nav-bar {
+    /* 顶部横幅：千禧刊物身份 */
+    .y2k-masthead {
       display: flex;
       justify-content: space-between;
       align-items: center;
+      flex-wrap: wrap;
+      gap: 16px;
       padding: 16px 28px;
-      background: rgba(255, 255, 255, 0.06);
-      border: 1px solid rgba(255, 255, 255, 0.2);
+      background: rgba(255, 255, 255, 0.08);
+      border: 1.5px solid rgba(255, 255, 255, 0.35);
       border-radius: 999px;
-      backdrop-filter: blur(16px);
-      box-shadow: 0 10px 30px rgba(0, 0, 0, 0.5), inset 0 1px 0 rgba(255, 255, 255, 0.4);
-      margin-bottom: 36px;
+      backdrop-filter: blur(20px);
+      box-shadow: 0 10px 30px rgba(0, 0, 0, 0.6), inset 0 2px 2px rgba(255, 255, 255, 0.6);
+      margin-bottom: 28px;
     }
 
-    .y2k-logo {
+    .y2k-logo-group {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+    }
+
+    .y2k-sparkle-icon {
+      font-size: 24px;
+      animation: spinY2k 6s linear infinite;
+    }
+
+    .y2k-logo-title {
       font-family: var(--font-display);
       font-size: 22px;
-      font-weight: 900;
+      letter-spacing: 0.12em;
       background: var(--y2k-chrome);
       -webkit-background-clip: text;
       -webkit-text-fill-color: transparent;
-      letter-spacing: 0.1em;
       text-transform: uppercase;
-      filter: drop-shadow(0 0 12px rgba(236, 72, 153, 0.6));
+      filter: drop-shadow(0 0 12px rgba(255, 45, 135, 0.7));
     }
 
-    .y2k-badge-pill {
-      font-family: var(--font-display);
-      font-size: 11px;
-      padding: 6px 14px;
-      background: linear-gradient(90deg, var(--y2k-pink), var(--y2k-purple));
-      color: #fff;
-      border-radius: 999px;
-      font-weight: 900;
-      letter-spacing: 0.08em;
-      box-shadow: 0 0 15px rgba(255, 45, 135, 0.6);
-    }
-
-    /* 巨幅 Hero 区域 */
-    .y2k-hero-banner {
-      display: grid;
-      grid-template-columns: 1fr 1.1fr;
-      gap: 32px;
-      align-items: center;
-      background: var(--y2k-card);
-      border: 2px solid rgba(255, 255, 255, 0.25);
-      border-radius: 32px;
-      padding: 40px;
-      backdrop-filter: blur(20px);
-      box-shadow: 0 20px 60px rgba(0, 0, 0, 0.6), inset 0 2px 2px rgba(255, 255, 255, 0.5);
-      margin-bottom: 40px;
-      position: relative;
-      overflow: hidden;
-    }
-
-    .y2k-hero-banner::after {
-      content: "★ 2000s ★";
-      position: absolute;
-      right: -20px;
-      top: 20px;
-      font-family: var(--font-display);
-      font-size: 80px;
-      font-weight: 900;
-      color: rgba(255, 255, 255, 0.03);
-      pointer-events: none;
-    }
-
-    .y2k-title-big {
-      font-family: var(--font-display);
-      font-size: clamp(36px, 5vw, 56px);
-      font-weight: 900;
-      line-height: 1.1;
-      text-transform: uppercase;
-      background: var(--y2k-chrome);
-      -webkit-background-clip: text;
-      -webkit-text-fill-color: transparent;
-      margin-bottom: 16px;
-      filter: drop-shadow(0 0 20px rgba(236, 72, 153, 0.5));
-    }
-
-    .y2k-desc {
-      font-size: 15px;
-      line-height: 1.7;
-      color: #e2e8f0;
-      margin-bottom: 24px;
-    }
-
-    .y2k-hero-img-box {
-      border-radius: 20px;
-      overflow: hidden;
-      border: 2px solid rgba(255, 255, 255, 0.3);
-      box-shadow: 0 15px 40px rgba(0, 0, 0, 0.8), 0 0 30px rgba(192, 132, 252, 0.4);
-      position: relative;
-    }
-
-    .y2k-hero-img-box img {
-      width: 100%;
-      height: 320px;
-      object-fit: cover;
-      display: block;
-      transition: transform 0.5s cubic-bezier(0.2, 0.8, 0.2, 1);
-    }
-    .y2k-hero-img-box:hover img {
-      transform: scale(1.05);
-    }
-
-    /* 3D 充气果冻卡片网格 */
-    .y2k-cards-row {
-      display: grid;
-      grid-template-columns: repeat(3, 1fr);
-      gap: 24px;
-      margin-bottom: 40px;
-    }
-
-    .y2k-jelly-card {
-      background: rgba(255, 255, 255, 0.05);
-      border: 1.5px solid rgba(255, 255, 255, 0.2);
-      border-radius: 24px;
-      padding: 24px;
-      backdrop-filter: blur(16px);
-      box-shadow: 0 10px 30px rgba(0, 0, 0, 0.4), inset 0 1px 0 rgba(255, 255, 255, 0.4);
-      transition: all 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
-      cursor: pointer;
-    }
-    .y2k-jelly-card:hover {
-      transform: translateY(-8px) scale(1.02);
-      border-color: var(--y2k-cyan);
-      box-shadow: 0 20px 40px rgba(0, 240, 255, 0.3), inset 0 1px 0 rgba(255, 255, 255, 0.6);
-    }
-
-    .jelly-tag {
-      display: inline-block;
-      padding: 4px 10px;
-      background: rgba(0, 240, 255, 0.2);
-      border: 1px solid var(--y2k-cyan);
-      border-radius: 8px;
+    .y2k-subtitle-tag {
       font-size: 11px;
       color: var(--y2k-cyan);
-      font-family: var(--font-display);
       font-weight: 700;
+      background: rgba(0, 240, 255, 0.12);
+      border: 1px solid rgba(0, 240, 255, 0.4);
+      padding: 4px 10px;
+      border-radius: 20px;
+      letter-spacing: 0.05em;
+    }
+
+    .y2k-status-capsule {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      font-size: 12px;
+      color: #e2e8f0;
+      background: rgba(0, 0, 0, 0.4);
+      border: 1px solid rgba(255, 255, 255, 0.2);
+      padding: 6px 14px;
+      border-radius: 999px;
+    }
+    .status-dot {
+      width: 8px;
+      height: 8px;
+      border-radius: 50%;
+      background: var(--y2k-lime);
+      box-shadow: 0 0 10px var(--y2k-lime);
+      animation: blinkDot 1.4s ease infinite alternate;
+    }
+
+    /* 主叙事区域：我们曾以为 2001 年之后一切都会悬浮 */
+    .hero-narrative-card {
+      display: grid;
+      grid-template-columns: 1.15fr 0.85fr;
+      gap: 32px;
+      background: linear-gradient(135deg, rgba(35, 20, 65, 0.8) 0%, rgba(18, 10, 36, 0.85) 100%);
+      border: 2px solid rgba(255, 255, 255, 0.35);
+      border-radius: 36px;
+      padding: 44px;
+      backdrop-filter: blur(24px);
+      box-shadow: 0 25px 60px rgba(0, 0, 0, 0.7), inset 0 2px 4px rgba(255, 255, 255, 0.5);
+      margin-bottom: 40px;
+      position: relative;
+      overflow: hidden;
+    }
+
+    .hero-narrative-card::before {
+      content: "★ 2001 DIAL-UP ★";
+      position: absolute;
+      top: -15px;
+      right: 20px;
+      font-family: var(--font-display);
+      font-size: 50px;
+      font-weight: 900;
+      color: rgba(255, 255, 255, 0.04);
+      pointer-events: none;
+      letter-spacing: 0.1em;
+    }
+
+    .hero-eyebrow {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      font-family: var(--font-display);
+      font-size: 12px;
+      letter-spacing: 0.18em;
+      color: var(--y2k-pink);
+      text-transform: uppercase;
       margin-bottom: 12px;
     }
 
-    .jelly-title {
+    .hero-title {
       font-family: var(--font-display);
-      font-size: 20px;
-      font-weight: 800;
-      margin-bottom: 8px;
-      color: #fff;
+      font-size: clamp(30px, 4vw, 48px);
+      line-height: 1.15;
+      font-weight: 900;
+      letter-spacing: -0.01em;
+      background: var(--y2k-chrome);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      margin-bottom: 20px;
+      filter: drop-shadow(0 0 24px rgba(255, 45, 135, 0.5));
     }
 
-    .jelly-body {
+    .hero-text {
+      font-size: 15.5px;
+      line-height: 1.8;
+      color: #cbd5e1;
+      margin-bottom: 24px;
+    }
+
+    .hero-text strong {
+      color: var(--y2k-lime);
+      font-weight: 700;
+    }
+
+    .hero-interactive-row {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 12px;
+      align-items: center;
+    }
+
+    .btn-y2k-bubble {
+      padding: 13px 26px;
+      background: linear-gradient(135deg, var(--y2k-pink) 0%, #a855f7 60%, var(--y2k-cyan) 100%);
+      border: 1.5px solid rgba(255, 255, 255, 0.6);
+      border-radius: 999px;
+      color: #fff;
+      font-family: var(--font-display);
+      font-size: 13.5px;
+      font-weight: 900;
+      letter-spacing: 0.04em;
+      cursor: pointer;
+      box-shadow: 0 10px 25px rgba(255, 45, 135, 0.5), inset 0 2px 2px rgba(255, 255, 255, 0.6);
+      transition: all 0.25s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+    }
+    .btn-y2k-bubble:hover {
+      transform: translateY(-3px) scale(1.04);
+      box-shadow: 0 16px 35px rgba(0, 240, 255, 0.7), inset 0 2px 2px #fff;
+    }
+
+    .btn-y2k-hollow {
+      padding: 12px 22px;
+      background: rgba(255, 255, 255, 0.07);
+      border: 1.5px solid rgba(255, 255, 255, 0.3);
+      border-radius: 999px;
+      color: var(--y2k-cyan);
+      font-family: var(--font-display);
+      font-size: 13px;
+      cursor: pointer;
+      transition: all 0.2s ease;
+      backdrop-filter: blur(10px);
+    }
+    .btn-y2k-hollow:hover {
+      background: rgba(0, 240, 255, 0.18);
+      border-color: var(--y2k-cyan);
+      transform: translateY(-2px);
+    }
+
+    /* 视觉悬浮视窗 */
+    .hero-holo-display {
+      background: radial-gradient(circle at center, rgba(192, 132, 252, 0.25) 0%, rgba(13, 9, 26, 0.8) 80%);
+      border: 2px solid rgba(255, 255, 255, 0.3);
+      border-radius: 28px;
+      padding: 24px;
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
+      position: relative;
+      box-shadow: inset 0 0 40px rgba(0, 240, 255, 0.25);
+    }
+
+    .holo-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      border-bottom: 1px dashed rgba(255, 255, 255, 0.2);
+      padding-bottom: 12px;
+      font-size: 11.5px;
+      color: var(--y2k-silver);
+    }
+
+    .holo-visual-core {
+      text-align: center;
+      padding: 24px 0;
+      position: relative;
+    }
+
+    .holo-orb {
+      width: 130px;
+      height: 130px;
+      margin: 0 auto 16px;
+      border-radius: 50%;
+      background: radial-gradient(circle at 35% 35%, #ffffff 0%, #00f0ff 30%, #ff2d87 70%, #581c87 100%);
+      box-shadow: 0 0 45px rgba(255, 45, 135, 0.7), inset 0 0 20px rgba(255, 255, 255, 0.9);
+      animation: floatOrb 4s ease-in-out infinite;
+      position: relative;
+    }
+
+    .holo-orb::after {
+      content: "2001";
+      position: absolute;
+      inset: 0;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-family: var(--font-display);
+      font-size: 26px;
+      font-weight: 900;
+      color: rgba(255, 255, 255, 0.9);
+      text-shadow: 0 2px 10px rgba(0, 0, 0, 0.6);
+    }
+
+    .holo-quote {
+      font-size: 13px;
+      color: #e2e8f0;
+      font-style: italic;
+      line-height: 1.5;
+    }
+
+    /* 3 个次级栏目网格 */
+    .section-title-wrap {
+      margin-bottom: 24px;
+      display: flex;
+      align-items: baseline;
+      gap: 12px;
+    }
+    .section-title-wrap h2 {
+      font-family: var(--font-display);
+      font-size: 24px;
+      color: #fff;
+      letter-spacing: 0.05em;
+    }
+    .section-title-wrap span {
+      font-size: 12px;
+      color: var(--y2k-pink);
+      font-family: var(--font-display);
+    }
+
+    .sub-columns-grid {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 24px;
+      margin-bottom: 48px;
+    }
+
+    .y2k-glass-column {
+      background: rgba(255, 255, 255, 0.05);
+      border: 1.5px solid rgba(255, 255, 255, 0.22);
+      border-radius: 26px;
+      padding: 26px;
+      backdrop-filter: blur(18px);
+      box-shadow: 0 15px 35px rgba(0, 0, 0, 0.4), inset 0 1px 1px rgba(255, 255, 255, 0.4);
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
+      transition: all 0.35s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+    }
+    .y2k-glass-column:hover {
+      transform: translateY(-8px) scale(1.02);
+      border-color: var(--y2k-cyan);
+      box-shadow: 0 22px 50px rgba(0, 240, 255, 0.3), inset 0 2px 4px rgba(255, 255, 255, 0.6);
+    }
+
+    .column-badge {
+      display: inline-block;
+      padding: 4px 12px;
+      border-radius: 999px;
+      font-size: 11px;
+      font-family: var(--font-display);
+      font-weight: 700;
+      margin-bottom: 14px;
+      align-self: flex-start;
+    }
+    .badge-c1 { background: rgba(0, 240, 255, 0.15); color: var(--y2k-cyan); border: 1px solid var(--y2k-cyan); }
+    .badge-c2 { background: rgba(255, 45, 135, 0.15); color: var(--y2k-pink); border: 1px solid var(--y2k-pink); }
+    .badge-c3 { background: rgba(163, 255, 0, 0.15); color: var(--y2k-lime); border: 1px solid var(--y2k-lime); }
+
+    .column-heading {
+      font-family: var(--font-display);
+      font-size: 19px;
+      font-weight: 800;
+      color: #ffffff;
+      margin-bottom: 12px;
+      line-height: 1.35;
+    }
+
+    .column-desc {
       font-size: 13.5px;
       color: #cbd5e1;
-      line-height: 1.6;
+      line-height: 1.7;
+      margin-bottom: 18px;
     }
 
-    /* 互动液态气泡触发器 */
-    .y2k-interactive-dock {
+    .column-spec-pill {
+      font-size: 11.5px;
+      color: #94a3b8;
+      background: rgba(0, 0, 0, 0.3);
+      padding: 8px 12px;
+      border-radius: 12px;
+      border: 1px solid rgba(255, 255, 255, 0.08);
+    }
+
+    /* 资料模块矩阵：聊天室访客簿、桌面小组件、今日状态、播放列表、挂件与对照卡 */
+    .data-matrix-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 24px;
+      margin-bottom: 48px;
+    }
+
+    .matrix-panel {
+      background: rgba(20, 12, 38, 0.75);
+      border: 1.5px solid rgba(255, 255, 255, 0.25);
+      border-radius: 28px;
+      padding: 26px;
+      backdrop-filter: blur(20px);
+      box-shadow: 0 15px 40px rgba(0,0,0,0.5), inset 0 1px 1px rgba(255,255,255,0.4);
+    }
+
+    .panel-top-title {
+      font-family: var(--font-display);
+      font-size: 16px;
+      letter-spacing: 0.06em;
+      color: #fff;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      margin-bottom: 18px;
+      padding-bottom: 10px;
+      border-bottom: 1px solid rgba(255, 255, 255, 0.15);
+    }
+
+    /* 虚构聊天室访客簿 */
+    .chat-guestbook-list {
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+      max-height: 220px;
+      overflow-y: auto;
+      padding-right: 6px;
+      margin-bottom: 16px;
+    }
+    .chat-msg-row {
+      display: flex;
+      gap: 10px;
+      align-items: flex-start;
+      background: rgba(255, 255, 255, 0.04);
+      padding: 10px 14px;
+      border-radius: 14px;
+      border: 1px solid rgba(255, 255, 255, 0.1);
+      font-size: 13px;
+    }
+    .chat-avatar {
+      font-size: 18px;
+      background: rgba(255, 45, 135, 0.2);
+      border-radius: 50%;
+      padding: 4px;
+    }
+    .chat-content strong {
+      color: var(--y2k-cyan);
+      display: block;
+      font-size: 12px;
+      margin-bottom: 2px;
+    }
+    .chat-input-box {
+      display: flex;
+      gap: 8px;
+    }
+    .chat-input-box input {
+      flex: 1;
+      background: rgba(0, 0, 0, 0.4);
+      border: 1px solid rgba(255, 255, 255, 0.25);
+      border-radius: 999px;
+      padding: 8px 16px;
+      color: #fff;
+      font-size: 13px;
+      outline: none;
+    }
+    .chat-input-box input:focus {
+      border-color: var(--y2k-pink);
+    }
+
+    /* 桌面小组件 + 今日状态 + 播放列表 */
+    .widget-deck {
+      display: grid;
+      grid-template-columns: repeat(2, 1fr);
+      gap: 14px;
+      margin-bottom: 18px;
+    }
+    .widget-box {
+      background: rgba(255, 255, 255, 0.04);
+      border: 1px solid rgba(255, 255, 255, 0.15);
+      border-radius: 16px;
+      padding: 14px;
+    }
+    .widget-box h4 {
+      font-size: 12px;
+      color: var(--y2k-pink);
+      font-family: var(--font-display);
+      margin-bottom: 6px;
+    }
+    .widget-box p {
+      font-size: 13px;
+      color: #e2e8f0;
+    }
+
+    /* Winamp 迷你播放列表 */
+    .winamp-mini-player {
+      background: #110d21;
+      border: 2px solid #3b2a59;
+      border-radius: 14px;
+      padding: 12px;
+      font-family: monospace;
+    }
+    .winamp-display {
+      background: #000;
+      color: var(--y2k-lime);
+      padding: 6px 10px;
+      border-radius: 6px;
+      font-size: 12px;
+      display: flex;
+      justify-content: space-between;
+      margin-bottom: 8px;
+    }
+    .winamp-controls {
+      display: flex;
+      gap: 8px;
+      justify-content: center;
+    }
+    .winamp-btn {
+      background: #2a1f42;
+      border: 1px solid #5a4282;
+      color: #fff;
+      padding: 4px 10px;
+      font-size: 11px;
+      border-radius: 4px;
+      cursor: pointer;
+    }
+    .winamp-btn:hover {
+      background: var(--y2k-pink);
+    }
+
+    /* 挂件与 2001 vs 2026 对照卡 */
+    .compare-card-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 16px;
+      margin-top: 14px;
+    }
+    .compare-era-box {
+      background: rgba(0, 0, 0, 0.35);
+      border-radius: 16px;
+      padding: 14px;
+      border: 1px dashed rgba(255, 255, 255, 0.2);
+    }
+    .compare-era-box h4 {
+      font-family: var(--font-display);
+      font-size: 13px;
+      margin-bottom: 8px;
+    }
+    .compare-era-box ul {
+      list-style: none;
+      font-size: 12.5px;
+      line-height: 1.7;
+      color: #cbd5e1;
+    }
+    .charms-bar {
+      display: flex;
+      gap: 10px;
+      flex-wrap: wrap;
+      margin-top: 12px;
+    }
+    .charm-item {
+      display: inline-flex;
+      align-items: center;
+      gap: 5px;
       background: rgba(255, 255, 255, 0.08);
+      border: 1px solid rgba(255, 255, 255, 0.2);
+      border-radius: 999px;
+      padding: 4px 12px;
+      font-size: 12px;
+      animation: floatCharm 3s ease-in-out infinite alternate;
+    }
+    .charm-item:nth-child(2) { animation-delay: 0.5s; }
+    .charm-item:nth-child(3) { animation-delay: 1s; }
+    .charm-item:nth-child(4) { animation-delay: 1.5s; }
+
+    /* 专属千禧互动控制台 */
+    .interactive-console {
+      background: linear-gradient(90deg, rgba(255, 45, 135, 0.15), rgba(0, 240, 255, 0.15));
       border: 1.5px solid rgba(255, 255, 255, 0.3);
       border-radius: 24px;
-      padding: 20px 32px;
+      padding: 22px 30px;
       display: flex;
       justify-content: space-between;
       align-items: center;
       flex-wrap: wrap;
       gap: 16px;
       backdrop-filter: blur(20px);
+      box-shadow: 0 15px 40px rgba(0,0,0,0.5);
+    }
+    .console-actions {
+      display: flex;
+      gap: 12px;
+      flex-wrap: wrap;
     }
 
-    .btn-y2k-burst {
-      padding: 12px 28px;
-      background: linear-gradient(135deg, var(--y2k-pink), var(--y2k-cyan));
-      border: none;
-      border-radius: 999px;
-      color: #fff;
+    /* 收尾弹窗与反馈 Toast */
+    .y2k-modal-backdrop {
+      position: fixed;
+      inset: 0;
+      background: rgba(7, 3, 20, 0.85);
+      backdrop-filter: blur(12px);
+      display: none;
+      align-items: center;
+      justify-content: center;
+      z-index: 9999;
+      padding: 20px;
+    }
+    .y2k-modal-card {
+      background: linear-gradient(135deg, #241442 0%, #120924 100%);
+      border: 2px solid var(--y2k-cyan);
+      box-shadow: 0 0 50px rgba(0, 240, 255, 0.5), inset 0 2px 2px rgba(255, 255, 255, 0.6);
+      border-radius: 32px;
+      max-width: 520px;
+      width: 100%;
+      padding: 36px;
+      text-align: center;
+      position: relative;
+      animation: popIn 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+    }
+    .modal-spark {
+      font-size: 40px;
+      margin-bottom: 12px;
+      display: inline-block;
+      animation: spinY2k 8s linear infinite;
+    }
+    .modal-title {
       font-family: var(--font-display);
-      font-weight: 900;
-      font-size: 14px;
-      cursor: pointer;
-      box-shadow: 0 0 25px rgba(255, 45, 135, 0.8);
-      transition: all 0.2s ease;
-      letter-spacing: 0.05em;
+      font-size: 24px;
+      background: var(--y2k-chrome);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      margin-bottom: 16px;
     }
-    .btn-y2k-burst:hover {
-      transform: scale(1.08);
-      box-shadow: 0 0 35px rgba(0, 240, 255, 0.9);
+    .modal-text {
+      font-size: 15px;
+      color: #e2e8f0;
+      line-height: 1.8;
+      margin-bottom: 24px;
     }
 
-    @media (max-width: 840px) {
-      .y2k-hero-banner {
-        grid-template-columns: 1fr;
+    .y2k-toast {
+      position: fixed;
+      bottom: 30px;
+      right: 30px;
+      background: rgba(18, 10, 36, 0.95);
+      border: 1.5px solid var(--y2k-pink);
+      color: #fff;
+      padding: 12px 22px;
+      border-radius: 999px;
+      font-size: 13px;
+      font-weight: bold;
+      box-shadow: 0 10px 30px rgba(255, 45, 135, 0.6);
+      z-index: 10000;
+      opacity: 0;
+      transform: translateY(20px);
+      transition: all 0.3s ease;
+      pointer-events: none;
+    }
+    .y2k-toast.show {
+      opacity: 1;
+      transform: translateY(0);
+    }
+
+    /* 动效关键帧 */
+    @keyframes spinY2k {
+      from { transform: rotate(0deg); }
+      to { transform: rotate(360deg); }
+    }
+    @keyframes blinkDot {
+      0% { opacity: 0.3; transform: scale(0.8); }
+      100% { opacity: 1; transform: scale(1.2); }
+    }
+    @keyframes floatOrb {
+      0%, 100% { transform: translateY(0px) scale(1); }
+      50% { transform: translateY(-10px) scale(1.04); }
+    }
+    @keyframes floatCharm {
+      0% { transform: translateY(0); }
+      100% { transform: translateY(-6px); }
+    }
+    @keyframes popIn {
+      from { opacity: 0; transform: scale(0.85); }
+      to { opacity: 1; transform: scale(1); }
+    }
+
+    @media (prefers-reduced-motion: reduce) {
+      *, ::before, ::after {
+        animation-duration: 0.01ms !important;
+        animation-iteration-count: 1 !important;
+        transition-duration: 0.01ms !important;
       }
-      .y2k-cards-row {
-        grid-template-columns: 1fr;
-      }
+    }
+
+    @media (max-width: 960px) {
+      .hero-narrative-card { grid-template-columns: 1fr; }
+      .sub-columns-grid { grid-template-columns: 1fr; }
+      .data-matrix-grid { grid-template-columns: 1fr; }
+      .interactive-console { flex-direction: column; align-items: stretch; }
     }
   </style>
 </head>
 <body>
-  <div class="y2k-layout">
-    <!-- 顶部导航 -->
-    <nav class="y2k-nav-bar">
-      <div class="y2k-logo">✧ CYBER Y2K ✧</div>
-      <div class="y2k-badge-pill">STYLE 25 · 千禧金属流体</div>
-    </nav>
-
-    <!-- 巨幅主海报 -->
-    <section class="y2k-hero-banner">
-      <div>
-        <div style="font-size: 12px; font-family: var(--font-display); color: var(--y2k-cyan); letter-spacing: 0.15em; margin-bottom: 8px;">
-          ✦ ULTRA NOSTALGIA 3000 ✦
+  <div class="y2k-container">
+    <!-- 刊物身份栏 -->
+    <header class="y2k-masthead">
+      <div class="y2k-logo-group">
+        <div class="y2k-sparkle-icon">✧</div>
+        <div>
+          <div class="y2k-logo-title">CYBER BABY 2001</div>
+          <div style="font-size: 11px; color: #a855f7; letter-spacing: 0.08em;">来自拨号上网时代的未来日记</div>
         </div>
-        <h1 class="y2k-title-big">FUTURE METALLIC</h1>
-        <p class="y2k-desc">
-          流动铬合金反光、充气果冻塑料 3D 视觉与先锋千禧美学！重构世纪之交人类对赛博空间与未来主义的狂想。
+      </div>
+      <div style="display: flex; gap: 10px; align-items: center; flex-wrap: wrap;">
+        <span class="y2k-subtitle-tag">DIAL-UP OPTIMISM // STYLE 25</span>
+        <div class="y2k-status-capsule">
+          <span class="status-dot"></span>
+          <span>56K 调制解调器已握手</span>
+        </div>
+      </div>
+    </header>
+
+    <!-- 主叙事模块 -->
+    <main class="hero-narrative-card">
+      <div>
+        <div class="hero-eyebrow">
+          <span>★ MEMOIR OF Y2K TECHNO-FANTASY ★</span>
+        </div>
+        <h1 class="hero-title">我们曾以为 2001 年之后一切都会悬浮</h1>
+        <p class="hero-text">
+          在千禧年的卧室里，主机机箱里发出尖锐清脆的<strong>拨号声（Beep-Krrr-Shhh）</strong>。那时的透明果冻塑料随身听、液态铬合金字体以及霓虹色聊天室化身，构成了人类对未来的全部信任：<strong>数字化不会冰冷异化，它只会更加闪亮、充气且触手可及</strong>。
         </p>
-        <button class="btn-y2k-burst" onclick="triggerCyberSpark(event)">
-          ✨ 释放千禧脉冲星光
-        </button>
+        <div class="hero-interactive-row">
+          <button class="btn-y2k-bubble" onclick="sendPixelHeart()" aria-label="发送一颗像素爱心">
+            💖 发送一颗像素爱心
+          </button>
+          <button class="btn-y2k-hollow" onclick="toggleChromeSkin()" aria-label="切换液态铬皮肤">
+            🪞 切换液态铬皮肤
+          </button>
+          <button class="btn-y2k-hollow" onclick="showFutureModal()" aria-label="打开千禧收尾结语">
+            ✦ 阅读千禧收尾卷首语
+          </button>
+        </div>
       </div>
 
-      <div class="y2k-hero-img-box">
-        <img src="assets/images/y2k_chrome.jpg" alt="Y2K 千禧金属海报">
+      <!-- 右侧全息视窗 -->
+      <aside class="hero-holo-display" aria-label="全息千禧视窗">
+        <div class="holo-header">
+          <span>PORT: 56000 BPS</span>
+          <span>STATUS: ONLINE 24/7</span>
+        </div>
+        <div class="holo-visual-core">
+          <div class="holo-orb"></div>
+          <div class="holo-quote">“只要戴上充气耳机，整个世界就会以 128kbps 的速率悬浮起来。”</div>
+        </div>
+        <div style="font-size: 11px; color: var(--y2k-cyan); text-align: right;">
+          CYBER BABY ARCHIVE // FILE #2001
+        </div>
+      </aside>
+    </main>
+
+    <!-- 3 个次级栏目 -->
+    <section>
+      <div class="section-title-wrap">
+        <h2>次级栏目 ARCHIVES</h2>
+        <span>/ 3 个千禧物质文化切片</span>
+      </div>
+
+      <div class="sub-columns-grid">
+        <!-- 次级栏目 1 -->
+        <article class="y2k-glass-column">
+          <div>
+            <span class="column-badge badge-c1">HARDWARE #01</span>
+            <h3 class="column-heading">果冻外壳硬件图鉴</h3>
+            <p class="column-desc">
+              透明邦迪蓝（Bondi Blue）与充气软胶的时代！从半透明 iMac G3、透明 Game Boy Color 到带彩色闪光天线的翻盖手机，内部电路板直接坦荡地展示给目光，科技不再是黑盒，而是像果冻糖果一样甜美纯粹。
+            </p>
+          </div>
+          <div class="column-spec-pill">
+            🏷️ 材质：半透明聚碳酸酯 / 高折射高光涂层
+          </div>
+        </article>
+
+        <!-- 次级栏目 2 -->
+        <article class="y2k-glass-column">
+          <div>
+            <span class="column-badge badge-c2">INTERFACE #02</span>
+            <h3 class="column-heading">Winamp 皮肤收藏</h3>
+            <p class="column-desc">
+              当数字化 UI 第一次支持彻底换肤：金属拉丝旋钮、外星飞船仪表盘、带有微光呼吸灯的十段均衡器。年轻人在像素级画布上雕刻自己独特的太空歌剧播放界面，将 MP3 音频转译为流体视觉盛宴。
+            </p>
+          </div>
+          <div class="column-spec-pill">
+            🎛️ 预设：AMP-Chrome-2001.wsz / 128kbps 极速渲染
+          </div>
+        </article>
+
+        <!-- 次级栏目 3 -->
+        <article class="y2k-glass-column">
+          <div>
+            <span class="column-badge badge-c3">COMMUNITY #03</span>
+            <h3 class="column-heading">拨号声之后的第一个网友</h3>
+            <p class="column-desc">
+              敲下第一个“你好，在吗？”，等待企鹅闪烁或 ICQ 的滴滴警报。没有算法推荐与信息茧房，跨越半个地球的午夜交谈就像在茫茫赛博银河中捕捉到另一颗闪烁的无线电微光，纯真而无所畏惧。
+            </p>
+          </div>
+          <div class="column-spec-pill">
+            💬 频段：IRC #CyberDream / 握手协议稳定
+          </div>
+        </article>
       </div>
     </section>
 
-    <!-- 3D 充气卡片展区 -->
-    <section class="y2k-cards-row">
-      <div class="y2k-jelly-card" onclick="cardGlow(this)">
-        <span class="jelly-tag">#01 CHROMIUM</span>
-        <h3 class="jelly-title">水银流动雕塑</h3>
-        <p class="jelly-body">高反射流体在三维空间中自由形变，打破几何边界的硬朗秩序。</p>
+    <!-- 资料模块矩阵 -->
+    <section>
+      <div class="section-title-wrap">
+        <h2>千禧资料矩阵 DATA MATRIX</h2>
+        <span>/ 访客簿 · 桌面组件 · 播放列表 · 挂件与时代对照</span>
       </div>
 
-      <div class="y2k-jelly-card" onclick="cardGlow(this)">
-        <span class="jelly-tag" style="color: var(--y2k-pink); border-color: var(--y2k-pink);">#02 INFLATED 3D</span>
-        <h3 class="jelly-title">充气泡泡文字</h3>
-        <p class="jelly-body">饱满圆润的胶囊字形与 Q 弹悬停反馈，塑造极具感染力的视觉张力。</p>
-      </div>
+      <div class="data-matrix-grid">
+        <!-- 模块 A：虚构聊天室访客簿 -->
+        <div class="matrix-panel">
+          <div class="panel-top-title">
+            <span>💬 赛博访客簿 GUESTBOOK</span>
+            <span style="font-size: 12px; color: var(--y2k-lime);">● 实时在线 2001 人</span>
+          </div>
+          <div class="chat-guestbook-list" id="chatList">
+            <div class="chat-msg-row">
+              <div class="chat-avatar">👾</div>
+              <div class="chat-content">
+                <strong>@NeonCat_2001 (19:42)</strong>
+                今天终于把随身听外壳喷成了液态银色！放一首《爱像太平洋》！
+              </div>
+            </div>
+            <div class="chat-msg-row">
+              <div class="chat-avatar">🪩</div>
+              <div class="chat-content">
+                <strong>@ChromeBoy (20:15)</strong>
+                56K 终于下完了那张 3MB 的壁纸，今晚桌面上全是充气水银泡泡！
+              </div>
+            </div>
+            <div class="chat-msg-row">
+              <div class="chat-avatar">🫧</div>
+              <div class="chat-content">
+                <strong>@CyberAngel (21:03)</strong>
+                无论 2026 年变成什么样，请一定记得我们曾把未来画得闪闪发光！
+              </div>
+            </div>
+          </div>
+          <div class="chat-input-box">
+            <input type="text" id="guestbookInput" placeholder="写一句留言留给 2001 年的聊天室..." aria-label="输入访客留言">
+            <button class="btn-y2k-bubble" style="padding: 8px 18px; font-size: 12px;" onclick="signGuestbook()">签名留念</button>
+          </div>
+        </div>
 
-      <div class="y2k-jelly-card" onclick="cardGlow(this)">
-        <span class="jelly-tag" style="color: var(--y2k-purple); border-color: var(--y2k-purple);">#03 GLOSS GLASS</span>
-        <h3 class="jelly-title">半透明水晶视界</h3>
-        <p class="jelly-body">多层高斯折射与极光渐变，交织出属于千禧一代独特的未来主义浪漫。</p>
-      </div>
+        <!-- 模块 B：桌面小组件 + Winamp 播放器 + 对照卡 -->
+        <div class="matrix-panel">
+          <div class="panel-top-title">
+            <span>🎛️ 桌面组件 & 播放列表</span>
+            <span style="font-size: 12px; color: var(--y2k-pink);">WINAMP 2.81</span>
+          </div>
+          
+          <div class="widget-deck">
+            <div class="widget-box">
+              <h4>✦ 今日状态 STATUS</h4>
+              <p>正在充气仓充能中 🔋 88%</p>
+            </div>
+            <div class="widget-box">
+              <h4>✦ 气象 FORECAST</h4>
+              <p>极光粉 / 阵发性流体镀铬 🛸</p>
+            </div>
+          </div>
 
-      <!-- 卡片 4 -->
-      <div class="y2k-jelly-card" onclick="cardGlow(this)">
-        <span class="jelly-tag" style="color: var(--y2k-cyan); border-color: var(--y2k-cyan);">#04 CHROME TYPE</span>
-        <h3 class="jelly-title">液态金属字形演变</h3>
-        <p class="jelly-body">从影视特效到 3D 字体设计，水银般流动的镀铬金属反光，凝聚着人类对千禧纪元科技腾飞的纯粹乐观想象。</p>
-      </div>
+          <!-- Winamp 播放列表 -->
+          <div class="winamp-mini-player">
+            <div class="winamp-display">
+              <span id="trackName">01. 宇多田光 - Automatic.mp3</span>
+              <span>128 kbps [STEREO]</span>
+            </div>
+            <div class="winamp-controls">
+              <button class="winamp-btn" onclick="prevTrack()">⏮ PREV</button>
+              <button class="winamp-btn" onclick="togglePlay()">⏯ PLAY/PAUSE</button>
+              <button class="winamp-btn" onclick="nextTrack()">⏭ NEXT</button>
+            </div>
+          </div>
 
-      <!-- 卡片 5 -->
-      <div class="y2k-jelly-card" onclick="cardGlow(this)">
-        <span class="jelly-tag" style="color: #ffde00; border-color: #ffde00;">#05 WINAMP SKINS</span>
-        <h3 class="jelly-title">Winamp 换肤与果冻硬件</h3>
-        <p class="jelly-body">回顾第一代 iMac G3 半透明彩色外壳与可换肤播放器，当数字化 UI 第一次被赋予物理触觉温度与个性宣泄。</p>
+          <!-- 挂件 & 对照卡 -->
+          <div class="compare-card-grid">
+            <div class="compare-era-box">
+              <h4 style="color: var(--y2k-cyan);">✦ 2001 千禧想象</h4>
+              <ul>
+                <li>• 飞行汽车与悬浮公路</li>
+                <li>• 透明彩色果冻外壳</li>
+                <li>• 对赛博空间充满狂喜</li>
+              </ul>
+            </div>
+            <div class="compare-era-box">
+              <h4 style="color: var(--y2k-pink);">✦ 2026 现实回望</h4>
+              <ul>
+                <li>• 极简灰白黑色扁平化</li>
+                <li>• 算法分流与算法包裹</li>
+                <li>• 我们重新渴望充气金属</li>
+              </ul>
+            </div>
+          </div>
+
+          <div class="charms-bar">
+            <span class="charm-item">🎀 像素草莓</span>
+            <span class="charm-item">🛸 镀铬飞碟</span>
+            <span class="charm-item">💿 透明 mini-CD</span>
+            <span class="charm-item">⭐ 荧光星芒</span>
+          </div>
+        </div>
       </div>
     </section>
 
-    <!-- 底部互动操作栏 -->
-    <footer class="y2k-interactive-dock">
-      <div style="font-size: 13.5px; color: #94a3b8;">
-        🔮 提示：点击任意果冻卡片即可触发 3D 幻彩霓虹荧光反应
+    <!-- 底部互动控制台 -->
+    <footer class="interactive-console">
+      <div>
+        <div style="font-family: var(--font-display); font-size: 15px; font-weight: bold; color: #fff;">
+          CYBER BABY 2001 // 互动中枢
+        </div>
+        <div style="font-size: 12px; color: #94a3b8; margin-top: 2px;">
+          点击按钮发送千禧光斑，调制解调器已永久在线。
+        </div>
       </div>
-      <div style="font-family: var(--font-display); font-size: 12px; color: var(--y2k-pink);">
-        Y2K LAB // VERSION 2026.0
+      <div class="console-actions">
+        <button class="btn-y2k-hollow" onclick="dialUpRecharge()">📡 连接成功：56K 未来已上线</button>
+        <button class="btn-y2k-bubble" onclick="showFutureModal()">✨ 查看收尾弹窗</button>
       </div>
     </footer>
   </div>
 
-  <!-- Y2K 4角芒星 Canvas -->
-  <canvas id="y2kStarCanvas" style="position: fixed; inset: 0; pointer-events: none; z-index: 1;"></canvas>
+  <!-- 收尾弹窗 -->
+  <div class="y2k-modal-backdrop" id="futureModal" onclick="closeFutureModal(event)" role="dialog" aria-modal="true" aria-label="千禧寄语弹窗">
+    <div class="y2k-modal-card" onclick="event.stopPropagation()">
+      <div class="modal-spark">✦ 🛸 ✦</div>
+      <h3 class="modal-title">未来没有按想象抵达</h3>
+      <p class="modal-text">
+        “未来没有按想象抵达，但我们仍然喜欢把它画得闪闪发光。”<br><br>
+        2001 年的我们以为 2026 年是充气飞船、全息视窗与液态金属的乐园。即使今天充斥着扁平与焦虑，那颗在千禧之交种下的乐观星光，依然在每一个网页里持续跳动。
+      </p>
+      <button class="btn-y2k-bubble" onclick="closeModalDirect()" style="width: 100%;">
+        💖 带着闪光继续前行
+      </button>
+    </div>
+  </div>
 
-  <style>
-    .y2k-jelly-card {
-      transition: transform 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275), box-shadow 0.3s ease, border-color 0.3s ease;
-    }
-    .y2k-jelly-card:hover {
-      transform: translateY(-8px) scale(1.03) !important;
-    }
-  </style>
+  <!-- Toast 提示 -->
+  <div class="y2k-toast" id="y2kToast"></div>
+
+  <!-- 背景星芒 Canvas -->
+  <canvas id="y2kCanvas" style="position: fixed; inset: 0; pointer-events: none; z-index: 1;"></canvas>
 
   <script src="assets/nav-bar.js"></script>
   <script>
-    function triggerCyberSpark(e) {
-      const btn = e.currentTarget;
-      btn.style.transform = "scale(0.95)";
-      setTimeout(() => { btn.style.transform = "scale(1)"; }, 150);
-      document.body.style.filter = "invert(0.2) hue-rotate(45deg) contrast(1.2)";
-      setTimeout(() => { document.body.style.filter = "none"; }, 300);
-    }
-
-    function cardGlow(card) {
-      card.style.borderColor = "#ff2d87";
-      card.style.boxShadow = "0 0 35px rgba(255, 45, 135, 0.9), inset 0 0 15px rgba(255, 45, 135, 0.4)";
+    // 互动微文案与 Toast 触发
+    function showToast(msg) {
+      const toast = document.getElementById('y2kToast');
+      toast.textContent = msg;
+      toast.classList.add('show');
       setTimeout(() => {
-        card.style.borderColor = "rgba(255, 255, 255, 0.2)";
-        card.style.boxShadow = "0 10px 30px rgba(0, 0, 0, 0.4)";
-      }, 600);
+        toast.classList.remove('show');
+      }, 2500);
     }
 
-    // Y2K 4角芒星与镭射光斑
+    function sendPixelHeart() {
+      showToast("💖 发送了一颗像素爱心！整个聊天室充满了粉红流体荧光！");
+      spawnBurstEffect();
+    }
+
+    let isChrome = false;
+    function toggleChromeSkin() {
+      isChrome = !isChrome;
+      if (isChrome) {
+        document.body.style.filter = "contrast(1.3) hue-rotate(180deg) saturate(1.4)";
+        showToast("🪞 已切换为：液态铬超导皮肤！");
+      } else {
+        document.body.style.filter = "none";
+        showToast("✨ 已恢复：千禧果冻原色皮肤！");
+      }
+    }
+
+    function dialUpRecharge() {
+      showToast("📡 连接成功：56K 未来已上线！握手协议稳定！");
+    }
+
+    function signGuestbook() {
+      const input = document.getElementById('guestbookInput');
+      const text = input.value.trim();
+      if (!text) {
+        showToast("⚠️ 请先写下你想对 2001 年说的留言~");
+        return;
+      }
+      const list = document.getElementById('chatList');
+      const row = document.createElement('div');
+      row.className = 'chat-msg-row';
+      row.innerHTML = `<div class="chat-avatar">⭐</div><div class="chat-content"><strong>@访客_${Math.floor(Math.random()*9000+1000)} (刚刚)</strong>${text}</div>`;
+      list.prepend(row);
+      input.value = '';
+      showToast("📝 访客簿已签名！消息已写入 2001 年的千禧磁带！");
+    }
+
+    // 播放列表逻辑
+    const tracks = [
+      "01. 宇多田光 - Automatic.mp3",
+      "02. 滨崎步 - SEASONS (Cyber Remix).mp3",
+      "03. Daft Punk - One More Time.mp3",
+      "04. 孙燕姿 - 超快感 2000.mp3"
+    ];
+    let trackIndex = 0;
+    let isPlaying = true;
+
+    function updateTrackUI() {
+      document.getElementById('trackName').textContent = tracks[trackIndex] + (isPlaying ? " [PLAYING]" : " [PAUSED]");
+    }
+    function nextTrack() {
+      trackIndex = (trackIndex + 1) % tracks.length;
+      updateTrackUI();
+      showToast("🎵 正在播放：" + tracks[trackIndex]);
+    }
+    function prevTrack() {
+      trackIndex = (trackIndex - 1 + tracks.length) % tracks.length;
+      updateTrackUI();
+      showToast("🎵 正在播放：" + tracks[trackIndex]);
+    }
+    function togglePlay() {
+      isPlaying = !isPlaying;
+      updateTrackUI();
+      showToast(isPlaying ? "▶️ Winamp 继续播放" : "⏸ Winamp 已暂停");
+    }
+
+    // 弹窗
+    function showFutureModal() {
+      document.getElementById('futureModal').style.display = 'flex';
+    }
+    function closeFutureModal(e) {
+      if (e.target.id === 'futureModal') {
+        document.getElementById('futureModal').style.display = 'none';
+      }
+    }
+    function closeModalDirect() {
+      document.getElementById('futureModal').style.display = 'none';
+      showToast("✨ 未来已点亮，感谢你的驻足！");
+    }
+
+    function spawnBurstEffect() {
+      const el = document.createElement('div');
+      el.style.position = 'fixed';
+      el.style.top = '50%';
+      el.style.left = '50%';
+      el.style.transform = 'translate(-50%, -50%)';
+      el.style.fontSize = '80px';
+      el.style.zIndex = '99999';
+      el.style.pointerEvents = 'none';
+      el.style.transition = 'all 0.6s ease-out';
+      el.style.opacity = '1';
+      el.textContent = '💖✨🛸';
+      document.body.appendChild(el);
+      setTimeout(() => {
+        el.style.transform = 'translate(-50%, -80%) scale(2)';
+        el.style.opacity = '0';
+      }, 50);
+      setTimeout(() => {
+        el.remove();
+      }, 700);
+    }
+
+    // 背景 4 角芒星 Canvas 动效
     (function() {
-      const canvas = document.getElementById('y2kStarCanvas');
+      const canvas = document.getElementById('y2kCanvas');
+      if (!canvas) return;
       const ctx = canvas.getContext('2d');
       let w = canvas.width = window.innerWidth;
       let h = canvas.height = window.innerHeight;
@@ -363,25 +1061,26 @@
         h = canvas.height = window.innerHeight;
       });
 
-      const stars = Array.from({ length: 24 }, () => ({
+      const stars = Array.from({ length: 28 }, () => ({
         x: Math.random() * w,
         y: Math.random() * h,
-        size: 8 + Math.random() * 12,
+        size: 7 + Math.random() * 14,
         rot: Math.random() * Math.PI,
         rotSpeed: (Math.random() - 0.5) * 0.02,
-        opacity: 0.2 + Math.random() * 0.6,
-        color: Math.random() > 0.5 ? '#ff2d87' : '#00f0ff'
+        opacity: 0.2 + Math.random() * 0.7,
+        color: Math.random() > 0.5 ? '#ff2d87' : (Math.random() > 0.5 ? '#00f0ff' : '#c084fc')
       }));
 
-      function draw4PointStar(cx, cy, size, color, opacity) {
+      function drawStar(cx, cy, size, color, opacity, rot) {
         ctx.save();
         ctx.translate(cx, cy);
+        ctx.rotate(rot);
         ctx.fillStyle = color;
         ctx.globalAlpha = opacity;
         ctx.beginPath();
         for (let i = 0; i < 4; i++) {
           ctx.lineTo(Math.cos((i * Math.PI) / 2) * size, Math.sin((i * Math.PI) / 2) * size);
-          ctx.lineTo(Math.cos(((i + 0.5) * Math.PI) / 2) * (size * 0.2), Math.sin(((i + 0.5) * Math.PI) / 2) * (size * 0.2));
+          ctx.lineTo(Math.cos(((i + 0.5) * Math.PI) / 2) * (size * 0.22), Math.sin(((i + 0.5) * Math.PI) / 2) * (size * 0.22));
         }
         ctx.closePath();
         ctx.fill();
@@ -391,13 +1090,13 @@
       function loop() {
         ctx.clearRect(0, 0, w, h);
         stars.forEach(s => {
-          s.y -= 0.4;
+          s.y -= 0.45;
           s.rot += s.rotSpeed;
-          if (s.y < -20) {
-            s.y = h + 20;
+          if (s.y < -30) {
+            s.y = h + 30;
             s.x = Math.random() * w;
           }
-          draw4PointStar(s.x, s.y, s.size, s.color, s.opacity);
+          drawStar(s.x, s.y, s.size, s.color, s.opacity, s.rot);
         });
         requestAnimationFrame(loop);
       }

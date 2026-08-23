@@ -3,19 +3,36 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>NEO ACID // 30 酸性设计与金属流体</title>
+  <title>NEO ACID // 地下视觉文化年鉴 · 30 酸性设计与金属流体</title>
   <link rel="stylesheet" href="assets/common.css">
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@900&family=Syne:wght@800;900&family=Noto+Sans+SC:wght@400;900&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@700;900&family=Syne:wght@700;800;900&family=Noto+Sans+SC:wght@400;700;900&family=Space+Grotesk:wght@500;700&display=swap" rel="stylesheet">
   <style>
     :root {
-      --acid-bg: #09090b;
+      --acid-bg: #06070a;
+      --acid-card-bg: rgba(16, 18, 26, 0.82);
       --acid-neon-green: #39ff14;
       --acid-pink: #ff007f;
       --acid-cyan: #00f0ff;
-      --acid-chrome: linear-gradient(135deg, #fff, #99f6e4, #f472b6, #c084fc, #38bdf8);
-      --font-acid: 'Syne', 'Cinzel', 'Noto Sans SC', sans-serif;
+      --acid-violet: #a855f7;
+      --acid-yellow: #fbee0f;
+      --acid-chrome-glow: drop-shadow(0 0 16px rgba(0, 240, 255, 0.45)) drop-shadow(0 0 35px rgba(255, 0, 127, 0.35));
+      --font-display: 'Syne', 'Cinzel', 'Noto Sans SC', sans-serif;
+      --font-mono: 'Space Grotesk', monospace;
+      --border-acid: 1px solid rgba(255, 255, 255, 0.18);
+    }
+
+    body.low-stim-mode {
+      --acid-bg: #121316;
+      --acid-card-bg: #1a1b20;
+      --acid-neon-green: #7fd674;
+      --acid-pink: #d978a3;
+      --acid-cyan: #72bfca;
+      --acid-violet: #9b8bc7;
+      --acid-yellow: #d8ce66;
+      --acid-chrome-glow: none;
+      filter: saturate(0.55) contrast(0.95);
     }
 
     * {
@@ -26,267 +43,889 @@
 
     body {
       background-color: var(--acid-bg);
-      color: #ffffff;
-      font-family: var(--font-acid);
+      color: #e2e8f0;
+      font-family: var(--font-display);
       min-height: 100vh;
       overflow-x: hidden;
+      line-height: 1.6;
       background-image: 
-        radial-gradient(circle at 10% 20%, rgba(255, 0, 127, 0.2) 0%, transparent 40%),
-        radial-gradient(circle at 90% 80%, rgba(57, 255, 20, 0.15) 0%, transparent 40%);
+        radial-gradient(circle at 15% 12%, rgba(255, 0, 127, 0.16) 0%, transparent 36%),
+        radial-gradient(circle at 85% 25%, rgba(0, 240, 255, 0.14) 0%, transparent 40%),
+        radial-gradient(circle at 50% 80%, rgba(57, 255, 20, 0.1) 0%, transparent 45%),
+        linear-gradient(rgba(255, 255, 255, 0.03) 1px, transparent 1px),
+        linear-gradient(90deg, rgba(255, 255, 255, 0.03) 1px, transparent 1px);
+      background-size: 100% 100%, 100% 100%, 100% 100%, 48px 48px, 48px 48px;
+      transition: background-color 0.4s ease, filter 0.4s ease;
     }
 
-    .acid-container {
-      max-width: 1200px;
+    .acid-wrapper {
+      max-width: 1280px;
       margin: 0 auto;
-      padding: 40px 24px 80px;
+      padding: 24px 20px 96px;
     }
 
-    /* 顶部先锋排版标题 */
-    .acid-header {
-      border-bottom: 2px solid rgba(255, 255, 255, 0.2);
-      padding-bottom: 24px;
-      margin-bottom: 36px;
+    /* 头部年鉴身份条 */
+    .mag-masthead {
+      border: 1px solid rgba(255, 255, 255, 0.2);
+      background: rgba(10, 12, 18, 0.85);
+      backdrop-filter: blur(12px);
+      padding: 16px 24px;
       display: flex;
       justify-content: space-between;
-      align-items: flex-end;
+      align-items: center;
       flex-wrap: wrap;
       gap: 16px;
+      margin-bottom: 24px;
     }
 
-    .acid-main-title {
-      font-size: clamp(42px, 7vw, 84px);
-      font-weight: 900;
-      line-height: 0.9;
-      text-transform: uppercase;
-      letter-spacing: -0.04em;
-      background: var(--acid-chrome);
-      -webkit-background-clip: text;
-      -webkit-text-fill-color: transparent;
-      filter: drop-shadow(0 0 20px rgba(0, 240, 255, 0.4));
-    }
-
-    .acid-badge {
-      font-size: 12px;
-      padding: 6px 14px;
-      border: 1px solid var(--acid-neon-green);
-      color: var(--acid-neon-green);
-      font-weight: 900;
-      letter-spacing: 0.1em;
-      background: rgba(57, 255, 20, 0.08);
-    }
-
-    /* 酸性艺术大图展区 */
-    .acid-hero-grid {
-      display: grid;
-      grid-template-columns: 1.3fr 1fr;
-      gap: 32px;
-      align-items: center;
-      margin-bottom: 48px;
-    }
-
-    .acid-poster-frame {
-      border: 2px solid rgba(255, 255, 255, 0.3);
-      border-radius: 12px;
-      overflow: hidden;
-      box-shadow: 0 20px 50px rgba(0, 0, 0, 0.9), 0 0 30px rgba(255, 0, 127, 0.3);
-      position: relative;
-    }
-
-    .acid-poster-img {
-      width: 100%;
-      height: 380px;
-      object-fit: cover;
-      display: block;
-      transition: filter 0.4s ease, transform 0.4s ease;
-    }
-    .acid-poster-frame:hover .acid-poster-img {
-      transform: scale(1.04);
-      filter: hue-rotate(90deg) contrast(1.2);
-    }
-
-    .acid-text-content {
+    .mag-id-group {
       display: flex;
-      flex-direction: column;
-      gap: 16px;
+      align-items: center;
+      gap: 14px;
     }
 
-    .acid-sub-kicker {
-      font-size: 13px;
-      color: var(--acid-pink);
-      letter-spacing: 0.2em;
-      font-weight: 900;
-    }
-
-    .acid-heading {
-      font-size: 32px;
-      font-weight: 900;
-      line-height: 1.15;
-      text-transform: uppercase;
-      letter-spacing: -0.02em;
-    }
-
-    .acid-body {
-      font-size: 15px;
-      line-height: 1.7;
-      color: #d1d5db;
-    }
-
-    /* 互动失真滤镜按钮 */
-    .btn-acid-glitch {
-      align-self: flex-start;
-      padding: 12px 28px;
+    .mag-vol-badge {
       background: var(--acid-neon-green);
       color: #000;
-      border: none;
-      font-family: var(--font-acid);
-      font-size: 14px;
       font-weight: 900;
+      font-size: 11px;
+      letter-spacing: 0.15em;
+      padding: 4px 10px;
       text-transform: uppercase;
-      letter-spacing: 0.1em;
+    }
+
+    .mag-title-sub {
+      font-size: 12px;
+      color: #94a3b8;
+      letter-spacing: 0.2em;
+      font-family: var(--font-mono);
+      text-transform: uppercase;
+    }
+
+    .mag-actions {
+      display: flex;
+      gap: 10px;
+      flex-wrap: wrap;
+    }
+
+    .acid-btn {
+      font-family: var(--font-mono);
+      font-size: 12px;
+      font-weight: 700;
+      padding: 8px 14px;
+      border: 1px solid rgba(255, 255, 255, 0.25);
+      background: rgba(255, 255, 255, 0.05);
+      color: #f8fafc;
       cursor: pointer;
-      box-shadow: 0 0 20px rgba(57, 255, 20, 0.6);
-      transition: all 0.2s ease;
-      margin-top: 8px;
-    }
-    .btn-acid-glitch:hover {
-      background: var(--acid-pink);
-      color: #fff;
-      box-shadow: 0 0 30px rgba(255, 0, 127, 0.9);
-      transform: scale(1.05);
-    }
-
-    /* 底部三色光卡片 */
-    .acid-trio-row {
-      display: grid;
-      grid-template-columns: repeat(3, 1fr);
-      gap: 20px;
-    }
-
-    .acid-card {
-      border: 1px solid rgba(255, 255, 255, 0.15);
-      padding: 24px;
-      border-radius: 8px;
-      background: rgba(255, 255, 255, 0.02);
-      backdrop-filter: blur(10px);
-      transition: transform 0.2s ease, border-color 0.2s ease;
-    }
-    .acid-card:hover {
-      transform: translateY(-6px);
-      border-color: var(--acid-cyan);
-    }
-
-    .acid-card h4 {
-      font-size: 20px;
-      font-weight: 900;
-      margin-bottom: 8px;
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      transition: all 0.2s cubic-bezier(0.2, 0.8, 0.2, 1);
+      text-transform: uppercase;
       letter-spacing: 0.05em;
     }
 
-    @media (max-width: 860px) {
-      .acid-hero-grid {
+    .acid-btn:hover {
+      background: #fff;
+      color: #000;
+      border-color: #fff;
+      transform: translateY(-2px);
+      box-shadow: 0 4px 16px rgba(0, 240, 255, 0.4);
+    }
+
+    .acid-btn.active-state {
+      background: var(--acid-pink);
+      color: #fff;
+      border-color: var(--acid-pink);
+    }
+
+    /* 封面大标题区 */
+    .hero-manifesto {
+      border: 1px solid rgba(255, 255, 255, 0.25);
+      background: radial-gradient(circle at 75% 30%, rgba(168, 85, 247, 0.25), transparent 50%), rgba(8, 10, 15, 0.92);
+      padding: 44px 36px;
+      position: relative;
+      overflow: hidden;
+      margin-bottom: 32px;
+    }
+
+    .hero-marquee-top {
+      font-family: var(--font-mono);
+      font-size: 11px;
+      color: var(--acid-neon-green);
+      letter-spacing: 0.3em;
+      margin-bottom: 12px;
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      text-transform: uppercase;
+    }
+
+    .hero-marquee-top::after {
+      content: "";
+      flex: 1;
+      height: 1px;
+      background: linear-gradient(90deg, var(--acid-neon-green), transparent);
+    }
+
+    .hero-title-main {
+      font-size: clamp(38px, 7.2vw, 92px);
+      font-weight: 900;
+      line-height: 0.92;
+      text-transform: uppercase;
+      letter-spacing: -0.04em;
+      background: linear-gradient(130deg, #ffffff 10%, #67e8f9 35%, #f472b6 65%, #fde047 90%);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      filter: var(--acid-chrome-glow);
+      margin-bottom: 24px;
+    }
+
+    .hero-layout-grid {
+      display: grid;
+      grid-template-columns: 1.15fr 0.85fr;
+      gap: 36px;
+      align-items: center;
+    }
+
+    .hero-lead-text {
+      font-size: clamp(15px, 1.3vw, 18px);
+      color: #cbd5e1;
+      line-height: 1.75;
+      margin-bottom: 24px;
+    }
+
+    .chrome-fluid-canvas-box {
+      border: 1px solid rgba(255, 255, 255, 0.35);
+      position: relative;
+      padding: 12px;
+      background: rgba(0, 0, 0, 0.6);
+      box-shadow: 0 16px 40px rgba(0, 0, 0, 0.8), inset 0 0 25px rgba(255, 0, 127, 0.2);
+    }
+
+    .interactive-canvas-frame {
+      position: relative;
+      overflow: hidden;
+      width: 100%;
+      height: 340px;
+      background: #050608;
+      border: 1px dashed rgba(255, 255, 255, 0.3);
+      cursor: crosshair;
+    }
+
+    .liquid-metal-mesh {
+      position: absolute;
+      inset: -30px;
+      background: 
+        radial-gradient(circle at 30% 40%, rgba(0, 240, 255, 0.85) 0%, transparent 42%),
+        radial-gradient(circle at 70% 60%, rgba(255, 0, 127, 0.8) 0%, transparent 45%),
+        radial-gradient(circle at 50% 20%, rgba(251, 238, 15, 0.7) 0%, transparent 35%),
+        radial-gradient(circle at 80% 20%, rgba(168, 85, 247, 0.8) 0%, transparent 40%);
+      filter: blur(28px) contrast(2.4) brightness(1.2);
+      transition: transform 0.15s ease-out;
+      will-change: transform;
+    }
+
+    .liquid-metal-overlay {
+      position: absolute;
+      inset: 0;
+      background: repeating-linear-gradient(0deg, rgba(0,0,0,0.15) 0px, rgba(0,0,0,0.15) 2px, transparent 2px, transparent 4px);
+      pointer-events: none;
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
+      padding: 16px;
+    }
+
+    .canvas-hud-tag {
+      font-family: var(--font-mono);
+      font-size: 11px;
+      background: rgba(0, 0, 0, 0.75);
+      border: 1px solid var(--acid-cyan);
+      color: var(--acid-cyan);
+      padding: 3px 8px;
+      width: fit-content;
+      text-transform: uppercase;
+      letter-spacing: 0.1em;
+    }
+
+    /* 抽屉/目录快速导航 */
+    .toc-drawer {
+      border: 1px solid rgba(255, 255, 255, 0.2);
+      background: rgba(12, 15, 22, 0.95);
+      padding: 20px 24px;
+      margin-bottom: 40px;
+      display: none;
+      animation: fadeIn 0.3s ease;
+    }
+    .toc-drawer.active {
+      display: block;
+    }
+    .toc-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+      gap: 16px;
+      margin-top: 14px;
+    }
+    .toc-item {
+      display: block;
+      color: #94a3b8;
+      text-decoration: none;
+      font-size: 13px;
+      border-left: 2px solid var(--acid-pink);
+      padding: 6px 12px;
+      transition: all 0.2s ease;
+      background: rgba(255, 255, 255, 0.02);
+    }
+    .toc-item:hover {
+      color: #fff;
+      border-left-color: var(--acid-neon-green);
+      background: rgba(57, 255, 20, 0.08);
+      transform: translateX(4px);
+    }
+
+    /* 章节主叙事模块 */
+    .section-header-block {
+      display: flex;
+      justify-content: space-between;
+      align-items: flex-end;
+      border-bottom: 2px solid rgba(255, 255, 255, 0.2);
+      padding-bottom: 12px;
+      margin: 48px 0 28px;
+    }
+
+    .section-header-title {
+      font-size: clamp(24px, 3.6vw, 42px);
+      font-weight: 900;
+      letter-spacing: -0.02em;
+      text-transform: uppercase;
+    }
+
+    .section-kicker {
+      font-size: 11px;
+      font-family: var(--font-mono);
+      color: var(--acid-neon-green);
+      letter-spacing: 0.2em;
+      text-transform: uppercase;
+    }
+
+    .narrative-grid {
+      display: grid;
+      grid-template-columns: repeat(2, 1fr);
+      gap: 24px;
+      margin-bottom: 48px;
+    }
+
+    .narrative-card {
+      background: var(--acid-card-bg);
+      border: var(--border-acid);
+      padding: 30px;
+      position: relative;
+      overflow: hidden;
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
+      transition: transform 0.25s ease, border-color 0.25s ease;
+    }
+
+    .narrative-card:hover {
+      transform: translateY(-4px);
+      border-color: var(--acid-cyan);
+    }
+
+    .narrative-card::before {
+      content: attr(data-step);
+      position: absolute;
+      right: 18px;
+      top: 14px;
+      font-size: 48px;
+      font-weight: 900;
+      color: rgba(255, 255, 255, 0.04);
+      font-family: var(--font-mono);
+      pointer-events: none;
+    }
+
+    .narrative-title {
+      font-size: 20px;
+      font-weight: 900;
+      margin-bottom: 14px;
+      color: #fff;
+      letter-spacing: -0.01em;
+    }
+
+    .narrative-p {
+      font-size: 14px;
+      line-height: 1.8;
+      color: #94a3b8;
+    }
+
+    /* 次级栏目 */
+    .column-trio {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 22px;
+      margin-bottom: 54px;
+    }
+
+    .column-box {
+      border: var(--border-acid);
+      background: rgba(14, 16, 23, 0.85);
+      padding: 26px 22px;
+      position: relative;
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
+    }
+
+    .col-tag {
+      font-family: var(--font-mono);
+      font-size: 11px;
+      font-weight: 700;
+      padding: 3px 8px;
+      width: fit-content;
+      margin-bottom: 16px;
+      text-transform: uppercase;
+      letter-spacing: 0.1em;
+    }
+
+    .col-tag-1 { background: rgba(255, 0, 127, 0.15); color: var(--acid-pink); border: 1px solid var(--acid-pink); }
+    .col-tag-2 { background: rgba(0, 240, 255, 0.15); color: var(--acid-cyan); border: 1px solid var(--acid-cyan); }
+    .col-tag-3 { background: rgba(57, 255, 20, 0.15); color: var(--acid-neon-green); border: 1px solid var(--acid-neon-green); }
+
+    .column-title {
+      font-size: 18px;
+      font-weight: 900;
+      margin-bottom: 12px;
+      line-height: 1.4;
+    }
+
+    .column-desc {
+      font-size: 13.5px;
+      line-height: 1.75;
+      color: #94a3b8;
+    }
+
+    /* 资料模块集群 */
+    .data-matrix-container {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 24px;
+      margin-bottom: 56px;
+    }
+
+    .data-panel {
+      border: var(--border-acid);
+      background: rgba(10, 13, 20, 0.9);
+      padding: 26px;
+    }
+
+    .data-panel-title {
+      font-size: 15px;
+      font-weight: 900;
+      letter-spacing: 0.1em;
+      text-transform: uppercase;
+      margin-bottom: 18px;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      border-bottom: 1px dashed rgba(255, 255, 255, 0.18);
+      padding-bottom: 10px;
+    }
+
+    /* 展览时间表 */
+    .expo-timeline-item {
+      display: grid;
+      grid-template-columns: 90px 1fr auto;
+      gap: 12px;
+      padding: 10px 0;
+      border-bottom: 1px solid rgba(255, 255, 255, 0.06);
+      font-size: 13px;
+      align-items: center;
+    }
+    .expo-date { font-family: var(--font-mono); color: var(--acid-yellow); font-weight: 700; }
+    .expo-name { font-weight: 700; color: #f1f5f9; }
+    .expo-loc { font-family: var(--font-mono); color: #64748b; font-size: 11px; }
+
+    /* 荧光色谱条 */
+    .palette-grid {
+      display: grid;
+      grid-template-columns: repeat(5, 1fr);
+      gap: 8px;
+      margin-top: 12px;
+    }
+    .color-chip {
+      height: 64px;
+      border: 1px solid rgba(255,255,255,0.3);
+      display: flex;
+      flex-direction: column;
+      justify-content: flex-end;
+      padding: 6px;
+      font-family: var(--font-mono);
+      font-size: 10px;
+      font-weight: 700;
+      color: #000;
+      text-shadow: 0 0 2px rgba(255,255,255,0.8);
+    }
+
+    /* 艺术家卡片 */
+    .artist-grid {
+      display: grid;
+      grid-template-columns: repeat(2, 1fr);
+      gap: 12px;
+    }
+    .artist-card {
+      border: 1px solid rgba(255, 255, 255, 0.1);
+      padding: 12px;
+      background: rgba(255, 255, 255, 0.02);
+    }
+    .artist-name { font-size: 14px; font-weight: 900; color: #fff; margin-bottom: 4px; }
+    .artist-role { font-size: 11px; font-family: var(--font-mono); color: var(--acid-pink); }
+    .artist-focus { font-size: 12px; color: #94a3b8; margin-top: 6px; }
+
+    /* 术语表与实验编号 */
+    .glossary-list {
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+    }
+    .glossary-term {
+      font-size: 13px;
+      line-height: 1.6;
+    }
+    .glossary-term strong {
+      color: var(--acid-cyan);
+      font-family: var(--font-mono);
+      display: inline-block;
+      margin-right: 6px;
+    }
+
+    /* 宣言收尾 */
+    .manifesto-closer {
+      border: 2px solid var(--acid-neon-green);
+      background: radial-gradient(circle at center, rgba(57, 255, 20, 0.08), transparent 70%), #06070a;
+      padding: 56px 36px;
+      text-align: center;
+      position: relative;
+      box-shadow: 0 0 35px rgba(57, 255, 20, 0.2);
+    }
+
+    .closer-quote {
+      font-size: clamp(24px, 4.2vw, 44px);
+      font-weight: 900;
+      letter-spacing: -0.02em;
+      line-height: 1.3;
+      margin-bottom: 20px;
+      background: linear-gradient(120deg, #ffffff, #a7f3d0, #6ee7b7);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+    }
+
+    .closer-author {
+      font-family: var(--font-mono);
+      font-size: 12px;
+      letter-spacing: 0.25em;
+      color: #94a3b8;
+      text-transform: uppercase;
+    }
+
+    /* 动效与全局失真控制 */
+    .fluid-liquified {
+      animation: liquifyWave 2.8s infinite alternate ease-in-out !important;
+      filter: blur(18px) contrast(3.2) saturate(2.4) !important;
+    }
+
+    .fluid-frozen {
+      filter: blur(14px) contrast(1.8) grayscale(0.6) brightness(1.4) !important;
+      animation: none !important;
+    }
+
+    @keyframes liquifyWave {
+      0% { transform: scale(1) rotate(0deg) skewX(0deg); }
+      50% { transform: scale(1.12) rotate(6deg) skewX(8deg); }
+      100% { transform: scale(1.05) rotate(-5deg) skewY(-6deg); }
+    }
+
+    @keyframes fadeIn {
+      from { opacity: 0; transform: translateY(-8px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+
+    @media (prefers-reduced-motion: reduce) {
+      .liquid-metal-mesh,
+      .narrative-card,
+      .acid-btn {
+        transition: none !important;
+        animation: none !important;
+      }
+    }
+
+    @media (max-width: 920px) {
+      .hero-layout-grid {
         grid-template-columns: 1fr;
       }
-      .acid-trio-row {
+      .narrative-grid {
         grid-template-columns: 1fr;
+      }
+      .column-trio {
+        grid-template-columns: 1fr;
+      }
+      .data-matrix-container {
+        grid-template-columns: 1fr;
+      }
+    }
+
+    @media (max-width: 580px) {
+      .hero-manifesto {
+        padding: 24px 18px;
+      }
+      .interactive-canvas-frame {
+        height: 260px;
+      }
+      .palette-grid {
+        grid-template-columns: repeat(3, 1fr);
+      }
+      .artist-grid {
+        grid-template-columns: 1fr;
+      }
+      .mag-masthead {
+        padding: 14px;
       }
     }
   </style>
 </head>
 <body>
-  <div class="acid-container">
-    <header class="acid-header">
-      <div>
-        <div class="acid-badge">STYLE 30 // ACID GRAPHICS</div>
-        <h1 class="acid-main-title">LIQUID CHROME</h1>
+  <div class="acid-wrapper">
+    <!-- 刊物身份 MASTHEAD -->
+    <header class="mag-masthead">
+      <div class="mag-id-group">
+        <span class="mag-vol-badge">ISSUE 30 // 2026 ARCHIVE</span>
+        <span class="mag-title-sub">NEO ACID / 地下视觉文化年鉴</span>
       </div>
-      <div style="font-size: 13px; color: var(--acid-cyan); letter-spacing: 0.15em; font-weight: 900;">
-        SONIC ABERRATION 2049
+      <div class="mag-actions" role="toolbar" aria-label="杂志交互控制">
+        <button class="acid-btn" id="btnToggleToc" onclick="toggleToc()">
+          ☰ 打开地下刊物目录
+        </button>
+        <button class="acid-btn" id="btnLiquify" onclick="triggerLiquify()">
+          🧪 触发流体液化
+        </button>
+        <button class="acid-btn" id="btnFreeze" onclick="freezeChrome()">
+          ❄️ 冻结这一帧铬光
+        </button>
+        <button class="acid-btn" id="btnLowStim" onclick="toggleLowStim()">
+          👁️ 切换低刺激视觉
+        </button>
       </div>
     </header>
 
-    <section class="acid-hero-grid">
-      <div class="acid-poster-frame">
-        <img src="assets/images/acid_graphics.jpg" alt="酸性设计先锋海报" class="acid-poster-img" id="posterImg">
+    <!-- 目录展开抽屉 -->
+    <nav class="toc-drawer" id="tocDrawer" aria-label="快速目录导览">
+      <div style="font-size: 11px; font-family: var(--font-mono); color: var(--acid-neon-green); letter-spacing: 0.15em;">
+        INDEX / 目录索引
       </div>
+      <div class="toc-grid">
+        <a href="#main-narrative" class="toc-item">01. 主叙事：液态铬与 90s 反叛基因</a>
+        <a href="#sub-columns" class="toc-item">02. 次级栏目：色差、拉伸与后数字痕迹</a>
+        <a href="#data-matrix" class="toc-item">03. 资料模块：实验编号与色谱档案</a>
+        <a href="#manifesto-closer" class="toc-item">04. 最终宣言：重定秩序</a>
+      </div>
+    </nav>
 
-      <div class="acid-text-content">
-        <div class="acid-sub-kicker">// AVANT-GARDE VISUALS</div>
-        <h2 class="acid-heading">液态铬合金与先锋反叛视觉</h2>
-        <p class="acid-body">
-          扭曲金属高光、饱和电光撞色与解构字体排印！酸性设计打破一切传统平面构成的陈规，将赛博幻觉与重金属质感推向极致。
+    <!-- 封面主导读与流体画布 -->
+    <main>
+      <section class="hero-manifesto" id="main-narrative">
+        <div class="hero-marquee-top">LIQUID CHROME // UNDERGROUND RAVE ETHOS // POST-DIGITAL MANIFESTO</div>
+        <h1 class="hero-title-main">液态铬与 90s 地下派对传单的反叛基因</h1>
+        
+        <div class="hero-layout-grid">
+          <div>
+            <p class="hero-lead-text">
+              酸性设计绝非单纯的视觉噪点拼接。从低成本单色油印机对高饱和油墨的妥协，到三维渲染引擎中流淌的铬合金反光，这一股视觉洪流始终是对理性网格、中产审美的挑衅与重塑。
+            </p>
+            <div style="display: flex; gap: 12px; flex-wrap: wrap;">
+              <span class="col-tag col-tag-1">#CHROME-FLUID</span>
+              <span class="col-tag col-tag-2">#RAVE-FLYER-GENE</span>
+              <span class="col-tag col-tag-3">#GLITCH-DISPLACEMENT</span>
+            </div>
+          </div>
+
+          <!-- 交互式金属流体视窗 -->
+          <div class="chrome-fluid-canvas-box">
+            <div class="interactive-canvas-frame" id="fluidCanvas" onmousemove="handleFluidHover(event)" role="img" aria-label="可交互的液态金属光泽动态效果">
+              <div class="liquid-metal-mesh" id="liquidMesh"></div>
+              <div class="liquid-metal-overlay">
+                <span class="canvas-hud-tag" id="hudState">STATUS: DYNAMIC SPECULAR</span>
+                <span class="canvas-hud-tag" style="align-self: flex-end; color: var(--acid-pink); border-color: var(--acid-pink);">DISPLACEMENT: AUTO</span>
+              </div>
+            </div>
+            <div style="font-family: var(--font-mono); font-size: 10.5px; color: #64748b; margin-top: 8px; text-align: right;">
+              [ 移动光标拨动金属波纹，或使用顶部功能键改变流体形态 ]
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- 主叙事四小节 -->
+      <section class="narrative-grid">
+        <article class="narrative-card" data-step="01">
+          <div>
+            <div style="font-family: var(--font-mono); font-size: 11px; color: var(--acid-pink); margin-bottom: 8px;">CHAPTER 01 // PHYSICAL LIMIT</div>
+            <h2 class="narrative-title">印刷限制：廉价油印与荧光油墨的突围</h2>
+            <p class="narrative-p">
+              90 年代初的英国地下仓库派对组织者没有昂贵的四色胶印预算。他们利用 Risograph 与荧光油墨在低光照环境下产生视网膜刺激，刺破俱乐部浓重烟雾。意外的套印不准、网点错位，催生了最初的酸性构图语法。
+            </p>
+          </div>
+        </article>
+
+        <article class="narrative-card" data-step="02">
+          <div>
+            <div style="font-family: var(--font-mono); font-size: 11px; color: var(--acid-cyan); margin-bottom: 8px;">CHAPTER 02 // SUBCULTURE</div>
+            <h2 class="narrative-title">俱乐部文化：Techno 节奏与反体制传单</h2>
+            <p class="narrative-p">
+              海报不仅是派对入口指南，更是一种反主流符码。极度扭曲的科幻几何体与部落神秘学图腾交织，设计师们在传单中隐藏坐标与频段，把每一次聚会塑造成拒绝同质化都市生活的暂时性自治狂欢。
+            </p>
+          </div>
+        </article>
+
+        <article class="narrative-card" data-step="03">
+          <div>
+            <div style="font-family: var(--font-mono); font-size: 11px; color: var(--acid-neon-green); margin-bottom: 8px;">CHAPTER 03 // 3D RENDERING</div>
+            <h2 class="narrative-title">3D 软件平民化：从 Raytracing 到铬合金狂热</h2>
+            <p class="narrative-p">
+              随着 Blender 和 Cinema 4D 等工具在年轻创作者群体中普及，金属折射（IOR）、菲涅尔效应与法线置换被推向极致。铬合金拥有镜面反射周围一切环境的特质，象征着数字空间对物理世界的吞噬与重构。
+            </p>
+          </div>
+        </article>
+
+        <article class="narrative-card" data-step="04">
+          <div>
+            <div style="font-family: var(--font-mono); font-size: 11px; color: var(--acid-yellow); margin-bottom: 8px;">CHAPTER 04 // NEO VOGUE</div>
+            <h2 class="narrative-title">当代再流行：后网络时代的信息过载美学</h2>
+            <p class="narrative-p">
+              当扁平化（Flat Design）与极简 UI 让数字世界陷入无聊的标准化，新一代创作者重新抓起酸性美学。它用高密度、过饱和与破坏性的排版对抗算法喂养的平庸，成为当下最强硬的视觉表达。
+            </p>
+          </div>
+        </article>
+      </section>
+
+      <!-- 次级栏目 -->
+      <section id="sub-columns">
+        <div class="section-header-block">
+          <h2 class="section-header-title">CRITICAL ESSAYS // 先锋专栏</h2>
+          <span class="section-kicker">3 THEMATIC PERSPECTIVES</span>
+        </div>
+
+        <div class="column-trio">
+          <article class="column-box">
+            <span class="col-tag col-tag-1">COLOR OPTICS</span>
+            <h3 class="column-title">色差为何从缺陷变成语言</h3>
+            <p class="column-desc">
+              在传统光学中，色差（Chromatic Aberration）意味着镜片未能将所有波长的光线聚于同一点。但在酸性视觉中，红蓝边缘位移主动打破了画面的二维静止感，将显示器像素级的物理缺陷转化为极具现场冲击力的动态眩晕感。
+            </p>
+          </article>
+
+          <article class="column-box">
+            <span class="col-tag col-tag-2">TYPOGRAPHY</span>
+            <h3 class="column-title">拉伸字体的可读边界</h3>
+            <p class="column-desc">
+              瑞士国际主义排版视“任意拉伸字体比例”为死罪，而酸性排版将字形视作可塑的流体雕塑。当黑体字被水平拉伸 400% 或垂直压缩时，文字从“传达语义的工具”升格为“具备压迫感的建筑结构”，试探可读性的极值。
+            </p>
+          </article>
+
+          <article class="column-box">
+            <span class="col-tag col-tag-3">POST-DIGITAL</span>
+            <h3 class="column-title">后数字设计如何保留人的痕迹</h3>
+            <p class="column-desc">
+              完美的矢量路径与平滑渐变往往透露出冰冷的代码感。酸性艺术家故意注入颗粒噪点、扫描划痕与手绘矢量破坏，在纯数字合成空间中植入不完美的“生物残留”，抵抗人工智能生成的无暇幻觉。
+            </p>
+          </article>
+        </div>
+      </section>
+
+      <!-- 资料模块：展览、色谱、实验编号、术语表 -->
+      <section id="data-matrix">
+        <div class="section-header-block">
+          <h2 class="section-header-title">ARCHIVAL MATRIX // 档案与资料库</h2>
+          <span class="section-kicker">RESEARCH & SPECS</span>
+        </div>
+
+        <div class="data-matrix-container">
+          <!-- 虚构展览与日程 -->
+          <div class="data-panel">
+            <h3 class="data-panel-title">📅 虚构展览时间表 // EXPO TIMETABLE</h3>
+            <div class="expo-timeline-item">
+              <span class="expo-date">2026.04.12</span>
+              <span class="expo-name">《流体折射：后铬合金时代》</span>
+              <span class="expo-loc">BERLIN / KRAFTWERK</span>
+            </div>
+            <div class="expo-timeline-item">
+              <span class="expo-date">2026.06.08</span>
+              <span class="expo-name">《地下传单复活：1991-2026》</span>
+              <span class="expo-loc">LONDON / PRINTWORKS</span>
+            </div>
+            <div class="expo-timeline-item">
+              <span class="expo-date">2026.09.21</span>
+              <span class="expo-name">《像素溢出与解构字体双年展》</span>
+              <span class="expo-loc">TOKYO / SHIBUYA B1</span>
+            </div>
+            <div class="expo-timeline-item">
+              <span class="expo-date">2026.11.05</span>
+              <span class="expo-name">《非标准网格的狂欢夜》</span>
+              <span class="expo-loc">SHANGHAI / TANK NO.5</span>
+            </div>
+          </div>
+
+          <!-- 荧光色谱与材质实验编号 -->
+          <div class="data-panel">
+            <h3 class="data-panel-title">🌈 荧光色谱与材质实验 // MATERIAL LAB</h3>
+            <div style="font-size: 12px; color: #94a3b8; margin-bottom: 8px;">
+              LAB-EXP // 材质实验编号：#ACID-CHROME-709B (99.4% SPECULAR)
+            </div>
+            <div class="palette-grid">
+              <div class="color-chip" style="background: #39ff14;">#39FF14<br>NEON GRN</div>
+              <div class="color-chip" style="background: #ff007f; color: #fff;">#FF007F<br>ACID PNK</div>
+              <div class="color-chip" style="background: #00f0ff;">#00F0FF<br>CYAN AURA</div>
+              <div class="color-chip" style="background: #fbee0f;">#FBEE0F<br>SOLAR YEL</div>
+              <div class="color-chip" style="background: #a855f7; color: #fff;">#A855F7<br>VIOLET RAY</div>
+            </div>
+            <div style="font-family: var(--font-mono); font-size: 11px; color: #64748b; margin-top: 14px; line-height: 1.6;">
+              折射率设定 (IOR): 2.95 / 粗糙度 (Roughness): 0.04 / 散射模型: GGX Metallic Anisotropy.
+            </div>
+          </div>
+
+          <!-- 先锋艺术家卡片 -->
+          <div class="data-panel">
+            <h3 class="data-panel-title">⚡ 参展艺术家与核心研究员 // ARTISTS</h3>
+            <div class="artist-grid">
+              <div class="artist-card">
+                <div class="artist-name">Vektor K.</div>
+                <div class="artist-role">GLITCH RESEARCHER</div>
+                <div class="artist-focus">专注于着色器算法与非欧几里得空间字体畸变。</div>
+              </div>
+              <div class="artist-card">
+                <div class="artist-name">Sora Chen</div>
+                <div class="artist-role">CHROME SCULPTOR</div>
+                <div class="artist-focus">重现 90 年代夜店宣传品的物理油印颗粒感。</div>
+              </div>
+            </div>
+          </div>
+
+          <!-- 视觉术语表与编辑推荐 -->
+          <div class="data-panel">
+            <h3 class="data-panel-title">📖 视觉术语表 & 编辑推荐 // GLOSSARY</h3>
+            <div class="glossary-list">
+              <div class="glossary-term">
+                <strong>[Displacement Map]</strong> 置换贴图：使用高度信息直接变形网格顶点，塑造剧烈的液体褶皱。
+              </div>
+              <div class="glossary-term">
+                <strong>[Anti-Grid Layout]</strong> 反网格排版：公然破坏版心对齐原则，通过叠压制造空间张力。
+              </div>
+              <div class="glossary-term">
+                <strong>[Editor's Pick]</strong> 本期推荐：深入探索模拟合成器音频波形与金属着色器的实时映射联动。
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- 宣言收尾 -->
+      <footer class="manifesto-closer" id="manifesto-closer">
+        <p class="closer-quote">
+          “反叛不是把一切弄乱，<br>而是重新决定什么可以成为秩序。”
         </p>
-        <button class="btn-acid-glitch" onclick="toggleAcidDistort()">
-          💥 触发流体液化失真
-        </button>
-      </div>
-    </section>
-
-    <!-- 深度专栏长文 -->
-    <section style="margin-bottom: 48px; border-top: 2px solid rgba(255,255,255,0.2); padding-top: 36px;">
-      <div style="font-size: 12px; font-weight: 900; color: var(--acid-neon-green); letter-spacing: 0.15em; margin-bottom: 16px;">// ESSAYS & CRITIQUE · 先锋批评</div>
-      <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(320px, 1fr)); gap: 28px;">
-        <article style="background: rgba(255, 255, 255, 0.04); border: 1px solid rgba(255, 255, 255, 0.2); border-radius: 12px; padding: 24px;">
-          <div style="font-size: 11px; font-weight: 900; color: var(--acid-pink); margin-bottom: 8px;">ESSAY 01 // RAVE VISUALS</div>
-          <h3 style="font-size: 20px; font-weight: 900; line-height: 1.3; margin-bottom: 12px;">酸性视觉与地下狂欢：90s 俱乐部海报的反叛基因</h3>
-          <p style="font-size: 13.5px; line-height: 1.8; color: #d1d5db;">
-            从伦敦地下 Techno 派对的传单，到如今主宰 Behance 的 3D 镀铬液态金属。酸性设计用刺目的高荧光撞色与扭曲拉伸的黑体，公然反抗瑞士国际主义排版的“冷静客观”。
-          </p>
-        </article>
-
-        <article style="background: rgba(255, 255, 255, 0.04); border: 1px solid rgba(255, 255, 255, 0.2); border-radius: 12px; padding: 24px;">
-          <div style="font-size: 11px; font-weight: 900; color: var(--acid-cyan); margin-bottom: 8px;">ESSAY 02 // CHROMATIC ABERRATION</div>
-          <h3 style="font-size: 20px; font-weight: 900; line-height: 1.3; margin-bottom: 12px;">色差色散与液态渲染：GPU 着色器中的数字故障美学</h3>
-          <p style="font-size: 13.5px; line-height: 1.8; color: #d1d5db;">
-            在片段着色器中对 RGB 三通道施加不同强度的正弦扰动（Sine Wave Displacement），模拟光线穿过缺陷棱镜产生的彩虹边缘。数字故障（Glitch）不再是错误，而是最高阶的装饰。
-          </p>
-        </article>
-      </div>
-    </section>
-
-    <footer class="acid-trio-row">
-      <div class="acid-card">
-        <h4 style="color: var(--acid-pink);">01 // HYPER CHROME</h4>
-        <p style="font-size: 13px; color: #9ca3af; line-height: 1.6;">流体高反差铬合金渐变与金属光泽渲染。</p>
-      </div>
-      <div class="acid-card">
-        <h4 style="color: var(--acid-neon-green);">02 // ACID TYPO</h4>
-        <p style="font-size: 13px; color: #9ca3af; line-height: 1.6;">超大字阶与极度拉伸的解构主义字体混排。</p>
-      </div>
-      <div class="acid-card">
-        <h4 style="color: var(--acid-cyan);">03 // POST-DIGITAL</h4>
-        <p style="font-size: 13px; color: #9ca3af; line-height: 1.6;">后数字时代的未来反叛与艺术视觉轰炸。</p>
-      </div>
-    </footer>
-  <style>
-    .acid-card {
-      transition: transform 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275), box-shadow 0.3s ease, border-color 0.3s ease;
-    }
-    .acid-card:hover {
-      transform: translateY(-8px) rotate(-1deg) scale(1.02);
-      border-color: var(--acid-neon-green);
-      box-shadow: 0 0 25px rgba(57, 255, 20, 0.4);
-    }
-    .acid-glitch-active {
-      animation: acidShake 0.4s cubic-bezier(0.36, 0.07, 0.19, 0.97) both;
-      filter: invert(1) hue-rotate(120deg) contrast(1.8) saturate(2) !important;
-    }
-    @keyframes acidShake {
-      0% { transform: translate(0, 0); }
-      25% { transform: translate(-8px, 4px) skewX(4deg); }
-      50% { transform: translate(8px, -4px) skewX(-4deg); }
-      75% { transform: translate(-4px, -8px) skewY(2deg); }
-      100% { transform: translate(0, 0); }
-    }
-  </style>
+        <div class="closer-author">
+          — NEO ACID EDITORIAL BOARD · ISSUE 30 MANIFESTO CLOSER —
+        </div>
+      </footer>
+    </main>
+  </div>
 
   <script src="assets/nav-bar.js"></script>
   <script>
-    function toggleAcidDistort() {
-      const container = document.querySelector('.acid-container');
-      container.classList.add('acid-glitch-active');
-      setTimeout(() => {
-        container.classList.remove('acid-glitch-active');
-      }, 500);
+    // 交互状态控制
+    const mesh = document.getElementById('liquidMesh');
+    const hudState = document.getElementById('hudState');
+    let isLiquified = false;
+    let isFrozen = false;
+
+    // 光标联动水波位移
+    function handleFluidHover(e) {
+      if (isFrozen) return;
+      const rect = e.currentTarget.getBoundingClientRect();
+      const x = ((e.clientX - rect.left) / rect.width - 0.5) * 40;
+      const y = ((e.clientY - rect.top) / rect.height - 0.5) * 40;
+      if (!isLiquified) {
+        mesh.style.transform = `translate(${x}px, ${y}px) rotate(${x * 0.4}deg) scale(1.05)`;
+      }
+    }
+
+    // 触发流体液化
+    function triggerLiquify() {
+      isFrozen = false;
+      isLiquified = !isLiquified;
+      mesh.classList.remove('fluid-frozen');
+      
+      const btn = document.getElementById('btnLiquify');
+      const btnFrz = document.getElementById('btnFreeze');
+      btnFrz.classList.remove('active-state');
+
+      if (isLiquified) {
+        mesh.classList.add('fluid-liquified');
+        hudState.textContent = 'STATUS: HYPER LIQUIFYING';
+        btn.classList.add('active-state');
+      } else {
+        mesh.classList.remove('fluid-liquified');
+        mesh.style.transform = 'none';
+        hudState.textContent = 'STATUS: DYNAMIC SPECULAR';
+        btn.classList.remove('active-state');
+      }
+    }
+
+    // 冻结铬光
+    function freezeChrome() {
+      isLiquified = false;
+      isFrozen = !isFrozen;
+      mesh.classList.remove('fluid-liquified');
+
+      const btnFrz = document.getElementById('btnFreeze');
+      const btnLiq = document.getElementById('btnLiquify');
+      btnLiq.classList.remove('active-state');
+
+      if (isFrozen) {
+        mesh.classList.add('fluid-frozen');
+        hudState.textContent = 'STATUS: SPECULAR FROZEN';
+        btnFrz.classList.add('active-state');
+      } else {
+        mesh.classList.remove('fluid-frozen');
+        hudState.textContent = 'STATUS: DYNAMIC SPECULAR';
+        btnFrz.classList.remove('active-state');
+      }
+    }
+
+    // 切换低刺激视觉
+    function toggleLowStim() {
+      document.body.classList.toggle('low-stim-mode');
+      const btn = document.getElementById('btnLowStim');
+      if (document.body.classList.contains('low-stim-mode')) {
+        btn.textContent = '👁️ 恢复高饱和先锋';
+        btn.classList.add('active-state');
+      } else {
+        btn.textContent = '👁️ 切换低刺激视觉';
+        btn.classList.remove('active-state');
+      }
+    }
+
+    // 切换刊物目录
+    function toggleToc() {
+      const drawer = document.getElementById('tocDrawer');
+      const btn = document.getElementById('btnToggleToc');
+      drawer.classList.toggle('active');
+      if (drawer.classList.contains('active')) {
+        btn.textContent = '✕ 收起地下刊物目录';
+        btn.classList.add('active-state');
+      } else {
+        btn.textContent = '☰ 打开地下刊物目录';
+        btn.classList.remove('active-state');
+      }
     }
   </script>
 </body>

@@ -3,19 +3,23 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>思考与秩序 — 01 瑞士国际主义极简风</title>
+  <title>ORDNUNG / 秩序研究季刊 01 — 瑞士国际主义极简风</title>
   <link rel="stylesheet" href="assets/common.css">
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;600;700&family=Noto+Sans+SC:wght@300;400;700;900&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;700&family=Noto+Sans+SC:wght@400;500;700;900&family=JetBrains+Mono:wght@400;700&display=swap" rel="stylesheet">
   <style>
     :root {
-      --swiss-bg: #f8f8f8;
-      --swiss-black: #0d0d0d;
-      --swiss-red: #ff3300;
-      --swiss-border: #0d0d0d;
-      --swiss-gray: #757575;
-      --font-swiss: "Space Grotesk", "Noto Sans SC", -apple-system, sans-serif;
+      --bg: #f4f4f0;
+      --surface: #ffffff;
+      --ink: #0f0f11;
+      --muted: #62636a;
+      --line: #0f0f11;
+      --line-subtle: #d6d6d0;
+      --red: #ff2b00;
+      --blue: #0044ff;
+      --font-sans: "Space Grotesk", "Noto Sans SC", -apple-system, BlinkMacSystemFont, sans-serif;
+      --font-mono: "JetBrains Mono", monospace;
     }
 
     * {
@@ -25,611 +29,843 @@
     }
 
     body {
-      background-color: var(--swiss-bg);
-      color: var(--swiss-black);
-      font-family: var(--font-swiss);
-      line-height: 1.5;
+      background-color: var(--bg);
+      color: var(--ink);
+      font-family: var(--font-sans);
+      line-height: 1.55;
       -webkit-font-smoothing: antialiased;
       position: relative;
+      overflow-x: hidden;
     }
 
-    /* 瑞士网格辅助线背景（可切换） */
-    .grid-lines-overlay {
+    /* 12 列网格显影层 */
+    .grid-overlay {
       position: fixed;
       inset: 0;
       pointer-events: none;
-      z-index: 999;
+      z-index: 9998;
       display: none;
-      background: repeating-linear-gradient(to right, rgba(255, 51, 0, 0.08) 0px, rgba(255, 51, 0, 0.08) 1px, transparent 1px, transparent 80px),
-                  repeating-linear-gradient(to bottom, rgba(255, 51, 0, 0.08) 0px, rgba(255, 51, 0, 0.08) 1px, transparent 1px, transparent 40px);
-    }
-    .grid-lines-overlay.show {
-      display: block;
-    }
-
-    /* 容器主网格 */
-    .swiss-container {
-      max-width: 1320px;
+      max-width: 1360px;
       margin: 0 auto;
-      border-left: 2px solid var(--swiss-border);
-      border-right: 2px solid var(--swiss-border);
-      min-height: 100vh;
-      display: flex;
-      flex-direction: column;
+      padding: 0 24px;
     }
-
-    /* 顶部标头栏 */
-    header {
-      border-bottom: 2px solid var(--swiss-border);
+    .grid-overlay.active {
       display: grid;
-      grid-template-columns: 2fr 1fr 1fr;
+      grid-template-columns: repeat(12, 1fr);
+      gap: 16px;
+    }
+    .grid-col-guide {
+      height: 100vh;
+      background: rgba(255, 43, 0, 0.05);
+      border-left: 1px dashed rgba(255, 43, 0, 0.35);
+      border-right: 1px dashed rgba(255, 43, 0, 0.35);
+      position: relative;
+    }
+    .grid-col-guide::after {
+      content: attr(data-col);
+      position: absolute;
+      top: 6px;
+      left: 4px;
+      font-family: var(--font-mono);
+      font-size: 10px;
+      color: var(--red);
+      font-weight: 700;
     }
 
-    .header-col {
-      padding: 20px 24px;
-      border-right: 2px solid var(--swiss-border);
-      display: flex;
-      flex-direction: column;
-      justify-content: space-between;
-    }
-    .header-col:last-child {
-      border-right: none;
-    }
-
-    .brand-logo {
-      font-size: 28px;
-      font-weight: 900;
-      letter-spacing: -1.5px;
-      text-transform: uppercase;
-      line-height: 1;
+    /* 外框架 */
+    .ordnung-shell {
+      max-width: 1360px;
+      margin: 0 auto;
+      border-left: 2px solid var(--line);
+      border-right: 2px solid var(--line);
+      min-height: 100vh;
+      background: var(--surface);
     }
 
-    .meta-tag {
+    /* 顶栏 */
+    .masthead-band {
+      display: grid;
+      grid-template-columns: 3fr 4fr 3fr 2fr;
+      border-bottom: 2px solid var(--line);
       font-size: 12px;
       font-weight: 700;
       text-transform: uppercase;
-      color: var(--swiss-red);
       letter-spacing: 0.5px;
-      margin-top: 4px;
     }
-
-    .nav-links {
+    .band-cell {
+      padding: 14px 18px;
+      border-right: 1px solid var(--line);
       display: flex;
-      gap: 16px;
-      list-style: none;
-      font-weight: 700;
-      font-size: 13px;
+      flex-direction: column;
+      justify-content: center;
+      gap: 4px;
     }
-    .nav-links a {
-      color: var(--swiss-black);
-      text-decoration: none;
-      padding-bottom: 2px;
-      border-bottom: 2px solid transparent;
-      transition: all 0.2s;
+    .band-cell:last-child {
+      border-right: none;
+      align-items: flex-end;
     }
-    .nav-links a:hover, .nav-links a.active {
-      border-bottom-color: var(--swiss-red);
-      color: var(--swiss-red);
+    .brand-title {
+      font-size: 20px;
+      font-weight: 900;
+      letter-spacing: -0.5px;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+    .red-dot {
+      width: 10px;
+      height: 10px;
+      background: var(--red);
+      display: inline-block;
     }
 
-    .control-btn {
-      background: var(--swiss-black);
+    /* 控制条与交互 */
+    .toolbar-strip {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 12px 24px;
+      background: #ecece6;
+      border-bottom: 2px solid var(--line);
+      font-size: 13px;
+      flex-wrap: wrap;
+      gap: 12px;
+    }
+    .interactive-btn {
+      background: var(--ink);
       color: #fff;
       border: none;
-      padding: 6px 12px;
-      font-size: 11px;
-      font-weight: 700;
-      cursor: pointer;
-      font-family: inherit;
-      display: inline-flex;
-      align-items: center;
-      gap: 6px;
-      align-self: flex-start;
-      margin-top: 10px;
-    }
-    .control-btn:hover {
-      background: var(--swiss-red);
-    }
-
-    /* 巨型海报 Hero 区域 */
-    .hero-section {
-      border-bottom: 2px solid var(--swiss-border);
-      padding: 60px 24px;
-      background: #fff;
-    }
-
-    .hero-coords {
+      padding: 8px 16px;
+      font-family: var(--font-sans);
       font-size: 12px;
       font-weight: 700;
-      color: var(--swiss-gray);
-      margin-bottom: 20px;
-      letter-spacing: 1px;
-    }
-
-    .hero-title {
-      font-size: clamp(40px, 7vw, 96px);
-      font-weight: 900;
-      line-height: 0.95;
-      letter-spacing: -3px;
-      text-transform: uppercase;
-      margin-bottom: 24px;
-    }
-
-    .hero-title span.accent {
-      color: var(--swiss-red);
-    }
-
-    .hero-desc {
-      font-size: 18px;
-      max-width: 680px;
-      font-weight: 400;
-      color: #333;
-      border-left: 3px solid var(--swiss-red);
-      padding-left: 16px;
-    }
-
-    /* 主体内容分栏网格 */
-    .content-grid {
-      display: grid;
-      grid-template-columns: 320px 1fr;
-      flex: 1;
-    }
-
-    /* 左侧边栏：索引与个人说明 */
-    .sidebar {
-      border-right: 2px solid var(--swiss-border);
-      background: #fafafa;
-    }
-
-    .sidebar-block {
-      padding: 24px;
-      border-bottom: 2px solid var(--swiss-border);
-    }
-
-    .sidebar-heading {
-      font-size: 12px;
-      font-weight: 900;
-      text-transform: uppercase;
-      letter-spacing: 1px;
-      margin-bottom: 16px;
-      color: var(--swiss-black);
-      display: flex;
-      justify-content: space-between;
-    }
-
-    .category-list {
-      list-style: none;
-    }
-    .category-list li {
-      margin-bottom: 10px;
-      display: flex;
-      justify-content: space-between;
-      font-size: 14px;
-      font-weight: 600;
+      letter-spacing: 0.5px;
       cursor: pointer;
-      padding: 6px 8px;
-      border: 1px solid transparent;
-      transition: all 0.15s;
-    }
-    .category-list li:hover {
-      border-color: var(--swiss-black);
-      background: #fff;
-    }
-    .category-list li.active {
-      background: var(--swiss-black);
-      color: #fff;
-    }
-
-    .author-card {
-      font-size: 14px;
-      line-height: 1.6;
-    }
-    .author-card strong {
-      display: block;
-      font-size: 18px;
-      font-weight: 900;
-      margin-bottom: 4px;
-    }
-
-    /* 右侧主文章流 */
-    .articles-feed {
-      background: #fff;
-    }
-
-    .article-item {
-      border-bottom: 2px solid var(--swiss-border);
-      padding: 40px 36px;
-      transition: background-color 0.2s;
-    }
-    .article-item:hover {
-      background: #fafcff;
-    }
-
-    .article-meta {
-      display: flex;
-      align-items: center;
-      gap: 20px;
-      font-size: 12px;
-      font-weight: 700;
-      color: var(--swiss-gray);
-      margin-bottom: 12px;
-    }
-    .article-meta .tag {
-      background: var(--swiss-black);
-      color: #fff;
-      padding: 2px 8px;
-      text-transform: uppercase;
-    }
-    .article-meta .index-no {
-      color: var(--swiss-red);
-      font-size: 14px;
-    }
-
-    .article-title {
-      font-size: clamp(24px, 3.2vw, 36px);
-      font-weight: 900;
-      line-height: 1.15;
-      letter-spacing: -1px;
-      margin-bottom: 16px;
-      cursor: pointer;
-    }
-    .article-title:hover {
-      color: var(--swiss-red);
-    }
-
-    .article-summary {
-      font-size: 16px;
-      color: #444;
-      line-height: 1.65;
-      margin-bottom: 20px;
-      max-width: 780px;
-    }
-
-    .article-body-fold {
-      display: none;
-      padding: 20px;
-      background: var(--swiss-bg);
-      border: 1px solid var(--swiss-border);
-      margin-bottom: 20px;
-      font-size: 15px;
-      line-height: 1.7;
-    }
-    .article-body-fold.open {
-      display: block;
-    }
-
-    .read-more-btn {
       display: inline-flex;
       align-items: center;
       gap: 8px;
-      font-weight: 900;
-      font-size: 13px;
-      text-transform: uppercase;
-      color: var(--swiss-black);
-      background: transparent;
-      border: 2px solid var(--swiss-black);
-      padding: 8px 16px;
-      cursor: pointer;
-      transition: all 0.2s;
+      transition: background 0.15s;
     }
-    .read-more-btn:hover {
-      background: var(--swiss-red);
-      border-color: var(--swiss-red);
+    .interactive-btn:hover {
+      background: var(--red);
+    }
+    .live-status {
+      font-family: var(--font-mono);
+      font-size: 12px;
+      color: var(--muted);
+    }
+
+    /* 主叙事 Hero */
+    .hero-narrative {
+      display: grid;
+      grid-template-columns: 7fr 5fr;
+      border-bottom: 2px solid var(--line);
+    }
+    .hero-lead-pane {
+      padding: 48px 40px;
+      border-right: 2px solid var(--line);
+    }
+    .issue-tag {
+      display: inline-block;
+      background: var(--red);
+      color: #fff;
+      font-size: 11px;
+      font-weight: 900;
+      letter-spacing: 1.5px;
+      padding: 3px 8px;
+      margin-bottom: 18px;
+    }
+    .hero-title {
+      font-size: clamp(34px, 4.6vw, 64px);
+      font-weight: 900;
+      line-height: 1.04;
+      letter-spacing: -2px;
+      margin-bottom: 20px;
+    }
+    .hero-motto {
+      font-size: 18px;
+      font-weight: 500;
+      color: var(--ink);
+      padding-left: 16px;
+      border-left: 4px solid var(--red);
+      line-height: 1.6;
+      margin-bottom: 28px;
+    }
+    .hero-aside-pane {
+      padding: 40px 32px;
+      background: #fafaf7;
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
+    }
+    .aside-spec-box {
+      border: 1px solid var(--line);
+      padding: 20px;
+      background: #fff;
+      margin-bottom: 20px;
+    }
+    .spec-header {
+      font-size: 11px;
+      font-family: var(--font-mono);
+      color: var(--muted);
+      border-bottom: 1px solid var(--line-subtle);
+      padding-bottom: 6px;
+      margin-bottom: 12px;
+    }
+    .spec-row {
+      display: flex;
+      justify-content: space-between;
+      font-size: 13px;
+      padding: 4px 0;
+      font-weight: 600;
+    }
+
+    /* 主叙事 4 个编号章节 */
+    .narrative-chapters-grid {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      border-bottom: 2px solid var(--line);
+    }
+    .chapter-card {
+      padding: 28px 24px;
+      border-right: 1px solid var(--line);
+      background: var(--surface);
+      display: flex;
+      flex-direction: column;
+    }
+    .chapter-card:last-child {
+      border-right: none;
+    }
+    .chap-num {
+      font-family: var(--font-mono);
+      font-size: 28px;
+      font-weight: 900;
+      color: var(--red);
+      line-height: 1;
+      margin-bottom: 14px;
+    }
+    .chap-title {
+      font-size: 18px;
+      font-weight: 700;
+      line-height: 1.3;
+      margin-bottom: 12px;
+      letter-spacing: -0.3px;
+    }
+    .chap-body {
+      font-size: 14px;
+      color: #333;
+      line-height: 1.7;
+    }
+
+    /* 3 个次级栏目 */
+    .secondary-section {
+      border-bottom: 2px solid var(--line);
+      padding: 44px 36px;
+      background: #fafaf7;
+    }
+    .sec-head-row {
+      display: flex;
+      justify-content: space-between;
+      align-items: baseline;
+      margin-bottom: 28px;
+      border-bottom: 1px solid var(--line);
+      padding-bottom: 12px;
+    }
+    .sec-title {
+      font-size: 22px;
+      font-weight: 900;
+      letter-spacing: -0.5px;
+    }
+    .sec-subtitle {
+      font-size: 12px;
+      font-family: var(--font-mono);
+      color: var(--muted);
+    }
+    .columns-trio {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 28px;
+    }
+    .trio-card {
+      border: 1px solid var(--line);
+      background: #fff;
+      padding: 24px;
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
+      transition: transform 0.2s, box-shadow 0.2s;
+    }
+    .trio-card:hover {
+      transform: translateY(-3px);
+      box-shadow: 6px 6px 0 var(--line);
+    }
+    .trio-tag {
+      font-size: 11px;
+      font-family: var(--font-mono);
+      color: var(--red);
+      font-weight: 700;
+      margin-bottom: 10px;
+    }
+    .trio-h {
+      font-size: 19px;
+      font-weight: 800;
+      line-height: 1.35;
+      margin-bottom: 14px;
+    }
+    .trio-p {
+      font-size: 14px;
+      color: #444;
+      line-height: 1.7;
+      margin-bottom: 18px;
+    }
+    .trio-btn {
+      background: transparent;
+      border: 1px solid var(--line);
+      padding: 6px 12px;
+      font-size: 12px;
+      font-weight: 700;
+      font-family: var(--font-sans);
+      cursor: pointer;
+      align-self: flex-start;
+      transition: all 0.15s;
+    }
+    .trio-btn:hover {
+      background: var(--ink);
       color: #fff;
     }
 
-    /* 底部条 */
-    footer {
-      border-top: 2px solid var(--swiss-border);
+    /* 资料型模块：排版四大黄金法则 */
+    .data-module-section {
+      border-bottom: 2px solid var(--line);
+      padding: 44px 36px;
+    }
+    .data-grid-four {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 20px;
+    }
+    .data-spec-card {
+      border: 1px solid var(--line);
+      padding: 20px;
+      background: #fff;
+    }
+    .data-val {
+      font-family: var(--font-mono);
+      font-size: 32px;
+      font-weight: 900;
+      color: var(--ink);
+      border-bottom: 2px solid var(--red);
+      padding-bottom: 6px;
+      margin-bottom: 10px;
+    }
+    .data-name {
+      font-size: 15px;
+      font-weight: 700;
+      margin-bottom: 8px;
+    }
+    .data-desc {
+      font-size: 13px;
+      color: #555;
+      line-height: 1.6;
+    }
+
+    /* 主题专属交互：字阶与行长交互标尺 */
+    .interactive-lab-section {
+      border-bottom: 2px solid var(--line);
+      padding: 40px 36px;
+      background: #fdfdf9;
+    }
+    .lab-box {
+      border: 2px solid var(--line);
       padding: 24px;
+      background: #fff;
+    }
+    .lab-controls {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+      gap: 20px;
+      margin-bottom: 24px;
+      padding-bottom: 16px;
+      border-bottom: 1px solid var(--line-subtle);
+    }
+    .control-group label {
+      display: block;
+      font-size: 12px;
+      font-weight: 700;
+      margin-bottom: 6px;
+    }
+    .control-group input[type="range"] {
+      width: 100%;
+      accent-color: var(--red);
+    }
+    .lab-sample-text {
+      padding: 20px;
+      background: #fafaf5;
+      border-left: 4px solid var(--ink);
+      font-size: 16px;
+      line-height: 1.6;
+      transition: all 0.2s ease;
+    }
+
+    /* 收尾区：删减清单 */
+    .colophon-section {
+      padding: 48px 36px;
+      background: #0f0f11;
+      color: #f4f4f0;
+    }
+    .colophon-head {
+      display: flex;
+      justify-content: space-between;
+      align-items: baseline;
+      border-bottom: 1px solid #333339;
+      padding-bottom: 14px;
+      margin-bottom: 28px;
+    }
+    .colophon-title {
+      font-size: 24px;
+      font-weight: 900;
+      letter-spacing: -0.5px;
+      color: #fff;
+    }
+    .checklist-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+      gap: 18px;
+      margin-bottom: 36px;
+    }
+    .check-item {
+      border: 1px solid #2a2a30;
+      padding: 16px;
+      background: #17171c;
+    }
+    .check-num {
+      font-family: var(--font-mono);
+      color: var(--red);
+      font-size: 14px;
+      font-weight: 700;
+      margin-bottom: 6px;
+    }
+    .check-title {
+      font-size: 15px;
+      font-weight: 700;
+      margin-bottom: 6px;
+      color: #fff;
+    }
+    .check-desc {
+      font-size: 12px;
+      color: #9c9ca6;
+      line-height: 1.6;
+    }
+
+    .footer-stamp-row {
       display: flex;
       justify-content: space-between;
       align-items: center;
-      background: var(--swiss-bg);
+      border-top: 1px solid #333339;
+      padding-top: 20px;
       font-size: 12px;
-      font-weight: 700;
+      color: #7d7d88;
+      font-family: var(--font-mono);
+      flex-wrap: wrap;
+      gap: 12px;
     }
 
-    @media (max-width: 900px) {
-      header {
+    @media (max-width: 1024px) {
+      .masthead-band {
+        grid-template-columns: 1fr 1fr;
+      }
+      .band-cell:nth-child(2) {
+        border-right: none;
+      }
+      .band-cell:nth-child(3) {
+        border-top: 1px solid var(--line);
+      }
+      .band-cell:nth-child(4) {
+        border-top: 1px solid var(--line);
+        border-right: none;
+      }
+      .hero-narrative {
         grid-template-columns: 1fr;
       }
-      .header-col {
+      .hero-lead-pane {
         border-right: none;
-        border-bottom: 2px solid var(--swiss-border);
+        border-bottom: 2px solid var(--line);
+        padding: 32px 20px;
       }
-      .header-col:last-child {
-        border-bottom: none;
+      .hero-aside-pane {
+        padding: 24px 20px;
       }
-      .content-grid {
+      .narrative-chapters-grid {
+        grid-template-columns: 1fr 1fr;
+      }
+      .chapter-card:nth-child(2) {
+        border-right: none;
+      }
+      .chapter-card:nth-child(3) {
+        border-top: 1px solid var(--line);
+      }
+      .chapter-card:nth-child(4) {
+        border-top: 1px solid var(--line);
+        border-right: none;
+      }
+      .columns-trio, .data-grid-four {
         grid-template-columns: 1fr;
       }
-      .sidebar {
-        border-right: none;
-        border-bottom: 2px solid var(--swiss-border);
-      }
-      .article-item {
-        padding: 24px 18px;
+      .secondary-section, .data-module-section, .interactive-lab-section, .colophon-section {
+        padding: 28px 18px;
       }
     }
   </style>
 </head>
 <body>
 
-  <!-- 辅助网格图层 -->
-  <div id="gridOverlay" class="grid-lines-overlay"></div>
+  <!-- 12 列显影网格 -->
+  <div id="gridOverlay" class="grid-overlay" aria-hidden="true">
+    <div class="grid-col-guide" data-col="01"></div>
+    <div class="grid-col-guide" data-col="02"></div>
+    <div class="grid-col-guide" data-col="03"></div>
+    <div class="grid-col-guide" data-col="04"></div>
+    <div class="grid-col-guide" data-col="05"></div>
+    <div class="grid-col-guide" data-col="06"></div>
+    <div class="grid-col-guide" data-col="07"></div>
+    <div class="grid-col-guide" data-col="08"></div>
+    <div class="grid-col-guide" data-col="09"></div>
+    <div class="grid-col-guide" data-col="10"></div>
+    <div class="grid-col-guide" data-col="11"></div>
+    <div class="grid-col-guide" data-col="12"></div>
+  </div>
 
-  <div class="swiss-container">
-    <!-- 顶部导航栏 -->
-    <header>
-      <div class="header-col">
-        <div class="brand-logo">DESIGN / FORM / LOGIC</div>
-        <div class="meta-tag">STYLE 01 · SWISS INTERNATIONAL TYPOGRAPHY</div>
+  <div class="ordnung-shell">
+    <!-- 刊物身份栏 -->
+    <header class="masthead-band">
+      <div class="band-cell">
+        <div class="brand-title"><span class="red-dot"></span> ORDNUNG</div>
+        <div style="font-size: 11px; color: var(--muted);">秩序研究季刊 · 第 01 辑</div>
       </div>
-      <div class="header-col">
-        <ul class="nav-links">
-          <li><a href="#" class="active">文章 ARCHIVE</a></li>
-          <li><a href="#">手记 ESSAYS</a></li>
-          <li><a href="#">关于 ABOUT</a></li>
-        </ul>
+      <div class="band-cell">
+        <div>国际主义平面设计与理性信息架构</div>
+        <div style="font-size: 11px; color: var(--muted);">橘猫编辑部 · 瑞士苏黎世/上海联线</div>
       </div>
-      <div class="header-col">
-        <div style="font-size: 11px; font-weight: 700;">GRID ALIGNMENT SYSTEM</div>
-        <button id="toggleGridBtn" class="control-btn">📏 显示/隐藏 瑞士排版网格</button>
+      <div class="band-cell">
+        <div>标准：12 列数学网格 / 8PX 基线</div>
+        <div style="font-size: 11px; color: var(--muted);">ISSN 2026-0101 · 简体中文版</div>
+      </div>
+      <div class="band-cell">
+        <div style="font-family: var(--font-mono); color: var(--red);">VOL.01 // Q1</div>
+        <div style="font-size: 10px; color: var(--muted);">2026.03 RELEASE</div>
       </div>
     </header>
 
-    <!-- 巨幅海报 Hero 标头 -->
-    <section class="hero-section">
-      <div class="hero-coords">SYS_GRID_INDEX: 47°22'N 8°32'E // ZÜRICH 1957 — 2026</div>
-      <h1 class="hero-title">
-        秩序、网格与<br><span class="accent">纯粹理性</span>设计.
-      </h1>
-      <p class="hero-desc">
-        这里是关于软件工程、系统架构与排版美学的思考记录。坚信结构决定认知，极度的理性构建无与伦比的优雅。
-      </p>
-    </section>
-
-    <!-- 内容主体分栏 -->
-    <div class="content-grid">
-      <!-- 左侧边栏 -->
-      <aside class="sidebar">
-        <div class="sidebar-block">
-          <div class="sidebar-heading">
-            <span>关于博主</span>
-            <span>01 / 04</span>
-          </div>
-          <div class="author-card">
-            <strong>SYSTEM ARCHITECT</strong>
-            <p>全栈架构师 / 数字排版研究者。热衷于现代 Web 交互与底层系统设计。</p>
-          </div>
-        </div>
-
-        <div class="sidebar-block">
-          <div class="sidebar-heading">
-            <span>专题分类</span>
-            <span>TOPICS</span>
-          </div>
-          <ul class="category-list">
-            <li class="active"><span>全部文章 (ALL)</span> <span>18</span></li>
-            <li><span>系统架构 (ARCH)</span> <span>07</span></li>
-            <li><span>交互设计 (DESIGN)</span> <span>06</span></li>
-            <li><span>哲学随笔 (PHILOSOPHY)</span> <span>05</span></li>
-          </ul>
-        </div>
-
-        <div class="sidebar-block">
-          <div class="sidebar-heading">
-            <span>排版规范</span>
-            <span>STANDARDS</span>
-          </div>
-          <div style="font-size: 12px; color: #555; line-height: 1.6;">
-            <div>• 字体：Space Grotesk + Noto Sans</div>
-            <div>• 比例系统：基于 8pt 栅格</div>
-            <div>• 色彩：#F8F8F8 / #0D0D0D / #FF3300</div>
-          </div>
-        </div>
-      </aside>
-
-      <!-- 右侧文章流 -->
-      <main class="articles-feed">
-        <!-- 文章 1 -->
-        <article class="article-item">
-          <div class="article-meta">
-            <span class="index-no">№ 001</span>
-            <span class="tag">系统架构</span>
-            <span>2026.08.20</span>
-            <span>阅读时长: 6 MIN</span>
-          </div>
-          <h2 class="article-title" onclick="toggleFold('fold-1')">为什么现代 Web 需要重新回归「网格纪律」？</h2>
-          <p class="article-summary">
-            在信息爆炸与无休止的动效堆砌中，瑞士国际主义平面设计为我们提供了一剂解药：通过清晰的数学网格和层级关系，使复杂数据变得一目了然且具有持久的力量。
-          </p>
-          <div id="fold-1" class="article-body-fold">
-            <p>
-              网格系统不仅是视觉对齐工具，更是一种组织思维的逻辑框架。1950年代约瑟夫·米勒-布罗克曼（Josef Müller-Brockmann）指出：“网格是一种意志的表达，它代表着对客观性与功能性的最高敬畏。”
-            </p>
-            <br>
-            <p>
-              在现代分布式系统的 UI 构建中，清晰的模块隔离与网格定界能够显著降低用户的认知负荷。当我们剔除所有多余的渐变与装饰，排版本身就是最强大的界面。
-            </p>
-          </div>
-          <button class="read-more-btn" onclick="toggleFold('fold-1')">展开 / 收起全文 <span>↓</span></button>
-        </article>
-
-        <!-- 文章 2 -->
-        <article class="article-item">
-          <div class="article-meta">
-            <span class="index-no">№ 002</span>
-            <span class="tag">交互设计</span>
-            <span>2026.08.15</span>
-            <span>阅读时长: 8 MIN</span>
-          </div>
-          <h2 class="article-title" onclick="toggleFold('fold-2')">从铅字印刷到像素流：排版字阶（Type Scales）的几何之美</h2>
-          <p class="article-summary">
-            探讨斐波那契数列、黄金比例与现代响应式字阶在屏幕排版中的落地实践，以及如何通过严格的字号梯次建立不容置疑的信息层级。
-          </p>
-          <div id="fold-2" class="article-body-fold">
-            <p>
-              传统排版使用 12pt, 14pt, 18pt, 24pt, 36pt 等经典铅字阶梯。在数字屏幕上，利用 1.25 (Major Third) 或 1.333 (Perfect Fourth) 比例可以建立高度统一的阅读韵律。
-            </p>
-          </div>
-          <button class="read-more-btn" onclick="toggleFold('fold-2')">展开 / 收起全文 <span>↓</span></button>
-        </article>
-
-        <!-- 文章 3 -->
-        <article class="article-item">
-          <div class="article-meta">
-            <span class="index-no">№ 003</span>
-            <span class="tag">哲学随笔</span>
-            <span>2026.08.02</span>
-            <span>阅读时长: 4 MIN</span>
-          </div>
-          <h2 class="article-title" onclick="toggleFold('fold-3')">少即是多（Less is More）：极简主义不是空无一物，而是恰到好处</h2>
-          <p class="article-summary">
-            极简绝非偷工减料，而是对核心价值的极度凝练与提纯。每一根线条、每一个像素都必须具备不容置疑的存在意义。
-          </p>
-          <div id="fold-3" class="article-body-fold">
-            <p>
-              密斯·凡德罗与约瑟夫·米勒-布罗克曼所倡导的极简，本质上是一种对冗余信息的清洗过程。当设计做到“无法再删减任何一个元素而依然能完美表达意图”时，真正的纯粹之美便诞生了。
-            </p>
-          </div>
-          <button class="read-more-btn" onclick="toggleFold('fold-3')">展开 / 收起全文 <span>↓</span></button>
-        </article>
-
-        <!-- 文章 4 -->
-        <article class="article-item">
-          <div class="article-meta">
-            <span class="index-no">№ 004</span>
-            <span class="tag">排版史学</span>
-            <span>2026.07.28</span>
-            <span>阅读时长: 10 MIN</span>
-          </div>
-          <h2 class="article-title" onclick="toggleFold('fold-4')">无衬线体 Helvetica 诞生 70 周年演化录：冷峻理性如何征服全球视觉</h2>
-          <p class="article-summary">
-            1957 年由马克斯·米丁格（Max Miedinger）设计的 Neue Haas Grotesk（后更名 Helvetica），凭借完全中立、无情绪倾向的笔画结构，成为了现代企业标识、城市导视系统乃至全球数字操作系统的共同底色。
-          </p>
-          <div id="fold-4" class="article-body-fold">
-            <p>
-              Helvetica 的核心在于其精妙的字偶间距与平直的笔画切口。它不强加任何设计者的主观情绪，而是充当最透明的“思想载体”。在移动端 Retina 视网膜屏幕与高刷新率时代，这种中立性依然具有无与伦比的清晰度。
-            </p>
-            <br>
-            <div style="background: #eee; padding: 14px 18px; border-left: 4px solid var(--swiss-black); font-size: 13px; font-family: monospace;">
-              TYPOGRAPHY QUOTE // “好的排版就像一块干净的玻璃，读者透过它清晰地看到思想，而感觉不到玻璃本身的存在。” —— 贝亚特丽斯·沃德
-            </div>
-          </div>
-          <button class="read-more-btn" onclick="toggleFold('fold-4')">展开 / 收起全文 <span>↓</span></button>
-        </article>
-
-        <!-- 交互组件：瑞士排版字阶与黄金分割实验室 -->
-        <div style="border: 2px solid var(--swiss-border); padding: 24px; margin: 30px 0; background: #fff;">
-          <div style="display: flex; justify-content: space-between; align-items: baseline; border-bottom: 2px solid var(--swiss-border); padding-bottom: 12px; margin-bottom: 16px;">
-            <div style="font-weight: 900; font-size: 16px; letter-spacing: -0.5px;">📐 瑞士字阶与网格度量实验室 (SCALE LAB)</div>
-            <span style="font-size: 11px; color: var(--swiss-red); font-weight: 700;">INTERACTIVE DEMO</span>
-          </div>
-          <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 16px; margin-bottom: 16px;">
-            <div>
-              <label style="font-size: 12px; font-weight: 700; display: block; margin-bottom: 4px;">基准字号 (Base Size): <span id="baseSizeVal">16px</span></label>
-              <input type="range" min="12" max="24" value="16" id="baseSizeRange" style="width: 100%; accent-color: var(--swiss-red);" oninput="updateScaleLab()">
-            </div>
-            <div>
-              <label style="font-size: 12px; font-weight: 700; display: block; margin-bottom: 4px;">比例模数 (Scale Ratio):</label>
-              <select id="scaleRatioSelect" style="width: 100%; padding: 4px; font-family: inherit; font-size: 13px; border: 1px solid #999;" onchange="updateScaleLab()">
-                <option value="1.25">1.250 — Major Third (大三度)</option>
-                <option value="1.333">1.333 — Perfect Fourth (完全四度)</option>
-                <option value="1.414">1.414 — Augmented Fourth (白银分割)</option>
-                <option value="1.618">1.618 — Golden Ratio (黄金分割)</option>
-              </select>
-            </div>
-          </div>
-          <div id="scalePreviewList" style="display: flex; flex-direction: column; gap: 8px; border-top: 1px dashed #ccc; padding-top: 14px;">
-            <!-- 动态生成字阶预览 -->
-          </div>
-        </div>
+    <!-- 交互微文案与控制条 -->
+    <div class="toolbar-strip">
+      <div style="display: flex; align-items: center; gap: 12px; flex-wrap: wrap;">
+        <button id="toggleGridBtn" class="interactive-btn" aria-label="按 G 显示网格或点击切换辅助线">
+          <span>📏</span>
+          <span id="gridBtnText">按 G 显示网格</span>
+        </button>
+        <span id="gridStatusTip" class="live-status">网格已就绪：点击或按键盘 G 键显影 12 列参考线</span>
+      </div>
+      <div class="live-status" id="mouseCoordHud">X: 000 | Y: 000 (COL: --)</div>
     </div>
 
-    <!-- 底部 -->
-    <footer>
-      <div>&copy; 2026 SWISS TYPOGRAPHY STUDIO. ALL RIGHTS RESERVED.</div>
-      <div id="swissCoordsHud" style="font-family: monospace; color: var(--swiss-red);">GRID_POS: X:0 Y:0 | SCALE: 1.0</div>
+    <!-- 主叙事 Hero -->
+    <section class="hero-narrative">
+      <div class="hero-lead-pane">
+        <span class="issue-tag">COVER STORY / 主题特稿</span>
+        <h1 class="hero-title">十二列之后：<br>为什么现代界面仍需要网格纪律</h1>
+        <p class="hero-motto">
+          “秩序不是束缚，而是让复杂信息被看见的方法。极度克制的排版，胜过千言万语的装饰。”
+        </p>
+        <div style="font-size: 15px; line-height: 1.8; color: #2b2b30;">
+          当数字屏幕的分辨率与算力走向无限，设计者面临的最大诱惑是无限叠加视觉噪音。瑞士风格（Die Neue Typographie）在半个多世纪前便给出了回答：通过清晰的数学骨架、严谨的字阶比率和毫不妥协的留白，将读者从混乱的信息洪流中解放出来。
+        </div>
+      </div>
+
+      <div class="hero-aside-pane">
+        <div class="aside-spec-box">
+          <div class="spec-header">EDITORIAL DOSSIER / 刊物档案摘要</div>
+          <div class="spec-row"><span>主编审定</span><span>橘猫编辑部</span></div>
+          <div class="spec-row"><span>研究主题</span><span>网格纪律与认知负荷</span></div>
+          <div class="spec-row"><span>阅读用时</span><span>约 8 分钟</span></div>
+          <div class="spec-row"><span>排版基准</span><span>Space Grotesk + Noto Sans</span></div>
+        </div>
+
+        <div style="border-left: 2px solid var(--ink); padding-left: 14px; font-size: 13px; color: var(--muted); line-height: 1.6;">
+          <strong>编辑部备忘：</strong>本页每一个文字模块、间距与按钮均严格对齐 8px 模数。试着打开网格，观察页面元素如何在无形骨架上自然落位。
+        </div>
+      </div>
+    </section>
+
+    <!-- 主叙事 4 个编号章节 -->
+    <section class="narrative-chapters-grid">
+      <article class="chapter-card">
+        <div class="chap-num">01</div>
+        <h2 class="chap-title">基线垂直韵律</h2>
+        <p class="chap-body">
+          行高（Line-height）不是任意数值，而是页面的心跳脉搏。当文字行距与段间距严格被 8px 模数整除，读者的视线在换行扫视时会建立起稳定的生理节奏，从而极大降低长文阅读带来的眼部疲劳。
+        </p>
+      </article>
+
+      <article class="chapter-card">
+        <div class="chap-num">02</div>
+        <h2 class="chap-title">列宽与信息密度</h2>
+        <p class="chap-body">
+          十二列系统之所以经典，在于 12 可以被 2、3、4、6 完美整除。无论是单栏专论、双栏对比、三栏卡片还是四栏索引，版面都能在保持统一外边距的前提下灵活变奏，容纳不同密度的知识。
+        </p>
+      </article>
+
+      <article class="chapter-card">
+        <div class="chap-num">03</div>
+        <h2 class="chap-title">留白是编辑判断</h2>
+        <p class="chap-body">
+          留白绝不是“没有被内容填满的空隙”，而是最高级别的视觉标点。大面积的白底能够赋予主体文字不可忽视的重力，让读者在进入下一个复杂概念前获得短暂的思维回旋余地。
+        </p>
+      </article>
+
+      <article class="chapter-card">
+        <div class="chap-num">04</div>
+        <h2 class="chap-title">清晰的阅读路径</h2>
+        <p class="chap-body">
+          理性排版拒绝捉迷藏式的动效。从左上角的刊名，到巨幅主标题，再到四栏递进论述，读者的视线沿着 Z 字与 F 型扫视轨迹顺畅滑行，信息在第一时间被大脑解构与吸收。
+        </p>
+      </article>
+    </section>
+
+    <!-- 次级栏目：3 篇深度短论 -->
+    <section class="secondary-section">
+      <div class="sec-head-row">
+        <h2 class="sec-title">次级栏目 · 深度专栏</h2>
+        <span class="sec-subtitle">SECTION 02 // ESSAYS & CRITIQUE</span>
+      </div>
+
+      <div class="columns-trio">
+        <div class="trio-card">
+          <div>
+            <div class="trio-tag">COLUMN 01 / TYPOGRAPHY</div>
+            <h3 class="trio-h">字阶不是大小表：比例模数的数学之美</h3>
+            <p class="trio-p">
+              随意指定 14px、19px、27px 的字号只会让界面支离破碎。建立在 1.25 (Major Third) 阶梯上的字阶系统，就像巴赫的十二平均律，让各级标题与正文在尺度上产生天然的和弦共鸣。
+            </p>
+          </div>
+          <button class="trio-btn" onclick="revealNote('note-1')" aria-label="展开第 01 号笔记：比例和弦解析">展开第 01 号笔记</button>
+          <div id="note-1" style="display:none; margin-top:14px; padding-top:12px; border-top:1px dashed var(--line); font-size:12px; color:var(--muted); line-height:1.6;">
+            <strong>注记：</strong>12 → 15 → 18.75 → 23.4 → 29.3px，每次跃升都保持 1.25 倍率，形成稳定的阶梯层级。
+          </div>
+        </div>
+
+        <div class="trio-card">
+          <div>
+            <div class="trio-tag">COLUMN 02 / SPATIAL LOGIC</div>
+            <h3 class="trio-h">留白是一种编辑判断：拒绝塞满屏幕</h3>
+            <p class="trio-p">
+              初学者总害怕版面空旷，习惯用阴影、渐变和装饰性插图塞满角落。但在理性主义者眼中，敢于留下整整 4 列的纯白，是对读者专注力最大的尊重与礼赞。
+            </p>
+          </div>
+          <button class="trio-btn" onclick="revealNote('note-2')" aria-label="展开第 02 号笔记：负空间应用策略">展开第 02 号笔记</button>
+          <div id="note-2" style="display:none; margin-top:14px; padding-top:12px; border-top:1px dashed var(--line); font-size:12px; color:var(--muted); line-height:1.6;">
+            <strong>注记：</strong>高阶界面中，40% 的面积被负空间占据，能提升约 20% 的信息初次识读效率。
+          </div>
+        </div>
+
+        <div class="trio-card">
+          <div>
+            <div class="trio-tag">COLUMN 03 / CHROMATICS</div>
+            <h3 class="trio-h">一枚红点如何建立视觉重心：单点引力的极致</h3>
+            <p class="trio-p">
+              在全黑白灰的理性秩序中，克莱因红或亮橙色的出现必须像警铃一样精准。它不用于装点气氛，而是承担唯一的“终极行动指引”或“核心标的定位”。
+            </p>
+          </div>
+          <button class="trio-btn" onclick="revealNote('note-3')" aria-label="展开第 03 号笔记：单色引力定律">展开第 03 号笔记</button>
+          <div id="note-3" style="display:none; margin-top:14px; padding-top:12px; border-top:1px dashed var(--line); font-size:12px; color:var(--muted); line-height:1.6;">
+            <strong>注记：</strong>全页红色像素占比不得超过 2%，一旦过载，视觉权重将彻底失效。
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- 资料型模块：排版四大黄金法则 -->
+    <section class="data-module-section">
+      <div class="sec-head-row">
+        <h2 class="sec-title">资料模块 · 国际主义排版参数表</h2>
+        <span class="sec-subtitle">DATA STANDARDS // CORE PARAMETERS</span>
+      </div>
+
+      <div class="data-grid-four">
+        <div class="data-spec-card">
+          <div class="data-val">12 COL</div>
+          <div class="data-name">12 列动态网格</div>
+          <div class="data-desc">能被 2、3、4、6 整除的通用列宽，为多重信息层级提供毫不动摇的对齐轨道。</div>
+        </div>
+
+        <div class="data-spec-card">
+          <div class="data-val">8 PX</div>
+          <div class="data-name">基线模数系统</div>
+          <div class="data-desc">所有外边距、内边距、行高均为 8 的整数倍，消除屏幕渲染中的次像素模糊。</div>
+        </div>
+
+        <div class="data-spec-card">
+          <div class="data-val">1.250</div>
+          <div class="data-name">大三度字阶比率</div>
+          <div class="data-desc">Major Third 调和比例，在不过分夸张单字面积的同时拉开主副标题等级。</div>
+        </div>
+
+        <div class="data-spec-card">
+          <div class="data-val">66 CHR</div>
+          <div class="data-name">理想阅读行长</div>
+          <div class="data-desc">中文每行 30-40 字，西文 60-75 字符，避免眼球水平大幅摆动引起阅读疲劳。</div>
+        </div>
+      </div>
+    </section>
+
+    <!-- 主题专属交互：字阶与行长交互实验室 -->
+    <section class="interactive-lab-section">
+      <div class="sec-head-row">
+        <h2 class="sec-title">主题交互 · 瑞士排版参数实验室</h2>
+        <span class="sec-subtitle">INTERACTIVE SCALE & COLUMN LAB</span>
+      </div>
+
+      <div class="lab-box">
+        <div class="lab-controls">
+          <div class="control-group">
+            <label for="sampleBaseRange">基准正文字号: <span id="baseValDisplay" style="color:var(--red); font-family:var(--font-mono);">16px</span></label>
+            <input type="range" id="sampleBaseRange" min="13" max="22" value="16" aria-label="调整基准正文字号">
+          </div>
+          <div class="control-group">
+            <label for="sampleLineRange">行高比率: <span id="lineValDisplay" style="color:var(--red); font-family:var(--font-mono);">1.65</span></label>
+            <input type="range" id="sampleLineRange" min="1.3" max="2.2" step="0.05" value="1.65" aria-label="调整行高比率">
+          </div>
+          <div class="control-group">
+            <label for="sampleWidthRange">段落行长宽度: <span id="widthValDisplay" style="color:var(--red); font-family:var(--font-mono);">680px</span></label>
+            <input type="range" id="sampleWidthRange" min="360" max="980" step="20" value="680" aria-label="调整段落行长宽度">
+          </div>
+        </div>
+
+        <div id="interactiveSample" class="lab-sample-text" style="max-width: 680px;">
+          <strong>实时排版试样：</strong><br>
+          设计不是寻找新奇的视觉刺激，而是发现信息内部本就存在的结构关系。当行长、行高与字号形成严密比例时，文字便从印刷符号升华为可以直接被直觉感知的逻辑晶体。
+        </div>
+      </div>
+    </section>
+
+    <!-- 收尾区：删减清单 -->
+    <footer class="colophon-section">
+      <div class="colophon-head">
+        <div>
+          <h2 class="colophon-title">定稿前的「删减清单」</h2>
+          <div style="font-size: 13px; color: #a0a0ab; margin-top: 4px;">在最终导出前，请核验并清理以下 5 类冗余元素：</div>
+        </div>
+        <div style="font-family: var(--font-mono); color: var(--red); font-weight: 700;">CHECKLIST // 05 ITEMS</div>
+      </div>
+
+      <div class="checklist-grid">
+        <div class="check-item">
+          <div class="check-num">01 / REDUNDANCY</div>
+          <div class="check-title">无功能指向的装饰线</div>
+          <div class="check-desc">若一条线条既不表示内容分组，也不指引阅读流向，应立即移除。</div>
+        </div>
+        <div class="check-item">
+          <div class="check-num">02 / CHROMATIC</div>
+          <div class="check-title">第三种以上的提亮色</div>
+          <div class="check-desc">除非用于状态告警，否则整个页面除黑白灰外，强调色严格限定为单一色相。</div>
+        </div>
+        <div class="check-item">
+          <div class="check-num">03 / TYPO BLUR</div>
+          <div class="check-title">非标字阶的临时字号</div>
+          <div class="check-desc">严格检查是否有随手设置的 13px、17px 等脱离字阶模数的孤立字体。</div>
+        </div>
+        <div class="check-item">
+          <div class="check-num">04 / SKEUOMORPH</div>
+          <div class="check-title">过重弥散渐变与多层阴影</div>
+          <div class="check-desc">瑞士国际风依靠对比与边框定界，坚决剔除模糊视觉层级的过重模糊特效。</div>
+        </div>
+        <div class="check-item">
+          <div class="check-num">05 / VERBOSITY</div>
+          <div class="check-title">模棱两可的操作文案</div>
+          <div class="check-desc">将所有“点击这里”“查看更多”改为具体包含结果的确定性微文案。</div>
+        </div>
+      </div>
+
+      <div class="footer-stamp-row">
+        <div>ORDNUNG QUARTERLY &copy; 2026 橘猫编辑部 · 保持理性的严谨与优雅</div>
+        <div>SYS_GRID_ALIGNED: TRUE // STATUS: READY</div>
+      </div>
     </footer>
   </div>
 
-  <!-- 瑞士精准十字标尺光标跟随器 -->
-  <div id="swissCrosshairH" style="position: fixed; left: 0; width: 100vw; height: 1px; background: rgba(255, 51, 0, 0.25); pointer-events: none; z-index: 998; display: none;"></div>
-  <div id="swissCrosshairV" style="position: fixed; top: 0; height: 100vh; width: 1px; background: rgba(255, 51, 0, 0.25); pointer-events: none; z-index: 998; display: none;"></div>
-
   <script src="assets/nav-bar.js"></script>
   <script>
-    // 切换网格辅助线与十字标尺
-    const gridBtn = document.getElementById("toggleGridBtn");
+    // 网格显影控制与微文案反馈
+    const toggleGridBtn = document.getElementById("toggleGridBtn");
     const gridOverlay = document.getElementById("gridOverlay");
-    const crossH = document.getElementById("swissCrosshairH");
-    const crossV = document.getElementById("swissCrosshairV");
-    const coordsHud = document.getElementById("swissCoordsHud");
+    const gridBtnText = document.getElementById("gridBtnText");
+    const gridStatusTip = document.getElementById("gridStatusTip");
+    const mouseCoordHud = document.getElementById("mouseCoordHud");
 
-    let gridActive = false;
+    let isGridOn = false;
 
-    gridBtn.addEventListener("click", () => {
-      gridActive = !gridActive;
-      gridOverlay.classList.toggle("show", gridActive);
-      crossH.style.display = gridActive ? "block" : "none";
-      crossV.style.display = gridActive ? "block" : "none";
-      gridBtn.textContent = gridActive 
-        ? "📏 隐藏 瑞士排版网格 (ON)" 
-        : "📏 显示/隐藏 瑞士排版网格 (OFF)";
-    });
+    function setGridState(active) {
+      isGridOn = active;
+      if (isGridOn) {
+        gridOverlay.classList.add("active");
+        gridBtnText.textContent = "关闭辅助线，回到成品视图";
+        gridStatusTip.textContent = "网格已显影：现在看看文字如何对齐 12 列骨架";
+        toggleGridBtn.style.background = "var(--red)";
+      } else {
+        gridOverlay.classList.remove("active");
+        gridBtnText.textContent = "按 G 显示网格";
+        gridStatusTip.textContent = "关闭辅助线，回到成品视图（随时可按 G 重新显影）";
+        toggleGridBtn.style.background = "var(--ink)";
+      }
+    }
 
-    // 快捷键 G 切换网格
+    toggleGridBtn.addEventListener("click", () => setGridState(!isGridOn));
+
     document.addEventListener("keydown", (e) => {
+      if (e.target.tagName === "INPUT" || e.target.tagName === "TEXTAREA") return;
       if (e.key === "g" || e.key === "G") {
-        gridBtn.click();
+        setGridState(!isGridOn);
       }
     });
 
-    // 十字光标与坐标追踪
+    // 鼠标坐标与列位置测算
     window.addEventListener("mousemove", (e) => {
-      if (gridActive) {
-        crossH.style.top = e.clientY + "px";
-        crossV.style.left = e.clientX + "px";
-      }
-      if (coordsHud) {
-        coordsHud.textContent = `GRID_POS: X:${e.clientX} Y:${e.clientY} | SCROLL_Y: ${Math.round(window.scrollY)}`;
-      }
+      const w = window.innerWidth;
+      const colWidth = w / 12;
+      const currentCol = Math.min(12, Math.max(1, Math.ceil(e.clientX / colWidth)));
+      const colPad = String(currentCol).padStart(2, "0");
+      mouseCoordHud.textContent = `X: ${String(e.clientX).padStart(4, "0")} | Y: ${String(e.clientY).padStart(4, "0")} (COL: ${colPad}/12)`;
     });
 
-    // 折叠展开文章
-    function toggleFold(id) {
+    // 次级栏目笔记展开
+    function revealNote(id) {
       const el = document.getElementById(id);
-      el.classList.toggle("open");
+      if (!el) return;
+      const isHidden = el.style.display === "none";
+      el.style.display = isHidden ? "block" : "none";
     }
 
-    function updateScaleLab() {
-      const base = parseFloat(document.getElementById('baseSizeRange').value);
-      const ratio = parseFloat(document.getElementById('scaleRatioSelect').value);
-      document.getElementById('baseSizeVal').textContent = base + 'px';
+    // 交互实验室滑块联动
+    const baseRange = document.getElementById("sampleBaseRange");
+    const lineRange = document.getElementById("sampleLineRange");
+    const widthRange = document.getElementById("sampleWidthRange");
+    const sampleText = document.getElementById("interactiveSample");
 
-      const list = document.getElementById('scalePreviewList');
-      if (!list) return;
+    function updateLab() {
+      const bVal = baseRange.value;
+      const lVal = lineRange.value;
+      const wVal = widthRange.value;
+      document.getElementById("baseValDisplay").textContent = bVal + "px";
+      document.getElementById("lineValDisplay").textContent = lVal;
+      document.getElementById("widthValDisplay").textContent = wVal + "px";
 
-      const levels = [
-        { name: 'Display H1 (r⁴)', sz: Math.round(base * Math.pow(ratio, 4)) },
-        { name: 'Headline H2 (r³)', sz: Math.round(base * Math.pow(ratio, 3)) },
-        { name: 'Subhead H3 (r²)', sz: Math.round(base * Math.pow(ratio, 2)) },
-        { name: 'Lead Para (r¹)', sz: Math.round(base * ratio) },
-        { name: 'Body Text (r⁰)', sz: base }
-      ];
-
-      list.innerHTML = levels.map(l => `
-        <div style="display: flex; align-items: baseline; gap: 12px; border-bottom: 1px solid #f0f0f0; padding: 4px 0;">
-          <span style="font-size: 11px; font-family: monospace; color: #888; width: 140px;">${l.name} (${l.sz}px)</span>
-          <span style="font-size: ${l.sz}px; font-weight: 700; line-height: 1.1; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;">
-            Swiss Grid Rational Typography
-          </span>
-        </div>
-      `).join('');
+      sampleText.style.fontSize = bVal + "px";
+      sampleText.style.lineHeight = lVal;
+      sampleText.style.maxWidth = wVal + "px";
     }
-    updateScaleLab();
+
+    baseRange.addEventListener("input", updateLab);
+    lineRange.addEventListener("input", updateLab);
+    widthRange.addEventListener("input", updateLab);
   </script>
 </body>
 </html>
