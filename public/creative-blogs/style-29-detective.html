@@ -1,0 +1,275 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>CONFIDENTIAL DOSSIER — 29 侦探绝密档案</title>
+  <link rel="stylesheet" href="assets/common.css">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Special+Elite&family=Courier+Prime:wght@400;700&family=Noto+Serif+SC:wght@400;700&display=swap" rel="stylesheet">
+  <style>
+    :root {
+      --case-manila: #ecdcb9;
+      --case-manila-dark: #d8c49e;
+      --case-ink: #1a1612;
+      --case-stamp-red: #ab1f1f;
+      --case-tape: #c2b18c;
+      --font-typewriter: 'Special Elite', 'Courier Prime', monospace;
+      --font-body: 'Courier Prime', 'Noto Serif SC', monospace;
+    }
+
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+
+    body {
+      background-color: #211c18;
+      color: var(--case-ink);
+      font-family: var(--font-body);
+      min-height: 100vh;
+      padding: 40px 16px 80px;
+      line-height: 1.7;
+    }
+
+    .dossier-wrapper {
+      max-width: 1080px;
+      margin: 0 auto;
+      background: var(--case-manila);
+      border-radius: 6px;
+      box-shadow: 0 20px 50px rgba(0, 0, 0, 0.8), 0 2px 8px rgba(0, 0, 0, 0.4);
+      padding: 48px 56px;
+      position: relative;
+      border-top: 24px solid var(--case-manila-dark);
+    }
+
+    /* 封口棉线与档案袋切角 */
+    .dossier-tab {
+      position: absolute;
+      top: -24px;
+      right: 48px;
+      background: var(--case-manila-dark);
+      padding: 4px 18px;
+      font-family: var(--font-typewriter);
+      font-size: 13px;
+      font-weight: 700;
+      border-radius: 4px 4px 0 0;
+      color: #3d3227;
+      letter-spacing: 0.1em;
+    }
+
+    /* 红色 TOP SECRET 绝密大印章 */
+    .stamp-classified {
+      position: absolute;
+      top: 36px;
+      right: 48px;
+      border: 4px solid var(--case-stamp-red);
+      color: var(--case-stamp-red);
+      font-family: var(--font-typewriter);
+      font-size: 26px;
+      font-weight: 900;
+      padding: 8px 18px;
+      text-transform: uppercase;
+      letter-spacing: 0.15em;
+      transform: rotate(12deg);
+      opacity: 0.9;
+      user-select: none;
+      mask-image: linear-gradient(rgba(0,0,0,0.8), rgba(0,0,0,0.9));
+      box-shadow: inset 0 0 4px var(--case-stamp-red);
+    }
+
+    .dossier-header {
+      border-bottom: 2px solid var(--case-ink);
+      padding-bottom: 24px;
+      margin-bottom: 32px;
+    }
+
+    .case-code {
+      font-family: var(--font-typewriter);
+      font-size: 13px;
+      font-weight: 700;
+      letter-spacing: 0.1em;
+      color: #5c4d3c;
+      margin-bottom: 8px;
+    }
+
+    .case-title {
+      font-family: var(--font-typewriter);
+      font-size: clamp(28px, 4vw, 42px);
+      font-weight: 700;
+      line-height: 1.15;
+      text-transform: uppercase;
+      color: var(--case-ink);
+    }
+
+    /* 证物照片与排版大图 */
+    .evidence-row {
+      display: grid;
+      grid-template-columns: 1.4fr 1fr;
+      gap: 36px;
+      margin-bottom: 36px;
+      align-items: center;
+    }
+
+    .polaroid-frame {
+      background: #fdfbf7;
+      padding: 14px 14px 28px;
+      border-radius: 2px;
+      box-shadow: 0 8px 24px rgba(0, 0, 0, 0.25);
+      transform: rotate(-1.5deg);
+      border: 1px solid #c9beaa;
+      position: relative;
+    }
+
+    .polaroid-frame::before {
+      content: "";
+      position: absolute;
+      top: -12px;
+      left: 36px;
+      width: 48px;
+      height: 24px;
+      background: rgba(255, 255, 255, 0.5);
+      border: 1px solid rgba(0, 0, 0, 0.1);
+      transform: rotate(4deg);
+    }
+
+    .polaroid-img {
+      width: 100%;
+      height: 260px;
+      object-fit: cover;
+      display: block;
+      filter: contrast(1.1) sepia(0.25);
+    }
+
+    .polaroid-caption {
+      font-family: var(--font-typewriter);
+      font-size: 12px;
+      color: #4a3e31;
+      margin-top: 12px;
+      text-align: center;
+    }
+
+    /* 涂黑脱敏文本与解密交互 */
+    .redacted-text {
+      background: #1a1612;
+      color: #1a1612;
+      padding: 0 4px;
+      border-radius: 2px;
+      cursor: pointer;
+      user-select: none;
+      transition: all 0.2s ease;
+      font-weight: 700;
+    }
+    .redacted-text.revealed {
+      background: rgba(171, 31, 31, 0.15);
+      color: var(--case-stamp-red);
+      border-bottom: 1px dashed var(--case-stamp-red);
+    }
+
+    .case-log-box {
+      font-family: var(--font-typewriter);
+      font-size: 15px;
+      line-height: 1.8;
+      background: rgba(0, 0, 0, 0.03);
+      padding: 20px;
+      border-left: 3px solid var(--case-ink);
+      margin-bottom: 24px;
+    }
+
+    .dossier-footer {
+      border-top: 2px dashed var(--case-ink);
+      padding-top: 20px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      flex-wrap: wrap;
+      gap: 16px;
+      font-size: 13px;
+    }
+
+    .btn-declassify {
+      padding: 8px 18px;
+      background: var(--case-ink);
+      color: var(--case-manila);
+      border: none;
+      font-family: var(--font-typewriter);
+      font-size: 13px;
+      font-weight: 700;
+      cursor: pointer;
+      border-radius: 3px;
+      box-shadow: 2px 2px 0 rgba(0, 0, 0, 0.3);
+    }
+
+    @media (max-width: 800px) {
+      .dossier-wrapper {
+        padding: 32px 20px;
+      }
+      .evidence-row {
+        grid-template-columns: 1fr;
+      }
+      .stamp-classified {
+        position: static;
+        display: inline-block;
+        transform: rotate(3deg);
+        margin-bottom: 16px;
+      }
+    }
+  </style>
+</head>
+<body>
+  <div class="dossier-wrapper">
+    <div class="dossier-tab">CASE // #NOIR-2026-X</div>
+    <div class="stamp-classified">TOP SECRET</div>
+
+    <header class="dossier-header">
+      <div class="case-code">FBI ARCHIVE // BUREAU OF UNKNOWN PHENOMENA</div>
+      <h1 class="case-title">STYLE 29 · 绝密侦探档案</h1>
+      <div style="font-size: 12px; color: #6b5844; margin-top: 6px;">DATE FILED: OCTOBER 16, 1949 // CLASSIFICATION: EYES ONLY</div>
+    </header>
+
+    <!-- 证物照片区 -->
+    <section class="evidence-row">
+      <div class="case-log-box">
+        <div style="font-weight: 700; color: var(--case-stamp-red); margin-bottom: 8px;">[现场搜查笔录]</div>
+        <p>
+          现场遗留了一部旧式打字机，机身上尚有未干的咖啡渍。根据证物 <span class="redacted-text" onclick="toggleRedact(this)">【嫌疑人橘猫】</span> 的口供，案发当晚十点左右，在旧码头仓库曾出现强烈的 <span class="redacted-text" onclick="toggleRedact(this)">【神秘量子脉冲波动】</span>。
+        </p>
+        <p style="margin-top: 12px;">
+          所有关于该项目的绝密源码与设计草图，均已被封存于 <span class="redacted-text" onclick="toggleRedact(this)">【第 42 号加密保险箱】</span>。
+        </p>
+      </div>
+
+      <div class="polaroid-frame">
+        <img src="assets/images/detective_dossier.jpg" alt="犯罪嫌疑人与案发现场照片" class="polaroid-img">
+        <div class="polaroid-caption">EXHIBIT A: 现场物证卷宗全景</div>
+      </div>
+    </section>
+
+    <!-- 底部操作解密栏 -->
+    <footer class="dossier-footer">
+      <div>
+        <span>💡 提示：点击正文中的</span>
+        <span style="background: #111; color: #fff; padding: 1px 6px; font-size: 11px;">黑色涂黑区域</span>
+        <span>可一键脱敏解密</span>
+      </div>
+      <button class="btn-declassify" onclick="declassifyAll()">
+        🔓 [DECLASSIFY] 解密全部文本
+      </button>
+    </footer>
+  </div>
+
+  <script src="assets/nav-bar.js"></script>
+  <script>
+    function toggleRedact(el) {
+      el.classList.toggle("revealed");
+    }
+
+    function declassifyAll() {
+      const all = document.querySelectorAll(".redacted-text");
+      all.forEach(el => el.classList.add("revealed"));
+    }
+  </script>
+</body>
+</html>

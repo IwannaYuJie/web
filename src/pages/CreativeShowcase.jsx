@@ -114,20 +114,20 @@ function CreativeShowcase() {
       <header className="creative-hero">
         <div className="creative-badge">
           <span>✨</span>
-          <span>23 DISTINCT TYPOGRAPHY & INTERACTION PARADIGMS</span>
+          <span>{CREATIVE_BLOGS.length} DISTINCT TYPOGRAPHY & INTERACTION PARADIGMS</span>
         </div>
         <h1 className="creative-title">
-          创意工坊 · 23 款独立排版风格矩阵
+          创意工坊 · {CREATIVE_BLOGS.length} 款独立排版风格矩阵
         </h1>
         <p className="creative-desc">
-          探索 23 款完全不同排版范式与交互逻辑的博客设计。涵盖瑞士极简、复古报刊、赛博终端、Win95 视窗、日式禅意、新粗野主义、双向链接数字花园、中世纪羊皮纸手抄本、80s 蒸汽波、8-Bit 像素地牢、拟态毛玻璃与达芬奇发明手稿。
+          探索 {CREATIVE_BLOGS.length} 款完全不同排版范式与交互逻辑的博客设计。涵盖瑞士极简、水墨国风、Y2K千禧、GameBoy、黑客帝国数字雨、包豪斯、侦探档案、酸性设计、复古报刊、赛博终端、Win95视窗等。
         </p>
 
         {/* 统计指标与随机漫游 */}
         <div className="creative-stats-bar">
           <div className="creative-stat-item">
             <span>📚 全景矩阵：</span>
-            <strong>23 款排版流派</strong>
+            <strong>{CREATIVE_BLOGS.length} 款排版流派</strong>
           </div>
           <div className="creative-stat-item">
             <span>🏷️ 涵盖维度：</span>

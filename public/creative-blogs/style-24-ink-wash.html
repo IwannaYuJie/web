@@ -1,0 +1,363 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>墨韵千秋 — 24 水墨国风与卷轴画卷</title>
+  <link rel="stylesheet" href="assets/common.css">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Ma+Shan+Zheng&family=Noto+Serif+SC:wght@300;400;600;900&family=ZCOOL+XiaoWei&display=swap" rel="stylesheet">
+  <style>
+    :root {
+      --ink-paper: #f4eee2;
+      --ink-paper-dark: #e8ded0;
+      --ink-black: #1c1a17;
+      --ink-gray: #4a463f;
+      --ink-light-gray: #8c867a;
+      --vermilion: #b92b27;
+      --vermilion-light: #d64541;
+      --pine-green: #2d4f3e;
+      --border-ink: rgba(28, 26, 23, 0.2);
+      --font-kai: "Ma Shan Zheng", "STKaiti", "KaiTi", serif;
+      --font-song: "Noto Serif SC", "Songti SC", serif;
+      --font-xiaowei: "ZCOOL XiaoWei", serif;
+    }
+
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+
+    body {
+      background-color: var(--ink-paper);
+      color: var(--ink-black);
+      font-family: var(--font-song);
+      line-height: 1.85;
+      background-image: 
+        radial-gradient(rgba(28, 26, 23, 0.03) 1px, transparent 0),
+        linear-gradient(to right, rgba(28, 26, 23, 0.02) 1px, transparent 1px);
+      background-size: 24px 24px, 120px 100%;
+      min-height: 100vh;
+      position: relative;
+    }
+
+    /* 卷轴装饰轴杆 */
+    .scroll-shell {
+      max-width: 1200px;
+      margin: 32px auto 80px;
+      padding: 0 24px;
+      position: relative;
+    }
+
+    .scroll-container {
+      background: var(--ink-paper);
+      border: 3px double var(--ink-black);
+      border-radius: 4px;
+      box-shadow: 0 16px 40px rgba(40, 30, 20, 0.12), 0 2px 6px rgba(0, 0, 0, 0.06);
+      position: relative;
+      overflow: hidden;
+      padding: 48px 56px;
+    }
+
+    /* 宣纸四角仿绫绢包边 */
+    .scroll-container::before,
+    .scroll-container::after {
+      content: "";
+      position: absolute;
+      width: 48px;
+      height: 48px;
+      pointer-events: none;
+      border: 2px solid var(--vermilion);
+    }
+    .scroll-container::before { top: 12px; left: 12px; border-right: none; border-bottom: none; }
+    .scroll-container::after { bottom: 12px; right: 12px; border-left: none; border-top: none; }
+
+    /* 顶部题头 */
+    .scroll-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: flex-start;
+      border-bottom: 1px solid var(--border-ink);
+      padding-bottom: 28px;
+      margin-bottom: 36px;
+      position: relative;
+    }
+
+    .header-main-title {
+      font-family: var(--font-kai);
+      font-size: clamp(38px, 6vw, 64px);
+      color: var(--ink-black);
+      line-height: 1.15;
+      letter-spacing: 0.1em;
+      text-shadow: 2px 2px 0 rgba(185, 43, 39, 0.15);
+    }
+
+    .header-sub-meta {
+      font-size: 14px;
+      color: var(--ink-light-gray);
+      margin-top: 10px;
+      letter-spacing: 0.15em;
+    }
+
+    /* 朱砂闲章印记 */
+    .seal-stamp {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      width: 48px;
+      height: 48px;
+      border: 2px solid var(--vermilion);
+      border-radius: 4px;
+      color: var(--vermilion);
+      font-family: var(--font-kai);
+      font-size: 16px;
+      line-height: 1.1;
+      padding: 4px;
+      text-align: center;
+      transform: rotate(-4deg);
+      box-shadow: inset 0 0 4px rgba(185, 43, 39, 0.2);
+      cursor: pointer;
+      user-select: none;
+      transition: transform 0.2s ease;
+    }
+    .seal-stamp:hover {
+      transform: rotate(0deg) scale(1.08);
+    }
+
+    /* 水墨画卷大图展示 */
+    .ink-banner-wrapper {
+      margin-bottom: 40px;
+      border-radius: 4px;
+      border: 1px solid var(--border-ink);
+      overflow: hidden;
+      position: relative;
+      box-shadow: 0 8px 24px rgba(28, 26, 23, 0.08);
+    }
+
+    .ink-banner-img {
+      width: 100%;
+      height: 380px;
+      object-fit: cover;
+      display: block;
+      filter: contrast(1.05) saturate(0.95);
+      transition: transform 0.6s ease;
+    }
+    .ink-banner-wrapper:hover .ink-banner-img {
+      transform: scale(1.03);
+    }
+
+    .ink-banner-caption {
+      position: absolute;
+      bottom: 0;
+      left: 0;
+      right: 0;
+      padding: 16px 24px;
+      background: linear-gradient(to top, rgba(28, 26, 23, 0.85), transparent);
+      color: var(--ink-paper);
+      display: flex;
+      justify-content: space-between;
+      align-items: flex-end;
+      font-family: var(--font-xiaowei);
+      letter-spacing: 0.1em;
+    }
+
+    /* 双栏正文布局：日式/国风竖排引文与现代横排混排 */
+    .ink-content-grid {
+      display: grid;
+      grid-template-columns: 2fr 1fr;
+      gap: 48px;
+    }
+
+    .article-lead {
+      font-size: 19px;
+      font-weight: 600;
+      color: var(--ink-black);
+      line-height: 1.9;
+      margin-bottom: 24px;
+      border-left: 3px solid var(--vermilion);
+      padding-left: 18px;
+    }
+
+    .article-body p {
+      font-size: 16.5px;
+      color: var(--ink-gray);
+      margin-bottom: 20px;
+      text-indent: 2em;
+    }
+
+    .side-poetry-scroll {
+      background: var(--ink-paper-dark);
+      border: 1px solid var(--border-ink);
+      border-radius: 4px;
+      padding: 24px;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      box-shadow: inset 0 0 12px rgba(0, 0, 0, 0.04);
+    }
+
+    .vertical-poetry {
+      writing-mode: vertical-rl;
+      text-orientation: upright;
+      font-family: var(--font-kai);
+      font-size: 20px;
+      letter-spacing: 0.35em;
+      line-height: 2.2;
+      color: var(--ink-black);
+      max-height: 400px;
+      margin: 16px 0;
+    }
+
+    /* 互动落款盖印栏 */
+    .stamp-interactive-bar {
+      margin-top: 48px;
+      padding: 24px;
+      border-top: 1px dashed var(--border-ink);
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      flex-wrap: wrap;
+      gap: 16px;
+    }
+
+    .btn-stamp-action {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      padding: 10px 22px;
+      background: var(--vermilion);
+      color: #fff;
+      border: none;
+      border-radius: 4px;
+      font-family: var(--font-song);
+      font-size: 15px;
+      font-weight: 600;
+      cursor: pointer;
+      box-shadow: 0 4px 12px rgba(185, 43, 39, 0.3);
+      transition: all 0.2s ease;
+    }
+    .btn-stamp-action:hover {
+      background: var(--vermilion-light);
+      transform: translateY(-2px);
+    }
+
+    .stamps-collection {
+      display: flex;
+      gap: 12px;
+    }
+
+    @media (max-width: 840px) {
+      .scroll-container {
+        padding: 32px 24px;
+      }
+      .ink-content-grid {
+        grid-template-columns: 1fr;
+        gap: 32px;
+      }
+      .vertical-poetry {
+        writing-mode: horizontal-tb;
+        max-height: none;
+      }
+      .ink-banner-img {
+        height: 240px;
+      }
+    }
+  </style>
+</head>
+<body>
+  <div class="scroll-shell">
+    <div class="scroll-container">
+      <!-- 顶部题头 -->
+      <header class="scroll-header">
+        <div>
+          <div style="font-size: 12px; color: var(--vermilion); letter-spacing: 0.2em; font-weight: 700; margin-bottom: 6px;">
+            ✦ 风格第二十四 · 水墨文人志 ✦
+          </div>
+          <h1 class="header-main-title">山水微茫 · 澄怀观道</h1>
+          <div class="header-sub-meta">歲在丙午年秋 · 筆墨漫談 · 卷之壹</div>
+        </div>
+        <div style="display: flex; gap: 8px; align-items: center;">
+          <div class="seal-stamp" title="点击盖印" onclick="stampClick(this)">橘貓<br>之印</div>
+          <div class="seal-stamp" style="border-radius: 50%;" title="点击盖印" onclick="stampClick(this)">澄<br>懷</div>
+        </div>
+      </header>
+
+      <!-- 水墨长卷配图 -->
+      <div class="ink-banner-wrapper">
+        <img src="assets/images/ink_scroll.jpg" alt="传统水墨山水长卷" class="ink-banner-img">
+        <div class="ink-banner-caption">
+          <span>《秋山策杖图》· 仿宋元笔意</span>
+          <span>远山如黛 · 云水空濛</span>
+        </div>
+      </div>
+
+      <!-- 双栏正文与竖排诗文 -->
+      <div class="ink-content-grid">
+        <div class="article-body">
+          <div class="article-lead">
+            夫水墨之道，非独施赭墨于素绢，实乃以虚白御玄黑，以寸楮纳万象。留白处皆成妙境，笔不到而意已周。
+          </div>
+          <p>
+            观宋人格物之精，一叶落而知天下秋。今人治学码字，亦如枯笔着墨。代码之架构，讲求疏密有致，过繁则滞，过简则空。恰似山水之布白，密不透风，疏可走马。
+          </p>
+          <p>
+            世间万物皆有其节律。静坐案前，窗外微雨初霁，点一杯清茗，于键盘之上敲击方块文字，便如挥毫于生宣之上。墨色洇散开来，层次分明，浅绛淡著，自有一番超然之乐。
+          </p>
+          <p>
+            以极简之形，表深邃之意。无论千百年光阴流转，黑白与朱砂的对话，始终在东方美学的血脉中静静流淌。
+          </p>
+        </div>
+
+        <aside class="side-poetry-scroll">
+          <div style="font-size: 12px; color: var(--vermilion); letter-spacing: 0.2em; margin-bottom: 8px;">【 题 跋 】</div>
+          <div class="vertical-poetry" id="poetryText">
+            行到水穷处<br>
+            坐看云起时<br>
+            偶然值林叟<br>
+            谈笑无还期
+          </div>
+          <div style="font-size: 11px; color: var(--ink-light-gray); margin-top: 12px;">唐 · 王维《终南别业》</div>
+        </aside>
+      </div>
+
+      <!-- 底部互动落款 -->
+      <footer class="stamp-interactive-bar">
+        <div style="display: flex; align-items: center; gap: 12px;">
+          <button class="btn-stamp-action" onclick="addCustomStamp()">
+            <span>💮 临池泼墨盖印</span>
+          </button>
+          <span style="font-size: 13px; color: var(--ink-light-gray);">点击印章或按钮可在卷轴上加盖朱砂闲章</span>
+        </div>
+        <div class="stamps-collection" id="stampsPool">
+          <div class="seal-stamp" onclick="stampClick(this)">怡<br>然</div>
+          <div class="seal-stamp" onclick="stampClick(this)">得<br>趣</div>
+        </div>
+      </footer>
+    </div>
+  </div>
+
+  <script src="assets/nav-bar.js"></script>
+  <script>
+    function stampClick(el) {
+      el.style.transform = "scale(1.25) rotate(" + (Math.random() * 10 - 5) + "deg)";
+      setTimeout(() => {
+        el.style.transform = "rotate(" + (Math.random() * 8 - 4) + "deg)";
+      }, 200);
+    }
+
+    function addCustomStamp() {
+      const texts = ["神品", "清賞", "妙契", "偶得", "讀畫", "松風"];
+      const t = texts[Math.floor(Math.random() * texts.length)];
+      const pool = document.getElementById("stampsPool");
+      const newStamp = document.createElement("div");
+      newStamp.className = "seal-stamp";
+      newStamp.innerHTML = t.charAt(0) + "<br>" + t.charAt(1);
+      newStamp.onclick = function() { stampClick(this); };
+      pool.appendChild(newStamp);
+      stampClick(newStamp);
+    }
+  </script>
+</body>
+</html>

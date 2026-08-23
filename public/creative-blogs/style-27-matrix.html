@@ -1,0 +1,314 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>THE MATRIX — 27 黑客帝国数字雨</title>
+  <link rel="stylesheet" href="assets/common.css">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Share+Tech+Mono&family=VT323&family=Noto+Sans+SC:wght@400;700&display=swap" rel="stylesheet">
+  <style>
+    :root {
+      --matrix-black: #050805;
+      --matrix-green: #00ff66;
+      --matrix-dark-green: #008f11;
+      --matrix-bright: #adff2f;
+      --matrix-dim: rgba(0, 255, 102, 0.4);
+      --font-mono: 'Share Tech Mono', 'VT323', monospace;
+    }
+
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+
+    body {
+      background-color: var(--matrix-black);
+      color: var(--matrix-green);
+      font-family: var(--font-mono);
+      min-height: 100vh;
+      line-height: 1.6;
+      position: relative;
+      overflow-x: hidden;
+    }
+
+    /* 全屏 Canvas 数字雨 */
+    #matrixCanvas {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      pointer-events: none;
+      z-index: 1;
+      opacity: 0.35;
+    }
+
+    .matrix-layout {
+      position: relative;
+      z-index: 2;
+      max-width: 1100px;
+      margin: 0 auto;
+      padding: 40px 24px 80px;
+    }
+
+    /* 终端抬头 */
+    .matrix-header {
+      border: 1px solid var(--matrix-green);
+      background: rgba(5, 8, 5, 0.85);
+      border-radius: 4px;
+      padding: 20px 28px;
+      box-shadow: 0 0 20px rgba(0, 255, 102, 0.25), inset 0 0 10px rgba(0, 255, 102, 0.1);
+      margin-bottom: 32px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      flex-wrap: wrap;
+      gap: 16px;
+    }
+
+    .matrix-title {
+      font-size: 26px;
+      font-weight: 700;
+      color: #fff;
+      text-shadow: 0 0 10px var(--matrix-green), 0 0 20px var(--matrix-green);
+      letter-spacing: 0.1em;
+    }
+
+    .matrix-tag {
+      font-size: 12px;
+      padding: 4px 10px;
+      border: 1px solid var(--matrix-bright);
+      color: var(--matrix-bright);
+      background: rgba(0, 255, 102, 0.1);
+    }
+
+    /* 数字雨封面大图 */
+    .matrix-img-box {
+      border: 1px solid var(--matrix-green);
+      box-shadow: 0 0 25px rgba(0, 255, 102, 0.3);
+      border-radius: 4px;
+      overflow: hidden;
+      margin-bottom: 32px;
+      position: relative;
+    }
+
+    .matrix-img {
+      width: 100%;
+      height: 340px;
+      object-fit: cover;
+      display: block;
+      filter: saturate(1.2) contrast(1.2);
+    }
+
+    .matrix-img-overlay {
+      position: absolute;
+      bottom: 0;
+      left: 0;
+      right: 0;
+      padding: 16px 20px;
+      background: linear-gradient(to top, #050805 90%, transparent);
+      display: flex;
+      justify-content: space-between;
+      font-size: 13px;
+    }
+
+    /* 双栏终端文章内容 */
+    .matrix-grid {
+      display: grid;
+      grid-template-columns: 2fr 1fr;
+      gap: 28px;
+    }
+
+    .terminal-window {
+      background: rgba(5, 8, 5, 0.9);
+      border: 1px solid var(--matrix-green);
+      padding: 28px;
+      border-radius: 4px;
+      box-shadow: 0 0 20px rgba(0, 255, 102, 0.15);
+    }
+
+    .prompt-lead {
+      font-size: 18px;
+      color: var(--matrix-bright);
+      margin-bottom: 20px;
+      line-height: 1.6;
+      border-bottom: 1px dashed var(--matrix-dim);
+      padding-bottom: 16px;
+    }
+
+    .article-p {
+      font-size: 15px;
+      margin-bottom: 16px;
+      color: #bbf7d0;
+      cursor: pointer;
+      transition: text-shadow 0.2s ease;
+    }
+    .article-p:hover {
+      text-shadow: 0 0 8px var(--matrix-green);
+      color: #fff;
+    }
+
+    .side-logs {
+      background: rgba(5, 8, 5, 0.9);
+      border: 1px solid var(--matrix-green);
+      padding: 20px;
+      border-radius: 4px;
+      font-size: 12px;
+      line-height: 1.8;
+      color: var(--matrix-green);
+    }
+
+    .matrix-btn {
+      display: inline-block;
+      padding: 10px 20px;
+      background: rgba(0, 255, 102, 0.15);
+      border: 1px solid var(--matrix-green);
+      color: #fff;
+      font-family: var(--font-mono);
+      font-size: 14px;
+      font-weight: 700;
+      cursor: pointer;
+      text-shadow: 0 0 6px var(--matrix-green);
+      box-shadow: 0 0 15px rgba(0, 255, 102, 0.3);
+      transition: all 0.2s ease;
+      margin-top: 16px;
+    }
+    .matrix-btn:hover {
+      background: var(--matrix-green);
+      color: #000;
+      box-shadow: 0 0 25px rgba(0, 255, 102, 0.8);
+    }
+
+    @media (max-width: 800px) {
+      .matrix-grid {
+        grid-template-columns: 1fr;
+      }
+      .matrix-img {
+        height: 220px;
+      }
+    }
+  </style>
+</head>
+<body>
+  <!-- Canvas 数字雨背景 -->
+  <canvas id="matrixCanvas"></canvas>
+
+  <div class="matrix-layout">
+    <header class="matrix-header">
+      <div>
+        <div style="font-size: 11px; color: var(--matrix-bright); margin-bottom: 4px;">// SYSTEM_SECURITY: LEVEL_ALPHA</div>
+        <h1 class="matrix-title">NEO // MATRIX DECODE</h1>
+      </div>
+      <div class="matrix-tag">STYLE 27 · 数字雨矩阵</div>
+    </header>
+
+    <!-- 视觉 Banner -->
+    <div class="matrix-img-box">
+      <img src="assets/images/matrix_rain.jpg" alt="Matrix 数字雨" class="matrix-img">
+      <div class="matrix-img-overlay">
+        <span>ZION_SERVER_STREAM // 10010110</span>
+        <span style="color: var(--matrix-bright);">DECRYPTION_READY [100%]</span>
+      </div>
+    </div>
+
+    <!-- 正文终端窗口 -->
+    <div class="matrix-grid">
+      <main class="terminal-window">
+        <div class="prompt-lead">
+          root@matrix:~$ ./wake_up_neo.sh --inspect-reality
+        </div>
+
+        <p class="article-p" onclick="glitchText(this)">
+          ▶ 矩阵无处不在。它是我们所看到的一切，是我们所触碰的一切。
+        </p>
+        <p class="article-p" onclick="glitchText(this)">
+          你曾经做过一个如此真实的梦吗？如果你无法从梦中醒来，你将如何分辨真实世界与梦境？代码构成了这个虚拟宇宙的每一寸肌理，从神经元脉冲到星辰大海。
+        </p>
+        <p class="article-p" onclick="glitchText(this)">
+          选择红色药丸，你将留在仙境，我将带你看看这兔子洞究竟有多深；选择蓝色药丸，故事就此结束，你在自己的床上醒来，继续相信你所愿意相信的。
+        </p>
+
+        <button class="matrix-btn" onclick="speedUpRain()">
+          ⚡ [EXECUTE] 加速数字雨流速
+        </button>
+      </main>
+
+      <!-- 侧边遥测日志 -->
+      <aside class="side-logs">
+        <div style="font-weight: 700; color: #fff; border-bottom: 1px solid var(--matrix-dim); padding-bottom: 6px; margin-bottom: 12px;">
+          // TELEMETRY_FEED
+        </div>
+        <div>[00:00:12] Construct initialized.</div>
+        <div>[00:00:24] Agent scan completed: 0 threats.</div>
+        <div>[00:00:48] Operator connected: Tank.</div>
+        <div>[00:01:05] EMP status: ARMED.</div>
+        <div style="margin-top: 16px; color: var(--matrix-bright);">
+          [INPUT] 点击任意正文段落可触发文本重构解码。
+        </div>
+      </aside>
+    </div>
+  </div>
+
+  <script src="assets/nav-bar.js"></script>
+  <script>
+    // Canvas 数字雨动画实现
+    const canvas = document.getElementById("matrixCanvas");
+    const ctx = canvas.getContext("2d");
+
+    let width = canvas.width = window.innerWidth;
+    let height = canvas.height = window.innerHeight;
+
+    window.addEventListener("resize", () => {
+      width = canvas.width = window.innerWidth;
+      height = canvas.height = window.innerHeight;
+    });
+
+    const characters = "0123456789ABCDEFｦｱｳｴｵｶｷｹｺｻｼｽｾｿﾀﾂﾃﾅﾆﾇﾈﾊﾋﾎﾏﾐﾑﾒﾓﾔﾕﾗﾘﾜ";
+    const fontSize = 14;
+    let columns = Math.floor(width / fontSize);
+    let drops = [];
+    for (let i = 0; i < columns; i++) {
+      drops[i] = Math.floor(Math.random() * -100);
+    }
+
+    let intervalSpeed = 33;
+
+    function drawMatrix() {
+      ctx.fillStyle = "rgba(5, 8, 5, 0.08)";
+      ctx.fillRect(0, 0, width, height);
+
+      ctx.fillStyle = "#00ff66";
+      ctx.font = fontSize + "px 'Share Tech Mono'";
+
+      for (let i = 0; i < drops.length; i++) {
+        const text = characters.charAt(Math.floor(Math.random() * characters.length));
+        ctx.fillText(text, i * fontSize, drops[i] * fontSize);
+
+        if (drops[i] * fontSize > height && Math.random() > 0.975) {
+          drops[i] = 0;
+        }
+        drops[i]++;
+      }
+    }
+
+    let timer = setInterval(drawMatrix, intervalSpeed);
+
+    function speedUpRain() {
+      clearInterval(timer);
+      intervalSpeed = intervalSpeed === 33 ? 15 : 33;
+      timer = setInterval(drawMatrix, intervalSpeed);
+    }
+
+    function glitchText(el) {
+      const original = el.innerText;
+      el.innerText = ">> RESTRUCTURING DATA STREAM // 0xFA4812C...";
+      setTimeout(() => {
+        el.innerText = original;
+      }, 350);
+    }
+  </script>
+</body>
+</html>

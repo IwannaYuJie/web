@@ -137,14 +137,14 @@ function HomeCreativeSection() {
         <div className="home-creative-title-wrap">
           <div className="home-creative-badge">
             <span className="badge-spark">✨</span>
-            <span>23 款独立排版流派 · 随机精选</span>
+            <span>{CREATIVE_BLOGS.length} 款独立排版流派 · 随机精选</span>
           </div>
           <h2 className="home-creative-title">
             <span>🎨 创意工坊 · </span>
             <span className="title-highlight">排版灵感矩阵</span>
           </h2>
           <p className="home-creative-subtitle">
-            涵盖瑞士极简、复古报刊、赛博终端、Win95视窗、日式禅意、新粗野主义、达芬奇手稿等 23 款独立风格，支持免离开即刻试玩。
+            涵盖瑞士极简、水墨国风、Y2K千禧、GameBoy、黑客帝国数字雨、包豪斯、侦探档案、酸性设计等 {CREATIVE_BLOGS.length} 款独立风格，支持免离开即刻试玩。
           </p>
         </div>
 
@@ -167,8 +167,8 @@ function HomeCreativeSection() {
             <span>⚡</span>
             <span>随机试玩</span>
           </button>
-          <Link to="/creative" className="home-btn-all" title="查看创意工坊全部 23 款完整展厅">
-            <span>全部 23 款</span>
+          <Link to="/creative" className="home-btn-all" title={`查看创意工坊全部 ${CREATIVE_BLOGS.length} 款完整展厅`}>
+            <span>全部 {CREATIVE_BLOGS.length} 款</span>
             <span className="btn-arrow">➔</span>
           </Link>
         </div>

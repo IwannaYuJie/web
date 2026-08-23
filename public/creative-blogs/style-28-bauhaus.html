@@ -1,0 +1,265 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>BAUHAUS 1919 — 28 包豪斯几何构成主义</title>
+  <link rel="stylesheet" href="assets/common.css">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@500;700;900&family=Noto+Sans+SC:wght@400;700;900&display=swap" rel="stylesheet">
+  <style>
+    :root {
+      --bh-cream: #f4eee1;
+      --bh-black: #111111;
+      --bh-red: #de3823;
+      --bh-blue: #1c52a3;
+      --bh-yellow: #f3b712;
+      --font-bauhaus: "Space Grotesk", "Noto Sans SC", sans-serif;
+    }
+
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+
+    body {
+      background-color: var(--bh-cream);
+      color: var(--bh-black);
+      font-family: var(--font-bauhaus);
+      line-height: 1.5;
+      min-height: 100vh;
+      border-top: 12px solid var(--bh-red);
+    }
+
+    .bauhaus-shell {
+      max-width: 1240px;
+      margin: 0 auto;
+      padding: 40px 24px 80px;
+    }
+
+    /* 顶部非对称巨大题头 */
+    .bauhaus-header {
+      display: grid;
+      grid-template-columns: 2fr 1fr 1fr;
+      border-bottom: 4px solid var(--bh-black);
+      padding-bottom: 24px;
+      margin-bottom: 40px;
+      gap: 20px;
+    }
+
+    .bauhaus-logo {
+      font-size: clamp(48px, 8vw, 96px);
+      font-weight: 900;
+      letter-spacing: -0.04em;
+      line-height: 0.85;
+      text-transform: uppercase;
+    }
+
+    .bauhaus-badge {
+      display: flex;
+      flex-direction: column;
+      justify-content: flex-end;
+      border-left: 2px solid var(--bh-black);
+      padding-left: 16px;
+      font-weight: 700;
+      font-size: 13px;
+    }
+
+    .bauhaus-badge strong {
+      color: var(--bh-blue);
+      font-size: 18px;
+    }
+
+    /* 几何构成主义大展厅 */
+    .bauhaus-grid-main {
+      display: grid;
+      grid-template-columns: 1.2fr 1.8fr;
+      gap: 32px;
+      margin-bottom: 48px;
+    }
+
+    .bauhaus-poster-box {
+      border: 3px solid var(--bh-black);
+      box-shadow: 12px 12px 0 var(--bh-black);
+      background: #fff;
+      overflow: hidden;
+      position: relative;
+    }
+
+    .bauhaus-poster-img {
+      width: 100%;
+      height: 100%;
+      min-height: 440px;
+      object-fit: cover;
+      display: block;
+    }
+
+    /* 右侧图文与几何色块 */
+    .bauhaus-text-side {
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
+    }
+
+    .article-title-block {
+      background: var(--bh-black);
+      color: #fff;
+      padding: 24px 28px;
+      margin-bottom: 24px;
+    }
+
+    .article-title-block h2 {
+      font-size: 32px;
+      font-weight: 900;
+      line-height: 1.2;
+      letter-spacing: -0.02em;
+    }
+
+    .bauhaus-manifesto {
+      font-size: 16.5px;
+      line-height: 1.8;
+      color: var(--bh-black);
+      margin-bottom: 24px;
+      font-weight: 500;
+    }
+
+    /* 几何交互试验盘 (红黄蓝按钮) */
+    .geometric-dock {
+      display: flex;
+      gap: 16px;
+      align-items: center;
+      margin-top: 16px;
+      flex-wrap: wrap;
+    }
+
+    .geo-shape-btn {
+      padding: 12px 24px;
+      border: 2px solid var(--bh-black);
+      font-family: var(--font-bauhaus);
+      font-weight: 900;
+      font-size: 14px;
+      cursor: pointer;
+      box-shadow: 4px 4px 0 var(--bh-black);
+      transition: all 0.15s ease;
+    }
+    .geo-shape-btn:active {
+      transform: translate(2px, 2px);
+      box-shadow: 2px 2px 0 var(--bh-black);
+    }
+    .btn-circle { background: var(--bh-blue); color: #fff; border-radius: 999px; }
+    .btn-square { background: var(--bh-red); color: #fff; }
+    .btn-triangle { background: var(--bh-yellow); color: var(--bh-black); }
+
+    /* 三栏底板块 */
+    .bauhaus-three-cols {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      border-top: 4px solid var(--bh-black);
+      padding-top: 32px;
+      gap: 24px;
+    }
+
+    .col-card {
+      border: 2px solid var(--bh-black);
+      padding: 20px;
+      background: #fff;
+      box-shadow: 6px 6px 0 var(--bh-black);
+    }
+
+    .col-card h3 {
+      font-size: 20px;
+      font-weight: 900;
+      margin-bottom: 8px;
+    }
+
+    @media (max-width: 860px) {
+      .bauhaus-header {
+        grid-template-columns: 1fr;
+      }
+      .bauhaus-grid-main {
+        grid-template-columns: 1fr;
+      }
+      .bauhaus-three-cols {
+        grid-template-columns: 1fr;
+      }
+    }
+  </style>
+</head>
+<body>
+  <div class="bauhaus-shell">
+    <!-- 顶部标头 -->
+    <header class="bauhaus-header">
+      <div class="bauhaus-logo">BAUHAUS</div>
+      <div class="bauhaus-badge">
+        <div>STYLE 28 // 构成主义</div>
+        <strong>FORM FOLLOWS FUNCTION</strong>
+      </div>
+      <div class="bauhaus-badge">
+        <div>WEIMAR · DESSAU · BERLIN</div>
+        <div>1919 — 1933</div>
+      </div>
+    </header>
+
+    <!-- 主展示区 -->
+    <section class="bauhaus-grid-main">
+      <div class="bauhaus-poster-box">
+        <img src="assets/images/bauhaus_geometry.jpg" alt="包豪斯构成主义海报" class="bauhaus-poster-img">
+      </div>
+
+      <div class="bauhaus-text-side">
+        <div class="article-title-block">
+          <div style="color: var(--bh-yellow); font-size: 12px; font-weight: 900; letter-spacing: 0.1em; margin-bottom: 4px;">// MANIFESTO</div>
+          <h2>形式追随功能：包豪斯的几何理性美学</h2>
+        </div>
+
+        <p class="bauhaus-manifesto">
+          建立一个没有阶级壁垒的工匠与艺术家联邦！纯粹的原色（红、黄、蓝）与严谨的几何形体（圆、三角形、正方形），构成了二十世纪现代主义设计的基石。摒弃一切虚伪的繁复装饰，让材料自身说话。
+        </p>
+
+        <!-- 几何色块互动 -->
+        <div>
+          <div style="font-size: 12px; font-weight: 900; text-transform: uppercase; margin-bottom: 8px;">
+            ▶ 切换原色主题调色盘：
+          </div>
+          <div class="geometric-dock">
+            <button class="geo-shape-btn btn-circle" onclick="changeAccent('blue')">● 蔚蓝圆相</button>
+            <button class="geo-shape-btn btn-square" onclick="changeAccent('red')">■ 鲜红矩方</button>
+            <button class="geo-shape-btn btn-triangle" onclick="changeAccent('yellow')">▲ 明黄三角</button>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- 三栏构成卡片 -->
+    <footer class="bauhaus-three-cols">
+      <div class="col-card" style="border-top: 8px solid var(--bh-blue);">
+        <h3>01 / 纯粹原色</h3>
+        <p style="font-size: 13.5px; color: #444;">红、黄、蓝的三原色系统，以最凝练的色谱张力直击心灵。</p>
+      </div>
+      <div class="col-card" style="border-top: 8px solid var(--bh-red);">
+        <h3>02 / 非对称网格</h3>
+        <p style="font-size: 13.5px; color: #444;">打破传统中轴对称，以动态平衡重构信息层级的视觉秩序。</p>
+      </div>
+      <div class="col-card" style="border-top: 8px solid var(--bh-yellow);">
+        <h3>03 / 工业制造</h3>
+        <p style="font-size: 13.5px; color: #444;">艺术与技术的全新统一，服务于大众日常生活的工业设计先驱。</p>
+      </div>
+    </footer>
+  </div>
+
+  <script src="assets/nav-bar.js"></script>
+  <script>
+    function changeAccent(color) {
+      if (color === 'blue') {
+        document.body.style.borderTopColor = "#1c52a3";
+      } else if (color === 'red') {
+        document.body.style.borderTopColor = "#de3823";
+      } else if (color === 'yellow') {
+        document.body.style.borderTopColor = "#f3b712";
+      }
+    }
+  </script>
+</body>
+</html>

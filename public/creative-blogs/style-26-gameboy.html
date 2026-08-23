@@ -1,0 +1,304 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>RETRO GAMEBOY — 26 经典掌机绿屏</title>
+  <link rel="stylesheet" href="assets/common.css">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Press+Start+2P&family=DotGothic16&family=Noto+Sans+SC:wght@400;700&display=swap" rel="stylesheet">
+  <style>
+    :root {
+      --gb-shell: #c8c6be;
+      --gb-shell-dark: #aba89d;
+      --gb-screen-bg: #8ba32b;
+      --gb-screen-darkest: #0f380f;
+      --gb-screen-dark: #306230;
+      --gb-screen-light: #8bac0f;
+      --gb-screen-lightest: #9bbc0f;
+      --gb-magenta: #8c1d40;
+      --gb-blue: #001f66;
+      --font-pixel: 'Press Start 2P', 'DotGothic16', monospace;
+      --font-body: 'DotGothic16', 'Noto Sans SC', monospace;
+    }
+
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+
+    body {
+      background-color: #2b2b2b;
+      color: var(--gb-screen-darkest);
+      font-family: var(--font-body);
+      min-height: 100vh;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      padding: 40px 16px 80px;
+    }
+
+    /* 掌机外壳 */
+    .gameboy-device {
+      width: 100%;
+      max-width: 680px;
+      background: var(--gb-shell);
+      border-radius: 24px 24px 80px 24px;
+      padding: 32px 36px 48px;
+      box-shadow: 0 25px 60px rgba(0, 0, 0, 0.7), inset 0 2px 2px #fff, inset 0 -4px 6px rgba(0, 0, 0, 0.4);
+      border: 4px solid #555;
+      position: relative;
+    }
+
+    /* 顶部屏幕外边框 */
+    .screen-bezel {
+      background: #737373;
+      border-radius: 16px 16px 40px 16px;
+      padding: 24px;
+      box-shadow: inset 0 4px 8px rgba(0, 0, 0, 0.6);
+      margin-bottom: 28px;
+      border: 2px solid #555;
+    }
+
+    .bezel-top-line {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 12px;
+      color: #b0b0b0;
+      font-size: 10px;
+      font-family: var(--font-pixel);
+    }
+
+    .battery-led {
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      color: #ff3333;
+    }
+    .battery-dot {
+      width: 8px;
+      height: 8px;
+      border-radius: 50%;
+      background: #ff3333;
+      box-shadow: 0 0 8px #ff3333;
+      animation: pulseLed 2s infinite;
+    }
+    @keyframes pulseLed {
+      0%, 100% { opacity: 1; }
+      50% { opacity: 0.6; }
+    }
+
+    /* 经典点阵液晶屏 */
+    .lcd-screen {
+      background: var(--gb-screen-bg);
+      border: 3px solid #222;
+      border-radius: 6px;
+      padding: 20px;
+      min-height: 380px;
+      box-shadow: inset 0 0 16px rgba(0, 0, 0, 0.35);
+      position: relative;
+      overflow: hidden;
+    }
+
+    /* 扫描线像素网点 */
+    .lcd-screen::before {
+      content: "";
+      position: absolute;
+      inset: 0;
+      background: repeating-linear-gradient(0deg, rgba(15, 56, 15, 0.08) 0px, rgba(15, 56, 15, 0.08) 1px, transparent 1px, transparent 3px);
+      pointer-events: none;
+      z-index: 10;
+    }
+
+    .game-hero-box {
+      border: 2px solid var(--gb-screen-darkest);
+      margin-bottom: 16px;
+      overflow: hidden;
+    }
+
+    .game-hero-img {
+      width: 100%;
+      height: 160px;
+      object-fit: cover;
+      display: block;
+      filter: grayscale(1) sepia(1) hue-rotate(40deg) saturate(3) contrast(1.4);
+    }
+
+    .pixel-title {
+      font-family: var(--font-pixel);
+      font-size: 16px;
+      line-height: 1.5;
+      margin-bottom: 12px;
+      color: var(--gb-screen-darkest);
+    }
+
+    .pixel-text {
+      font-size: 13.5px;
+      line-height: 1.6;
+      color: var(--gb-screen-darkest);
+      margin-bottom: 12px;
+    }
+
+    .rpg-dialog-box {
+      border: 2px solid var(--gb-screen-darkest);
+      padding: 10px 12px;
+      background: var(--gb-screen-lightest);
+      font-size: 12px;
+      line-height: 1.5;
+      margin-top: 14px;
+    }
+
+    /* 下半部按键控制区 */
+    .controls-zone {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 10px 16px 20px;
+    }
+
+    /* 十字键 */
+    .d-pad {
+      position: relative;
+      width: 90px;
+      height: 90px;
+    }
+    .d-btn {
+      position: absolute;
+      background: #2b2b2b;
+      border: none;
+      box-shadow: 0 4px 0 #111, inset 0 1px 0 #666;
+      cursor: pointer;
+    }
+    .d-btn:active {
+      transform: translateY(2px);
+      box-shadow: 0 2px 0 #111;
+    }
+    .d-up { top: 0; left: 30px; width: 30px; height: 32px; border-radius: 4px 4px 0 0; }
+    .d-down { bottom: 0; left: 30px; width: 30px; height: 32px; border-radius: 0 0 4px 4px; }
+    .d-left { top: 30px; left: 0; width: 32px; height: 30px; border-radius: 4px 0 0 4px; }
+    .d-right { top: 30px; right: 0; width: 32px; height: 30px; border-radius: 0 4px 4px 0; }
+    .d-center { top: 30px; left: 30px; width: 30px; height: 30px; background: #2b2b2b; }
+
+    /* A / B 红色按键 */
+    .action-buttons {
+      display: flex;
+      gap: 16px;
+      transform: rotate(-25deg);
+    }
+    .ab-btn {
+      width: 44px;
+      height: 44px;
+      border-radius: 50%;
+      background: var(--gb-magenta);
+      border: none;
+      box-shadow: 0 4px 0 #4a0e22, inset 0 1px 0 #ff6699;
+      color: #fff;
+      font-family: var(--font-pixel);
+      font-size: 12px;
+      font-weight: 700;
+      cursor: pointer;
+    }
+    .ab-btn:active {
+      transform: translateY(2px);
+      box-shadow: 0 2px 0 #4a0e22;
+    }
+
+    /* Select / Start 胶囊按键 */
+    .system-buttons {
+      display: flex;
+      justify-content: center;
+      gap: 24px;
+      margin-top: 10px;
+    }
+    .sys-btn {
+      width: 60px;
+      height: 14px;
+      background: #737373;
+      border-radius: 999px;
+      border: 1px solid #444;
+      transform: rotate(-25deg);
+      box-shadow: 0 2px 0 #333;
+      cursor: pointer;
+    }
+  </style>
+</head>
+<body>
+  <div class="gameboy-device">
+    <!-- 屏幕边框 -->
+    <div class="screen-bezel">
+      <div class="bezel-top-line">
+        <div class="battery-led">
+          <span class="battery-dot"></span>
+          <span>BATTERY</span>
+        </div>
+        <div>DOT MATRIX WITH STEREO SOUND</div>
+      </div>
+
+      <!-- 点阵液晶屏 -->
+      <div class="lcd-screen" id="lcdScreen">
+        <div class="game-hero-box">
+          <img src="assets/images/gameboy_retro.jpg" alt="8-Bit 像素掌机冒险" class="game-hero-img">
+        </div>
+        <h1 class="pixel-title">STYLE 26 // GAMEBOY</h1>
+        <p class="pixel-text">
+          1989 年墨绿点阵像素传奇！经典的四阶灰绿调色、8-Bit 方块字阶与复古按键力反馈交互。
+        </p>
+        <div class="rpg-dialog-box" id="rpgBox">
+          ▶ 勇者橘猫：按 [A] 键与村长对话，按 [B] 键跳跃！
+        </div>
+      </div>
+    </div>
+
+    <!-- 掌机品牌铭牌 -->
+    <div style="font-family: var(--font-pixel); font-size: 14px; color: var(--gb-blue); margin-bottom: 20px; font-weight: 900; letter-spacing: 0.1em;">
+      OrangeBoy <span style="font-size: 8px; color: #555;">TM</span>
+    </div>
+
+    <!-- 下半部按键控制 -->
+    <div class="controls-zone">
+      <!-- 十字键 -->
+      <div class="d-pad">
+        <button class="d-btn d-up" onclick="pressKey('▲ 向上探索！')"></button>
+        <button class="d-btn d-down" onclick="pressKey('▼ 向下寻找宝箱！')"></button>
+        <button class="d-btn d-left" onclick="pressKey('◀ 向左回到村庄！')"></button>
+        <button class="d-btn d-right" onclick="pressKey('▶ 向右进入地下城！')"></button>
+        <div class="d-center"></div>
+      </div>
+
+      <!-- A/B 键 -->
+      <div class="action-buttons">
+        <button class="ab-btn" onclick="pressKey('💥 按下了 [B] 键：发动了必杀鱼骨斩！')">B</button>
+        <button class="ab-btn" onclick="pressKey('✨ 按下了 [A] 键：接受了拯救猫岛的主线任务！')">A</button>
+      </div>
+    </div>
+
+    <!-- Select / Start 键 -->
+    <div class="system-buttons">
+      <div style="text-align: center;">
+        <button class="sys-btn" onclick="pressKey('🔧 SELECT: 切换装备栏')"></button>
+        <div style="font-family: var(--font-pixel); font-size: 8px; color: #555; margin-top: 6px;">SELECT</div>
+      </div>
+      <div style="text-align: center;">
+        <button class="sys-btn" onclick="pressKey('⏸️ START: 游戏暂停中...')"></button>
+        <div style="font-family: var(--font-pixel); font-size: 8px; color: #555; margin-top: 6px;">START</div>
+      </div>
+    </div>
+  </div>
+
+  <script src="assets/nav-bar.js"></script>
+  <script>
+    function pressKey(msg) {
+      const box = document.getElementById("rpgBox");
+      box.innerText = msg;
+      const screen = document.getElementById("lcdScreen");
+      screen.style.filter = "contrast(1.6) brightness(1.1)";
+      setTimeout(() => {
+        screen.style.filter = "none";
+      }, 120);
+    }
+  </script>
+</body>
+</html>

@@ -25,7 +25,14 @@
     { id: "20", name: "维多利亚机械档案馆", desc: "⚙️ 旋转黄铜齿轮 · 蒸汽压力表 · 铆钉与差分机发明手记", file: "style-20-steampunk.html" },
     { id: "21", name: "复古黑胶唱片音乐志", desc: "📻 33⅓ RPM 旋转黑胶唱机 · 唱针播放控制 · 独立乐评", file: "style-21-vinyl.html" },
     { id: "22", name: "皇家植物标本标本志", desc: "🌿 自然历史博物馆植物台纸 · 压制花草标本 · 林奈分类法", file: "style-22-botanical.html" },
-    { id: "23", name: "达芬奇手稿与发明志", desc: "📜 鸟类飞行扑翼草图 · 黄金比例几何 · 达芬奇镜面解密手迹", file: "style-23-davinci.html" }
+    { id: "23", name: "达芬奇手稿与发明志", desc: "📜 鸟类飞行扑翼草图 · 黄金比例几何 · 达芬奇镜面解密手迹", file: "style-23-davinci.html" },
+    { id: "24", name: "水墨国风与卷轴画卷", desc: "🖌️ 宣纸温润底色 · 宋元山水长卷 · 朱砂闲章与竖排诗文", file: "style-24-ink-wash.html" },
+    { id: "25", name: "Y2K 千禧充气金属潮流", desc: "🔮 流动水银铬合金 · 3D 充气泡泡字 · 果冻玻璃微浮雕", file: "style-25-y2k.html" },
+    { id: "26", name: "GameBoy 经典复古掌机", desc: "🕹️ 四色墨绿点阵 LCD · 8-Bit 像素 · 真实十字键与按键操作", file: "style-26-gameboy.html" },
+    { id: "27", name: "黑客帝国数字雨解码", desc: "🟢 Canvas 字符落雨 · 纯黑控制台 · 实时段落解码重构", file: "style-27-matrix.html" },
+    { id: "28", name: "包豪斯几何构成主义", desc: "📐 经典红黄蓝三原色 · 几何形体穿插 · 动态平衡非对称", file: "style-28-bauhaus.html" },
+    { id: "29", name: "侦探绝密案件档案袋", desc: "🕵️ 牛皮纸卷宗 · TOP SECRET 绝密印章 · 涂黑脱敏解密", file: "style-29-detective.html" },
+    { id: "30", name: "酸性设计与金属流体", desc: "⚡ 液态铬合金 · 先锋反叛排版 · 霓虹流体失真滤镜", file: "style-30-acid.html" }
   ];
 
   function initSwitcher() {
@@ -35,10 +42,10 @@
     // 创建浮动按钮
     const trigger = document.createElement("button");
     trigger.className = "blog-switcher-trigger";
-    trigger.setAttribute("title", "点击切换博客排版风格 (共23种风格)");
+    trigger.setAttribute("title", "点击切换博客排版风格 (共30种风格)");
     trigger.innerHTML = `
       <span class="dot"></span>
-      <span>🎨 切换博客排版风格 (23款)</span>
+      <span>🎨 切换博客排版风格 (30款)</span>
     `;
 
     // 创建弹窗
@@ -61,7 +68,7 @@
         <div class="blog-switcher-header">
           <div class="blog-switcher-title">
             <span>✨</span>
-            <span>23 种排版风格个人博客全景矩阵</span>
+            <span>30 种排版风格个人博客全景矩阵</span>
           </div>
           <button class="blog-switcher-close" title="关闭">✕</button>
         </div>

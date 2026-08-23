@@ -223,7 +223,7 @@ function HomeSidebar({ cat, setCat, query, setQuery, categories, tags, articleCo
       >
         <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
           <span className="cat-chip" style={{ color: 'var(--o)' }}>🎨 创意矩阵</span>
-          <span style={{ fontSize: 12, fontWeight: 700, color: 'var(--ink-soft)' }}>23 款风格</span>
+          <span style={{ fontSize: 12, fontWeight: 700, color: 'var(--ink-soft)' }}>30 款风格</span>
         </div>
         <div style={{ fontFamily: 'var(--serif)', fontWeight: 800, fontSize: 17, margin: '8px 0 4px', color: 'var(--ink)' }}>
           排版与交互灵感工坊
