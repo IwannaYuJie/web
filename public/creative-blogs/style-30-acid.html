@@ -221,6 +221,28 @@
       </div>
     </section>
 
+    <!-- 深度专栏长文 -->
+    <section style="margin-bottom: 48px; border-top: 2px solid rgba(255,255,255,0.2); padding-top: 36px;">
+      <div style="font-size: 12px; font-weight: 900; color: var(--acid-neon-green); letter-spacing: 0.15em; margin-bottom: 16px;">// ESSAYS & CRITIQUE · 先锋批评</div>
+      <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(320px, 1fr)); gap: 28px;">
+        <article style="background: rgba(255, 255, 255, 0.04); border: 1px solid rgba(255, 255, 255, 0.2); border-radius: 12px; padding: 24px;">
+          <div style="font-size: 11px; font-weight: 900; color: var(--acid-pink); margin-bottom: 8px;">ESSAY 01 // RAVE VISUALS</div>
+          <h3 style="font-size: 20px; font-weight: 900; line-height: 1.3; margin-bottom: 12px;">酸性视觉与地下狂欢：90s 俱乐部海报的反叛基因</h3>
+          <p style="font-size: 13.5px; line-height: 1.8; color: #d1d5db;">
+            从伦敦地下 Techno 派对的传单，到如今主宰 Behance 的 3D 镀铬液态金属。酸性设计用刺目的高荧光撞色与扭曲拉伸的黑体，公然反抗瑞士国际主义排版的“冷静客观”。
+          </p>
+        </article>
+
+        <article style="background: rgba(255, 255, 255, 0.04); border: 1px solid rgba(255, 255, 255, 0.2); border-radius: 12px; padding: 24px;">
+          <div style="font-size: 11px; font-weight: 900; color: var(--acid-cyan); margin-bottom: 8px;">ESSAY 02 // CHROMATIC ABERRATION</div>
+          <h3 style="font-size: 20px; font-weight: 900; line-height: 1.3; margin-bottom: 12px;">色差色散与液态渲染：GPU 着色器中的数字故障美学</h3>
+          <p style="font-size: 13.5px; line-height: 1.8; color: #d1d5db;">
+            在片段着色器中对 RGB 三通道施加不同强度的正弦扰动（Sine Wave Displacement），模拟光线穿过缺陷棱镜产生的彩虹边缘。数字故障（Glitch）不再是错误，而是最高阶的装饰。
+          </p>
+        </article>
+      </div>
+    </section>
+
     <footer class="acid-trio-row">
       <div class="acid-card">
         <h4 style="color: var(--acid-pink);">01 // HYPER CHROME</h4>
@@ -235,16 +257,36 @@
         <p style="font-size: 13px; color: #9ca3af; line-height: 1.6;">后数字时代的未来反叛与艺术视觉轰炸。</p>
       </div>
     </footer>
-  </div>
+  <style>
+    .acid-card {
+      transition: transform 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275), box-shadow 0.3s ease, border-color 0.3s ease;
+    }
+    .acid-card:hover {
+      transform: translateY(-8px) rotate(-1deg) scale(1.02);
+      border-color: var(--acid-neon-green);
+      box-shadow: 0 0 25px rgba(57, 255, 20, 0.4);
+    }
+    .acid-glitch-active {
+      animation: acidShake 0.4s cubic-bezier(0.36, 0.07, 0.19, 0.97) both;
+      filter: invert(1) hue-rotate(120deg) contrast(1.8) saturate(2) !important;
+    }
+    @keyframes acidShake {
+      0% { transform: translate(0, 0); }
+      25% { transform: translate(-8px, 4px) skewX(4deg); }
+      50% { transform: translate(8px, -4px) skewX(-4deg); }
+      75% { transform: translate(-4px, -8px) skewY(2deg); }
+      100% { transform: translate(0, 0); }
+    }
+  </style>
 
   <script src="assets/nav-bar.js"></script>
   <script>
     function toggleAcidDistort() {
-      const img = document.getElementById("posterImg");
-      img.style.filter = "invert(1) hue-rotate(180deg) contrast(2)";
+      const container = document.querySelector('.acid-container');
+      container.classList.add('acid-glitch-active');
       setTimeout(() => {
-        img.style.filter = "none";
-      }, 600);
+        container.classList.remove('acid-glitch-active');
+      }, 500);
     }
   </script>
 </body>

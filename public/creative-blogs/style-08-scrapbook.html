@@ -288,22 +288,77 @@
           ☐ 去公园拍一组傍晚的胶片照片 📸
         </p>
       </article>
+
+      <!-- 卡片 5 (手账排版秘籍) -->
+      <article class="scrap-note" style="transform: rotate(2.5deg); background:#fdf8f0;">
+        <div class="tape-corner tape-left" style="background: var(--washi-yellow);"></div>
+        <div class="note-date">✂️ 手作指南 · CRAFT TIPS</div>
+        <h2 class="note-title">拼贴手账的三层留白法则</h2>
+        <p class="note-text">
+          底层用淡色牛皮纸打底，中层贴上撕边和纸胶带与泛黄票根，顶层用铅笔手写心流随笔。三个维度的物理厚度，让平面的纸页瞬间拥有立体的时光温度！
+        </p>
+        <div class="hand-tags">
+          <span class="hand-tag" style="background: var(--highlighter);">✏️ 排版小窍门</span>
+        </div>
+      </article>
+
+      <!-- 卡片 6 (旅行票根手账) -->
+      <article class="scrap-note" style="transform: rotate(-1.5deg); background:#fffefb;">
+        <div class="tape-corner tape-right" style="background: var(--washi-pink);"></div>
+        <div class="note-date">✈️ 旅行速写 · KYOTO JOURNEY</div>
+        <h2 class="note-title">京都古书街巡礼与旧票根</h2>
+        <p class="note-text">
+          在三条通的小巷里淘到一本 1970 年代的古董活字样本册。把电车票根和咖啡杯垫贴在这里，每翻一页都能闻到那年夏天的古书香气。
+        </p>
+        <div class="hand-tags">
+          <span class="hand-tag">🏮 京都漫游</span>
+          <span class="hand-tag">🎫 票根标本</span>
+        </div>
+      </article>
     </main>
   </div>
 
+  <style>
+    .click-stamp {
+      position: absolute;
+      font-size: 28px;
+      pointer-events: none;
+      z-index: 9999;
+      animation: stampDrop 0.35s cubic-bezier(0.175, 0.885, 0.32, 1.275) forwards;
+    }
+    @keyframes stampDrop {
+      0% { transform: scale(2.5) rotate(-20deg); opacity: 0; }
+      100% { transform: scale(1) rotate(var(--rot, 0deg)); opacity: 0.9; }
+    }
+    .scrap-note {
+      transition: transform 0.3s cubic-bezier(0.2, 0.8, 0.2, 1), box-shadow 0.3s ease;
+    }
+    .scrap-note:hover {
+      transform: translateY(-8px) scale(1.02) !important;
+      box-shadow: 0 16px 30px rgba(0,0,0,0.12) !important;
+      z-index: 5;
+    }
+  </style>
+
   <script src="assets/nav-bar.js"></script>
   <script>
-    const stamps = ["⭐", "✨", "🌸", "☕", "🐱", "📌", "🎨", "🍀", "💖"];
-    function createStamp(e) {
-      if (e.target.closest('.blog-switcher-trigger') || e.target.closest('.blog-switcher-modal')) return;
+    const stamps = ["⭐", "✨", "🌸", "☕", "🐱", "📌", "🎨", "🍀", "💖", "🐾", "🌿", "🔖"];
+    window.addEventListener('click', (e) => {
+      if (e.target.closest('.blog-switcher-trigger') || e.target.closest('.blog-switcher-modal') || e.target.closest('a') || e.target.closest('button')) return;
       const stamp = document.createElement("div");
       stamp.className = "click-stamp";
       stamp.textContent = stamps[Math.floor(Math.random() * stamps.length)];
-      stamp.style.left = `${e.pageX - 15}px`;
-      stamp.style.top = `${e.pageY - 15}px`;
+      const rot = (Math.random() - 0.5) * 40;
+      stamp.style.setProperty('--rot', `${rot}deg`);
+      stamp.style.left = `${e.pageX - 14}px`;
+      stamp.style.top = `${e.pageY - 14}px`;
       document.body.appendChild(stamp);
-      setTimeout(() => stamp.remove(), 4000);
-    }
+      setTimeout(() => {
+        stamp.style.transition = 'opacity 1s ease';
+        stamp.style.opacity = '0';
+        setTimeout(() => stamp.remove(), 1000);
+      }, 3000);
+    });
   </script>
 </body>
 </html>

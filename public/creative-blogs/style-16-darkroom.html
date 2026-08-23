@@ -209,11 +209,60 @@
             EXIF: HASSELBLAD 500C/M · PLANAR 80mm F/2.8 · 1/60s · ILFORD MULTIGRADE
           </div>
         </article>
+
+        <!-- 画幅 3 -->
+        <article class="film-frame">
+          <div class="frame-number">▶ 26A // ILFORD HP5 // EXP.03</div>
+          <h2 class="frame-title">安塞尔·亚当斯区域曝光法（Zone System）的数学美</h2>
+          <p class="frame-desc">
+            将自然界的连续光影量化为 0 到 X 的十一个灰阶区域。精准计算阴影暗部与高光反差，在快门按下之前就已经在脑海中完成最终打印成片的预视觉化（Previsualization）。
+          </p>
+          <div class="exif-stamp">
+            EXIF: LARGE FORMAT 4x5 · SCHNEIDER 150mm · F/22 · ZONE V CALIBRATION
+          </div>
+        </article>
+
+        <!-- 画幅 4 -->
+        <article class="film-frame">
+          <div class="frame-number">▶ 27A // FUJI ACROS 100 // EXP.04</div>
+          <h2 class="frame-title">定影、水洗与纯棉钡地纸：让银盐影像跨越百年的物理炼金</h2>
+          <p class="frame-desc">
+            利用海波（硫代硫酸钠）彻底溶解未曝光的溴化银，再经过长达一小时的流水浸洗去除酸性残留。这不仅是摄影技术，更是人类与时间衰变抗衡的致密物理契约。
+          </p>
+          <div class="exif-stamp">
+            EXIF: LEICA MP · SUMMILUX 50mm F/1.4 · ARCHIVAL FIBER PRINT
+          </div>
+        </article>
       </div>
 
       <div class="sprockets-bottom"></div>
     </section>
   </div>
+
+  <style>
+    .red-bulb {
+      animation: bulbBreathe 2.5s ease-in-out infinite alternate;
+    }
+    @keyframes bulbBreathe {
+      from { box-shadow: 0 0 6px #ef4444; opacity: 0.6; }
+      to { box-shadow: 0 0 20px #ef4444, 0 0 40px rgba(239, 68, 68, 0.4); opacity: 1; }
+    }
+    .film-frame img {
+      filter: contrast(1.15) brightness(0.85) sepia(0.2);
+      transition: filter 0.8s ease, transform 0.4s ease;
+    }
+    .film-frame:hover img {
+      filter: contrast(1.1) brightness(1.05) sepia(0);
+      transform: scale(1.03);
+    }
+    .film-frame {
+      transition: transform 0.3s ease, border-color 0.3s ease;
+    }
+    .film-frame:hover {
+      transform: translateY(-4px);
+      border-color: var(--safelight-red);
+    }
+  </style>
 
   <script src="assets/nav-bar.js"></script>
 </body>

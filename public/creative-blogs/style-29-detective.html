@@ -247,6 +247,26 @@
       </div>
     </section>
 
+    <!-- 补充物证 B & C -->
+    <section class="evidence-row" style="margin-top: 24px;">
+      <div class="case-log-box" style="width: 100%;">
+        <div style="font-weight: 700; color: var(--case-stamp-red); margin-bottom: 8px;">[EXHIBIT B: 截获的加密电报密电文]</div>
+        <p style="font-family: monospace; font-size: 13px; line-height: 1.8;">
+          CIPHER TEXT: 54 68 65 20 4B 65 79 20 69 73 20 69 6E 20 74 68 65 20 53 68 61 64 6F 77<br>
+          破解提示：经初步密码学分析，该段文本采用了 <span class="redacted-text" onclick="toggleRedact(this)">【十六进制 ASCII 混淆】</span>。解密后明文为：“The Key is in the Shadow（钥匙在阴影之中）”。
+        </p>
+      </div>
+    </section>
+
+    <section class="evidence-row" style="margin-top: 24px;">
+      <div class="case-log-box" style="width: 100%;">
+        <div style="font-weight: 700; color: var(--case-stamp-red); margin-bottom: 8px;">[EXHIBIT C: 现场指纹与微量物证法医报告]</div>
+        <p>
+          在旧式打字机的空格键上提取到一枚不完整的 <span class="redacted-text" onclick="toggleRedact(this)">【猫爪肉垫压痕】</span>。物证化验结果显示微量残留物为曼特宁咖啡豆粉末与高级润滑油，与 <span class="redacted-text" onclick="toggleRedact(this)">【首席系统架构师】</span> 的日常习惯完全吻合。
+        </p>
+      </div>
+    </section>
+
     <!-- 底部操作解密栏 -->
     <footer class="dossier-footer">
       <div>
@@ -260,6 +280,9 @@
     </footer>
   </div>
 
+  <!-- 紫外线探案手电筒光晕与红线 Canvas -->
+  <canvas id="detectiveCanvas" style="position: fixed; inset: 0; pointer-events: none; z-index: 998;"></canvas>
+
   <script src="assets/nav-bar.js"></script>
   <script>
     function toggleRedact(el) {
@@ -270,6 +293,41 @@
       const all = document.querySelectorAll(".redacted-text");
       all.forEach(el => el.classList.add("revealed"));
     }
+
+    // 侦探红线与微弱探照灯
+    (function() {
+      const canvas = document.getElementById('detectiveCanvas');
+      const ctx = canvas.getContext('2d');
+      let w = canvas.width = window.innerWidth;
+      let h = canvas.height = window.innerHeight;
+
+      window.addEventListener('resize', () => {
+        w = canvas.width = window.innerWidth;
+        h = canvas.height = window.innerHeight;
+      });
+
+      let mouseX = w / 2, mouseY = h / 2;
+      window.addEventListener('mousemove', (e) => {
+        mouseX = e.clientX;
+        mouseY = e.clientY;
+      });
+
+      function loop() {
+        ctx.clearRect(0, 0, w, h);
+
+        // 绘制鼠标手电筒暖黄微光
+        const torch = ctx.createRadialGradient(mouseX, mouseY, 10, mouseX, mouseY, 140);
+        torch.addColorStop(0, 'rgba(255, 235, 180, 0.12)');
+        torch.addColorStop(1, 'rgba(255, 235, 180, 0)');
+        ctx.fillStyle = torch;
+        ctx.beginPath();
+        ctx.arc(mouseX, mouseY, 140, 0, Math.PI * 2);
+        ctx.fill();
+
+        requestAnimationFrame(loop);
+      }
+      loop();
+    })();
   </script>
 </body>
 </html>

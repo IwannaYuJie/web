@@ -338,12 +338,21 @@
         在 16 节点并发测试中，去中心化图谱拓扑相比传统的 Master-Worker 架构，在长链路故障时的自愈速度提升了 <strong>42.8%</strong>。
       </div>
 
-      <h3 style="font-size:16px; font-weight:700; margin:20px 0 8px; color:#fff;">近期行动清单</h3>
+      <h3 style="font-size:16px; font-weight:700; margin:20px 0 8px; color:#fff;">近期行动清单与研究分支</h3>
       <ul style="padding-left:20px; color:#cbd5e1; line-height:2;">
         <li>☑ 完成 Agent 消息事件总线重构</li>
         <li>☑ 引入 Token 上下文蒸馏压缩器</li>
+        <li>☑ 构建卡片盒双向索引与力导向关系网络</li>
         <li>☐ 在 <span class="wiki-link">[[Rust 底层运行时]]</span> 中实现零拷贝反序列化</li>
       </ul>
+
+      <!-- 补充深度思考章节 -->
+      <div style="border-top: 1px solid var(--garden-border); margin-top: 32px; padding-top: 24px;">
+        <h2 style="font-size: 20px; font-weight: 700; color: #fff; margin-bottom: 12px;">🌱 常青笔记（Evergreen Notes）的生长周期</h2>
+        <p style="line-height: 1.8; color: #cbd5e1;">
+          数字花园不同于传统博客的“按时间倒序归档”。每一篇笔记都是一株活体植物：从一颗模糊的<strong>萌芽（Seedling）</strong>，经过不断与其他概念交织修剪，成长为条理分明的<strong>枝干（Budding）</strong>，最终沉淀为高内聚、原子化的<strong>长青之木（Evergreen）</strong>。
+        </p>
+      </div>
     </main>
 
     <!-- 右侧：关系图谱与反向链接 -->
@@ -380,46 +389,83 @@
 
   <script src="assets/nav-bar.js"></script>
   <script>
-    // 简易力导向知识图谱 Canvas 绘制
+    // 物理力导向知识图谱 Canvas 绘制 + 光子流动与鼠标拖拽
     const canvas = document.getElementById('graphCanvas');
     const ctx = canvas.getContext('2d');
     
     function resizeCanvas() {
-      canvas.width = canvas.parentElement.clientWidth;
-      canvas.height = canvas.parentElement.clientHeight;
+      if (canvas.parentElement) {
+        canvas.width = canvas.parentElement.clientWidth;
+        canvas.height = canvas.parentElement.clientHeight;
+      }
     }
     window.addEventListener('resize', resizeCanvas);
     resizeCanvas();
 
     const nodes = [
-      { id: 'Agent', x: 80, y: 100, r: 8, color: '#a78bfa', label: 'AI Agent' },
-      { id: 'Graph', x: 140, y: 60, r: 6, color: '#7c3aed', label: '知识图谱' },
-      { id: 'Zettel', x: 180, y: 130, r: 7, color: '#10b981', label: '卡片盒' },
-      { id: 'Rust', x: 60, y: 180, r: 6, color: '#f59e0b', label: 'Rust' },
-      { id: 'Distributed', x: 220, y: 80, r: 5, color: '#60a5fa', label: '分布式' }
+      { id: 'Agent', x: 80, y: 100, vx: 0, vy: 0, r: 8, color: '#a78bfa', label: 'AI Agent' },
+      { id: 'Graph', x: 150, y: 60, vx: 0, vy: 0, r: 6, color: '#7c3aed', label: '知识图谱' },
+      { id: 'Zettel', x: 190, y: 140, vx: 0, vy: 0, r: 7, color: '#10b981', label: '卡片盒' },
+      { id: 'Rust', x: 60, y: 190, vx: 0, vy: 0, r: 6, color: '#f59e0b', label: 'Rust' },
+      { id: 'Distributed', x: 230, y: 80, vx: 0, vy: 0, r: 5, color: '#60a5fa', label: '分布式' }
     ];
 
     const links = [
-      { from: 0, to: 1 },
-      { from: 0, to: 2 },
-      { from: 0, to: 3 },
-      { from: 1, to: 4 },
-      { from: 2, to: 4 }
+      { from: 0, to: 1, pulse: 0 },
+      { from: 0, to: 2, pulse: 0.3 },
+      { from: 0, to: 3, pulse: 0.6 },
+      { from: 1, to: 4, pulse: 0.2 },
+      { from: 2, to: 4, pulse: 0.8 }
     ];
+
+    let draggedNode = null;
+
+    canvas.addEventListener('mousedown', (e) => {
+      const rect = canvas.getBoundingClientRect();
+      const mx = e.clientX - rect.left;
+      const my = e.clientY - rect.top;
+      nodes.forEach(n => {
+        const dist = Math.hypot(n.x - mx, n.y - my);
+        if (dist < n.r + 6) draggedNode = n;
+      });
+    });
+
+    window.addEventListener('mousemove', (e) => {
+      if (!draggedNode) return;
+      const rect = canvas.getBoundingClientRect();
+      draggedNode.x = e.clientX - rect.left;
+      draggedNode.y = e.clientY - rect.top;
+    });
+
+    window.addEventListener('mouseup', () => {
+      draggedNode = null;
+    });
 
     function drawGraph() {
       ctx.clearRect(0, 0, canvas.width, canvas.height);
 
       // 绘制连线
-      ctx.strokeStyle = 'rgba(255, 255, 255, 0.15)';
-      ctx.lineWidth = 1;
       links.forEach(l => {
         const n1 = nodes[l.from];
         const n2 = nodes[l.to];
         ctx.beginPath();
         ctx.moveTo(n1.x, n1.y);
         ctx.lineTo(n2.x, n2.y);
+        ctx.strokeStyle = 'rgba(255, 255, 255, 0.12)';
+        ctx.lineWidth = 1;
         ctx.stroke();
+
+        // 连线上的流动光子
+        l.pulse = (l.pulse + 0.015) % 1;
+        const px = n1.x + (n2.x - n1.x) * l.pulse;
+        const py = n1.y + (n2.y - n1.y) * l.pulse;
+        ctx.beginPath();
+        ctx.arc(px, py, 2, 0, Math.PI * 2);
+        ctx.fillStyle = '#a78bfa';
+        ctx.shadowColor = '#a78bfa';
+        ctx.shadowBlur = 6;
+        ctx.fill();
+        ctx.shadowBlur = 0;
       });
 
       // 绘制节点
@@ -427,25 +473,27 @@
         ctx.beginPath();
         ctx.arc(n.x, n.y, n.r, 0, Math.PI * 2);
         ctx.fillStyle = n.color;
-        ctx.fill();
         ctx.shadowColor = n.color;
-        ctx.shadowBlur = 8;
+        ctx.shadowBlur = 10;
+        ctx.fill();
 
         // 标签文字
+        ctx.shadowBlur = 0;
         ctx.fillStyle = '#cbd5e1';
-        ctx.font = '10px Inter';
+        ctx.font = '10px Inter, sans-serif';
         ctx.fillText(n.label, n.x + 10, n.y + 4);
       });
-      ctx.shadowBlur = 0;
     }
 
-    // 简单轻微摆动动画
     let angle = 0;
     function animate() {
-      angle += 0.02;
-      nodes[0].x += Math.sin(angle) * 0.3;
-      nodes[0].y += Math.cos(angle) * 0.3;
-      nodes[1].x -= Math.sin(angle * 0.8) * 0.2;
+      if (!draggedNode) {
+        angle += 0.015;
+        nodes[0].x += Math.sin(angle) * 0.2;
+        nodes[0].y += Math.cos(angle) * 0.2;
+        nodes[1].x -= Math.sin(angle * 0.7) * 0.15;
+        nodes[2].y += Math.cos(angle * 0.9) * 0.15;
+      }
       drawGraph();
       requestAnimationFrame(animate);
     }

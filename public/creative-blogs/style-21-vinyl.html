@@ -297,6 +297,30 @@
             环境音乐旨在“既能引人专注沉浸，又能在不经意间完全融入周围空间”。优秀的 UI/UX 设计亦如是——最高的境界并非炫耀喧哗的交互，而是如呼吸般自然贴合心流。
           </p>
         </article>
+
+        <!-- TRACK 03 -->
+        <article class="track-post-card">
+          <div class="track-number-row">
+            <span>TRACK 03 // ANALOG MASTERING</span>
+            <span>DURATION: 07:18</span>
+          </div>
+          <h2 class="track-title">RIAA 均衡曲线与模拟母带：为什么黑胶的偶次谐波如此耐听？</h2>
+          <p class="track-body">
+            数字音频的方波截断会带来刺耳的奇次谐波失真，而黑胶唱针在微观微槽中的机械震动却产生了温润的二次谐波（Second Harmonic）。探讨硬件模拟感在现代数字化音频引擎中的重建。
+          </p>
+        </article>
+
+        <!-- TRACK 04 -->
+        <article class="track-post-card">
+          <div class="track-number-row">
+            <span>TRACK 04 // NEO-SOUL & HIPHOP</span>
+            <span>DURATION: 05:40</span>
+          </div>
+          <h2 class="track-title">J Dilla 的人性化微延迟（Humanized Swing）：打破量化网格的灵魂律动</h2>
+          <p class="track-body">
+            关闭 MPC 采样器的自动对齐量化（Quantize Off），让底鼓故意延迟 15 毫秒，军鼓微微提前。这种故意制造的微小时钟偏差，让冷冰冰的数字节拍瞬间拥有了人类心脏跳动的有机生命力。
+          </p>
+        </article>
       </main>
 
       <!-- 右侧黑胶唱片收藏架 -->
@@ -334,6 +358,22 @@
     </div>
   </div>
 
+  <style>
+    .music-note-fly {
+      position: absolute;
+      font-size: 22px;
+      color: #e69138;
+      pointer-events: none;
+      z-index: 9999;
+      animation: noteFloatUp 1.2s ease-out forwards;
+    }
+    @keyframes noteFloatUp {
+      0% { transform: translateY(0) scale(0.5) rotate(0deg); opacity: 1; }
+      50% { transform: translateY(-30px) scale(1.2) rotate(15deg); opacity: 0.8; }
+      100% { transform: translateY(-70px) scale(1) rotate(-15deg); opacity: 0; }
+    }
+  </style>
+
   <script src="assets/nav-bar.js"></script>
   <script>
     let isPlaying = true;
@@ -346,12 +386,29 @@
         disc.classList.remove('paused');
         icon.textContent = '⏸';
         text.textContent = 'PAUSE TURNTABLE';
+        spawnMusicNote(window.innerWidth / 2, window.innerHeight / 2);
       } else {
         disc.classList.add('paused');
         icon.textContent = '▶';
         text.textContent = 'PLAY ROTATING TURNTABLE';
       }
     }
+
+    function spawnMusicNote(x, y) {
+      const notes = ['♪', '♫', '♬', '♩', '📻', '✨'];
+      const note = document.createElement('div');
+      note.className = 'music-note-fly';
+      note.textContent = notes[Math.floor(Math.random() * notes.length)];
+      note.style.left = `${x - 10}px`;
+      note.style.top = `${y - 10}px`;
+      document.body.appendChild(note);
+      setTimeout(() => note.remove(), 1200);
+    }
+
+    window.addEventListener('click', (e) => {
+      if (e.target.closest('.blog-switcher-trigger') || e.target.closest('.blog-switcher-modal')) return;
+      spawnMusicNote(e.pageX, e.pageY);
+    });
   </script>
 </body>
 </html>

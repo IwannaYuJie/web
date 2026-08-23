@@ -100,9 +100,84 @@
     });
   }
 
-  if (document.readyState === "loading") {
-    document.addEventListener("DOMContentLoaded", initSwitcher);
-  } else {
+  // 全局滚动渐显 (Scroll Reveal)
+  function initScrollReveal() {
+    if (!("IntersectionObserver" in window)) return;
+
+    const revealElements = document.querySelectorAll(
+      "article, .article-item, .post-item, .log-entry, .article-card, .case-file, section, .sidebar-block, .specimen-plate, .parchment-sheet"
+    );
+
+    const observer = new IntersectionObserver((entries) => {
+      entries.forEach((entry) => {
+        if (entry.isIntersecting) {
+          entry.target.classList.add("fx-revealed");
+          observer.unobserve(entry.target);
+        }
+      });
+    }, {
+      rootMargin: "0px 0px -30px 0px",
+      threshold: 0.05
+    });
+
+    revealElements.forEach((el, idx) => {
+      el.classList.add("fx-reveal-init");
+      el.style.setProperty("--fx-delay", `${(idx % 3) * 0.08}s`);
+      observer.observe(el);
+    });
+  }
+
+  // 全局点击水波纹 (Click Ripple)
+  function initClickRipple() {
+    document.addEventListener("click", (e) => {
+      const btn = e.target.closest("button, .btn, .nav-link, a.control-btn, .interactive-tag, .card-action-btn");
+      if (!btn) return;
+
+      const rect = btn.getBoundingClientRect();
+      const ripple = document.createElement("span");
+      ripple.className = "fx-ripple-wave";
+      const size = Math.max(rect.width, rect.height) * 2;
+      ripple.style.width = ripple.style.height = `${size}px`;
+      ripple.style.left = `${e.clientX - rect.left - size / 2}px`;
+      ripple.style.top = `${e.clientY - rect.top - size / 2}px`;
+
+      const currentPos = window.getComputedStyle(btn).position;
+      if (currentPos === "static") {
+        btn.style.position = "relative";
+      }
+      btn.style.overflow = "hidden";
+      btn.appendChild(ripple);
+
+      setTimeout(() => {
+        ripple.remove();
+      }, 550);
+    });
+  }
+
+  // 全局阅读进度条 (Reading Progress)
+  function initReadingProgress() {
+    const bar = document.createElement("div");
+    bar.className = "fx-reading-progress-bar";
+    document.body.appendChild(bar);
+
+    window.addEventListener("scroll", () => {
+      const scrollTop = window.scrollY || document.documentElement.scrollTop;
+      const docHeight = document.documentElement.scrollHeight - document.documentElement.clientHeight;
+      const progress = docHeight > 0 ? (scrollTop / docHeight) * 100 : 0;
+      bar.style.width = `${progress}%`;
+    }, { passive: true });
+  }
+
+  function initAll() {
     initSwitcher();
+    initScrollReveal();
+    initClickRipple();
+    initReadingProgress();
+  }
+
+  if (document.readyState === "loading") {
+    document.addEventListener("DOMContentLoaded", initAll);
+  } else {
+    initAll();
   }
 })();

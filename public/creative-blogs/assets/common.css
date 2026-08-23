@@ -217,3 +217,52 @@
 .blog-hub-btn:hover {
   opacity: 0.9;
 }
+
+/* ============================================================
+   全局通用动效与交互增强类 (FX Engine Styles)
+   ============================================================ */
+
+/* 1. 元素滚动视口平滑入场 */
+.fx-reveal-init {
+  opacity: 0;
+  transform: translateY(22px);
+  transition: opacity 0.6s cubic-bezier(0.16, 1, 0.3, 1), transform 0.6s cubic-bezier(0.16, 1, 0.3, 1);
+  transition-delay: var(--fx-delay, 0s);
+  will-change: opacity, transform;
+}
+
+.fx-revealed {
+  opacity: 1;
+  transform: translateY(0);
+}
+
+/* 2. 点击水波纹扩散动效 */
+.fx-ripple-wave {
+  position: absolute;
+  border-radius: 50%;
+  background: radial-gradient(circle, rgba(255, 255, 255, 0.45) 0%, rgba(255, 255, 255, 0) 70%);
+  pointer-events: none;
+  transform: scale(0);
+  animation: fxRippleAnim 0.55s ease-out forwards;
+}
+
+@keyframes fxRippleAnim {
+  to {
+    transform: scale(1);
+    opacity: 0;
+  }
+}
+
+/* 3. 顶部阅读进度指示条 */
+.fx-reading-progress-bar {
+  position: fixed;
+  top: 0;
+  left: 0;
+  height: 3px;
+  width: 0%;
+  background: linear-gradient(90deg, #3b82f6, #ec4899, #f59e0b);
+  z-index: 100001;
+  pointer-events: none;
+  transition: width 0.1s linear;
+  box-shadow: 0 0 10px rgba(59, 130, 246, 0.6);
+}

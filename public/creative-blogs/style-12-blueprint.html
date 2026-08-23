@@ -229,9 +229,43 @@
           </div>
           <h2 class="cad-article-title">数据管道应力分析：流计算状态存储的容量规划</h2>
           <p class="cad-article-body">
-            推导每秒 50 万并发事件下的 RocksDB 写放大系数与 LSM-Tree 压实延迟数学模型，给出最优分层系数。
+            推导每秒 50 万并发事件下的 RocksDB 写放大系数与 LSM-Tree 压实延迟数学模型，给出最优分层系数与内存缓冲区分配方案。
           </p>
         </section>
+
+        <!-- 篇章 3 -->
+        <section class="cad-section">
+          <div class="cad-sec-id">DWG // 03.STRUCTURAL_ISOLATION</div>
+          <h2 class="cad-article-title">高可用系统的「承重墙」设计：故障域隔离与多活机房拓扑</h2>
+          <p class="cad-article-body">
+            类比土木工程中的剪力墙结构，探讨如何在分布式系统出现级联故障（Cascading Failure）时，通过断路器与单元化部署（Cell-based Architecture）将爆炸半径精确控制在单个单元之内。
+          </p>
+        </section>
+
+        <!-- 篇章 4 -->
+        <section class="cad-section">
+          <div class="cad-sec-id">DWG // 04.HYDRAULIC_PIPELINES</div>
+          <h2 class="cad-article-title">微服务管网拓扑与流量反压模型：流体力学在后端工程中的隐喻</h2>
+          <p class="cad-article-body">
+            高并发请求如高压液体穿过弯头与节流阀。深入解析 Reactive Streams 的背压拉取机制（Backpressure Pull）与 TCP 拥塞控制在 RPC 网关层的工程映射。
+          </p>
+        </section>
+
+        <!-- 交互组件：CAD 图层管理器 -->
+        <div style="border: 1px solid var(--cad-cyan); padding: 20px; margin: 24px 0; background: rgba(56, 189, 248, 0.06);">
+          <div style="display: flex; justify-content: space-between; align-items: center; border-bottom: 1px solid var(--cad-cyan); padding-bottom: 10px; margin-bottom: 14px;">
+            <div style="font-weight: 800; font-size: 14px; color: var(--cad-yellow);">[CAD LAYER MANAGER // 图层控制台]</div>
+            <span style="font-size: 11px; color: var(--cad-cyan);">ACTIVE LAYERS: 4/4</span>
+          </div>
+          <div style="display: flex; gap: 10px; flex-wrap: wrap;">
+            <button class="layer-btn active" onclick="toggleCadLayer('layer-struct', this)" style="background: rgba(56,189,248,0.2); border: 1px solid var(--cad-cyan); color: #fff; padding: 6px 14px; font-family: inherit; font-size: 12px; cursor: pointer;">🧱 结构层 (STRUCTURE)</button>
+            <button class="layer-btn active" onclick="toggleCadLayer('layer-pipe', this)" style="background: rgba(56,189,248,0.2); border: 1px solid var(--cad-cyan); color: #fff; padding: 6px 14px; font-family: inherit; font-size: 12px; cursor: pointer;">⚡ 管网层 (PIPELINES)</button>
+            <button class="layer-btn active" onclick="toggleCadLayer('layer-sensor', this)" style="background: rgba(56,189,248,0.2); border: 1px solid var(--cad-cyan); color: #fff; padding: 6px 14px; font-family: inherit; font-size: 12px; cursor: pointer;">📡 探针层 (TELEMETRY)</button>
+          </div>
+          <div id="cadLayerStatus" style="font-size: 12px; color: var(--cad-cyan); margin-top: 12px; font-family: monospace;">
+            ▶ 全部工程图层已锁定就绪。网格间距: 20.00mm | 投影: 正交透视
+          </div>
+        </div>
       </main>
 
       <!-- 右侧图纸规范 -->
@@ -242,10 +276,22 @@
             <span>STANDARDS</span>
           </div>
           <div style="font-size: 12px; line-height: 1.8;">
-            1. 所有设计遵循 ISO 9001 软件质量规范。<br>
+            1. 所有系统设计严格遵循 ISO 9001 软件质量规范与 CAP 定理。<br>
             2. 未注公差尺寸按 IT12 级执行。<br>
             3. 主笔工程师：CHIEF ARCHITECT。<br>
-            4. 材质：纯净代码与逻辑严密性。
+            4. 材质：纯净 Rust/Go 代码与严密数学逻辑。
+          </div>
+        </div>
+
+        <div class="cad-module">
+          <div class="cad-mod-header">
+            <span>[PROJECT SPECS]</span>
+            <span>METRICS</span>
+          </div>
+          <div style="font-size: 12px; line-height: 1.8; color: var(--cad-cyan);">
+            <div>• SLA: 99.999% (年停机 &lt; 5.26m)</div>
+            <div>• P99 延迟目标: &lt; 8.5ms</div>
+            <div>• 节点规模: 1024 物理核心集群</div>
           </div>
         </div>
       </aside>
@@ -265,13 +311,57 @@
         <strong>DATE:</strong>
         2026-08-22
       </div>
-      <div class="title-cell">
-        <strong>SHEET:</strong>
-        1 OF 1 (DWG APPROVED)
+      <div class="title-cell" id="cadCoordCell">
+        <strong>COORDS:</strong>
+        X: 0.00mm | Y: 0.00mm
       </div>
     </footer>
   </div>
 
+  <!-- CAD 激光准星与扫描线 -->
+  <div id="cadLaserScan" style="position: fixed; left: 0; right: 0; height: 2px; background: rgba(56, 189, 248, 0.4); box-shadow: 0 0 8px #38bdf8; pointer-events: none; z-index: 998; animation: cadScan 8s linear infinite;"></div>
+  <div id="cadCrossH" style="position: fixed; left: 0; width: 100vw; height: 1px; background: rgba(56, 189, 248, 0.4); pointer-events: none; z-index: 999;"></div>
+  <div id="cadCrossV" style="position: fixed; top: 0; height: 100vh; width: 1px; background: rgba(56, 189, 248, 0.4); pointer-events: none; z-index: 999;"></div>
+  <div id="cadTarget" style="position: fixed; width: 30px; height: 30px; border: 1px solid rgba(56, 189, 248, 0.7); border-radius: 50%; pointer-events: none; z-index: 999; transform: translate(-50%, -50%); transition: transform 0.05s ease-out;"></div>
+
+  <style>
+    @keyframes cadScan {
+      0% { top: 0; opacity: 0.8; }
+      50% { opacity: 0.3; }
+      100% { top: 100vh; opacity: 0.8; }
+    }
+  </style>
+
   <script src="assets/nav-bar.js"></script>
+  <script>
+    (function() {
+      const crossH = document.getElementById('cadCrossH');
+      const crossV = document.getElementById('cadCrossV');
+      const target = document.getElementById('cadTarget');
+      const coordCell = document.getElementById('cadCoordCell');
+
+      window.addEventListener('mousemove', (e) => {
+        crossH.style.top = e.clientY + 'px';
+        crossV.style.left = e.clientX + 'px';
+        target.style.top = e.clientY + 'px';
+        target.style.left = e.clientX + 'px';
+
+        if (coordCell) {
+          coordCell.innerHTML = `<strong>COORDS:</strong> X: ${(e.clientX * 0.264).toFixed(2)}mm | Y: ${(e.clientY * 0.264).toFixed(2)}mm`;
+        }
+      });
+    })();
+
+    function toggleCadLayer(layerName, btn) {
+      btn.classList.toggle('active');
+      const isActive = btn.classList.contains('active');
+      btn.style.background = isActive ? 'rgba(56,189,248,0.2)' : 'transparent';
+      btn.style.color = isActive ? '#fff' : '#64748b';
+      const status = document.getElementById('cadLayerStatus');
+      if (status) {
+        status.innerHTML = `▶ 图层状态变更: <strong>${btn.textContent}</strong> 已切换为 [${isActive ? 'VIS_ON' : 'VIS_OFF'}]`;
+      }
+    }
+  </script>
 </body>
 </html>

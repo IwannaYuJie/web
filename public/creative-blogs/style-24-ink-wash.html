@@ -305,13 +305,21 @@
           <p>
             世间万物皆有其节律。静坐案前，窗外微雨初霁，点一杯清茗，于键盘之上敲击方块文字，便如挥毫于生宣之上。墨色洇散开来，层次分明，浅绛淡著，自有一番超然之乐。
           </p>
+
+          <div style="border-top: 1px dashed var(--border-ink); border-bottom: 1px dashed var(--border-ink); padding: 18px 0; margin: 20px 0;">
+            <div style="font-family: var(--font-kai); font-size: 20px; color: var(--vermilion); margin-bottom: 8px;">【 墨 法 析 理 · 筆 意 入 神 】</div>
+            <p style="font-size: 15px; line-height: 1.9;">
+              董源披麻，写尽江南土山郁茂；李唐斧劈，顿见北方崇山苍劲。今之计算机着色器（Shader），借由法线贴图与柏林噪声模拟墨晕渐变，亦是在数字世界重铸“气韵生动”之六法。
+            </p>
+          </div>
+
           <p>
             以极简之形，表深邃之意。无论千百年光阴流转，黑白与朱砂的对话，始终在东方美学的血脉中静静流淌。
           </p>
         </div>
 
         <aside class="side-poetry-scroll">
-          <div style="font-size: 12px; color: var(--vermilion); letter-spacing: 0.2em; margin-bottom: 8px;">【 题 跋 】</div>
+          <div style="font-size: 12px; color: var(--vermilion); letter-spacing: 0.2em; margin-bottom: 8px;">【 題 跋 】</div>
           <div class="vertical-poetry" id="poetryText">
             行到水穷处<br>
             坐看云起时<br>
@@ -338,6 +346,9 @@
     </div>
   </div>
 
+  <!-- 宣纸水墨烟云拖尾 Canvas -->
+  <canvas id="inkSmokeCanvas" style="position: fixed; inset: 0; pointer-events: none; z-index: 998; mix-blend-mode: multiply;"></canvas>
+
   <script src="assets/nav-bar.js"></script>
   <script>
     function stampClick(el) {
@@ -348,7 +359,7 @@
     }
 
     function addCustomStamp() {
-      const texts = ["神品", "清賞", "妙契", "偶得", "讀畫", "松風"];
+      const texts = ["神品", "清賞", "妙契", "偶得", "讀畫", "松風", "煙雨", "墨禪"];
       const t = texts[Math.floor(Math.random() * texts.length)];
       const pool = document.getElementById("stampsPool");
       const newStamp = document.createElement("div");
@@ -358,6 +369,62 @@
       pool.appendChild(newStamp);
       stampClick(newStamp);
     }
+
+    // 鼠标水墨烟云拖尾
+    (function() {
+      const canvas = document.getElementById('inkSmokeCanvas');
+      const ctx = canvas.getContext('2d');
+      let w = canvas.width = window.innerWidth;
+      let h = canvas.height = window.innerHeight;
+
+      window.addEventListener('resize', () => {
+        w = canvas.width = window.innerWidth;
+        h = canvas.height = window.innerHeight;
+      });
+
+      const particles = [];
+
+      window.addEventListener('mousemove', (e) => {
+        for (let i = 0; i < 2; i++) {
+          particles.push({
+            x: e.clientX + (Math.random() - 0.5) * 8,
+            y: e.clientY + (Math.random() - 0.5) * 8,
+            vx: (Math.random() - 0.5) * 0.5,
+            vy: (Math.random() - 0.5) * 0.5,
+            radius: 10 + Math.random() * 18,
+            opacity: 0.18 + Math.random() * 0.1
+          });
+        }
+      });
+
+      function loop() {
+        ctx.clearRect(0, 0, w, h);
+        for (let i = particles.length - 1; i >= 0; i--) {
+          const p = particles[i];
+          p.x += p.vx;
+          p.y += p.vy;
+          p.radius += 0.4;
+          p.opacity -= 0.005;
+
+          if (p.opacity <= 0 || p.radius > 50) {
+            particles.splice(i, 1);
+            continue;
+          }
+
+          const grad = ctx.createRadialGradient(p.x, p.y, 0, p.x, p.y, p.radius);
+          grad.addColorStop(0, `rgba(28, 26, 23, ${p.opacity})`);
+          grad.addColorStop(0.6, `rgba(45, 79, 62, ${p.opacity * 0.5})`);
+          grad.addColorStop(1, 'rgba(28, 26, 23, 0)');
+          ctx.fillStyle = grad;
+
+          ctx.beginPath();
+          ctx.arc(p.x, p.y, p.radius, 0, Math.PI * 2);
+          ctx.fill();
+        }
+        requestAnimationFrame(loop);
+      }
+      loop();
+    })();
   </script>
 </body>
 </html>

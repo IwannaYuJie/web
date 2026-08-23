@@ -372,13 +372,32 @@
       <div class="supp-card">
         <div class="supp-section">副刊 · 器具志</div>
         <h4 class="supp-title">机械键盘与敲击韵律：触觉的复兴</h4>
-        <p class="supp-desc">在触控屏泛滥的今天，我们为何依然迷恋段落轴清脆的反馈？关于物理触感与生产力的思考。</p>
+        <p class="supp-desc">在触控屏泛滥的今天，我们为何依然迷恋段落轴清脆的反馈？关于物理触感与生产力的深度思考。</p>
       </div>
 
       <div class="supp-card">
         <div class="supp-section">副刊 · 茶余杂谈</div>
         <h4 class="supp-title">咖啡因、多巴胺与深夜灵感的交织</h4>
         <p class="supp-desc">为什么大多数出色的架构设计与文学构思总是在凌晨两点破土而出？探寻心流状态的生物学秘密。</p>
+      </div>
+    </section>
+
+    <!-- 号外与趣味分类广告栏目 -->
+    <section style="margin-top: 32px; border: 2px solid var(--paper-border); padding: 20px; background: #fffcf5;">
+      <div style="display: flex; justify-content: space-between; align-items: baseline; border-bottom: 2px solid var(--paper-border); padding-bottom: 8px; margin-bottom: 16px;">
+        <div style="font-weight: 900; font-size: 16px; letter-spacing: 2px;">【 號 外 特 刊 · 技 藝 分 類 啓 事 】</div>
+        <span style="font-size: 11px; color: var(--paper-sub); font-family: monospace;">CLASSIFIEDS & DISPATCHES</span>
+      </div>
+      <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(240px, 1fr)); gap: 20px; font-size: 13px; line-height: 1.7;">
+        <div style="border-right: 1px dashed var(--paper-rule); padding-right: 14px;">
+          <strong style="color: #8b1e0f;">【求购启事】</strong> 求购 19 世纪精装版《百科全书》全套与铸铁古董印刷机一台。要求字模完好，能正常出墨者为佳。
+        </div>
+        <div style="border-right: 1px dashed var(--paper-rule); padding-right: 14px;">
+          <strong style="color: #1c52a3;">【极客寻友】</strong> 诚寻对 Rust 异步运行时底层、eBPF 监控与机械排版有共同狂热的同道中人，共谋开源盛举。
+        </div>
+        <div>
+          <strong style="color: #2e7d32;">【气象与航运】</strong> 本周数字书斋风平浪静，算力微风徐徐，最宜伏案长读，偶有灵感雨阵过境。
+        </div>
       </div>
     </section>
 
@@ -389,6 +408,61 @@
     </footer>
   </div>
 
+  <!-- 油墨晕染动效 Canvas -->
+  <canvas id="inkCanvas" style="position: fixed; inset: 0; pointer-events: none; z-index: 999;"></canvas>
+
   <script src="assets/nav-bar.js"></script>
+  <script>
+    (function() {
+      const canvas = document.getElementById('inkCanvas');
+      const ctx = canvas.getContext('2d');
+      let w, h;
+
+      function resize() {
+        w = canvas.width = window.innerWidth;
+        h = canvas.height = window.innerHeight;
+      }
+      window.addEventListener('resize', resize);
+      resize();
+
+      const drops = [];
+
+      window.addEventListener('click', (e) => {
+        for (let i = 0; i < 6; i++) {
+          drops.push({
+            x: e.clientX + (Math.random() - 0.5) * 20,
+            y: e.clientY + (Math.random() - 0.5) * 20,
+            radius: 2 + Math.random() * 4,
+            maxRadius: 18 + Math.random() * 25,
+            opacity: 0.35 + Math.random() * 0.2,
+            speed: 0.8 + Math.random() * 1.2
+          });
+        }
+      });
+
+      function animate() {
+        ctx.clearRect(0, 0, w, h);
+
+        for (let i = drops.length - 1; i >= 0; i--) {
+          const d = drops[i];
+          d.radius += d.speed;
+          d.opacity -= 0.008;
+
+          if (d.opacity <= 0 || d.radius >= d.maxRadius) {
+            drops.splice(i, 1);
+            continue;
+          }
+
+          ctx.beginPath();
+          ctx.arc(d.x, d.y, d.radius, 0, Math.PI * 2);
+          ctx.fillStyle = `rgba(34, 31, 29, ${d.opacity})`;
+          ctx.fill();
+        }
+
+        requestAnimationFrame(animate);
+      }
+      animate();
+    })();
+  </script>
 </body>
 </html>

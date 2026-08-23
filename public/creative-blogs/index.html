@@ -129,16 +129,37 @@
       display: flex;
       flex-direction: column;
       justify-content: space-between;
-      transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+      transition: transform 0.3s cubic-bezier(0.16, 1, 0.3, 1), border-color 0.3s ease, box-shadow 0.3s ease;
       position: relative;
       overflow: hidden;
+      animation: cardFadeIn 0.5s ease-out backwards;
+    }
+
+    @keyframes cardFadeIn {
+      from { opacity: 0; transform: translateY(20px) scale(0.97); }
+      to { opacity: 1; transform: translateY(0) scale(1); }
+    }
+
+    .style-card::after {
+      content: "";
+      position: absolute;
+      inset: 0;
+      border-radius: inherit;
+      background: radial-gradient(400px circle at var(--mouse-x, 50%) var(--mouse-y, 50%), rgba(99, 102, 241, 0.12), transparent 60%);
+      opacity: 0;
+      transition: opacity 0.3s ease;
+      pointer-events: none;
+    }
+
+    .style-card:hover::after {
+      opacity: 1;
     }
 
     .style-card:hover {
       background: var(--card-hover);
-      border-color: rgba(255, 255, 255, 0.2);
-      transform: translateY(-4px);
-      box-shadow: 0 20px 40px rgba(0, 0, 0, 0.5);
+      border-color: rgba(99, 102, 241, 0.5);
+      transform: translateY(-6px);
+      box-shadow: 0 20px 40px rgba(0, 0, 0, 0.6), 0 0 20px rgba(99, 102, 241, 0.2);
     }
 
     .card-top {
@@ -1211,6 +1232,15 @@
     // ESC 关闭预览
     document.addEventListener('keydown', (e) => {
       if (e.key === 'Escape') closePreview();
+    });
+
+    // 卡片光泽跟随
+    document.querySelectorAll('.style-card').forEach(card => {
+      card.addEventListener('mousemove', (e) => {
+        const rect = card.getBoundingClientRect();
+        card.style.setProperty('--mouse-x', `${e.clientX - rect.left}px`);
+        card.style.setProperty('--mouse-y', `${e.clientY - rect.top}px`);
+      });
     });
   </script>
 </body>

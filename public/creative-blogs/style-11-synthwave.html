@@ -279,6 +279,26 @@
         </p>
         <a href="#" class="synth-btn">LISTEN & READ ➔</a>
       </article>
+
+      <!-- 文章 3 -->
+      <article class="synth-card">
+        <div class="synth-card-date">// 1984.08.08 :: RETRO_FILE_03</div>
+        <h2 class="synth-card-title">罗兰 TR-808 鼓机传奇：定义现代电子乐节奏的晶体管轰鸣</h2>
+        <p class="synth-card-body">
+          原本被设计为伴奏乐器却意外因独特的低音重低音（Sub-bass Kick）改变了音乐史。剖析模拟晶体管饱和失真与微小计时抖动（Timing Jitter）给机器节拍带来的“灵魂摇摆感”。
+        </p>
+        <a href="#" class="synth-btn">LISTEN & READ ➔</a>
+      </article>
+
+      <!-- 文章 4 -->
+      <article class="synth-card">
+        <div class="synth-card-date">// 1984.07.29 :: RETRO_FILE_04</div>
+        <h2 class="synth-card-title">Outrun 竞速文化：向着永不落下的霓虹夕阳全速狂飙</h2>
+        <p class="synth-card-body">
+          经典的世嘉《Out Run》街机、法拉利 Testarossa 侧进气格栅、以及迈阿密棕榈树投下的紫色阴影。回顾 80 年代赛车游戏如何奠定了现代电子游戏极速视觉体验的标准。
+        </p>
+        <a href="#" class="synth-btn">LISTEN & READ ➔</a>
+      </article>
     </main>
 
     <!-- 右侧磁带播放器 -->
@@ -293,11 +313,41 @@
             <div class="cassette-reel" id="reelRight"></div>
           </div>
           <div style="font-size: 13px; color: var(--synth-cyan);">Now Playing: Nightcall</div>
+
+          <!-- 音频频谱跳动柱 -->
+          <div id="synthEq" style="display: flex; gap: 4px; justify-content: center; align-items: flex-end; height: 28px; margin-top: 10px;"></div>
         </div>
         <button class="synth-btn" onclick="toggleTape(this)" style="width: 100%; justify-content: center;">⏸️ 暂停 / 播放磁带</button>
       </div>
     </aside>
   </div>
+
+  <style>
+    /* 底部流动 3D 霓虹网格背景 */
+    .synth-grid-floor {
+      position: fixed;
+      bottom: 0;
+      left: 0;
+      width: 100%;
+      height: 45vh;
+      background-image: 
+        linear-gradient(rgba(255, 42, 141, 0.4) 1px, transparent 1px),
+        linear-gradient(90deg, rgba(5, 217, 232, 0.4) 1px, transparent 1px);
+      background-size: 40px 40px;
+      transform: perspective(300px) rotateX(65deg);
+      transform-origin: bottom center;
+      animation: gridMove 2s linear infinite;
+      pointer-events: none;
+      z-index: 0;
+      mask-image: linear-gradient(to top, rgba(0,0,0,1) 30%, transparent 100%);
+      -webkit-mask-image: linear-gradient(to top, rgba(0,0,0,1) 30%, transparent 100%);
+    }
+    @keyframes gridMove {
+      from { background-position-y: 0px; }
+      to { background-position-y: 40px; }
+    }
+  </style>
+  <div class="synth-grid-floor"></div>
 
   <script src="assets/nav-bar.js"></script>
   <script>
@@ -314,6 +364,30 @@
         btn.textContent = '▶️ 播放磁带旋转';
       }
     }
+
+    // 均衡器音频频谱柱跳动
+    (function() {
+      const eq = document.getElementById('synthEq');
+      if (!eq) return;
+      const barCount = 14;
+      for (let i = 0; i < barCount; i++) {
+        const bar = document.createElement('div');
+        bar.style.width = '5px';
+        bar.style.background = 'linear-gradient(to top, #05d9e8, #ff2a8d, #ffea00)';
+        bar.style.borderRadius = '2px';
+        bar.style.height = '6px';
+        bar.style.transition = 'height 0.12s ease';
+        eq.appendChild(bar);
+      }
+
+      setInterval(() => {
+        const bars = eq.children;
+        for (let b of bars) {
+          const h = 4 + Math.random() * 24;
+          b.style.height = `${h}px`;
+        }
+      }, 120);
+    })();
   </script>
 </body>
 </html>

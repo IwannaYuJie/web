@@ -223,10 +223,34 @@
           <div class="quest-tag">★ SIDE QUEST #02 ★</div>
           <h2 class="quest-title">解密古代禁咒：WebAssembly 在浏览器底层的即时演算</h2>
           <p class="quest-desc">
-            探索将 C/Rust 原生模块编译为 WASM 字节码并在客户端执行的高阶技巧。
+            探索将 C/Rust 原生模块编译为 WASM 字节码并在客户端执行的高阶技巧。将 3D 物理碰撞与音频实时合成的算力开销降至极限。
           </p>
           <div class="quest-reward">
             🏆 通关奖励：魔法值 +50 MP · 获得成就「像素魔法师」
+          </div>
+        </article>
+
+        <!-- 任务 3 -->
+        <article class="pixel-box quest-card">
+          <div class="quest-tag" style="background:#f38ba8; color:#111;">★ RAID QUEST #03 ★</div>
+          <h2 class="quest-title">封印死锁幽灵：多线程并发模型与无锁环形缓冲区</h2>
+          <p class="quest-desc">
+            在高频交易与游戏服务器架构中，锁竞争是吞噬 CPU 周期的大敌。勇者运用内存屏障（Memory Barrier）与 CAS 原子操作铸就了 Disrupter 级无锁队列！
+          </p>
+          <div class="quest-reward">
+            🏆 通关奖励：敏捷 +30 AGI · 获得装备「无锁之戒」
+          </div>
+        </article>
+
+        <!-- 任务 4 -->
+        <article class="pixel-box quest-card">
+          <div class="quest-tag" style="background:#a6e3a1; color:#111;">★ BOSS BATTLE #04 ★</div>
+          <h2 class="quest-title">屠灭内存泄漏巨兽：Rust 所有权与 RAII 结界</h2>
+          <p class="quest-desc">
+            悬垂指针与野指针怪物在地牢深处游荡。借由编译器生命周期推导（Borrow Checker）与零成本抽象结界，勇者在编译期彻底斩灭了内存安全隐患！
+          </p>
+          <div class="quest-reward">
+            🏆 通关奖励：防御力 +999 DEF · 习得终极技能「编译期证明」
           </div>
         </article>
       </main>
@@ -253,11 +277,46 @@
     </div>
   </div>
 
+  <style>
+    .pixel-exp-fly {
+      position: absolute;
+      font-family: 'Press Start 2P', monospace;
+      font-size: 13px;
+      color: #f9e2af;
+      text-shadow: 2px 2px #000;
+      pointer-events: none;
+      z-index: 9999;
+      animation: expFlyUp 0.8s ease-out forwards;
+    }
+    @keyframes expFlyUp {
+      0% { transform: translateY(0) scale(1); opacity: 1; }
+      100% { transform: translateY(-40px) scale(1.2); opacity: 0; }
+    }
+  </style>
+
   <script src="assets/nav-bar.js"></script>
   <script>
     function inspectItem(text) {
       document.getElementById('itemInfo').textContent = text;
+      showExpText(window.event ? window.event.pageX : window.innerWidth / 2, window.event ? window.event.pageY : window.innerHeight / 2, "+ITEM ACQUIRED!");
     }
+
+    function showExpText(x, y, text) {
+      const el = document.createElement('div');
+      el.className = 'pixel-exp-fly';
+      el.textContent = text;
+      el.style.left = `${x - 20}px`;
+      el.style.top = `${y - 20}px`;
+      document.body.appendChild(el);
+      setTimeout(() => el.remove(), 800);
+    }
+
+    window.addEventListener('click', (e) => {
+      if (e.target.closest('.blog-switcher-trigger') || e.target.closest('.blog-switcher-modal') || e.target.closest('.item-slot')) return;
+      const rewards = ['+100 EXP', '+50 GOLD', 'CRITICAL HIT!', 'LEVEL UP? 🎮', '+20 MP'];
+      const text = rewards[Math.floor(Math.random() * rewards.length)];
+      showExpText(e.pageX, e.pageY, text);
+    });
   </script>
 </body>
 </html>

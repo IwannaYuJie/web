@@ -348,6 +348,26 @@
           </p>
           <a href="#" class="cyber-btn">ACCESS NODE &gt;&gt;</a>
         </article>
+
+        <!-- 卡片 4 -->
+        <article class="cyber-card">
+          <div class="card-protocol">[LOG_ENTRY :: 2026.07.24 // ZERO_KNOWLEDGE]</div>
+          <h2 class="card-title">零知识证明（ZK-SNARKs）：在透明区块链上实现绝对隐私</h2>
+          <p class="card-content">
+            无需透露任何私密输入即可数学证明计算的正确性。从多项式承诺（KZG）到 PLONK 电路，探索密码学终极圣杯的工程化落地。
+          </p>
+          <a href="#" class="cyber-btn">ACCESS NODE &gt;&gt;</a>
+        </article>
+
+        <!-- 卡片 5 -->
+        <article class="cyber-card">
+          <div class="card-protocol">[LOG_ENTRY :: 2026.07.15 // DARK_ROUTING]</div>
+          <h2 class="card-title">赛博空间匿踪路由：抗审查 P2P 覆盖网络与混淆流量设计</h2>
+          <p class="card-content">
+            利用分层加密洋葱头与自适应多路径混洗（Multipath Shuffle），在主干网深度包检测（DPI）的严酷封锁下建立坚不可摧的去中心化信息信道。
+          </p>
+          <a href="#" class="cyber-btn">ACCESS NODE &gt;&gt;</a>
+        </article>
       </main>
 
       <!-- 右侧侧栏 -->
@@ -390,6 +410,84 @@
     </div>
   </div>
 
+  <!-- 赛博霓虹电路脉冲 Canvas -->
+  <canvas id="cyberCircuitCanvas" style="position: fixed; inset: 0; pointer-events: none; z-index: 998;"></canvas>
+
   <script src="assets/nav-bar.js"></script>
+  <script>
+    // 终端实时日志滚动流
+    (function() {
+      const termLog = document.getElementById('termLog');
+      const messages = [
+        "FIREWALL PROBE DETECTED: PORT 8080",
+        "NEURAL BUFFER REFRESH: 100% OK",
+        "QUANTUM KEY DISTRIBUTED ACROSS NODES",
+        "STREAM PROTOCOL V4 ACTIVE",
+        "TELEMETRY HEALTH: OPTIMAL",
+        "SYS_LOAD: 0.14 0.22 0.08"
+      ];
+      setInterval(() => {
+        const time = new Date().toTimeString().split(' ')[0];
+        const msg = messages[Math.floor(Math.random() * messages.length)];
+        termLog.innerHTML += `<br>[${time}] ${msg}`;
+        termLog.scrollTop = termLog.scrollHeight;
+      }, 3000);
+
+      // 电路点击霓虹脉冲
+      const canvas = document.getElementById('cyberCircuitCanvas');
+      const ctx = canvas.getContext('2d');
+      let w = canvas.width = window.innerWidth;
+      let h = canvas.height = window.innerHeight;
+
+      window.addEventListener('resize', () => {
+        w = canvas.width = window.innerWidth;
+        h = canvas.height = window.innerHeight;
+      });
+
+      const pulses = [];
+
+      window.addEventListener('click', (e) => {
+        const colors = ['#00f0ff', '#ff0055', '#fcee0a', '#00ff66'];
+        for (let i = 0; i < 4; i++) {
+          pulses.push({
+            x: e.clientX,
+            y: e.clientY,
+            dir: i, // 0: up, 1: right, 2: down, 3: left
+            length: 10,
+            maxLength: 80 + Math.random() * 80,
+            color: colors[Math.floor(Math.random() * colors.length)],
+            opacity: 1
+          });
+        }
+      });
+
+      function loop() {
+        ctx.clearRect(0, 0, w, h);
+        for (let i = pulses.length - 1; i >= 0; i--) {
+          const p = pulses[i];
+          p.length += 4;
+          p.opacity -= 0.02;
+
+          if (p.opacity <= 0 || p.length >= p.maxLength) {
+            pulses.splice(i, 1);
+            continue;
+          }
+
+          ctx.strokeStyle = p.color;
+          ctx.lineWidth = 2;
+          ctx.globalAlpha = p.opacity;
+          ctx.beginPath();
+          ctx.moveTo(p.x, p.y);
+          if (p.dir === 0) ctx.lineTo(p.x, p.y - p.length);
+          else if (p.dir === 1) ctx.lineTo(p.x + p.length, p.y);
+          else if (p.dir === 2) ctx.lineTo(p.x, p.y + p.length);
+          else if (p.dir === 3) ctx.lineTo(p.x - p.length, p.y);
+          ctx.stroke();
+        }
+        requestAnimationFrame(loop);
+      }
+      loop();
+    })();
+  </script>
 </body>
 </html>

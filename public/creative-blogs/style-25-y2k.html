@@ -293,6 +293,20 @@
         <h3 class="jelly-title">半透明水晶视界</h3>
         <p class="jelly-body">多层高斯折射与极光渐变，交织出属于千禧一代独特的未来主义浪漫。</p>
       </div>
+
+      <!-- 卡片 4 -->
+      <div class="y2k-jelly-card" onclick="cardGlow(this)">
+        <span class="jelly-tag" style="color: var(--y2k-cyan); border-color: var(--y2k-cyan);">#04 CHROME TYPE</span>
+        <h3 class="jelly-title">液态金属字形演变</h3>
+        <p class="jelly-body">从影视特效到 3D 字体设计，水银般流动的镀铬金属反光，凝聚着人类对千禧纪元科技腾飞的纯粹乐观想象。</p>
+      </div>
+
+      <!-- 卡片 5 -->
+      <div class="y2k-jelly-card" onclick="cardGlow(this)">
+        <span class="jelly-tag" style="color: #ffde00; border-color: #ffde00;">#05 WINAMP SKINS</span>
+        <h3 class="jelly-title">Winamp 换肤与果冻硬件</h3>
+        <p class="jelly-body">回顾第一代 iMac G3 半透明彩色外壳与可换肤播放器，当数字化 UI 第一次被赋予物理触觉温度与个性宣泄。</p>
+      </div>
     </section>
 
     <!-- 底部互动操作栏 -->
@@ -306,24 +320,89 @@
     </footer>
   </div>
 
+  <!-- Y2K 4角芒星 Canvas -->
+  <canvas id="y2kStarCanvas" style="position: fixed; inset: 0; pointer-events: none; z-index: 1;"></canvas>
+
+  <style>
+    .y2k-jelly-card {
+      transition: transform 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275), box-shadow 0.3s ease, border-color 0.3s ease;
+    }
+    .y2k-jelly-card:hover {
+      transform: translateY(-8px) scale(1.03) !important;
+    }
+  </style>
+
   <script src="assets/nav-bar.js"></script>
   <script>
     function triggerCyberSpark(e) {
       const btn = e.currentTarget;
       btn.style.transform = "scale(0.95)";
       setTimeout(() => { btn.style.transform = "scale(1)"; }, 150);
-      document.body.style.filter = "invert(0.15) hue-rotate(45deg)";
+      document.body.style.filter = "invert(0.2) hue-rotate(45deg) contrast(1.2)";
       setTimeout(() => { document.body.style.filter = "none"; }, 300);
     }
 
     function cardGlow(card) {
       card.style.borderColor = "#ff2d87";
-      card.style.boxShadow = "0 0 30px rgba(255, 45, 135, 0.8)";
+      card.style.boxShadow = "0 0 35px rgba(255, 45, 135, 0.9), inset 0 0 15px rgba(255, 45, 135, 0.4)";
       setTimeout(() => {
         card.style.borderColor = "rgba(255, 255, 255, 0.2)";
         card.style.boxShadow = "0 10px 30px rgba(0, 0, 0, 0.4)";
-      }, 500);
+      }, 600);
     }
+
+    // Y2K 4角芒星与镭射光斑
+    (function() {
+      const canvas = document.getElementById('y2kStarCanvas');
+      const ctx = canvas.getContext('2d');
+      let w = canvas.width = window.innerWidth;
+      let h = canvas.height = window.innerHeight;
+
+      window.addEventListener('resize', () => {
+        w = canvas.width = window.innerWidth;
+        h = canvas.height = window.innerHeight;
+      });
+
+      const stars = Array.from({ length: 24 }, () => ({
+        x: Math.random() * w,
+        y: Math.random() * h,
+        size: 8 + Math.random() * 12,
+        rot: Math.random() * Math.PI,
+        rotSpeed: (Math.random() - 0.5) * 0.02,
+        opacity: 0.2 + Math.random() * 0.6,
+        color: Math.random() > 0.5 ? '#ff2d87' : '#00f0ff'
+      }));
+
+      function draw4PointStar(cx, cy, size, color, opacity) {
+        ctx.save();
+        ctx.translate(cx, cy);
+        ctx.fillStyle = color;
+        ctx.globalAlpha = opacity;
+        ctx.beginPath();
+        for (let i = 0; i < 4; i++) {
+          ctx.lineTo(Math.cos((i * Math.PI) / 2) * size, Math.sin((i * Math.PI) / 2) * size);
+          ctx.lineTo(Math.cos(((i + 0.5) * Math.PI) / 2) * (size * 0.2), Math.sin(((i + 0.5) * Math.PI) / 2) * (size * 0.2));
+        }
+        ctx.closePath();
+        ctx.fill();
+        ctx.restore();
+      }
+
+      function loop() {
+        ctx.clearRect(0, 0, w, h);
+        stars.forEach(s => {
+          s.y -= 0.4;
+          s.rot += s.rotSpeed;
+          if (s.y < -20) {
+            s.y = h + 20;
+            s.x = Math.random() * w;
+          }
+          draw4PointStar(s.x, s.y, s.size, s.color, s.opacity);
+        });
+        requestAnimationFrame(loop);
+      }
+      loop();
+    })();
   </script>
 </body>
 </html>

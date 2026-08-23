@@ -315,6 +315,38 @@
             <button class="clap-btn" onclick="addClap(this)">👏 点赞 (89)</button>
           </div>
         </article>
+
+        <!-- 文章 3 -->
+        <article class="neo-card">
+          <div class="neo-tag-row">
+            <span class="neo-tag" style="background:#74ee15; color:#000;">🎨 设计先锋</span>
+            <span class="neo-tag">排版哲学</span>
+          </div>
+          <h2 class="neo-card-title">反直觉网格与硬投影：后现代 Web 如何打破过度规整的教条</h2>
+          <p class="neo-card-body">
+            为什么微小旋转（-2deg）、巨大未修饰的粗体字阶和纯黑 5px 偏移物理硬阴影，比千篇一律的灰白扁平化更能激发用户的探索欲？
+          </p>
+          <div class="neo-card-actions">
+            <a href="#" class="neo-pill-btn">阅读全文 ➔</a>
+            <button class="clap-btn" onclick="addClap(this)">👏 点赞 (136)</button>
+          </div>
+        </article>
+
+        <!-- 文章 4 -->
+        <article class="neo-card">
+          <div class="neo-tag-row">
+            <span class="neo-tag" style="background:#4deeea; color:#000;">🚀 前端极客</span>
+            <span class="neo-tag">CSS 魔法</span>
+          </div>
+          <h2 class="neo-card-title">纯 CSS 视差滚轴与机械开关：告别笨重的 JavaScript 依赖</h2>
+          <p class="neo-card-body">
+            利用 CSS `:has()` 伪类、`@container` 容器查询与原生弹性变换，以 0kb 的 JS 开销实现充满弹力与物理打击感的界面。
+          </p>
+          <div class="neo-card-actions">
+            <a href="#" class="neo-pill-btn">阅读全文 ➔</a>
+            <button class="clap-btn" onclick="addClap(this)">👏 点赞 (72)</button>
+          </div>
+        </article>
       </main>
 
       <!-- 右侧边栏 -->
@@ -338,12 +370,86 @@
     </div>
   </div>
 
+  <!-- 五彩纸屑 Canvas -->
+  <canvas id="confettiCanvas" style="position: fixed; inset: 0; pointer-events: none; z-index: 99999;"></canvas>
+
+  <style>
+    .neo-pill-btn:active, .clap-btn:active {
+      transform: translate(3px, 3px) scale(0.96) !important;
+      box-shadow: 2px 2px 0px #000 !important;
+    }
+  </style>
+
   <script src="assets/nav-bar.js"></script>
   <script>
     function addClap(btn) {
       let count = parseInt(btn.textContent.match(/\d+/)[0]) + 1;
-      btn.textContent = `👏 点赞 (${count})`;
+      btn.textContent = `👏 点赞 (${count}) 🎉`;
+      const rect = btn.getBoundingClientRect();
+      burstConfetti(rect.left + rect.width / 2, rect.top);
     }
+
+    // 彩色五彩纸屑粒子喷发
+    const canvas = document.getElementById('confettiCanvas');
+    const ctx = canvas.getContext('2d');
+    let w = canvas.width = window.innerWidth;
+    let h = canvas.height = window.innerHeight;
+
+    window.addEventListener('resize', () => {
+      w = canvas.width = window.innerWidth;
+      h = canvas.height = window.innerHeight;
+    });
+
+    const particles = [];
+    const colors = ['#ffdf00', '#ff6b8b', '#4deeea', '#9d4edd', '#74ee15', '#000000'];
+
+    function burstConfetti(x, y) {
+      for (let i = 0; i < 35; i++) {
+        particles.push({
+          x: x,
+          y: y,
+          vx: (Math.random() - 0.5) * 12,
+          vy: -(Math.random() * 10 + 4),
+          size: 6 + Math.random() * 6,
+          color: colors[Math.floor(Math.random() * colors.length)],
+          rot: Math.random() * 360,
+          rotSpeed: (Math.random() - 0.5) * 15,
+          life: 1
+        });
+      }
+    }
+
+    function loop() {
+      ctx.clearRect(0, 0, w, h);
+      for (let i = particles.length - 1; i >= 0; i--) {
+        const p = particles[i];
+        p.x += p.vx;
+        p.y += p.vy;
+        p.vy += 0.35; // 重力
+        p.rot += p.rotSpeed;
+        p.life -= 0.015;
+
+        if (p.life <= 0 || p.y > h) {
+          particles.splice(i, 1);
+          continue;
+        }
+
+        ctx.save();
+        ctx.translate(p.x, p.y);
+        ctx.rotate((p.rot * Math.PI) / 180);
+        ctx.fillStyle = p.color;
+        ctx.globalAlpha = p.life;
+        ctx.fillRect(-p.size / 2, -p.size / 2, p.size, p.size);
+        ctx.restore();
+      }
+      requestAnimationFrame(loop);
+    }
+    loop();
+
+    window.addEventListener('click', (e) => {
+      if (e.target.closest('.blog-switcher-trigger') || e.target.closest('.blog-switcher-modal')) return;
+      if (Math.random() < 0.3) burstConfetti(e.clientX, e.clientY);
+    });
   </script>
 </body>
 </html>

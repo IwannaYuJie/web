@@ -10,6 +10,7 @@ function CreativeShowcase() {
   const [viewportMode, setViewportMode] = useState('desktop') // 'desktop' | 'tablet' | 'mobile'
   const [toastMessage, setToastMessage] = useState('')
   const [iframeKey, setIframeKey] = useState(0)
+  const [isRoaming, setIsRoaming] = useState(false)
 
   // 复制提示自动淡出
   const showToast = useCallback((msg) => {
@@ -32,6 +33,27 @@ function CreativeShowcase() {
       showToast(`色彩值：${hex}`)
     }
   }, [showToast])
+
+  // 卡片 3D 悬浮视差处理
+  const handleCardMouseMove = useCallback((e) => {
+    const card = e.currentTarget
+    const rect = card.getBoundingClientRect()
+    const x = e.clientX - rect.left
+    const y = e.clientY - rect.top
+    const centerX = rect.width / 2
+    const centerY = rect.height / 2
+    const rotateX = ((y - centerY) / centerY) * -6
+    const rotateY = ((x - centerX) / centerX) * 6
+
+    card.style.setProperty('--mouse-x', `${x}px`)
+    card.style.setProperty('--mouse-y', `${y}px`)
+    card.style.transform = `perspective(1000px) rotateX(${rotateX}deg) rotateY(${rotateY}deg) translateY(-4px)`
+  }, [])
+
+  const handleCardMouseLeave = useCallback((e) => {
+    const card = e.currentTarget
+    card.style.transform = 'perspective(1000px) rotateX(0deg) rotateY(0deg) translateY(0)'
+  }, [])
 
   // 过滤博客列表
   const filteredBlogs = useMemo(() => {
@@ -56,11 +78,15 @@ function CreativeShowcase() {
 
   // 随机漫游
   const handleRandomRoam = useCallback(() => {
-    const randomIndex = Math.floor(Math.random() * CREATIVE_BLOGS.length)
-    const randomBlog = CREATIVE_BLOGS[randomIndex]
-    setPreviewItem(randomBlog)
-    setIframeKey(k => k + 1)
-    showToast(`🎲 开启漫游：${randomBlog.num} ${randomBlog.title}`)
+    setIsRoaming(true)
+    setTimeout(() => {
+      setIsRoaming(false)
+      const randomIndex = Math.floor(Math.random() * CREATIVE_BLOGS.length)
+      const randomBlog = CREATIVE_BLOGS[randomIndex]
+      setPreviewItem(randomBlog)
+      setIframeKey(k => k + 1)
+      showToast(`🎲 开启漫游：${randomBlog.num} ${randomBlog.title}`)
+    }, 400)
   }, [showToast])
 
   // 键盘快捷键监听 (ESC 退出预览，左右键切页)
@@ -137,9 +163,13 @@ function CreativeShowcase() {
             <span>⚡ 交互体验：</span>
             <strong>100% 独立可玩</strong>
           </div>
-          <button className="btn-random-roam" onClick={handleRandomRoam} title="随机探索一款排版风格">
-            <span>🎲</span>
-            <span>随机漫游一个</span>
+          <button 
+            className={`btn-random-roam ${isRoaming ? 'roaming-pulse' : ''}`} 
+            onClick={handleRandomRoam} 
+            title="随机探索一款排版风格"
+          >
+            <span className={isRoaming ? 'roaming-dice-spin' : ''}>🎲</span>
+            <span>{isRoaming ? '正在漫游中...' : '随机漫游一个'}</span>
           </button>
         </div>
       </header>
@@ -220,8 +250,14 @@ function CreativeShowcase() {
         </div>
       ) : (
         <main className={`creative-grid ${viewMode === 'list' ? 'list-view' : ''}`}>
-          {filteredBlogs.map(blog => (
-            <article key={blog.id} className="creative-card">
+          {filteredBlogs.map((blog, idx) => (
+            <article 
+              key={blog.id} 
+              className="creative-card"
+              style={{ animationDelay: `${Math.min(idx * 0.04, 0.6)}s` }}
+              onMouseMove={handleCardMouseMove}
+              onMouseLeave={handleCardMouseLeave}
+            >
               {/* 列表模式或网格式封面 */}
               <div 
                 className="card-thumb-wrapper"

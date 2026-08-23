@@ -284,6 +284,26 @@
           </p>
           <a href="#" class="steampunk-btn">EXAMINE BLUEPRINTS ➔</a>
         </article>
+
+        <!-- 文章 3 -->
+        <article class="archive-card">
+          <div class="archive-folio-tag">FOLIO NO. 1843-L // LOVELACE ALGORITHM</div>
+          <h2 class="archive-title">伯努利数与打孔纸带：艾达·洛芙莱斯的世界首个计算机程序</h2>
+          <p class="archive-body">
+            “分析机就像提花织布机编织花朵与树叶一样，编织着代数模式。”深入解析历史上第一个由人类编写的循环与子程序架构及其对现代编译器的深远影响。
+          </p>
+          <a href="#" class="steampunk-btn">EXAMINE BLUEPRINTS ➔</a>
+        </article>
+
+        <!-- 文章 4 -->
+        <article class="archive-card">
+          <div class="archive-folio-tag">FOLIO NO. 1899-Z // AERONAUTICAL GYRO</div>
+          <h2 class="archive-title">齐柏林飞艇陀螺仪自稳系统：黄铜飞轮角动量守恒工程实践</h2>
+          <p class="archive-body">
+            万向节悬挂的重型青铜飞轮以每分钟 6,000 转高速自转，在气流扰动下为千米长空巨兽提供坚定不移的水平基准。
+          </p>
+          <a href="#" class="steampunk-btn">EXAMINE BLUEPRINTS ➔</a>
+        </article>
       </main>
 
       <!-- 右侧仪表与发明目录 -->
@@ -308,8 +328,71 @@
         </div>
       </aside>
     </div>
-  </div>
+  <!-- 蒸汽粒子 Canvas -->
+  <canvas id="steamCanvas" style="position: fixed; inset: 0; pointer-events: none; z-index: 999;"></canvas>
 
   <script src="assets/nav-bar.js"></script>
+  <script>
+    // 蒸汽压力表指针与蒸汽喷射
+    (function() {
+      const canvas = document.getElementById('steamCanvas');
+      const ctx = canvas.getContext('2d');
+      let w = canvas.width = window.innerWidth;
+      let h = canvas.height = window.innerHeight;
+
+      window.addEventListener('resize', () => {
+        w = canvas.width = window.innerWidth;
+        h = canvas.height = window.innerHeight;
+      });
+
+      const steamPuffs = [];
+
+      function emitSteam(x, y) {
+        for (let i = 0; i < 8; i++) {
+          steamPuffs.push({
+            x: x + (Math.random() - 0.5) * 20,
+            y: y,
+            vx: (Math.random() - 0.5) * 1.5,
+            vy: -(1.5 + Math.random() * 2),
+            radius: 8 + Math.random() * 12,
+            maxRadius: 40 + Math.random() * 30,
+            opacity: 0.4 + Math.random() * 0.3
+          });
+        }
+      }
+
+      window.addEventListener('click', (e) => {
+        emitSteam(e.clientX, e.clientY);
+      });
+
+      // 定期在底部自动喷发微弱蒸汽
+      setInterval(() => {
+        emitSteam(Math.random() * w, h - 20);
+      }, 2500);
+
+      function loop() {
+        ctx.clearRect(0, 0, w, h);
+        for (let i = steamPuffs.length - 1; i >= 0; i--) {
+          const s = steamPuffs[i];
+          s.x += s.vx;
+          s.y += s.vy;
+          s.radius += 0.6;
+          s.opacity -= 0.008;
+
+          if (s.opacity <= 0 || s.radius >= s.maxRadius) {
+            steamPuffs.splice(i, 1);
+            continue;
+          }
+
+          ctx.beginPath();
+          ctx.arc(s.x, s.y, s.radius, 0, Math.PI * 2);
+          ctx.fillStyle = `rgba(244, 236, 225, ${s.opacity})`;
+          ctx.fill();
+        }
+        requestAnimationFrame(loop);
+      }
+      loop();
+    })();
+  </script>
 </body>
 </html>

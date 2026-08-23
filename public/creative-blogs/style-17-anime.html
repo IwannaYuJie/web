@@ -536,6 +536,28 @@
             </div>
           </div>
         </article>
+
+        <!-- 文章 3: 新海诚光影与渲染美学 -->
+        <article class="anime-post-card">
+          <div class="post-content-inner" style="padding-top: 24px;">
+            <div class="card-top-tags">
+              <span class="anime-tag blue">✨ 视觉渲染</span>
+              <span class="anime-tag">丁达尔光</span>
+              <span style="font-size: 12px; color: #998899;">2026.08.02</span>
+            </div>
+            <h2 class="anime-card-title">新海诚画风解密：逆光丁达尔效应与 WebGL 积雨云着色器</h2>
+            <p class="anime-card-body">
+              从《言叶之庭》雨滴打在翠绿枫叶上的透亮反射，到《天气之子》中撕裂云层洒向东京街头的金色体积光（Volumetric Light）。探索如何用 GLSL 在浏览器端复现日系动画天花板级的空气感与通透感。
+            </p>
+            <div class="vn-speech-bubble">
+              <strong>光影随笔：</strong>「光芒并不只照亮物体，它本身就是空气与时间流逝的形状。」
+            </div>
+            <div style="display: flex; justify-content: space-between; align-items: center;">
+              <a href="#" class="anime-btn">阅读全文物語 ➔</a>
+              <button class="moe-react-btn" onclick="sendHeart(this)">💖 萌力发送 (612)</button>
+            </div>
+          </div>
+        </article>
       </main>
 
       <!-- 右侧边栏 -->
@@ -591,11 +613,27 @@
     </div>
   </div>
 
+  <style>
+    .flying-heart {
+      position: absolute;
+      font-size: 24px;
+      pointer-events: none;
+      z-index: 99999;
+      animation: heartFlyUp 1s ease-out forwards;
+    }
+    @keyframes heartFlyUp {
+      0% { transform: scale(0.5) translateY(0); opacity: 1; }
+      50% { transform: scale(1.3) translateY(-30px); opacity: 0.9; }
+      100% { transform: scale(1) translateY(-70px); opacity: 0; }
+    }
+  </style>
+
   <script src="assets/nav-bar.js"></script>
   <script>
     // 动态生成飘落樱花花瓣
     const sakuraBox = document.getElementById('sakuraBox');
     function createPetal() {
+      if (!sakuraBox) return;
       const petal = document.createElement('div');
       petal.className = 'petal';
       const size = Math.random() * 12 + 8;
@@ -608,11 +646,29 @@
     }
     setInterval(createPetal, 400);
 
+    function createFloatingHeart(x, y) {
+      const hearts = ['💖', '💕', '🌸', '✨', '🐾', '🎀'];
+      const heart = document.createElement('div');
+      heart.className = 'flying-heart';
+      heart.textContent = hearts[Math.floor(Math.random() * hearts.length)];
+      heart.style.left = `${x - 12}px`;
+      heart.style.top = `${y - 12}px`;
+      document.body.appendChild(heart);
+      setTimeout(() => heart.remove(), 1000);
+    }
+
     // 萌力发送点赞
     function sendHeart(btn) {
       let count = parseInt(btn.textContent.match(/\d+/)[0]) + 1;
       btn.textContent = `💖 萌力发送 (${count})`;
+      const rect = btn.getBoundingClientRect();
+      createFloatingHeart(rect.left + rect.width / 2, rect.top);
     }
+
+    window.addEventListener('click', (e) => {
+      if (e.target.closest('.blog-switcher-trigger') || e.target.closest('.blog-switcher-modal')) return;
+      createFloatingHeart(e.pageX, e.pageY);
+    });
   </script>
 </body>
 </html>

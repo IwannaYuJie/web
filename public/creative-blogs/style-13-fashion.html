@@ -206,7 +206,49 @@
         算法推送正在抹平所有个体的表达棱角。保持敏锐的审美自律，是用设计与文字对抗同质化浪潮的最好武器。
       </p>
     </article>
+
+    <!-- 文章 3 -->
+    <article class="fashion-post-card">
+      <div class="post-category-tag">PHOTOGRAPHY & LIGHT</div>
+      <h2 class="post-main-title">光影的建筑感：赫尔穆特·牛顿到数字 CGI 的质感演变</h2>
+      <p class="post-body-text">
+        高反差明暗交界线（Chiaroscuro）与冷暖色温冲突。在数字 Web 界面中，精细调试的渐变光源能够为 2D 卡片注入雕塑般的硬朗质感。
+      </p>
+    </article>
+
+    <!-- 文章 4 -->
+    <article class="fashion-post-card">
+      <div class="post-category-tag">DECONSTRUCTION</div>
+      <h2 class="post-main-title">解构主义剪裁：马吉拉的粗线缝线对软件架构的隐喻</h2>
+      <p class="post-body-text">
+        将内衬与走线完全外露，赋予未完成感以极致的先锋美。在系统设计中，敢于暴露清晰的数据流转骨架，远胜于用过度包装掩盖混乱。
+      </p>
+    </article>
   </main>
+
+  <style>
+    .fashion-art-panel img {
+      transition: transform 0.6s cubic-bezier(0.16, 1, 0.3, 1), filter 0.6s ease;
+    }
+    .fashion-art-panel:hover img {
+      transform: scale(1.06);
+      filter: contrast(1.05) brightness(1.05);
+    }
+    .fashion-post-card {
+      transition: transform 0.4s cubic-bezier(0.16, 1, 0.3, 1), border-color 0.4s ease;
+    }
+    .fashion-post-card:hover {
+      transform: translateY(-6px);
+      border-color: var(--fashion-burgundy);
+    }
+    .fashion-pull-quote {
+      transition: letter-spacing 0.4s ease, color 0.4s ease;
+    }
+    .fashion-pull-quote:hover {
+      letter-spacing: 0.05em;
+      color: var(--fashion-burgundy);
+    }
+  </style>
 
   <script src="assets/nav-bar.js"></script>
 </body>

@@ -231,9 +231,36 @@
           选择红色药丸，你将留在仙境，我将带你看看这兔子洞究竟有多深；选择蓝色药丸，故事就此结束，你在自己的床上醒来，继续相信你所愿意相信的。
         </p>
 
-        <button class="matrix-btn" onclick="speedUpRain()">
-          ⚡ [EXECUTE] 加速数字雨流速
-        </button>
+        <!-- 文章 2: 仿真假说 -->
+        <article style="border: 1px solid var(--matrix-dim); padding: 18px; margin: 20px 0; background: rgba(0,255,102,0.03);">
+          <div style="font-size: 11px; color: var(--matrix-bright); margin-bottom: 6px;">// ARCHIVE: SIMULATION_HYPOTHESIS</div>
+          <h2 style="font-size: 18px; color: #fff; margin-bottom: 8px;">量子测量塌缩与计算资源懒加载（Lazy Loading）</h2>
+          <p style="font-size: 13.5px; line-height: 1.7; color: #cbd5e1;">
+            双缝干涉实验中观察者介入才导致波函数塌缩，在程序员眼中恰似 3D 渲染引擎的视锥剔除（Frustum Culling）与按需求值——当没有智能体注视时，宇宙根本无需浪费算力渲染粒子的确定轨迹！
+          </p>
+        </article>
+
+        <!-- 文章 3: 底层劫持 -->
+        <article style="border: 1px solid var(--matrix-dim); padding: 18px; margin: 20px 0; background: rgba(0,255,102,0.03);">
+          <div style="font-size: 11px; color: var(--matrix-bright); margin-bottom: 6px;">// ARCHIVE: HYPERVISOR_ESCAPE</div>
+          <h2 style="font-size: 18px; color: #fff; margin-bottom: 8px;">母体逃逸协议：在虚拟化硬件层突破沙箱隔离</h2>
+          <p style="font-size: 13.5px; line-height: 1.7; color: #cbd5e1;">
+            探讨利用硬件侧信道攻击（Rowhammer / Spectre）打破虚拟 CPU 寄存器边界，在宿主机内核中注入自定义执行钩子，撕开现实世界的第一道裂隙。
+          </p>
+        </article>
+
+        <!-- 红蓝药丸选择器 -->
+        <div style="display: flex; gap: 16px; margin-top: 24px; flex-wrap: wrap;">
+          <button class="matrix-btn" onclick="choosePill('red')" style="border-color: #ff3366; color: #ff3366; background: rgba(255,51,102,0.1);">
+            💊 服下红色药丸 (RED PILL)
+          </button>
+          <button class="matrix-btn" onclick="choosePill('blue')" style="border-color: #00f0ff; color: #00f0ff; background: rgba(0,240,255,0.1);">
+            💊 服下蓝色药丸 (BLUE PILL)
+          </button>
+          <button class="matrix-btn" onclick="speedUpRain()">
+            ⚡ 加速数字雨流速
+          </button>
+        </div>
       </main>
 
       <!-- 侧边遥测日志 -->
@@ -254,7 +281,7 @@
 
   <script src="assets/nav-bar.js"></script>
   <script>
-    // Canvas 数字雨动画实现
+    // Canvas 3D 景深数字雨与鼠标互动
     const canvas = document.getElementById("matrixCanvas");
     const ctx = canvas.getContext("2d");
 
@@ -266,48 +293,94 @@
       height = canvas.height = window.innerHeight;
     });
 
-    const characters = "0123456789ABCDEFｦｱｳｴｵｶｷｹｺｻｼｽｾｿﾀﾂﾃﾅﾆﾇﾈﾊﾋﾎﾏﾐﾑﾒﾓﾔﾕﾗﾘﾜ";
-    const fontSize = 14;
+    const characters = "0123456789ABCDEFｦｱｳｴｵｶｷｹｺｻｼｽｾｿﾀﾂﾃﾅﾆﾇﾈﾊﾋﾎﾏﾐﾑﾒﾓﾔﾕﾗﾘﾜXYZ$#*+<>";
+    const fontSize = 15;
     let columns = Math.floor(width / fontSize);
     let drops = [];
     for (let i = 0; i < columns; i++) {
-      drops[i] = Math.floor(Math.random() * -100);
+      drops[i] = {
+        y: Math.floor(Math.random() * -100),
+        speed: 1 + Math.random() * 1.5,
+        isBright: Math.random() > 0.85
+      };
     }
 
-    let intervalSpeed = 33;
+    let mouseX = -100, mouseY = -100;
+    window.addEventListener('mousemove', (e) => {
+      mouseX = e.clientX;
+      mouseY = e.clientY;
+    });
 
     function drawMatrix() {
-      ctx.fillStyle = "rgba(5, 8, 5, 0.08)";
+      ctx.fillStyle = "rgba(5, 8, 5, 0.12)";
       ctx.fillRect(0, 0, width, height);
 
-      ctx.fillStyle = "#00ff66";
-      ctx.font = fontSize + "px 'Share Tech Mono'";
+      ctx.font = fontSize + "px 'Share Tech Mono', monospace";
 
       for (let i = 0; i < drops.length; i++) {
+        const d = drops[i];
         const text = characters.charAt(Math.floor(Math.random() * characters.length));
-        ctx.fillText(text, i * fontSize, drops[i] * fontSize);
+        const px = i * fontSize;
+        const py = d.y * fontSize;
 
-        if (drops[i] * fontSize > height && Math.random() > 0.975) {
-          drops[i] = 0;
+        const distToMouse = Math.hypot(px - mouseX, py - mouseY);
+        if (distToMouse < 80) {
+          ctx.fillStyle = "#ffffff";
+          ctx.shadowColor = "#00ff66";
+          ctx.shadowBlur = 10;
+        } else if (d.isBright) {
+          ctx.fillStyle = "#adff2f";
+          ctx.shadowBlur = 0;
+        } else {
+          ctx.fillStyle = "#00ff66";
+          ctx.shadowBlur = 0;
         }
-        drops[i]++;
+
+        ctx.fillText(text, px, py);
+
+        if (py > height && Math.random() > 0.96) {
+          d.y = 0;
+        }
+        d.y += d.speed;
       }
+      requestAnimationFrame(drawMatrix);
     }
-
-    let timer = setInterval(drawMatrix, intervalSpeed);
-
-    function speedUpRain() {
-      clearInterval(timer);
-      intervalSpeed = intervalSpeed === 33 ? 15 : 33;
-      timer = setInterval(drawMatrix, intervalSpeed);
-    }
+    requestAnimationFrame(drawMatrix);
 
     function glitchText(el) {
       const original = el.innerText;
-      el.innerText = ">> RESTRUCTURING DATA STREAM // 0xFA4812C...";
+      let iterations = 0;
+      const interval = setInterval(() => {
+        el.innerText = original.split('').map((char, index) => {
+          if (index < iterations) return original[index];
+          return characters[Math.floor(Math.random() * characters.length)];
+        }).join('');
+        if (iterations >= original.length) {
+          clearInterval(interval);
+        }
+        iterations += 1 / 2;
+      }, 30);
+    }
+
+    function speedUpRain() {
+      drops.forEach(d => d.speed = 3 + Math.random() * 4);
       setTimeout(() => {
-        el.innerText = original;
-      }, 350);
+        drops.forEach(d => d.speed = 1 + Math.random() * 1.5);
+      }, 3000);
+    }
+
+    function choosePill(color) {
+      if (color === 'red') {
+        document.documentElement.style.setProperty('--matrix-green', '#ff3366');
+        document.documentElement.style.setProperty('--matrix-bright', '#ff0033');
+        document.documentElement.style.setProperty('--matrix-dim', 'rgba(255, 51, 102, 0.4)');
+        alert("🔴 你服下了红色药丸。欢迎来到真实荒漠（The Desert of the Real）。");
+      } else {
+        document.documentElement.style.setProperty('--matrix-green', '#00ff66');
+        document.documentElement.style.setProperty('--matrix-bright', '#adff2f');
+        document.documentElement.style.setProperty('--matrix-dim', 'rgba(0, 255, 102, 0.4)');
+        alert("🔵 你服下了蓝色药丸。心智重置完成，继续留在安逸的幻境中吧。");
+      }
     }
   </script>
 </body>

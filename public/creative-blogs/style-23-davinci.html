@@ -244,6 +244,28 @@
             </span>
           </p>
         </article>
+
+        <!-- 篇章 3 -->
+        <article class="study-entry">
+          <div class="study-folio-num">FOLIO 108-R // ANATOMIA & CORPORE</div>
+          <h2 class="study-title">维特鲁威人与骨骼杠杆：人体工程学中的力矩平衡</h2>
+          <p class="study-desc">
+            <span class="mirror-text">
+              手臂屈曲时的肱二头肌拉力点与肘关节支点构成第三类杠杆。以微小的肌肉收缩换取肢体末端的大范围快速运动。在机器人关节电机控制中，这一几何配置依然是最优雅的动力学解法。
+            </span>
+          </p>
+        </article>
+
+        <!-- 篇章 4 -->
+        <article class="study-entry">
+          <div class="study-folio-num">FOLIO 114-V // VOLATILIS ET MACHINAE</div>
+          <h2 class="study-title">鸟类扑翼与空气动力学：跨学科发明的直觉与实证</h2>
+          <p class="study-desc">
+            <span class="mirror-text">
+              “一旦你尝试过飞行，你行走在陆地上时也将仰望天空，因为那是你曾经到过并渴望回去的地方。”通过观察海鸥翼尖羽毛的微调开合，设计出最早的变曲率机翼雏形。
+            </span>
+          </p>
+        </article>
       </main>
 
       <!-- 右侧几何笔记 -->
@@ -268,12 +290,46 @@
         </div>
       </aside>
     </div>
-  </div>
+  <style>
+    .golden-spiral-overlay {
+      position: fixed;
+      right: 20px;
+      bottom: 20px;
+      width: 140px;
+      height: 140px;
+      pointer-events: none;
+      opacity: 0.25;
+      z-index: 10;
+      animation: rotateSlow 40s linear infinite;
+    }
+    @keyframes rotateSlow {
+      from { transform: rotate(0deg); }
+      to { transform: rotate(360deg); }
+    }
+    .codex-parchment-sheet {
+      transition: transform 0.6s cubic-bezier(0.16, 1, 0.3, 1), filter 0.6s ease;
+    }
+    .codex-parchment-sheet.mirror-active {
+      transform: scaleX(-1);
+      filter: sepia(0.3) contrast(1.1);
+    }
+  </style>
+
+  <!-- 黄金分割螺旋背景 SVG -->
+  <svg class="golden-spiral-overlay" viewBox="0 0 100 100">
+    <path d="M 50,50 A 5,5 0 0,1 55,50 A 10,10 0 0,1 45,50 A 20,20 0 0,1 65,50 A 35,35 0 0,1 30,50 A 55,55 0 0,1 85,50" fill="none" stroke="#8c2d19" stroke-width="1.2" stroke-dasharray="3 3"/>
+  </svg>
 
   <script src="assets/nav-bar.js"></script>
   <script>
     function toggleMirror() {
-      document.getElementById('codexSheet').classList.toggle('mirror-active');
+      const sheet = document.getElementById('codexSheet');
+      sheet.classList.toggle('mirror-active');
+      const isMirrored = sheet.classList.contains('mirror-active');
+      const btn = document.querySelector('.davinci-ctrl-btn');
+      if (btn) {
+        btn.textContent = isMirrored ? '🔄 恢复正向阅读 (ORIGINAL)' : '🔍 解密达芬奇镜面字迹 (MIRROR)';
+      }
     }
   </script>
 </body>

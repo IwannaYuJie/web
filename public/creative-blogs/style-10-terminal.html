@@ -230,12 +230,22 @@
       "02_kernel.md": {
         title: "02_kernel.md // 深入 Linux eBPF：无侵入式微服务可观测性实践",
         date: "2026-08-15",
-        content: `【摘要】\n探讨如何利用 eBPF 技术在内核空间直接捕获网络 socket 与系统调用，实现零代码侵入、纳秒级开销的分布式追踪架构。`
+        content: `【摘要】\n探讨如何利用 eBPF 技术在内核空间直接捕获网络 socket 与系统调用，实现零代码侵入、纳秒级开销的分布式追踪架构。从 kprobe 到 tracepoint，彻底洞悉内核每一微秒的数据流动。`
       },
       "03_terminal_zen.md": {
         title: "03_terminal_zen.md // 终端美学：为什么纯文本拥有永恒的生命力？",
         date: "2026-08-05",
         content: `【摘要】\n从 1970 年代的 VT100 终端到如今的 Alacritty 与 WezTerm，字符界面剔除了所有视觉噪音，只留下人与代码之间最纯粹的对话。`
+      },
+      "04_rust_async.md": {
+        title: "04_rust_async.md // 深入 Rust 异步运行时：从 Future 状态机到 Epoll Reactor",
+        date: "2026-07-28",
+        content: `【摘要】\n深入推导 Tokio 与 async-std 的核心调度循环。为什么无栈协程（Stackless Coroutine）能在单机支撑百万级长连接并发？通过手写简化版 Mini-Tokio 掌握 Pin 与 Waker 的终极奥义。`
+      },
+      "05_compiler_ast.md": {
+        title: "05_compiler_ast.md // 打造微型编译器：从递归下降语法解析到字节码生成",
+        date: "2026-07-12",
+        content: `【摘要】\n从零实现一个支持闭包与高阶函数的 Lisp/Scheme 解释器。剖析抽象语法树（AST）求值与寄存器虚拟机（Register VM）的性能权衡。`
       }
     };
 
@@ -269,7 +279,8 @@
             <div><strong>可用命令列表：</strong></div>
             <div style="padding-left:14px; color:#cbd5e1;">
               <div>• <span class="highlight-keyword">ls</span> / <span class="highlight-keyword">dir</span> : 列出所有博客文章与文件</div>
-              <div>• <span class="highlight-keyword">cat &lt;filename&gt;</span> : 查看指定文章内容 (例: cat 01_agents.md)</div>
+              <div>• <span class="highlight-keyword">cat &lt;filename&gt;</span> : 查看指定文章内容 (例: cat 04_rust_async.md)</div>
+              <div>• <span class="highlight-keyword">neofetch</span> : 打印极客系统硬件与版本信息</div>
               <div>• <span class="highlight-keyword">about</span> : 查看博主个人档案</div>
               <div>• <span class="highlight-keyword">date</span> : 显示当前系统时区与时间</div>
               <div>• <span class="highlight-keyword">clear</span> : 清屏</div>
@@ -277,14 +288,31 @@
           `;
           break;
 
+        case 'neofetch':
+          output = `
+            <div style="font-family:monospace; line-height:1.4; color:var(--term-cyan);">
+              &nbsp;&nbsp;&nbsp;__&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;__&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<strong>guest@hacker-core</strong><br>
+              &nbsp;&nbsp;/&nbsp;\\&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;/&nbsp;\\&nbsp;&nbsp;&nbsp;&nbsp;-----------------<br>
+              &nbsp;|===|=======|===|&nbsp;&nbsp;&nbsp;<strong>OS:</strong> Arch Linux x86_64<br>
+              &nbsp;&nbsp;\\_/&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;\\_/&nbsp;&nbsp;&nbsp;&nbsp;<strong>Kernel:</strong> 6.10.4-zen-1-zen<br>
+              &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<strong>Uptime:</strong> 42 days, 13 hours<br>
+              &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<strong>Shell:</strong> zsh 5.9 (x86_64-apple-darwin)<br>
+              &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<strong>CPU:</strong> Apple M3 Max (16 Cores)<br>
+              &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<strong>Memory:</strong> 14208MiB / 65536MiB
+            </div>
+          `;
+          break;
+
         case 'ls':
         case 'dir':
           output = `
-            <div style="color:var(--term-gray);">total 3 files, 1 directory</div>
+            <div style="color:var(--term-gray);">total 5 files, 1 directory</div>
             <div style="color:var(--term-cyan);">drwxr-xr-x  2 dev dev 4096 Aug 21 .system/</div>
             <div>-rw-r--r--  1 dev dev 1840 Aug 20 <span class="file-link" onclick="execCmd('cat 01_agents.md')">01_agents.md</span></div>
             <div>-rw-r--r--  1 dev dev 1420 Aug 15 <span class="file-link" onclick="execCmd('cat 02_kernel.md')">02_kernel.md</span></div>
             <div>-rw-r--r--  1 dev dev 1120 Aug 05 <span class="file-link" onclick="execCmd('cat 03_terminal_zen.md')">03_terminal_zen.md</span></div>
+            <div>-rw-r--r--  1 dev dev 2140 Jul 28 <span class="file-link" onclick="execCmd('cat 04_rust_async.md')">04_rust_async.md</span></div>
+            <div>-rw-r--r--  1 dev dev 1980 Jul 12 <span class="file-link" onclick="execCmd('cat 05_compiler_ast.md')">05_compiler_ast.md</span></div>
             <div>-rwxr-xr-x  1 dev dev  512 Aug 21 <span class="file-link" onclick="execCmd('about')">about_author.sh</span>*</div>
           `;
           break;
@@ -304,6 +332,10 @@
           } else {
             output = `<div class="output-line error">cat: ${arg}: 没有那个文件或目录</div>`;
           }
+          break;
+
+        case 'sudo':
+          output = `<div class="output-line error">[SECURITY AUDIT] 用户不在 sudoers 列表中。此事件将被报告给超级管理员。</div>`;
           break;
 
         case 'about':
@@ -328,11 +360,36 @@
         default:
           output = `<div class="output-line error">bash: ${action}: 未找到命令。键入 'help' 查看帮助。</div>`;
       }
-
       appendOutput(cmd, output);
       cliInput.value = '';
     }
 
+  <style>
+    .terminal-container {
+      position: relative;
+    }
+    .terminal-container::before {
+      content: " ";
+      display: block;
+      position: absolute;
+      top: 0; left: 0; bottom: 0; right: 0;
+      background: linear-gradient(rgba(18, 16, 16, 0) 50%, rgba(0, 0, 0, 0.25) 50%);
+      background-size: 100% 4px;
+      z-index: 20;
+      pointer-events: none;
+      opacity: 0.6;
+    }
+    .output-group {
+      animation: termFadeIn 0.2s ease-out;
+    }
+    @keyframes termFadeIn {
+      from { opacity: 0; transform: translateY(4px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+  </style>
+
+  <script src="assets/nav-bar.js"></script>
+  <script>
     cliInput.addEventListener('keydown', (e) => {
       if (e.key === 'Enter') {
         execCmd(cliInput.value);

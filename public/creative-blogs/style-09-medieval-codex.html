@@ -263,12 +263,57 @@
       </p>
     </section>
 
+    <!-- 第三章 -->
+    <section class="codex-chapter">
+      <div class="chapter-heading">
+        <span>✦ CAPITVLVM III ✦</span>
+        <span>自由七艺：语法、修辞、逻辑与代码架构的同构</span>
+      </div>
+      <p class="codex-text">
+        <span class="illuminated-initial">三</span>学（Trivium）与四艺（Quadrivium）构成了中世纪大学的智识基石。逻辑学规范推理闭环，几何学丈量数据拓扑，音乐学推导波形谐振。现代系统架构师不仅是数字工匠，更是古典通识传统的数字化继承者。
+      </p>
+    </section>
+
+    <!-- 第四章 -->
+    <section class="codex-chapter">
+      <div class="chapter-heading">
+        <span>✦ CAPITVLVM IV ✦</span>
+        <span>羊皮纸配方与青金石：实体介质的千年抗衰老魔法</span>
+      </div>
+      <p class="codex-text">
+        <span class="illuminated-initial">研</span>磨来自阿富汗山脉的纯正青金石（Ultramarine），以蜂蜡与蛋清调和。手抄本边缘蜿蜒的花叶蔓藤不仅是视觉装饰，更保护了内文边缘免遭物理磨损。在 Web 设计中，恰如其分的留白与装饰框线同样守护着阅读者的心智焦点。
+      </p>
+    </section>
+
     <!-- 卷末题记 -->
     <footer class="codex-colophon">
       <div>SCRIPTUM ET DEDICATUM · MMXXVI</div>
       <div style="margin-top: 6px; font-size: 11px;">凡阅读此书卷者，愿理智与宁静长伴汝心。</div>
     </footer>
-  </div>
+  <style>
+    /* 烛光摇曳环境光 */
+    body::before {
+      content: "";
+      position: fixed;
+      inset: 0;
+      background: radial-gradient(circle at var(--candle-x, 50%) var(--candle-y, 50%), rgba(245, 158, 11, 0.08) 0%, transparent 60%);
+      pointer-events: none;
+      z-index: 99;
+      animation: candleFlicker 3s ease-in-out infinite alternate;
+    }
+    @keyframes candleFlicker {
+      0% { opacity: 0.8; transform: scale(1); }
+      50% { opacity: 0.5; transform: scale(1.05); }
+      100% { opacity: 0.9; transform: scale(0.98); }
+    }
+    .illuminated-initial {
+      text-shadow: 0 0 12px rgba(197, 155, 39, 0.6);
+      transition: text-shadow 0.3s ease;
+    }
+    .illuminated-initial:hover {
+      text-shadow: 0 0 24px rgba(197, 155, 39, 1);
+    }
+  </style>
 
   <script src="assets/nav-bar.js"></script>
   <script>
@@ -281,6 +326,12 @@
         status.textContent = '★ 御印已重新加盖！';
       }, 250);
     }
+
+    // 烛光鼠标跟随
+    window.addEventListener('mousemove', (e) => {
+      document.body.style.setProperty('--candle-x', `${(e.clientX / window.innerWidth) * 100}%`);
+      document.body.style.setProperty('--candle-y', `${(e.clientY / window.innerHeight) * 100}%`);
+    });
   </script>
 </body>
 </html>

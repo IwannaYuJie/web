@@ -432,16 +432,45 @@
     </div>
   </div>
 
+  <!-- 视窗 4: 系统属性与硬件信息 -->
+  <div id="win-sys" class="win-window" style="top: 180px; left: 460px; width: 440px; height: 320px; display: none;">
+    <div class="win-titlebar" onmousedown="focusWin('win-sys')">
+      <div class="win-title"><span>💻</span> 系统属性 (System Info)</div>
+      <div class="win-controls">
+        <button class="win-btn" onclick="minWin('win-sys')">_</button>
+        <button class="win-btn" onclick="closeWin('win-sys')">✕</button>
+      </div>
+    </div>
+    <div class="win-content" style="font-size: 12px; line-height: 1.8;">
+      <div style="display: flex; gap: 16px; align-items: center; border-bottom: 2px groove #fff; padding-bottom: 12px; margin-bottom: 12px;">
+        <span style="font-size: 40px;">🖥️</span>
+        <div>
+          <strong>Microsoft Windows 98 SE</strong><br>
+          系统版本: 4.10.2222 A<br>
+          注册组织: CYBER PIONEER LAB
+        </div>
+      </div>
+      <div>
+        <strong>硬件配置清单：</strong><br>
+        • 处理器: Intel Pentium III @ 500 MHz<br>
+        • 物理内存: 128 MB SDRAM PC-100<br>
+        • 显卡: 3dfx Voodoo3 3000 (16MB)<br>
+        • 存储: 10.2 GB Ultra ATA IDE 硬盘
+      </div>
+    </div>
+  </div>
+
   <!-- 开始菜单 -->
   <div id="startMenu" class="start-menu">
     <div style="display: flex;">
       <div class="start-menu-side">WINDOWS 98</div>
       <div class="start-menu-items">
-        <div class="start-item" onclick="openWin('win-intro')"><span>📁</span> 我的文档</div>
-        <div class="start-item" onclick="openWin('win-post1')"><span>📝</span> 最新博客文章</div>
-        <div class="start-item" onclick="openWin('win-note')"><span>📌</span> 随手便签</div>
+        <div class="start-item" onclick="openWin('win-intro')"><span>📁</span> 我的文档 (Profile)</div>
+        <div class="start-item" onclick="openWin('win-post1')"><span>📝</span> 最新博客文章 (Articles)</div>
+        <div class="start-item" onclick="openWin('win-sys')"><span>💻</span> 系统属性 (System Info)</div>
+        <div class="start-item" onclick="openWin('win-note')"><span>📌</span> 随手便签 (Sticky Notes)</div>
         <div style="border-top: 1px solid #808080; margin: 4px 0;"></div>
-        <div class="start-item" onclick="alert('即将关机... 开个玩笑！继续浏览吧 :)')"><span>⏻</span> 关闭计算机...</div>
+        <div class="start-item" onclick="alert('即将关机... 开个玩笑！请尽情探索视窗桌面吧 :)')"><span>⏻</span> 关闭计算机...</div>
       </div>
     </div>
   </div>
@@ -461,6 +490,9 @@
       <span id="clockText">15:40</span>
     </div>
   </div>
+
+  <!-- 像素碎屑 Canvas -->
+  <canvas id="pixelCanvas" style="position: fixed; inset: 0; pointer-events: none; z-index: 99999;"></canvas>
 
   <script src="assets/nav-bar.js"></script>
   <script>
@@ -493,8 +525,11 @@
       if (target) {
         target.classList.add('active');
         target.style.display = 'flex';
+        target.style.zIndex = ++maxZ;
       }
     }
+
+    let maxZ = 100;
 
     function openWin(id) {
       focusWin(id);
@@ -508,8 +543,108 @@
     }
 
     function minWin(id) {
-      closeWin(id);
+      const target = document.getElementById(id);
+      if (target) {
+        target.style.transform = 'scale(0.1) translateY(400px)';
+        target.style.opacity = '0';
+        setTimeout(() => {
+          target.style.display = 'none';
+          target.style.transform = '';
+          target.style.opacity = '';
+        }, 200);
+      }
     }
+
+    // 窗口拖拽功能
+    document.querySelectorAll('.win-window').forEach(win => {
+      const titleBar = win.querySelector('.win-titlebar');
+      if (!titleBar) return;
+
+      let isDragging = false;
+      let startX, startY, origX, origY;
+
+      titleBar.addEventListener('mousedown', (e) => {
+        if (e.target.closest('.win-btn-ctrl')) return;
+        isDragging = true;
+        focusWin(win.id);
+        startX = e.clientX;
+        startY = e.clientY;
+        const rect = win.getBoundingClientRect();
+        origX = rect.left;
+        origY = rect.top;
+
+        function onMouseMove(ev) {
+          if (!isDragging) return;
+          const dx = ev.clientX - startX;
+          const dy = ev.clientY - startY;
+          win.style.left = `${Math.max(10, origX + dx)}px`;
+          win.style.top = `${Math.max(10, origY + dy)}px`;
+          win.style.right = 'auto';
+          win.style.bottom = 'auto';
+        }
+
+        function onMouseUp() {
+          isDragging = false;
+          window.removeEventListener('mousemove', onMouseMove);
+          window.removeEventListener('mouseup', onMouseUp);
+        }
+
+        window.addEventListener('mousemove', onMouseMove);
+        window.addEventListener('mouseup', onMouseUp);
+      });
+    });
+
+    // 双击像素碎屑粒子
+    (function() {
+      const canvas = document.getElementById('pixelCanvas');
+      const ctx = canvas.getContext('2d');
+      let w = canvas.width = window.innerWidth;
+      let h = canvas.height = window.innerHeight;
+
+      window.addEventListener('resize', () => {
+        w = canvas.width = window.innerWidth;
+        h = canvas.height = window.innerHeight;
+      });
+
+      const pixels = [];
+
+      window.addEventListener('dblclick', (e) => {
+        const colors = ['#ffffa5', '#00f0ff', '#ffffff', '#000080', '#008080'];
+        for (let i = 0; i < 24; i++) {
+          pixels.push({
+            x: e.clientX,
+            y: e.clientY,
+            vx: (Math.random() - 0.5) * 8,
+            vy: (Math.random() - 0.5) * 8 - 2,
+            size: 4 + Math.floor(Math.random() * 4),
+            color: colors[Math.floor(Math.random() * colors.length)],
+            life: 1
+          });
+        }
+      });
+
+      function loop() {
+        ctx.clearRect(0, 0, w, h);
+        for (let i = pixels.length - 1; i >= 0; i--) {
+          const p = pixels[i];
+          p.x += p.vx;
+          p.y += p.vy;
+          p.vy += 0.25; // 重力
+          p.life -= 0.025;
+
+          if (p.life <= 0) {
+            pixels.splice(i, 1);
+            continue;
+          }
+
+          ctx.fillStyle = p.color;
+          ctx.globalAlpha = p.life;
+          ctx.fillRect(p.x, p.y, p.size, p.size);
+        }
+        requestAnimationFrame(loop);
+      }
+      loop();
+    })();
   </script>
 </body>
 </html>

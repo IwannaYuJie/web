@@ -330,6 +330,32 @@
           </p>
           <a href="#" class="telemetry-btn">READ FLIGHT TELEMETRY ➔</a>
         </article>
+
+        <!-- 文章 3 -->
+        <article class="mission-log-card">
+          <div class="log-meta-row">
+            <span>ENTRY #03 · CELESTIAL MECHANICS</span>
+            <span>DATE: 2026.07.30 · SYS: HOHMANN TRANSFER</span>
+          </div>
+          <h2 class="log-title">霍曼转移与拉格朗日引力平衡点：星际远航的最优能量路径</h2>
+          <p class="log-content">
+            推导双脉冲切向加速在双椭圆轨道共面转移中的德尔塔-V（Δv）极值。分析詹姆斯·韦伯太空望远镜在日地 L2 平衡点微弱引力井中的晕轮轨道（Halo Orbit）维持策略。
+          </p>
+          <a href="#" class="telemetry-btn">READ FLIGHT TELEMETRY ➔</a>
+        </article>
+
+        <!-- 文章 4 -->
+        <article class="mission-log-card">
+          <div class="log-meta-row">
+            <span>ENTRY #04 · AVIONICS FAULT-TOLERANCE</span>
+            <span>DATE: 2026.07.19 · SYS: AGC CORE ROPE</span>
+          </div>
+          <h2 class="log-title">阿波罗导航计算机（AGC）：编织在铜环磁芯中的代码与实时抢占调度</h2>
+          <p class="log-content">
+            1969 年登月舱降落阶段著名的 1202 报警。玛格丽特·汉密尔顿设计的异步优先级执行器（Priority Job Scheduling）如何在雷达数据溢出时果断丢弃低优先任务，确保主控推进器安全点火。
+          </p>
+          <a href="#" class="telemetry-btn">READ FLIGHT TELEMETRY ➔</a>
+        </article>
       </main>
 
       <!-- 右侧飞行仪表板 -->
@@ -364,8 +390,86 @@
         </div>
       </aside>
     </div>
-  </div>
+  <!-- 深空星尘与流星 Canvas -->
+  <canvas id="spaceCanvas" style="position: fixed; inset: 0; pointer-events: none; z-index: 0;"></canvas>
 
   <script src="assets/nav-bar.js"></script>
+  <script>
+    (function() {
+      const canvas = document.getElementById('spaceCanvas');
+      const ctx = canvas.getContext('2d');
+      let w = canvas.width = window.innerWidth;
+      let h = canvas.height = window.innerHeight;
+
+      window.addEventListener('resize', () => {
+        w = canvas.width = window.innerWidth;
+        h = canvas.height = window.innerHeight;
+      });
+
+      const stars = Array.from({ length: 60 }, () => ({
+        x: Math.random() * w,
+        y: Math.random() * h,
+        size: Math.random() * 2,
+        opacity: Math.random(),
+        speed: 0.01 + Math.random() * 0.02
+      }));
+
+      const meteors = [];
+
+      function createMeteor() {
+        meteors.push({
+          x: Math.random() * w,
+          y: Math.random() * (h * 0.4),
+          len: 60 + Math.random() * 80,
+          speed: 8 + Math.random() * 6,
+          opacity: 1
+        });
+      }
+
+      setInterval(() => {
+        if (Math.random() < 0.6) createMeteor();
+      }, 3500);
+
+      function loop() {
+        ctx.clearRect(0, 0, w, h);
+
+        // 恒星闪烁
+        stars.forEach(s => {
+          s.opacity += s.speed;
+          if (s.opacity > 1 || s.opacity < 0.2) s.speed *= -1;
+          ctx.fillStyle = `rgba(255, 255, 255, ${s.opacity})`;
+          ctx.beginPath();
+          ctx.arc(s.x, s.y, s.size, 0, Math.PI * 2);
+          ctx.fill();
+        });
+
+        // 流星划过
+        for (let i = meteors.length - 1; i >= 0; i--) {
+          const m = meteors[i];
+          m.x -= m.speed * 1.2;
+          m.y += m.speed * 0.8;
+          m.opacity -= 0.02;
+
+          if (m.opacity <= 0 || m.x < 0 || m.y > h) {
+            meteors.splice(i, 1);
+            continue;
+          }
+
+          const grad = ctx.createLinearGradient(m.x, m.y, m.x + m.len, m.y - m.len * 0.6);
+          grad.addColorStop(0, `rgba(76, 201, 240, ${m.opacity})`);
+          grad.addColorStop(1, 'rgba(76, 201, 240, 0)');
+          ctx.strokeStyle = grad;
+          ctx.lineWidth = 1.5;
+          ctx.beginPath();
+          ctx.moveTo(m.x, m.y);
+          ctx.lineTo(m.x + m.len, m.y - m.len * 0.6);
+          ctx.stroke();
+        }
+
+        requestAnimationFrame(loop);
+      }
+      loop();
+    })();
+  </script>
 </body>
 </html>

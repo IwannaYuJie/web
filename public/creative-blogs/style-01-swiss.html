@@ -487,33 +487,95 @@
           </div>
           <h2 class="article-title" onclick="toggleFold('fold-3')">少即是多（Less is More）：极简主义不是空无一物，而是恰到好处</h2>
           <p class="article-summary">
-            极简绝非偷工减料，而是对核心价值的极度凝练与提纯。每一根线条都必须有存在的意义。
+            极简绝非偷工减料，而是对核心价值的极度凝练与提纯。每一根线条、每一个像素都必须具备不容置疑的存在意义。
           </p>
           <div id="fold-3" class="article-body-fold">
             <p>
-              当设计做到无法再删减任何一个元素而依然能完美表达意图时，真正的设计便诞生了。
+              密斯·凡德罗与约瑟夫·米勒-布罗克曼所倡导的极简，本质上是一种对冗余信息的清洗过程。当设计做到“无法再删减任何一个元素而依然能完美表达意图”时，真正的纯粹之美便诞生了。
             </p>
           </div>
           <button class="read-more-btn" onclick="toggleFold('fold-3')">展开 / 收起全文 <span>↓</span></button>
         </article>
-      </main>
+
+        <!-- 文章 4 -->
+        <article class="article-item">
+          <div class="article-meta">
+            <span class="index-no">№ 004</span>
+            <span class="tag">排版史学</span>
+            <span>2026.07.28</span>
+            <span>阅读时长: 10 MIN</span>
+          </div>
+          <h2 class="article-title" onclick="toggleFold('fold-4')">无衬线体 Helvetica 诞生 70 周年演化录：冷峻理性如何征服全球视觉</h2>
+          <p class="article-summary">
+            1957 年由马克斯·米丁格（Max Miedinger）设计的 Neue Haas Grotesk（后更名 Helvetica），凭借完全中立、无情绪倾向的笔画结构，成为了现代企业标识、城市导视系统乃至全球数字操作系统的共同底色。
+          </p>
+          <div id="fold-4" class="article-body-fold">
+            <p>
+              Helvetica 的核心在于其精妙的字偶间距与平直的笔画切口。它不强加任何设计者的主观情绪，而是充当最透明的“思想载体”。在移动端 Retina 视网膜屏幕与高刷新率时代，这种中立性依然具有无与伦比的清晰度。
+            </p>
+            <br>
+            <div style="background: #eee; padding: 14px 18px; border-left: 4px solid var(--swiss-black); font-size: 13px; font-family: monospace;">
+              TYPOGRAPHY QUOTE // “好的排版就像一块干净的玻璃，读者透过它清晰地看到思想，而感觉不到玻璃本身的存在。” —— 贝亚特丽斯·沃德
+            </div>
+          </div>
+          <button class="read-more-btn" onclick="toggleFold('fold-4')">展开 / 收起全文 <span>↓</span></button>
+        </article>
+
+        <!-- 交互组件：瑞士排版字阶与黄金分割实验室 -->
+        <div style="border: 2px solid var(--swiss-border); padding: 24px; margin: 30px 0; background: #fff;">
+          <div style="display: flex; justify-content: space-between; align-items: baseline; border-bottom: 2px solid var(--swiss-border); padding-bottom: 12px; margin-bottom: 16px;">
+            <div style="font-weight: 900; font-size: 16px; letter-spacing: -0.5px;">📐 瑞士字阶与网格度量实验室 (SCALE LAB)</div>
+            <span style="font-size: 11px; color: var(--swiss-red); font-weight: 700;">INTERACTIVE DEMO</span>
+          </div>
+          <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 16px; margin-bottom: 16px;">
+            <div>
+              <label style="font-size: 12px; font-weight: 700; display: block; margin-bottom: 4px;">基准字号 (Base Size): <span id="baseSizeVal">16px</span></label>
+              <input type="range" min="12" max="24" value="16" id="baseSizeRange" style="width: 100%; accent-color: var(--swiss-red);" oninput="updateScaleLab()">
+            </div>
+            <div>
+              <label style="font-size: 12px; font-weight: 700; display: block; margin-bottom: 4px;">比例模数 (Scale Ratio):</label>
+              <select id="scaleRatioSelect" style="width: 100%; padding: 4px; font-family: inherit; font-size: 13px; border: 1px solid #999;" onchange="updateScaleLab()">
+                <option value="1.25">1.250 — Major Third (大三度)</option>
+                <option value="1.333">1.333 — Perfect Fourth (完全四度)</option>
+                <option value="1.414">1.414 — Augmented Fourth (白银分割)</option>
+                <option value="1.618">1.618 — Golden Ratio (黄金分割)</option>
+              </select>
+            </div>
+          </div>
+          <div id="scalePreviewList" style="display: flex; flex-direction: column; gap: 8px; border-top: 1px dashed #ccc; padding-top: 14px;">
+            <!-- 动态生成字阶预览 -->
+          </div>
+        </div>
     </div>
 
     <!-- 底部 -->
     <footer>
       <div>&copy; 2026 SWISS TYPOGRAPHY STUDIO. ALL RIGHTS RESERVED.</div>
-      <div>HELVETICA & SPACE GROTESK ACCREDITATION</div>
+      <div id="swissCoordsHud" style="font-family: monospace; color: var(--swiss-red);">GRID_POS: X:0 Y:0 | SCALE: 1.0</div>
     </footer>
   </div>
 
+  <!-- 瑞士精准十字标尺光标跟随器 -->
+  <div id="swissCrosshairH" style="position: fixed; left: 0; width: 100vw; height: 1px; background: rgba(255, 51, 0, 0.25); pointer-events: none; z-index: 998; display: none;"></div>
+  <div id="swissCrosshairV" style="position: fixed; top: 0; height: 100vh; width: 1px; background: rgba(255, 51, 0, 0.25); pointer-events: none; z-index: 998; display: none;"></div>
+
   <script src="assets/nav-bar.js"></script>
   <script>
-    // 切换网格辅助线
+    // 切换网格辅助线与十字标尺
     const gridBtn = document.getElementById("toggleGridBtn");
     const gridOverlay = document.getElementById("gridOverlay");
+    const crossH = document.getElementById("swissCrosshairH");
+    const crossV = document.getElementById("swissCrosshairV");
+    const coordsHud = document.getElementById("swissCoordsHud");
+
+    let gridActive = false;
+
     gridBtn.addEventListener("click", () => {
-      gridOverlay.classList.toggle("show");
-      gridBtn.textContent = gridOverlay.classList.contains("show") 
+      gridActive = !gridActive;
+      gridOverlay.classList.toggle("show", gridActive);
+      crossH.style.display = gridActive ? "block" : "none";
+      crossV.style.display = gridActive ? "block" : "none";
+      gridBtn.textContent = gridActive 
         ? "📏 隐藏 瑞士排版网格 (ON)" 
         : "📏 显示/隐藏 瑞士排版网格 (OFF)";
     });
@@ -525,11 +587,49 @@
       }
     });
 
+    // 十字光标与坐标追踪
+    window.addEventListener("mousemove", (e) => {
+      if (gridActive) {
+        crossH.style.top = e.clientY + "px";
+        crossV.style.left = e.clientX + "px";
+      }
+      if (coordsHud) {
+        coordsHud.textContent = `GRID_POS: X:${e.clientX} Y:${e.clientY} | SCROLL_Y: ${Math.round(window.scrollY)}`;
+      }
+    });
+
     // 折叠展开文章
     function toggleFold(id) {
       const el = document.getElementById(id);
       el.classList.toggle("open");
     }
+
+    function updateScaleLab() {
+      const base = parseFloat(document.getElementById('baseSizeRange').value);
+      const ratio = parseFloat(document.getElementById('scaleRatioSelect').value);
+      document.getElementById('baseSizeVal').textContent = base + 'px';
+
+      const list = document.getElementById('scalePreviewList');
+      if (!list) return;
+
+      const levels = [
+        { name: 'Display H1 (r⁴)', sz: Math.round(base * Math.pow(ratio, 4)) },
+        { name: 'Headline H2 (r³)', sz: Math.round(base * Math.pow(ratio, 3)) },
+        { name: 'Subhead H3 (r²)', sz: Math.round(base * Math.pow(ratio, 2)) },
+        { name: 'Lead Para (r¹)', sz: Math.round(base * ratio) },
+        { name: 'Body Text (r⁰)', sz: base }
+      ];
+
+      list.innerHTML = levels.map(l => `
+        <div style="display: flex; align-items: baseline; gap: 12px; border-bottom: 1px solid #f0f0f0; padding: 4px 0;">
+          <span style="font-size: 11px; font-family: monospace; color: #888; width: 140px;">${l.name} (${l.sz}px)</span>
+          <span style="font-size: ${l.sz}px; font-weight: 700; line-height: 1.1; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;">
+            Swiss Grid Rational Typography
+          </span>
+        </div>
+      `).join('');
+    }
+    updateScaleLab();
   </script>
 </body>
 </html>

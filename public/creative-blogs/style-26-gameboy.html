@@ -246,8 +246,25 @@
         <p class="pixel-text">
           1989 年墨绿点阵像素传奇！经典的四阶灰绿调色、8-Bit 方块字阶与复古按键力反馈交互。
         </p>
+
+        <!-- 篇章 1 -->
+        <div class="pixel-article-box" style="border: 2px solid var(--gb-screen-darkest); padding: 10px; margin: 12px 0; background: var(--gb-screen-light);">
+          <div style="font-family: var(--font-pixel); font-size: 9px; color: var(--gb-screen-darkest); font-weight: 700; margin-bottom: 4px;">[ARTICLE #01] 枯萎技术的水平思考</div>
+          <p style="font-size: 11px; line-height: 1.6; color: var(--gb-screen-darkest);">
+            横井军平放弃耗电巨大的彩色液晶，选用廉价成熟的反射式黑白点阵屏，实现了长达 30 小时的续航奇迹。在成熟技术中发掘未被满足的全新价值，至今仍是产品设计的无上真理。
+          </p>
+        </div>
+
+        <!-- 篇章 2 -->
+        <div class="pixel-article-box" style="border: 2px solid var(--gb-screen-darkest); padding: 10px; margin: 12px 0; background: var(--gb-screen-light);">
+          <div style="font-family: var(--font-pixel); font-size: 9px; color: var(--gb-screen-darkest); font-weight: 700; margin-bottom: 4px;">[ARTICLE #02] 160×144 极限压榨</div>
+          <p style="font-size: 11px; line-height: 1.6; color: var(--gb-screen-darkest);">
+            在仅有 8KB VRAM 的严苛硬件限制下，程序员用精灵平铺（Tile Mapping）与逐行扫描中断（H-Blank Interrupt）创造了《塞尔达传说：织梦岛》中辽阔无垠的开放世界。
+          </p>
+        </div>
+
         <div class="rpg-dialog-box" id="rpgBox">
-          ▶ 勇者橘猫：按 [A] 键与村长对话，按 [B] 键跳跃！
+          ▶ 勇者橘猫：按 [A] 键与村长对话，按 [B] 键跳跃！按 [SELECT] 切换文章！
         </div>
       </div>
     </div>
@@ -288,17 +305,46 @@
     </div>
   </div>
 
+  <style>
+    .ab-btn:active, .d-btn:active, .sys-btn:active {
+      transform: translateY(2px) scale(0.95);
+    }
+    .pixel-cat-sprite {
+      position: absolute;
+      right: 12px;
+      bottom: 8px;
+      font-size: 20px;
+      animation: catWalk 1.2s steps(2) infinite alternate;
+      pointer-events: none;
+    }
+    @keyframes catWalk {
+      0% { transform: translateY(0) scaleX(1); }
+      50% { transform: translateY(-4px) scaleX(1); }
+      100% { transform: translateY(0) scaleX(-1); }
+    }
+  </style>
+
   <script src="assets/nav-bar.js"></script>
   <script>
     function pressKey(msg) {
       const box = document.getElementById("rpgBox");
       box.innerText = msg;
       const screen = document.getElementById("lcdScreen");
-      screen.style.filter = "contrast(1.6) brightness(1.1)";
+      screen.style.filter = "contrast(1.6) brightness(1.2) hue-rotate(10deg)";
       setTimeout(() => {
         screen.style.filter = "none";
-      }, 120);
+      }, 100);
     }
+
+    // 键盘支持 (WASD / J K)
+    document.addEventListener('keydown', (e) => {
+      if (e.key === 'w' || e.key === 'ArrowUp') pressKey('▲ 向上探索！');
+      if (e.key === 's' || e.key === 'ArrowDown') pressKey('▼ 向下寻找宝箱！');
+      if (e.key === 'a' || e.key === 'ArrowLeft') pressKey('◀ 向左回到村庄！');
+      if (e.key === 'd' || e.key === 'ArrowRight') pressKey('▶ 向右进入地下城！');
+      if (e.key === 'j' || e.key === 'z') pressKey('✨ 按下了 [A] 键：拯救猫岛任务进行中！');
+      if (e.key === 'k' || e.key === 'x') pressKey('💥 按下了 [B] 键：发动必杀鱼骨斩！');
+    });
   </script>
 </body>
 </html>
