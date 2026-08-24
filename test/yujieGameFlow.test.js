@@ -2,8 +2,9 @@
  * 《雨姐的心动时刻》流程仿真测试
  * 用与 UI 共用的纯逻辑引擎自动跑完整局游戏，验证：
  * 1. 九个结局全部可达
- * 2. 随机乱选也不会死局/死循环
+ * 2. 随机乱选 200 局也不会死局/死循环，且天数不超过 13 天
  * 3. 关键节点（D3、D6、D9、D12等）AP与天数精确流转
+ * 4. D12 五个专属回响分支与通用兜底均可正确流转至 ev_feast_end 并进入 D13 抉择日
  */
 import { describe, expect, it } from 'vitest'
 import gameData from '../src/data/yujieGameData'
@@ -312,21 +313,23 @@ describe('雨姐游戏流程仿真', () => {
     expect(ending).toBe('ending_bye')
   })
 
-  it('随机乱选50局：都能走到结局，不会死局死循环', () => {
-    // 简单LCG保证可复现
+  it('随机乱选200局：均走到合法结局，无死局/死循环且day<=13', () => {
+    // 简单LCG保证跨环境完全可复现
     let seed = 42
     const rand = () => {
       seed = (seed * 1103515245 + 12345) % 2147483648
       return seed / 2147483648
     }
     const routeIds = ['kitchen', 'pigpen', 'market', 'riverside', 'laokuai', 'mountain', 'sleep']
-    for (let run = 0; run < 50; run++) {
-      const { ending, steps } = simulate({
+    for (let run = 0; run < 200; run++) {
+      const { ending, stats, steps } = simulate({
         hub: () => routeIds[Math.floor(rand() * routeIds.length)],
         pick: ({ available }) => available[Math.floor(rand() * available.length)]
       })
       expect(ending, `第${run}局在${steps}步内应走到结局`).toBeTruthy()
+      expect(endings[ending], `第${run}局结局应在结局库中`).toBeDefined()
       expect(steps).toBeLessThan(300)
+      expect(stats.day).toBeLessThanOrEqual(13)
     }
   })
 
@@ -437,6 +440,151 @@ describe('雨姐游戏流程仿真', () => {
     expect(liveState.ending).toBeNull()
   })
 
+  it('D12五个专属回响和通用兜底均能从代表状态进入对应短事件、汇入ev_feast_end并进入D13', () => {
+    const echoCases = [
+      {
+        name: '掌勺大厨回响',
+        setup: {
+          routes: { kitchen: 3, pigpen: 3 },
+          affection: 65,
+          laokuaiAlert: 10
+        },
+        choiceId: 'feast_chef',
+        echoEventId: 'ev_feast_chef',
+        subChoiceId: 'f_chef_1'
+      },
+      {
+        name: '盛宴直播回响',
+        setup: {
+          routes: { market: 3 },
+          flags: { livePath: true, refusedNoodles: true },
+          affection: 60
+        },
+        choiceId: 'feast_streamer',
+        echoEventId: 'ev_feast_streamer',
+        subChoiceId: 'f_streamer_1'
+      },
+      {
+        name: '温情相伴回响',
+        setup: {
+          routes: { riverside: 3 },
+          affection: 80,
+          laokuaiAlert: 20
+        },
+        choiceId: 'feast_love',
+        echoEventId: 'ev_feast_love',
+        subChoiceId: 'f_love_1'
+      },
+      {
+        name: '主桌上座回响',
+        setup: {
+          routes: { laokuai: 3 },
+          laokuaiAlert: 10,
+          affection: 40
+        },
+        choiceId: 'feast_family',
+        echoEventId: 'ev_feast_family',
+        subChoiceId: 'f_family_1'
+      },
+      {
+        name: '鹅王巡场回响',
+        setup: {
+          gooseCount: 3,
+          affection: 40
+        },
+        choiceId: 'feast_goose',
+        echoEventId: 'ev_feast_goose',
+        subChoiceId: 'f_goose_1'
+      },
+      {
+        name: '通用热火朝天兜底',
+        setup: {},
+        choiceId: 'feast_generic',
+        echoEventId: 'ev_feast_generic',
+        subChoiceId: 'f_gen_1'
+      }
+    ]
+
+    for (const testCase of echoCases) {
+      let state = {
+        stats: {
+          ...initialStats(),
+          day: 12,
+          actionPoints: ACTIONS_PER_DAY,
+          ...testCase.setup,
+          routes: { ...initialStats().routes, ...(testCase.setup.routes || {}) },
+          flags: { ...initialStats().flags, ...(testCase.setup.flags || {}) }
+        },
+        mode: 'event',
+        eventId: 'ev_feast',
+        ending: null
+      }
+
+      // 验证在 ev_feast 中对应选项可用并进入对应短事件
+      state = stepEvent(state, testCase.choiceId)
+      expect(state.eventId, `${testCase.name} 应该进入 ${testCase.echoEventId}`).toBe(testCase.echoEventId)
+      expect(state.mode).toBe('event')
+
+      // 验证在对应短事件中选下唯一选项汇入 ev_feast_end
+      state = stepEvent(state, testCase.subChoiceId)
+      expect(state.eventId, `${testCase.name} 应该汇入 ev_feast_end`).toBe('ev_feast_end')
+      expect(state.mode).toBe('event')
+
+      // 验证散席后睡觉直接推进到 D13 抉择日主事件 ev_final
+      state = stepEvent(state, 'feast_e_1')
+      expect(state.stats.day).toBe(13)
+      expect(state.eventId).toBe('ev_final')
+      expect(state.mode).toBe('event')
+      expect(state.ending).toBeNull()
+    }
+  })
+
+  it('回归测试：D12心动回响不增加老蒯警觉度，确保边界状态(alert=40)在D13仍可选心动结局', () => {
+    let state = {
+      stats: {
+        ...initialStats(),
+        day: 12,
+        actionPoints: ACTIONS_PER_DAY,
+        affection: 90,
+        laokuaiAlert: 40,
+        routes: { ...initialStats().routes, riverside: 3 }
+      },
+      mode: 'event',
+      eventId: 'ev_feast',
+      ending: null
+    }
+
+    state = stepEvent(state, 'feast_love')
+    expect(state.eventId).toBe('ev_feast_love')
+    expect(state.mode).toBe('event')
+
+    state = stepEvent(state, 'f_love_1')
+    expect(state.eventId).toBe('ev_feast_end')
+    expect(state.mode).toBe('event')
+
+    state = stepEvent(state, 'feast_e_1')
+    expect(state.stats.day).toBe(13)
+    expect(state.eventId).toBe('ev_final')
+    expect(state.mode).toBe('event')
+    expect(state.ending).toBeNull()
+
+    // 断言警觉度未被增加，仍然不超过 40
+    expect(state.stats.laokuaiAlert).toBeLessThanOrEqual(40)
+
+    // 断言到达 D13 ev_final 后，final_love 依然满足 checkCondition 且在可用选项中
+    const finalEvent = gameEvents[state.eventId]
+    const finalLoveChoice = finalEvent.choices.find((c) => c.id === 'final_love')
+    expect(finalLoveChoice).toBeDefined()
+    expect(checkCondition(finalLoveChoice.condition, state.stats)).toBe(true)
+
+    const available = finalEvent.choices.filter((c) => checkCondition(c.condition, state.stats))
+    expect(available.some((c) => c.id === 'final_love')).toBe(true)
+
+    // 确认可顺利完成心动结局
+    state = stepEvent(state, 'final_love')
+    expect(state.ending).toBe('ending_love')
+  })
+
   it('D12分流后正确导向D13或翻车结局，且全流程不出现day>13', () => {
     const resNoodle = simulate({
       hub: () => 'sleep',
@@ -461,19 +609,5 @@ describe('雨姐游戏流程仿真', () => {
     })
     expect(resNormal.ending).toBe('ending_bye')
     expect(resNormal.stats.day).toBe(13)
-
-    let seed = 99
-    const rand = () => {
-      seed = (seed * 1103515245 + 12345) % 2147483648
-      return seed / 2147483648
-    }
-    const routeIds = ['kitchen', 'pigpen', 'market', 'riverside', 'laokuai', 'mountain', 'sleep']
-    for (let run = 0; run < 20; run++) {
-      const { stats } = simulate({
-        hub: () => routeIds[Math.floor(rand() * routeIds.length)],
-        pick: ({ available }) => available[Math.floor(rand() * available.length)]
-      })
-      expect(stats.day).toBeLessThanOrEqual(13)
-    }
   })
 })

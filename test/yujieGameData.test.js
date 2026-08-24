@@ -5,8 +5,12 @@
  * 2. 六条支线的 1-3 幕事件都存在，repeatable 支线有 repeat 事件
  * 3. 选项引用的物品、场景、角色都存在
  * 4. 条件字段引用合法
- * 5. v2.2 CG / 幕次 / 目标指引 / 日程 / 立绘舞台校验
- * 运行：node test/yujieGameData.test.js 或被 vitest 引用
+ * 5. v2.2+ CG / 幕次 / 目标指引 / 日程 / 立绘舞台校验
+ * 6. D12杀猪宴五条专属分支与通用兜底汇入 ev_feast_end
+ * 7. 代表状态下 checkCondition 正确解锁，空白状态有通用兜底
+ * 8. night_rest / ev_feast 系列 / ev_final / ev_expose 特殊日程标记
+ * 9. 猪圈第三幕无红烧肉/杰克二世硬编码
+ * 10. D6粉条桥段明确出现100元定金、贴牌/纯红薯要求
  */
 import { describe, expect, it } from 'vitest'
 import gameData from '../src/data/yujieGameData'
@@ -17,10 +21,11 @@ import {
   getWishProgress,
   getRecommendedRoutes,
   shouldRenderStage,
-  pickStageSprite
+  pickStageSprite,
+  checkCondition
 } from '../src/data/yujieGameEngine'
 
-const { scenes, items, routes, endings, characters, acts, wishGuides, scheduledEvents } = gameData
+const { scenes, items, routes, endings, characters, acts, wishGuides } = gameData
 const SPECIAL_NEXT = ['HUB', 'NIGHT']
 
 describe('雨姐游戏数据校验', () => {
@@ -108,7 +113,7 @@ describe('雨姐游戏数据校验', () => {
     expect(bad).toEqual([])
   })
 
-  it('序章入口存在，终章事件存在', () => {
+  it('序章入口存在，终章事件存在，入夜过渡事件存在', () => {
     expect(gameEvents.pro_arrive).toBeTruthy()
     expect(gameEvents.ev_final).toBeTruthy()
     expect(gameEvents.night_rest).toBeTruthy()
@@ -305,8 +310,147 @@ describe('雨姐游戏数据校验', () => {
     expect(casualProg.requirements.every((i) => i.met)).toBe(true)
   })
 
-  it('D12 ev_feast与ev_expose带有specialSchedule: true', () => {
-    expect(gameEvents.ev_feast.specialSchedule).toBe(true)
-    expect(gameEvents.ev_expose.specialSchedule).toBe(true)
+  it('D12杀猪宴事件体系：五条专属分支与通用兜底存在且都汇入ev_feast_end', () => {
+    const feast = gameEvents.ev_feast
+    expect(feast).toBeDefined()
+    expect(feast.choices).toHaveLength(6)
+
+    const choiceMap = Object.fromEntries(feast.choices.map((c) => [c.id, c]))
+    expect(choiceMap.feast_chef).toBeDefined()
+    expect(choiceMap.feast_streamer).toBeDefined()
+    expect(choiceMap.feast_love).toBeDefined()
+    expect(choiceMap.feast_family).toBeDefined()
+    expect(choiceMap.feast_goose).toBeDefined()
+    expect(choiceMap.feast_generic).toBeDefined()
+
+    // 目标事件存在且为对应专属事件
+    expect(choiceMap.feast_chef.next).toBe('ev_feast_chef')
+    expect(choiceMap.feast_streamer.next).toBe('ev_feast_streamer')
+    expect(choiceMap.feast_love.next).toBe('ev_feast_love')
+    expect(choiceMap.feast_family.next).toBe('ev_feast_family')
+    expect(choiceMap.feast_goose.next).toBe('ev_feast_goose')
+    expect(choiceMap.feast_generic.next).toBe('ev_feast_generic')
+
+    // 所有分支事件选项均汇入 ev_feast_end
+    const subEventIds = [
+      'ev_feast_chef',
+      'ev_feast_streamer',
+      'ev_feast_love',
+      'ev_feast_family',
+      'ev_feast_goose',
+      'ev_feast_generic'
+    ]
+    for (const subId of subEventIds) {
+      const subEvent = gameEvents[subId]
+      expect(subEvent, `子事件 ${subId} 存在`).toBeDefined()
+      expect(subEvent.choices.length).toBeGreaterThanOrEqual(1)
+      for (const c of subEvent.choices) {
+        expect(c.next).toBe('ev_feast_end')
+      }
+    }
+
+    // ev_feast_end 选项进入 NIGHT
+    const feastEnd = gameEvents.ev_feast_end
+    expect(feastEnd).toBeDefined()
+    expect(feastEnd.choices[0].next).toBe('NIGHT')
+  })
+
+  it('D12条件检查：代表状态下精确解锁对应分支，空白状态有通用兜底', () => {
+    const feastChoices = gameEvents.ev_feast.choices
+
+    // 空白状态
+    const blankStats = {
+      affection: 0,
+      laokuaiAlert: 0,
+      gooseCount: 0,
+      routes: {},
+      flags: {},
+      items: {},
+      money: 0
+    }
+    const blankAvailable = feastChoices.filter((c) => checkCondition(c.condition, blankStats))
+    expect(blankAvailable.map((c) => c.id)).toEqual(['feast_generic'])
+
+    // 大厨状态 (厨房+猪圈满3)
+    const chefStats = { ...blankStats, routes: { kitchen: 3, pigpen: 3 } }
+    expect(checkCondition(feastChoices.find((c) => c.id === 'feast_chef').condition, chefStats)).toBe(true)
+
+    // 直播状态 (大集满3 + livePath + refusedNoodles)
+    const streamerStats = {
+      ...blankStats,
+      routes: { market: 3 },
+      flags: { livePath: true, refusedNoodles: true }
+    }
+    expect(checkCondition(feastChoices.find((c) => c.id === 'feast_streamer').condition, streamerStats)).toBe(true)
+
+    // 心动状态 (河边满3 + 好感>=75 + 警觉<=40)
+    const loveStats = {
+      ...blankStats,
+      routes: { riverside: 3 },
+      affection: 75,
+      laokuaiAlert: 40
+    }
+    expect(checkCondition(feastChoices.find((c) => c.id === 'feast_love').condition, loveStats)).toBe(true)
+
+    // 一家人状态 (老蒯满3 + 警觉<=20)
+    const familyStats = {
+      ...blankStats,
+      routes: { laokuai: 3 },
+      laokuaiAlert: 20
+    }
+    expect(checkCondition(feastChoices.find((c) => c.id === 'feast_family').condition, familyStats)).toBe(true)
+
+    // 大鹅状态 (鹅数量>=3)
+    const gooseStats = { ...blankStats, gooseCount: 3 }
+    expect(checkCondition(feastChoices.find((c) => c.id === 'feast_goose').condition, gooseStats)).toBe(true)
+  })
+
+  it('特殊日程语义：night_rest / ev_feast系列 / ev_final / ev_expose 均带有 specialSchedule: true', () => {
+    const specialEvents = [
+      'night_rest',
+      'ev_expose',
+      'ev_feast',
+      'ev_feast_chef',
+      'ev_feast_streamer',
+      'ev_feast_love',
+      'ev_feast_family',
+      'ev_feast_goose',
+      'ev_feast_generic',
+      'ev_feast_end',
+      'ev_final'
+    ]
+    for (const id of specialEvents) {
+      expect(gameEvents[id]?.specialSchedule, `事件 ${id} 应具有 specialSchedule: true`).toBe(true)
+    }
+  })
+
+  it('猪圈第三幕（route_pigpen_3）不硬编码"红烧肉"或"杰克二世"', () => {
+    const p3 = gameEvents.route_pigpen_3
+    expect(p3).toBeDefined()
+    const allText = [
+      p3.narration || '',
+      ...(p3.dialogue || []).map((d) => d.text),
+      ...(p3.choices || []).map((c) => c.text)
+    ].join(' ')
+
+    expect(allText).not.toContain('红烧肉')
+    expect(allText).not.toContain('杰克二世')
+    expect(allText).toContain('半扇猪')
+  })
+
+  it('D6粉条桥段（ev_noodle_man）文本中明确出现 100元定金 以及 贴牌/纯红薯 要求', () => {
+    const noodleEvent = gameEvents.ev_noodle_man
+    expect(noodleEvent).toBeDefined()
+
+    const fullNoodleText = [
+      noodleEvent.narration || '',
+      ...(noodleEvent.dialogue || []).map((d) => d.text),
+      ...(noodleEvent.choices || []).map((c) => c.text)
+    ].join(' ')
+
+    expect(fullNoodleText).toContain('定金')
+    expect(fullNoodleText).toMatch(/一百元|100/)
+    expect(fullNoodleText).toContain('贴牌')
+    expect(fullNoodleText).toContain('纯红薯')
   })
 })

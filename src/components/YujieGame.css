@@ -930,6 +930,52 @@
   font-weight: 700;
 }
 
+/* 紧凑选项布局 (>=4 选项时自动启用) */
+.choices-container-dense {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 8px 10px;
+}
+
+.choices-container-dense .choices-title {
+  grid-column: 1 / -1;
+  margin-bottom: 2px;
+}
+
+.choices-container-dense .choice-button {
+  min-height: 44px;
+  padding: 8px 12px;
+  gap: 8px;
+  font-size: 14px;
+  min-width: 0;
+}
+
+.choices-container-dense .choice-button:hover {
+  transform: translateY(-2px);
+}
+
+.choices-container-dense .choice-number {
+  width: 22px;
+  height: 22px;
+  font-size: 11px;
+}
+
+.choices-container-dense .choice-text-group {
+  min-width: 0;
+  gap: 1px;
+}
+
+.choices-container-dense .choice-text {
+  font-size: 13.5px;
+  line-height: 1.35;
+  word-break: break-word;
+}
+
+.choices-container-dense .choice-locked-hint {
+  font-size: 11px;
+  line-height: 1.25;
+}
+
 /* ==================== 阶段二：自由行动地图 (HUB PANEL) ==================== */
 .hub-panel {
   position: absolute;
@@ -1742,6 +1788,43 @@
     min-height: 48px;
   }
 
+  /* 移动端紧凑选项布局 (>=4 选项时保持双列并控制高度) */
+  .choices-container-dense {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 6px;
+    margin-top: 8px;
+  }
+
+  .choices-container-dense .choices-title {
+    grid-column: 1 / -1;
+    font-size: 13px;
+    margin-bottom: 0;
+  }
+
+  .choices-container-dense .choice-button {
+    padding: 6px 8px;
+    gap: 6px;
+    min-height: 42px;
+    border-radius: 10px;
+  }
+
+  .choices-container-dense .choice-number {
+    width: 20px;
+    height: 20px;
+    font-size: 11px;
+  }
+
+  .choices-container-dense .choice-text {
+    font-size: 12px;
+    line-height: 1.3;
+  }
+
+  .choices-container-dense .choice-locked-hint {
+    font-size: 11px;
+    line-height: 1.2;
+  }
+
   /* 手机端自由行动地图面板：铺满滚动 */
   .hub-panel {
     top: calc(72px + var(--sat));
@@ -1808,6 +1891,18 @@
 
   .status-item.ap-item .status-text {
     max-width: 78px;
+  }
+}
+
+/* 极窄屏适配 (<=340px) 紧凑选项降级为单列 */
+@media (max-width: 340px) {
+  .choices-container-dense {
+    grid-template-columns: 1fr;
+    gap: 6px;
+  }
+
+  .choices-container-dense .choices-title {
+    grid-column: auto;
   }
 }
 

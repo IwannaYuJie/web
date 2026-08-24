@@ -331,7 +331,7 @@ export const gameEvents = {
     id: 'route_pigpen_3',
     title: '扛半扇猪',
     scene: 'pigpen',
-    narration: '"红烧肉"出栏的日子。雨姐正要把半扇猪扛去仓房，全村的目光（含一只鹅）都聚了过来。',
+    narration: '圈里最大的那头猪出栏的日子。雨姐正要把半扇猪扛去仓房，全村的目光（含一只鹅）都聚了过来。',
     dialogue: [
       { character: 'yujie', text: '这半扇少说得有一百五十斤，都看好了啊——', expression: 'serious', pose: 'carrying' },
       { character: 'jack', text: '（深呼吸）雨姐！今天让我来！', expression: 'serious', pose: 'working' }
@@ -870,30 +870,31 @@ export const gameEvents = {
     id: 'ev_noodle_man',
     title: '神秘商人',
     scene: 'market',
-    narration: '收摊时分，一个戴金链子的大哥把你拉到角落，神秘兮兮地掏出一包粉条。',
+    narration:
+      '收摊时分，一个戴金链子的商人把你拉到角落，塞过来一包粉条，开门见山提出合作：只要你在直播间打出"纯红薯粉条、假一赔万"的贴牌标签，当场就能拿走一百元定金，后续带货提成另算。',
     dialogue: [
-      { character: 'jack', text: '这是……粉条？', expression: 'serious' },
+      { character: 'jack', text: '这是……让我们贴牌卖纯红薯粉条？', expression: 'serious' },
       {
         character: 'laokuai',
-        text: '（不知从哪冒出来，低声）那是镇上有名的"木薯哥"，专找人贴牌带货，佣金给得老高了……',
+        text: '（不知从哪冒出来，低声）那是镇上有名的"木薯哥"，专找人贴牌带货，定金给得痛快，但货源虚得很……',
         expression: 'proud'
       },
       {
         character: 'jack',
-        text: '"纯红薯粉条，假一赔万"，一场直播给我一百块定金……家人们，这单接不接？',
+        text: '一百元定金就摆在眼前，还要求在直播间打保票……这单接不接？',
         expression: 'embarrassed'
       }
     ],
     choices: [
       {
         id: 'noodle_1',
-        text: '接！不就是直播吗，富贵险中求（危险！）',
+        text: '接！一百元定金先落袋，直播带货富贵险中求（危险！）',
         effects: { money: 100, setFlag: 'noodleDeal', ap: -1 },
         next: 'HUB'
       },
       {
         id: 'noodle_2',
-        text: '拒绝：来路不明的货，不能坑"家人们"',
+        text: '拒绝：贴牌货来路不明，不能拿纯红薯幌子坑"家人们"',
         effects: { setFlag: 'refusedNoodles', affection: 5, ap: -1 },
         next: 'HUB'
       }
@@ -949,39 +950,194 @@ export const gameEvents = {
     choices: [{ id: 'expose_1', text: '完了……', next: 'ending_noodle' }]
   },
 
-  // 没接粉条单 → 杀猪菜大宴
+  // 没接粉条单 → 杀猪菜大宴（路线回收枢纽）
   ev_feast: {
     id: 'ev_feast',
     title: '杀猪菜大宴',
     scene: 'kitchen',
     specialSchedule: true,
     cg: 'yujie/cg_feast_v2.png',
-    narration: '第十二天，一年一度杀猪菜大宴！全村老小都来了，院子里支起八张桌。这是你表现的最后舞台。',
+    narration: '第十二天，一年一度杀猪菜大宴！全村老小都来了，院子里支起八张桌。这是你大展身手的时刻。',
     dialogue: [
       { character: 'yujie', text: '杰克！今儿你是主角之一，想干哪个环节，自己挑！', expression: 'laugh' },
       { character: 'dabaobei', text: '杰、杰克哥，加油！俺给你打下手！', expression: 'happy' }
     ],
     choices: [
       {
-        id: 'feast_1',
-        text: '掌勺全场！（需：走完厨房线）',
-        condition: { routeCompleted: 'kitchen' },
-        lockedHint: '需要完成大厨房全部剧情',
-        effects: { affection: 15, money: 50 },
-        next: 'ev_feast_end'
+        id: 'feast_chef',
+        text: '🧑‍🍳【掌勺大厨】系上围裙掌勺全场，带佩斯和大宝贝忙活',
+        condition: { routesCompleted: ['kitchen', 'pigpen'] },
+        next: 'ev_feast_chef'
       },
       {
-        id: 'feast_2',
-        text: '当着全村的面，把半扇猪扛进场！（需：走完猪圈线）',
-        condition: { routeCompleted: 'pigpen' },
-        lockedHint: '需要完成猪圈全部剧情',
-        effects: { affection: 12, laokuaiAlert: 5 },
-        next: 'ev_feast_end'
+        id: 'feast_streamer',
+        text: '📱【盛宴直播】架起手机直播杀猪菜，帮农家乐打响招牌',
+        condition: { routeCompleted: 'market', flagsAll: ['livePath', 'refusedNoodles'] },
+        next: 'ev_feast_streamer'
       },
       {
-        id: 'feast_3',
-        text: '老老实实打下手、端盘子',
-        effects: { affection: 5 },
+        id: 'feast_love',
+        text: '💕【温情相伴】给雨姐擦汗递水，默默陪在她身边',
+        condition: { routeCompleted: 'riverside', minAffection: 75, maxAlert: 40 },
+        next: 'ev_feast_love'
+      },
+      {
+        id: 'feast_family',
+        text: '👨‍👩‍👦【主桌畅饮】陪老蒯坐主桌炕头，举AD钙奶畅叙兄弟情',
+        condition: { routeCompleted: 'laokuai', maxAlert: 20 },
+        next: 'ev_feast_family'
+      },
+      {
+        id: 'feast_goose',
+        text: '🪿【鹅王巡场】率领村霸大鹅巡视全院，维持大宴秩序',
+        condition: { minGooseCount: 3 },
+        next: 'ev_feast_goose'
+      },
+      {
+        id: 'feast_generic',
+        text: '🍲【忙前忙后】老老实实打下手、帮着端盘摆桌',
+        next: 'ev_feast_generic'
+      }
+    ]
+  },
+
+  // 厨艺线回收：掌勺大厨
+  ev_feast_chef: {
+    id: 'ev_feast_chef',
+    title: '掌勺大宴',
+    scene: 'kitchen',
+    specialSchedule: true,
+    narration: '大黑锅热气升腾，佩斯把风箱拉得飞起，大宝贝端着切好的五花肉一路小跑。今天的大宴掌勺，全交到了你手上。',
+    dialogue: [
+      { character: 'peisi', text: '大厨，火候正合适，下肉不下？', expression: 'happy', pose: 'bellows' },
+      { character: 'jack', text: '下！葱姜爆香，酸菜下锅！今天让全村尝尝咱们的手艺！', expression: 'working', pose: 'working' },
+      { character: 'yujie', text: '（尝了一口汤，眼睛放光）可以啊杰克！这味道，比镇上大饭店都地道！', expression: 'laugh' }
+    ],
+    choices: [
+      {
+        id: 'f_chef_1',
+        text: '擦把汗，给大伙分盛热气腾腾的杀猪菜',
+        effects: { affection: 6, money: 30 },
+        next: 'ev_feast_end'
+      }
+    ]
+  },
+
+  // 直播线回收：盛宴开播
+  ev_feast_streamer: {
+    id: 'ev_feast_streamer',
+    title: '盛宴开播',
+    scene: 'yard',
+    specialSchedule: true,
+    narration: '院子中央支起三脚架，翠花姐和你配合默契，手机屏幕上的点赞与弹幕像雪花一样刷屏。',
+    dialogue: [
+      {
+        character: 'cuihua',
+        text: '家人们看过来！正宗东北农家杀猪菜，热气腾腾刚出锅！点赞破十万杰克给大家秀一段！',
+        expression: 'happy',
+        pose: 'livestream'
+      },
+      { character: 'jack', text: '感谢家人们支持！地道东北味，真材实料不玩虚的！', expression: 'happy' },
+      { character: 'yujie', text: '（对着镜头挥手）家人们好！吃好喝好啊！', expression: 'happy' }
+    ],
+    choices: [
+      {
+        id: 'f_streamer_1',
+        text: '向直播间观众推介雨姐家的正宗农产品',
+        effects: { affection: 5, money: 20 },
+        next: 'ev_feast_end'
+      }
+    ]
+  },
+
+  // 心动线回收：温情相伴
+  ev_feast_love: {
+    id: 'ev_feast_love',
+    title: '温情默契',
+    scene: 'yard',
+    specialSchedule: true,
+    narration: '院子里人声鼎沸，你端了碗热汤穿过人群，轻轻递到忙得满头是汗的雨姐手里。',
+    dialogue: [
+      { character: 'jack', text: '雨姐，歇口气，喝口热汤暖暖身子。', expression: 'gentle' },
+      { character: 'yujie', text: '（愣了一下，接过汤碗，脸颊微红）哎……杰克，这几天辛苦你了。', expression: 'shy' },
+      { character: 'jack', text: '不辛苦，只要能陪着你，干啥都踏实。', expression: 'gentle' }
+    ],
+    choices: [
+      {
+        id: 'f_love_1',
+        text: '相视一笑，并肩站在院角看着热闹的人群',
+        effects: { affection: 8 },
+        next: 'ev_feast_end'
+      }
+    ]
+  },
+
+  // 结拜线回收：主桌上座
+  ev_feast_family: {
+    id: 'ev_feast_family',
+    title: '主桌上座',
+    scene: 'hall',
+    specialSchedule: true,
+    narration: '老蒯把你一把拉到主桌炕头坐下，炕桌正中间整整齐齐摆着一圈开好盖的AD钙奶。',
+    dialogue: [
+      {
+        character: 'laokuai',
+        text: '来，老弟，坐大哥旁边！今儿个谁来敬酒都不好使，咱哥俩必须喝AD钙奶！',
+        expression: 'proud',
+        pose: 'drinking'
+      },
+      { character: 'jack', text: '大哥发话了，必须干杯！感谢大哥这些天的照顾！', expression: 'happy' },
+      { character: 'yujie', text: '（掀帘进来笑骂）老蒯，少拉着杰克嘚瑟，赶紧招呼村长吃肉！', expression: 'laugh' }
+    ],
+    choices: [
+      {
+        id: 'f_family_1',
+        text: '与老蒯碰杯，畅谈未来的农家大计',
+        effects: { laokuaiAlert: -5, affection: 4 },
+        next: 'ev_feast_end'
+      }
+    ]
+  },
+
+  // 大鹅线回收：鹅王巡视
+  ev_feast_goose: {
+    id: 'ev_feast_goose',
+    title: '鹅王巡视',
+    scene: 'yard',
+    specialSchedule: true,
+    narration: '院子外头，几只大白鹅昂首挺胸排成一列。带头的大鹅见你过来，居然破天荒地朝你低了低头。',
+    dialogue: [
+      { character: 'goose', text: '嘎！嘎——！（翻译：巡视时间到，全员就位，闲杂人等退让！）', pose: 'charge' },
+      { character: 'jack', text: '鹅兄，今天大喜日子，咱维持好秩序，后厨白菜少不了你们的。', expression: 'serious', pose: 'working' },
+      { character: 'yujie', text: '（在后头看得目瞪口呆）神了……全村的大鹅咋全听你指挥了？！', expression: 'surprised' }
+    ],
+    choices: [
+      {
+        id: 'f_goose_1',
+        text: '带领鹅卫队绕院巡逻一周，威震全场',
+        effects: { affection: 5, goose: 1 },
+        next: 'ev_feast_end'
+      }
+    ]
+  },
+
+  // 通用回收：热火朝天
+  ev_feast_generic: {
+    id: 'ev_feast_generic',
+    title: '热火朝天',
+    scene: 'yard',
+    specialSchedule: true,
+    narration: '全村男女老少围坐在一起，热气腾腾的杀猪菜端上一桌又一桌，欢声笑语回荡在整个小院。',
+    dialogue: [
+      { character: 'jack', text: '来喽！热气腾腾的酸菜白肉出锅喽——！', expression: 'happy', pose: 'working' },
+      { character: 'yujie', text: '好样的杰克！大伙放开了造，管够！', expression: 'laugh' },
+      { character: 'laokuai', text: '（在炕上咬着吸管）嗯，今儿个这气氛，得劲。', expression: 'proud', pose: 'drinking' }
+    ],
+    choices: [
+      {
+        id: 'f_gen_1',
+        text: '端着大碗和村民们坐在一起大快朵颐',
+        effects: { affection: 4 },
         next: 'ev_feast_end'
       }
     ]
@@ -991,6 +1147,7 @@ export const gameEvents = {
     id: 'ev_feast_end',
     title: '散席',
     scene: 'yard',
+    specialSchedule: true,
     narration:
       '酒足饭饱，宾客散尽。雨姐看着杯盘狼藉却喜气洋洋的院子，长舒了一口气："有你们在，真好。" 明天，就是你在农家乐的最后一天了。',
     choices: [{ id: 'feast_e_1', text: '回屋睡觉，养足精神', next: 'NIGHT' }]
@@ -1001,6 +1158,7 @@ export const gameEvents = {
     id: 'ev_final',
     title: '抉择日',
     scene: 'snow',
+    specialSchedule: true,
     narration:
       '第十三天。夜里落了今冬第一场雪。行李已经收拾好，全家人站在院子里送你——你最后的选择是什么？【结局由你十三天来的所作所为决定，亮起的选项就是你能走的路】',
     dialogue: [
@@ -1064,6 +1222,7 @@ export const gameEvents = {
     id: 'night_rest',
     title: '夜幕降临',
     scene: 'hall',
+    specialSchedule: true,
     narration: '夜深了，大鹅回巢，猪睡了，老蒯的呼噜声隔着墙都能听见。你躺在热炕上，回味着今天，期待着明天。',
     choices: [{ id: 'night_1', text: '睡觉（进入下一天）', next: 'NIGHT' }]
   }

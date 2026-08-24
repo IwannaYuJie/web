@@ -141,7 +141,7 @@ const removeSaveData = () => {
 }
 
 /**
- * 雨姐的心动时刻 - 重制版 v2.2
+ * 雨姐的心动时刻 - 重制版 v2.3
  * 序章线性 → 自由行动hub → 日期强制事件 → 终章多结局
  */
 const YujieGameInner = ({ onExit }) => {
@@ -532,7 +532,7 @@ const YujieGameInner = ({ onExit }) => {
               <br />
               六条支线、九个结局——追雨姐、拜把子、当大厨、带大鹅，
               <br />
-              甚至……卖一单不该卖的粉条。结局图鉴等你集齐！（v2.2）
+              甚至……卖一单不该卖的粉条。结局图鉴等你集齐！（v2.3）
             </p>
 
             <div className="start-actions">
@@ -715,6 +715,26 @@ const YujieGameInner = ({ onExit }) => {
   const recommendedRoutes = wishId ? getRecommendedRoutes(wishId) : []
   const wishProgress = wishId ? getWishProgress(wishId, stats) : null
 
+  // 特殊日程与 HUD AP 文本计算
+  const isSpecialSchedule = mode !== 'hub' && Boolean(currentEvent.specialSchedule)
+  let scheduleIcon = '⚡'
+  let scheduleText = `行动点 ×${stats.actionPoints}`
+  if (isSpecialSchedule) {
+    if (currentEventId === 'night_rest') {
+      scheduleIcon = '🌙'
+      scheduleText = '歇息中'
+    } else if (currentEventId === 'ev_final') {
+      scheduleIcon = '⭐'
+      scheduleText = '终章抉择'
+    } else {
+      scheduleIcon = '⭐'
+      scheduleText = `特别日程：${currentEvent.title || '特别日程'}`
+    }
+  }
+
+  // HUB 模式使用专属 yard 场景，避免残留前一事件场景与标题
+  const activeSceneEvent = mode === 'hub' ? { scene: 'yard' } : currentEvent
+
   return (
     <div className="yujie-game-container" ref={containerRef}>
       {/* 顶部综合导航与状态栏 */}
@@ -749,12 +769,8 @@ const YujieGameInner = ({ onExit }) => {
           </div>
 
           <div className="status-item ap-item">
-            <span className="status-icon">{currentEvent.specialSchedule ? '⭐' : '⚡'}</span>
-            <span className="status-text">
-              {currentEvent.specialSchedule
-                ? `特别日程：${currentEvent.title || '盛宴大考'}`
-                : `行动点 ×${stats.actionPoints}`}
-            </span>
+            <span className="status-icon">{scheduleIcon}</span>
+            <span className="status-text">{scheduleText}</span>
           </div>
 
           <div className="status-item gauge-item" title={`雨姐好感度: ${stats.affection}/100`}>
@@ -803,7 +819,7 @@ const YujieGameInner = ({ onExit }) => {
       <main className="game-main-area">
         {/* 背景层：渐变兜底；CG 竖版 contain+模糊垫底；场景横版 cover 铺满 */}
         {(() => {
-          const layers = sceneLayers(currentEvent)
+          const layers = sceneLayers(activeSceneEvent)
           return (
             <>
               <div
@@ -834,7 +850,7 @@ const YujieGameInner = ({ onExit }) => {
         <div className="scene-overlay"></div>
 
         <div className="scene-name">
-          📍 {currentEvent.title || scenes[currentEvent.scene]?.name || '未知地点'}
+          📍 {mode === 'hub' ? '雨姐小院 · 自由行动' : (currentEvent.title || scenes[currentEvent.scene]?.name || '未知地点')}
         </div>
 
         {/* 效果飘字（无障碍 live region） */}
@@ -1014,7 +1030,27 @@ const YujieGameInner = ({ onExit }) => {
                 const stage = stats.routes[route.id] || 0
                 const completed = stage >= gameData.MAX_ROUTE_STAGE
                 const usable = !completed || route.repeatable
-                const isRecommended = recommendedRoutes.includes(route.id)
+                // 已完成的非重复路线不再显示推荐边框/徽章
+                const isRecommended = !completed && recommendedRoutes.includes(route.id)
+
+                let descText = route.description
+                if (completed) {
+                  if (route.repeatable) {
+                    descText = route.repeatText
+                  } else if (wishId === 'streamer' && route.id === 'market') {
+                    if (stats.day < 6) {
+                      descText = '技巧已掌握，等第6天赶集守住口碑'
+                    } else if (stats.day < 9) {
+                      descText = '口碑抉择做完后，第9天可提出直播'
+                    } else if (stats.day < 12) {
+                      descText = '直播方向已定，第12天盛宴见真章'
+                    } else {
+                      descText = '路线已完成，盛宴与结局会回响'
+                    }
+                  } else {
+                    descText = '路线已完成，关键日程会记住这段经历'
+                  }
+                }
 
                 return (
                   <button
@@ -1027,9 +1063,7 @@ const YujieGameInner = ({ onExit }) => {
                     {isRecommended && <span className="recommended-badge">🌟 推荐</span>}
                     <span className="hub-card-icon">{route.icon}</span>
                     <span className="hub-card-name">{route.name}</span>
-                    <span className="hub-card-desc">
-                      {completed && route.repeatable ? route.repeatText : route.description}
-                    </span>
+                    <span className="hub-card-desc">{descText}</span>
                     <span className="hub-card-progress">
                       {completed
                         ? route.repeatable
@@ -1142,7 +1176,7 @@ const YujieGameInner = ({ onExit }) => {
   )
 }
 
-// 选项列表（含锁定项支持与无可用选项兜底）
+// 选项列表（含锁定项支持与无可用选项兜底，支持 >=4 项紧凑排版类名）
 const ChoiceList = ({ choices, stats, onPick }) => {
   // 过滤出可渲染项：条件满足的选项，或条件不满足但带 lockedHint 的锁定项；无 hint 且不满足的隐藏不泄密
   const renderableChoices = choices
@@ -1172,8 +1206,10 @@ const ChoiceList = ({ choices, stats, onPick }) => {
     )
   }
 
+  const isDense = renderableChoices.length >= 4
+
   return (
-    <div className="choices-container">
+    <div className={`choices-container ${isDense ? 'choices-container-dense' : ''}`.trim()}>
       <div className="choices-title">做出你的选择：</div>
       {renderableChoices.map((choice, idx) => {
         if (!choice.unlocked) {
