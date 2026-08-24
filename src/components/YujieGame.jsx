@@ -19,8 +19,110 @@ import {
 const { characters, scenes, items, routes, endings, TOTAL_DAYS, ACTIONS_PER_DAY, ALERT_GAME_OVER, GALLERY_KEY } =
   gameData
 
+const SAVE_KEY = 'yujie_save_v2'
+
 /**
- * 雨姐的心动时刻 - 重制版
+ * 校验存档数据完整性与形状，防止坏档导致页面崩溃
+ */
+const validateSaveData = (data) => {
+  if (!data || typeof data !== 'object' || Array.isArray(data)) {
+    return null
+  }
+  const { stats, mode, currentEventId, dialogueIndex } = data
+
+  if (mode !== 'event' && mode !== 'hub') {
+    return null
+  }
+
+  const targetEvent = gameEvents[currentEventId]
+  if (!targetEvent) {
+    return null
+  }
+
+  if (!Number.isInteger(dialogueIndex) || dialogueIndex < 0) {
+    return null
+  }
+
+  // 校验 dialogueIndex 是否在当前事件可用行范围内（无台词仅选项的事件允许 0）
+  const totalLines =
+    (targetEvent.narration ? 1 : 0) + (Array.isArray(targetEvent.dialogue) ? targetEvent.dialogue.length : 0)
+  if (totalLines === 0) {
+    if (dialogueIndex !== 0) {
+      return null
+    }
+  } else if (dialogueIndex >= totalLines) {
+    return null
+  }
+
+  if (!stats || typeof stats !== 'object' || Array.isArray(stats)) {
+    return null
+  }
+
+  const numFields = ['day', 'actionPoints', 'affection', 'laokuaiAlert', 'money', 'gooseCount']
+  for (const field of numFields) {
+    if (typeof stats[field] !== 'number' || !Number.isFinite(stats[field])) {
+      return null
+    }
+  }
+
+  // day: 1..TOTAL_DAYS 整数；actionPoints: 0..ACTIONS_PER_DAY 整数
+  if (!Number.isInteger(stats.day) || stats.day < 1 || stats.day > TOTAL_DAYS) {
+    return null
+  }
+  if (!Number.isInteger(stats.actionPoints) || stats.actionPoints < 0 || stats.actionPoints > ACTIONS_PER_DAY) {
+    return null
+  }
+
+  // flags/routes 必须是非 null 且非数组的对象，items 必须为数组
+  if (
+    !Array.isArray(stats.items) ||
+    !stats.flags ||
+    typeof stats.flags !== 'object' ||
+    Array.isArray(stats.flags) ||
+    !stats.routes ||
+    typeof stats.routes !== 'object' ||
+    Array.isArray(stats.routes)
+  ) {
+    return null
+  }
+
+  return {
+    stats: {
+      ...initialStats(),
+      ...stats,
+      flags: { ...stats.flags },
+      routes: { ...stats.routes },
+      items: [...stats.items]
+    },
+    mode,
+    currentEventId,
+    dialogueIndex
+  }
+}
+
+const loadSavedGame = () => {
+  try {
+    const raw = localStorage.getItem(SAVE_KEY)
+    if (!raw) {
+      return null
+    }
+    const parsed = JSON.parse(raw)
+    return validateSaveData(parsed)
+  } catch {
+    return null
+  }
+}
+
+const removeSaveData = () => {
+  try {
+    localStorage.removeItem(SAVE_KEY)
+  } catch {
+    // 静默降级
+  }
+}
+
+/**
+ * 雨姐的心动时刻 - 重制版 v2.1
  * 序章线性 → 自由行动hub → 日期强制事件 → 终章多结局
  */
 const YujieGameInner = ({ onExit }) => {
@@ -32,8 +134,35 @@ const YujieGameInner = ({ onExit }) => {
   const [endingId, setEndingId] = useState(null)
   const [toast, setToast] = useState(null) // { parts: [], key }
   const [gallery, setGallery] = useState(loadGallery)
+  const [hasSave, setHasSave] = useState(() => Boolean(loadSavedGame()))
   const dialogueRef = useRef(null)
   const toastTimer = useRef(null)
+
+  // 每次进入 start 阶段时重新刷新存档存在状态
+  useEffect(() => {
+    if (gamePhase === 'start') {
+      setHasSave(Boolean(loadSavedGame()))
+    }
+  }, [gamePhase])
+
+  // playing 阶段自动存档
+  useEffect(() => {
+    if (gamePhase !== 'playing') {
+      return
+    }
+    try {
+      const payload = {
+        stats,
+        mode,
+        currentEventId,
+        dialogueIndex,
+        timestamp: Date.now()
+      }
+      localStorage.setItem(SAVE_KEY, JSON.stringify(payload))
+    } catch {
+      // localStorage 不可用时静默降级
+    }
+  }, [gamePhase, stats, mode, currentEventId, dialogueIndex])
 
   // 飘字自动消失
   useEffect(() => {
@@ -78,14 +207,51 @@ const YujieGameInner = ({ onExit }) => {
     setGallery(unlocked)
     setEndingId(id)
     setGamePhase('ending')
+    removeSaveData()
+    setHasSave(false)
   }
 
   const startNewGame = () => {
+    removeSaveData()
     setStats(initialStats())
     setEndingId(null)
     setToast(null)
+    setCurrentEventId('pro_arrive')
+    setDialogueIndex(0)
+    setMode('event')
     setGamePhase('playing')
-    gotoEvent('pro_arrive')
+  }
+
+  const resumeSavedGame = () => {
+    const saved = loadSavedGame()
+    if (!saved) {
+      startNewGame()
+      return
+    }
+    setStats(saved.stats)
+    setMode(saved.mode)
+    setCurrentEventId(saved.currentEventId)
+    setDialogueIndex(saved.dialogueIndex)
+    setEndingId(null)
+    setToast(null)
+    setGamePhase('playing')
+  }
+
+  const handleSaveAndReturnToTitle = () => {
+    try {
+      const payload = {
+        stats,
+        mode,
+        currentEventId,
+        dialogueIndex,
+        timestamp: Date.now()
+      }
+      localStorage.setItem(SAVE_KEY, JSON.stringify(payload))
+      setHasSave(true)
+    } catch {
+      // 静默降级
+    }
+    setGamePhase('start')
   }
 
   // 选项选择
@@ -143,12 +309,6 @@ const YujieGameInner = ({ onExit }) => {
 
   // ==================== 渲染辅助 ====================
 
-  const exitButton = onExit ? (
-    <button type="button" className="game-exit-button" onClick={onExit}>
-      ← 返回游戏列表
-    </button>
-  ) : null
-
   const renderAvatar = (charId, className, seed, expression) => {
     const char = characters[charId]
     if (!char) {
@@ -186,9 +346,15 @@ const YujieGameInner = ({ onExit }) => {
     const total = Object.keys(endings).length
     return (
       <div className="yujie-game-container">
-        {exitButton}
         <div className="game-start-screen">
           <div className="start-screen-content">
+            <div className="start-nav-bar">
+              {onExit && (
+                <button type="button" className="start-exit-button" onClick={onExit}>
+                  ← 返回游戏列表
+                </button>
+              )}
+            </div>
             <h1 className="game-title">
               <span className="title-icon">💕</span>
               雨姐的心动时刻
@@ -210,10 +376,26 @@ const YujieGameInner = ({ onExit }) => {
               <br />
               甚至……卖一单不该卖的粉条。结局图鉴等你集齐！
             </p>
-            <button type="button" className="start-button" onClick={startNewGame}>
-              <span className="button-icon">▶️</span>
-              <span>开始这段缘分</span>
-            </button>
+
+            <div className="start-actions">
+              {hasSave ? (
+                <>
+                  <button type="button" className="start-button resume-button" onClick={resumeSavedGame}>
+                    <span className="button-icon">⏯️</span>
+                    <span>继续上次旅程</span>
+                  </button>
+                  <button type="button" className="start-button secondary-start-button" onClick={startNewGame}>
+                    <span className="button-icon">🔄</span>
+                    <span>重新开始</span>
+                  </button>
+                </>
+              ) : (
+                <button type="button" className="start-button" onClick={startNewGame}>
+                  <span className="button-icon">▶️</span>
+                  <span>开始这段缘分</span>
+                </button>
+              )}
+            </div>
 
             <div className="gallery-block">
               <div className="gallery-title">🏆 结局图鉴 {gallery.length}/{total}</div>
@@ -245,9 +427,15 @@ const YujieGameInner = ({ onExit }) => {
     const total = Object.keys(endings).length
     return (
       <div className="yujie-game-container">
-        {exitButton}
         <div className="game-ending-screen">
           <div className="ending-content">
+            <div className="ending-nav-bar">
+              {onExit && (
+                <button type="button" className="start-exit-button" onClick={onExit}>
+                  ← 返回游戏列表
+                </button>
+              )}
+            </div>
             <h2 className="ending-title">
               {ending.icon} {ending.name}
             </h2>
@@ -283,9 +471,11 @@ const YujieGameInner = ({ onExit }) => {
               🏆 结局图鉴：{gallery.length}/{total}
             </div>
 
-            <button type="button" className="restart-button" onClick={() => setGamePhase('start')}>
-              🔄 再来一局
-            </button>
+            <div className="ending-actions">
+              <button type="button" className="restart-button" onClick={() => setGamePhase('start')}>
+                🔄 回到标题
+              </button>
+            </div>
           </div>
         </div>
       </div>
@@ -308,8 +498,8 @@ const YujieGameInner = ({ onExit }) => {
   ]
   const currentLine = lines[dialogueIndex] || null
   const isLastLine = dialogueIndex >= lines.length - 1
-  const speaker =
-    currentLine && currentLine.character !== '__narrator' ? characters[currentLine.character] : null
+  const isNarrator = !currentLine || currentLine.character === '__narrator'
+  const speaker = isNarrator ? null : characters[currentLine.character]
   const visibleChoices = (currentEvent.choices || []).filter((c) => checkCondition(c.condition, stats))
 
   // 舞台角色：按对话首次出场顺序，最多3人；1人→居中，2人→左右，3人→左中右
@@ -344,44 +534,66 @@ const YujieGameInner = ({ onExit }) => {
 
   return (
     <div className="yujie-game-container">
-      {exitButton}
-      {/* 顶部状态栏 */}
-      <div className="game-status-bar">
-        <div className="status-item">
-          <span className="status-icon">📅</span>
-          <span>
-            第 {stats.day}/{TOTAL_DAYS} 天
-          </span>
+      {/* 顶部综合导航与状态栏 */}
+      <header className="game-status-bar">
+        <div className="status-nav-group">
+          {onExit && (
+            <button
+              type="button"
+              className="in-game-nav-btn exit-btn"
+              onClick={onExit}
+              title="返回博客游戏列表"
+            >
+              ← 游戏列表
+            </button>
+          )}
+          <button
+            type="button"
+            className="in-game-nav-btn save-title-btn"
+            onClick={handleSaveAndReturnToTitle}
+            title="保存进度并返回游戏主标题"
+          >
+            💾 保存并回标题
+          </button>
         </div>
-        <div className="status-item">
-          <span className="status-icon">⚡</span>
-          <span>行动点 ×{stats.actionPoints}</span>
-        </div>
-        <div className="status-item">
-          <span className="status-icon">❤️</span>
-          <div className="status-bar">
-            <div
-              className="status-fill affection"
-              style={{ width: `${Math.min(stats.affection, 100)}%` }}
-            ></div>
+
+        <div className="status-metrics-group">
+          <div className="status-item day-item">
+            <span className="status-icon">📅</span>
+            <span className="status-text">
+              第 {stats.day}/{TOTAL_DAYS} 天
+            </span>
           </div>
-          <span className="status-num">{stats.affection}</span>
-        </div>
-        <div className="status-item">
-          <span className="status-icon">👀</span>
-          <div className="status-bar">
-            <div
-              className="status-fill alert"
-              style={{ width: `${Math.min(stats.laokuaiAlert, 100)}%` }}
-            ></div>
+          <div className="status-item ap-item">
+            <span className="status-icon">⚡</span>
+            <span className="status-text">行动点 ×{stats.actionPoints}</span>
           </div>
-          <span className="status-num">{stats.laokuaiAlert}</span>
+          <div className="status-item gauge-item" title={`雨姐好感度: ${stats.affection}/100`}>
+            <span className="status-icon">❤️</span>
+            <div className="status-bar">
+              <div
+                className="status-fill affection"
+                style={{ width: `${Math.min(stats.affection, 100)}%` }}
+              ></div>
+            </div>
+            <span className="status-num">{stats.affection}</span>
+          </div>
+          <div className="status-item gauge-item" title={`老蒯警觉度: ${stats.laokuaiAlert}/100 (达到${ALERT_GAME_OVER}危险)`}>
+            <span className="status-icon">👀</span>
+            <div className="status-bar">
+              <div
+                className="status-fill alert"
+                style={{ width: `${Math.min(stats.laokuaiAlert, 100)}%` }}
+              ></div>
+            </div>
+            <span className="status-num">{stats.laokuaiAlert}</span>
+          </div>
+          <div className="status-item money-item">
+            <span className="status-icon">💰</span>
+            <span className="status-text">{stats.money}元</span>
+          </div>
         </div>
-        <div className="status-item">
-          <span className="status-icon">💰</span>
-          <span>{stats.money}元</span>
-        </div>
-      </div>
+      </header>
 
       {/* 物品栏 */}
       {stats.items.length > 0 && (
@@ -399,7 +611,7 @@ const YujieGameInner = ({ onExit }) => {
       )}
 
       {/* 游戏主舞台 */}
-      <div className="game-main-area">
+      <main className="game-main-area">
         {/* 背景层：渐变兜底；CG 竖版 contain+模糊垫底；场景横版 cover 铺满 */}
         {(() => {
           const layers = sceneLayers(currentEvent)
@@ -436,18 +648,20 @@ const YujieGameInner = ({ onExit }) => {
           📍 {currentEvent.title || scenes[currentEvent.scene]?.name || '未知地点'}
         </div>
 
-        {/* 效果飘字 */}
-        {toast && (
-          <div className="effect-toast" key={toast.key}>
-            {toast.parts.map((part) => (
-              <span key={part} className="effect-toast-item">
-                {part}
-              </span>
-            ))}
-          </div>
-        )}
+        {/* 效果飘字（无障碍 live region） */}
+        <div aria-live="polite" aria-atomic="true" className="toast-live-region">
+          {toast && (
+            <div className="effect-toast" key={toast.key}>
+              {toast.parts.map((part) => (
+                <span key={part} className="effect-toast-item">
+                  {part}
+                </span>
+              ))}
+            </div>
+          )}
+        </div>
 
-        {/* Galgame 舞台：角色立绘左右站位，说话者高亮，其他人变暗 */}
+        {/* Galgame 舞台：角色立绘左右站位，旁白时保持柔和可见，说话者高亮 */}
         {mode === 'event' && (
           <div className="stage-layer">
             {stageIds.map((cid, idx) => {
@@ -457,9 +671,14 @@ const YujieGameInner = ({ onExit }) => {
               }
               const img = pickPortrait(char, `${currentEventId}:${cid}:${idx}`, expressionOf(cid), 'sprite')
               const pos = positionOf(idx, stageIds.length)
-              const active = currentLine && currentLine.character === cid
+              const roleState = isNarrator
+                ? 'narrator-view'
+                : currentLine && currentLine.character === cid
+                ? 'active'
+                : 'dim'
+
               return (
-                <div key={cid} className={`stage-sprite ${pos} ${active ? 'active' : 'dim'}`}>
+                <div key={cid} className={`stage-sprite ${pos} ${roleState}`}>
                   {img ? (
                     <img
                       src={`/images/${img}`}
@@ -533,10 +752,14 @@ const YujieGameInner = ({ onExit }) => {
                 <>
                   <div className="narration-text">{currentLine.text}</div>
                   {!isLastLine ? (
-                    <div className="dialogue-continue" onClick={() => handleContinue(lines.length)}>
+                    <button
+                      type="button"
+                      className="dialogue-continue-button"
+                      onClick={() => handleContinue(lines.length)}
+                    >
                       <span>点击继续</span>
                       <span className="continue-icon">▼</span>
-                    </div>
+                    </button>
                   ) : (
                     <ChoiceList choices={visibleChoices} onPick={handleChoice} />
                   )}
@@ -556,10 +779,14 @@ const YujieGameInner = ({ onExit }) => {
                   </div>
                   <div className="dialogue-text">{currentLine.text}</div>
                   {!isLastLine ? (
-                    <div className="dialogue-continue" onClick={() => handleContinue(lines.length)}>
+                    <button
+                      type="button"
+                      className="dialogue-continue-button"
+                      onClick={() => handleContinue(lines.length)}
+                    >
                       <span>点击继续</span>
                       <span className="continue-icon">▼</span>
-                    </div>
+                    </button>
                   ) : (
                     <ChoiceList choices={visibleChoices} onPick={handleChoice} />
                   )}
@@ -570,7 +797,7 @@ const YujieGameInner = ({ onExit }) => {
             )}
           </div>
         )}
-      </div>
+      </main>
     </div>
   )
 }
@@ -609,8 +836,7 @@ const ChoiceList = ({ choices, onPick }) => {
   )
 }
 
-// 通过 Portal 挂到 body：GameHub 容器上的 animate-fade-in 动画以 forwards 保留 transform，
-// 会把 position:fixed 的包含块变成面板自身，导致游戏全屏布局被压缩变形
+// 通过 Portal 挂到 body
 const YujieGame = (props) => createPortal(<YujieGameInner {...props} />, document.body)
 
 export default YujieGame
