@@ -359,7 +359,7 @@ export const endings = {
     id: 'ending_bye',
     name: '路人结局',
     icon: '😶',
-    hint: '好感不足50时默默离开',
+    hint: '无条件：终章始终可选',
     image: 'yujie/ending_bye.jpg',
     text: '十三天的农家乐体验卡到期了。你学会了几句东北话，胖了三斤，手机里多了几百张照片和一段大鹅追你的视频。雨姐在村口冲你挥手："有空再来啊！" 你想，大概会吧。'
   },
