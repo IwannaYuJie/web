@@ -8,16 +8,32 @@ import {
   NIGHT,
   applyEffects,
   checkCondition,
+  getActForDay,
+  getNextScheduledEvent,
+  getRecommendedRoutes,
+  getWishProgress,
   initialStats,
   loadGallery,
   morningEventForDay,
   pickPortrait,
+  pickStageSprite,
   routeEventId,
+  shouldRenderStage,
   summarizeChoice
 } from '../data/yujieGameEngine'
 
-const { characters, scenes, items, routes, endings, TOTAL_DAYS, ACTIONS_PER_DAY, ALERT_GAME_OVER, GALLERY_KEY } =
-  gameData
+const {
+  characters,
+  scenes,
+  items,
+  routes,
+  endings,
+  wishGuides,
+  TOTAL_DAYS,
+  ACTIONS_PER_DAY,
+  ALERT_GAME_OVER,
+  GALLERY_KEY
+} = gameData
 
 const SAVE_KEY = 'yujie_save_v2'
 
@@ -28,7 +44,7 @@ const validateSaveData = (data) => {
   if (!data || typeof data !== 'object' || Array.isArray(data)) {
     return null
   }
-  const { stats, mode, currentEventId, dialogueIndex } = data
+  const { stats, mode, currentEventId, dialogueIndex, wishId } = data
 
   if (mode !== 'event' && mode !== 'hub') {
     return null
@@ -86,6 +102,8 @@ const validateSaveData = (data) => {
     return null
   }
 
+  const validWishId = typeof wishId === 'string' && wishGuides[wishId] ? wishId : null
+
   return {
     stats: {
       ...initialStats(),
@@ -96,7 +114,8 @@ const validateSaveData = (data) => {
     },
     mode,
     currentEventId,
-    dialogueIndex
+    dialogueIndex,
+    wishId: validWishId
   }
 }
 
@@ -122,7 +141,7 @@ const removeSaveData = () => {
 }
 
 /**
- * 雨姐的心动时刻 - 重制版 v2.1
+ * 雨姐的心动时刻 - 重制版 v2.2
  * 序章线性 → 自由行动hub → 日期强制事件 → 终章多结局
  */
 const YujieGameInner = ({ onExit }) => {
@@ -131,12 +150,73 @@ const YujieGameInner = ({ onExit }) => {
   const [mode, setMode] = useState('event') // event | hub
   const [currentEventId, setCurrentEventId] = useState('pro_arrive')
   const [dialogueIndex, setDialogueIndex] = useState(0)
+  const [wishId, setWishId] = useState(null)
+  const [showSleepConfirm, setShowSleepConfirm] = useState(false)
   const [endingId, setEndingId] = useState(null)
   const [toast, setToast] = useState(null) // { parts: [], key }
   const [gallery, setGallery] = useState(loadGallery)
   const [hasSave, setHasSave] = useState(() => Boolean(loadSavedGame()))
+  const [isMobile, setIsMobile] = useState(() => {
+    if (typeof window === 'undefined' || !window.matchMedia) {
+      return false
+    }
+    return window.matchMedia('(max-width: 768px)').matches
+  })
+
+  const containerRef = useRef(null)
   const dialogueRef = useRef(null)
   const toastTimer = useRef(null)
+
+  // 监听移动端媒体查询
+  useEffect(() => {
+    if (typeof window === 'undefined' || !window.matchMedia) {
+      return
+    }
+    const mq = window.matchMedia('(max-width: 768px)')
+    const handler = (e) => setIsMobile(e.matches)
+    if (mq.addEventListener) {
+      mq.addEventListener('change', handler)
+      return () => mq.removeEventListener('change', handler)
+    }
+    mq.addListener(handler)
+    return () => mq.removeListener(handler)
+  }, [])
+
+  // 测量对话框实际高度并注入 CSS 变量，确保立绘避开对话区
+  useEffect(() => {
+    const rootEl = containerRef.current
+    const targetEl = dialogueRef.current
+    if (!rootEl) {
+      return
+    }
+
+    if (!targetEl || mode !== 'event') {
+      rootEl.style.setProperty('--dialogue-height', '220px')
+      return
+    }
+
+    const updateHeight = (h) => {
+      const clamped = Math.max(120, Math.min(Math.round(h), 500))
+      rootEl.style.setProperty('--dialogue-height', `${clamped}px`)
+    }
+
+    updateHeight(targetEl.offsetHeight || 220)
+
+    if (typeof ResizeObserver !== 'undefined') {
+      const observer = new ResizeObserver((entries) => {
+        for (const entry of entries) {
+          const borderBox = entry.borderBoxSize
+          if (borderBox && borderBox[0]) {
+            updateHeight(borderBox[0].blockSize)
+          } else if (entry.contentRect) {
+            updateHeight(entry.contentRect.height)
+          }
+        }
+      })
+      observer.observe(targetEl)
+      return () => observer.disconnect()
+    }
+  }, [mode, dialogueIndex, currentEventId])
 
   // 每次进入 start 阶段时重新刷新存档存在状态
   useEffect(() => {
@@ -156,13 +236,14 @@ const YujieGameInner = ({ onExit }) => {
         mode,
         currentEventId,
         dialogueIndex,
+        wishId,
         timestamp: Date.now()
       }
       localStorage.setItem(SAVE_KEY, JSON.stringify(payload))
     } catch {
       // localStorage 不可用时静默降级
     }
-  }, [gamePhase, stats, mode, currentEventId, dialogueIndex])
+  }, [gamePhase, stats, mode, currentEventId, dialogueIndex, wishId])
 
   // 飘字自动消失
   useEffect(() => {
@@ -173,9 +254,52 @@ const YujieGameInner = ({ onExit }) => {
     return () => clearTimeout(toastTimer.current)
   }, [toast])
 
+  // 轻量资源预加载（当前/下一可能事件 CG/背景与关键角色）
+  useEffect(() => {
+    if (gamePhase !== 'playing') {
+      return
+    }
+    const preloadUrls = new Set()
+
+    const addImg = (file) => {
+      if (file && typeof file === 'string') {
+        preloadUrls.add(`/images/${file}`)
+      }
+    }
+
+    const currentEv = gameEvents[currentEventId]
+    if (currentEv) {
+      if (currentEv.cg) {
+        addImg(currentEv.cg)
+      }
+      if (currentEv.scene && scenes[currentEv.scene]?.image) {
+        addImg(scenes[currentEv.scene].image)
+      }
+      if (Array.isArray(currentEv.choices)) {
+        currentEv.choices.forEach((c) => {
+          const nextEv = gameEvents[c.next]
+          if (nextEv) {
+            if (nextEv.cg) {
+              addImg(nextEv.cg)
+            }
+            if (nextEv.scene && scenes[nextEv.scene]?.image) {
+              addImg(scenes[nextEv.scene].image)
+            }
+          }
+        })
+      }
+    }
+
+    preloadUrls.forEach((url) => {
+      const img = new Image()
+      img.src = url
+    })
+  }, [gamePhase, currentEventId])
+
   // ==================== 流程控制 ====================
 
   const gotoEvent = (id) => {
+    setShowSleepConfirm(false)
     setCurrentEventId(id)
     setDialogueIndex(0)
     setMode('event')
@@ -183,6 +307,7 @@ const YujieGameInner = ({ onExit }) => {
 
   // 进入下一天：重置行动点，命中日期事件则强制插入，否则回地图
   const advanceDay = (currentStats) => {
+    setShowSleepConfirm(false)
     const nextDay = currentStats.day + 1
     const newStats = { ...currentStats, day: nextDay, actionPoints: ACTIONS_PER_DAY }
     setStats(newStats)
@@ -195,6 +320,7 @@ const YujieGameInner = ({ onExit }) => {
   }
 
   const triggerEnding = (id) => {
+    setShowSleepConfirm(false)
     const unlocked = loadGallery()
     if (!unlocked.includes(id)) {
       unlocked.push(id)
@@ -216,6 +342,8 @@ const YujieGameInner = ({ onExit }) => {
     setStats(initialStats())
     setEndingId(null)
     setToast(null)
+    setWishId(null)
+    setShowSleepConfirm(false)
     setCurrentEventId('pro_arrive')
     setDialogueIndex(0)
     setMode('event')
@@ -232,6 +360,8 @@ const YujieGameInner = ({ onExit }) => {
     setMode(saved.mode)
     setCurrentEventId(saved.currentEventId)
     setDialogueIndex(saved.dialogueIndex)
+    setWishId(saved.wishId)
+    setShowSleepConfirm(false)
     setEndingId(null)
     setToast(null)
     setGamePhase('playing')
@@ -244,6 +374,7 @@ const YujieGameInner = ({ onExit }) => {
         mode,
         currentEventId,
         dialogueIndex,
+        wishId,
         timestamp: Date.now()
       }
       localStorage.setItem(SAVE_KEY, JSON.stringify(payload))
@@ -307,6 +438,33 @@ const YujieGameInner = ({ onExit }) => {
     gotoEvent(eventId)
   }
 
+  const handleWishChange = (newWishId) => {
+    if (wishGuides[newWishId]) {
+      setWishId(newWishId)
+      try {
+        const payload = {
+          stats,
+          mode,
+          currentEventId,
+          dialogueIndex,
+          wishId: newWishId,
+          timestamp: Date.now()
+        }
+        localStorage.setItem(SAVE_KEY, JSON.stringify(payload))
+      } catch {
+        // 静默降级
+      }
+    }
+  }
+
+  const handleSleepClick = () => {
+    if (stats.actionPoints > 0) {
+      setShowSleepConfirm(true)
+    } else {
+      gotoEvent('night_rest')
+    }
+  }
+
   // ==================== 渲染辅助 ====================
 
   const renderAvatar = (charId, className, seed, expression) => {
@@ -345,7 +503,7 @@ const YujieGameInner = ({ onExit }) => {
   if (gamePhase === 'start') {
     const total = Object.keys(endings).length
     return (
-      <div className="yujie-game-container">
+      <div className="yujie-game-container" ref={containerRef}>
         <div className="game-start-screen">
           <div className="start-screen-content">
             <div className="start-nav-bar">
@@ -374,7 +532,7 @@ const YujieGameInner = ({ onExit }) => {
               <br />
               六条支线、九个结局——追雨姐、拜把子、当大厨、带大鹅，
               <br />
-              甚至……卖一单不该卖的粉条。结局图鉴等你集齐！
+              甚至……卖一单不该卖的粉条。结局图鉴等你集齐！（v2.2）
             </p>
 
             <div className="start-actions">
@@ -426,7 +584,7 @@ const YujieGameInner = ({ onExit }) => {
     const ending = endings[endingId] || endings.ending_bye
     const total = Object.keys(endings).length
     return (
-      <div className="yujie-game-container">
+      <div className="yujie-game-container" ref={containerRef}>
         <div className="game-ending-screen">
           <div className="ending-content">
             <div className="ending-nav-bar">
@@ -500,28 +658,47 @@ const YujieGameInner = ({ onExit }) => {
   const isLastLine = dialogueIndex >= lines.length - 1
   const isNarrator = !currentLine || currentLine.character === '__narrator'
   const speaker = isNarrator ? null : characters[currentLine.character]
-  const visibleChoices = (currentEvent.choices || []).filter((c) => checkCondition(c.condition, stats))
 
-  // 舞台角色：按对话首次出场顺序，最多3人；1人→居中，2人→左右，3人→左中右
-  const stageIds = []
-  for (const line of lines) {
-    if (line.character !== '__narrator' && !stageIds.includes(line.character)) {
-      stageIds.push(line.character)
-    }
-    if (stageIds.length >= 3) {
-      break
-    }
-  }
-  // 角色当前表情：到当前台词为止，他最近一句标注的 expression
-  const expressionOf = (charId) => {
+  // 分离 pose 与 expression，向前扫描最近的状态
+  const stateOf = (charId) => {
+    let expression = null
+    let pose = null
     for (let i = dialogueIndex; i >= 0; i--) {
       const line = lines[i]
-      if (line && line.character === charId && line.expression) {
-        return line.expression
+      if (line && line.character === charId) {
+        if (!expression && line.expression) {
+          expression = line.expression
+        }
+        if (!pose && line.pose) {
+          pose = line.pose
+        }
+        if (expression && pose) {
+          break
+        }
       }
     }
-    return null
+    return { expression, pose }
   }
+
+  // 舞台角色挑选与移动端简化
+  const allSpeakerIds = []
+  for (const line of lines) {
+    if (line.character !== '__narrator' && !allSpeakerIds.includes(line.character)) {
+      allSpeakerIds.push(line.character)
+    }
+  }
+
+  let stageIds = []
+  if (isMobile) {
+    if (!isNarrator && currentLine?.character) {
+      stageIds = [currentLine.character]
+    } else {
+      stageIds = allSpeakerIds.slice(0, 2)
+    }
+  } else {
+    stageIds = allSpeakerIds.slice(0, 3)
+  }
+
   const positionOf = (idx, total) => {
     if (total === 1) {
       return 'center'
@@ -532,8 +709,14 @@ const YujieGameInner = ({ onExit }) => {
     return ['left', 'center', 'right'][idx]
   }
 
+  // 旅程指引与建议计算
+  const currentAct = getActForDay(stats.day)
+  const nextScheduled = getNextScheduledEvent(stats.day)
+  const recommendedRoutes = wishId ? getRecommendedRoutes(wishId) : []
+  const wishProgress = wishId ? getWishProgress(wishId, stats) : null
+
   return (
-    <div className="yujie-game-container">
+    <div className="yujie-game-container" ref={containerRef}>
       {/* 顶部综合导航与状态栏 */}
       <header className="game-status-bar">
         <div className="status-nav-group">
@@ -564,10 +747,16 @@ const YujieGameInner = ({ onExit }) => {
               第 {stats.day}/{TOTAL_DAYS} 天
             </span>
           </div>
+
           <div className="status-item ap-item">
-            <span className="status-icon">⚡</span>
-            <span className="status-text">行动点 ×{stats.actionPoints}</span>
+            <span className="status-icon">{currentEvent.specialSchedule ? '⭐' : '⚡'}</span>
+            <span className="status-text">
+              {currentEvent.specialSchedule
+                ? `特别日程：${currentEvent.title || '盛宴大考'}`
+                : `行动点 ×${stats.actionPoints}`}
+            </span>
           </div>
+
           <div className="status-item gauge-item" title={`雨姐好感度: ${stats.affection}/100`}>
             <span className="status-icon">❤️</span>
             <div className="status-bar">
@@ -661,15 +850,16 @@ const YujieGameInner = ({ onExit }) => {
           )}
         </div>
 
-        {/* Galgame 舞台：角色立绘左右站位，旁白时保持柔和可见，说话者高亮 */}
-        {mode === 'event' && (
+        {/* Galgame 舞台：CG 事件隐藏；普通事件立绘按 pose+expression 选图 */}
+        {mode === 'event' && shouldRenderStage(currentEvent) && (
           <div className="stage-layer">
             {stageIds.map((cid, idx) => {
               const char = characters[cid]
               if (!char) {
                 return null
               }
-              const img = pickPortrait(char, `${currentEventId}:${cid}:${idx}`, expressionOf(cid), 'sprite')
+              const { expression, pose } = stateOf(cid)
+              const img = pickStageSprite(char, `${currentEventId}:${cid}:${idx}`, pose, expression)
               const pos = positionOf(idx, stageIds.length)
               const roleState = isNarrator
                 ? 'narrator-view'
@@ -699,22 +889,142 @@ const YujieGameInner = ({ onExit }) => {
         {/* 自由行动地图 */}
         {mode === 'hub' && (
           <div className="hub-panel">
+            {/* 首次进入或未选愿望时的内联选择器 */}
+            {!wishId ? (
+              <section className="hub-wish-prompt" aria-labelledby="wish-prompt-title">
+                <h3 id="wish-prompt-title" className="wish-prompt-title">
+                  ✨ 确立你的东北之旅心愿（可随时调整）
+                </h3>
+                <div className="wish-prompt-grid">
+                  {Object.values(wishGuides).map((guide) => (
+                    <button
+                      type="button"
+                      key={guide.id}
+                      className="wish-prompt-btn"
+                      onClick={() => handleWishChange(guide.id)}
+                    >
+                      <strong className="wish-prompt-name">{guide.title}</strong>
+                      <span className="wish-prompt-desc">{guide.description}</span>
+                    </button>
+                  ))}
+                </div>
+              </section>
+            ) : null}
+
+            {/* 旅程指引条 */}
+            <div className="hub-journey-guide">
+              <div className="guide-top-line">
+                <span className="guide-act-pill">
+                  {currentAct ? `第${currentAct.id.replace('act_', '')}幕 · ${currentAct.title}` : '自由行动'}
+                </span>
+                <span className="guide-wish-pill">
+                  心愿：{wishGuides[wishId]?.title || '随性农家时光'}
+                </span>
+                {nextScheduled && (
+                  <span className="guide-next-event">
+                    ⏳ 下个固定事件：第 {nextScheduled.day} 天「{nextScheduled.name}」
+                    （还剩 {Math.max(0, nextScheduled.day - stats.day)} 天）
+                  </span>
+                )}
+              </div>
+              <div className="guide-suggestion">
+                💡 今日建议：
+                {wishGuides[wishId]
+                  ? wishGuides[wishId].description
+                  : '自由分配体力，多与院里众人互动，结下深厚羁绊。'}
+              </div>
+            </div>
+
+            {/* 内联可折叠旅途手记 */}
+            <details className="hub-notes-details">
+              <summary className="hub-notes-summary">
+                <span>📖 旅途手记与心愿进度</span>
+                <span className="summary-indicator">▼</span>
+              </summary>
+              <div className="hub-notes-content">
+                <div className="notes-wish-switcher">
+                  <label htmlFor="wish-select" className="wish-switcher-label">
+                    切换目标心愿：
+                  </label>
+                  <select
+                    id="wish-select"
+                    className="wish-select"
+                    value={wishId || 'casual'}
+                    onChange={(e) => handleWishChange(e.target.value)}
+                  >
+                    {Object.values(wishGuides).map((g) => (
+                      <option key={g.id} value={g.id}>
+                        {g.title}
+                      </option>
+                    ))}
+                  </select>
+                </div>
+
+                {wishProgress && wishProgress.requirements.length > 0 ? (
+                  <div className="notes-requirements">
+                    <div className="requirements-title">当前心愿达成条件：</div>
+                    <ul className="requirements-list">
+                      {wishProgress.requirements.map((req) => (
+                        <li key={req.key} className={`req-item ${req.met ? 'met' : 'pending'}`}>
+                          <span className="req-icon">{req.met ? '✅' : '⏳'}</span>
+                          <span className="req-label">{req.label}：</span>
+                          <span className="req-value">
+                            {typeof req.target === 'boolean'
+                              ? req.met
+                                ? '已完成'
+                                : '未达成'
+                              : `${req.current} / 目标 ${req.target}`}
+                          </span>
+                        </li>
+                      ))}
+                    </ul>
+                  </div>
+                ) : (
+                  <div className="notes-empty-wish">随性农家时光无需硬性条件，尽情享受体验！</div>
+                )}
+
+                <div className="notes-routes-progress">
+                  <div className="routes-progress-title">六大支线进度概览：</div>
+                  <div className="routes-progress-grid">
+                    {Object.values(routes).map((r) => {
+                      const stage = stats.routes[r.id] || 0
+                      const percent = Math.min(100, Math.round((stage / gameData.MAX_ROUTE_STAGE) * 100))
+                      return (
+                        <div key={r.id} className="route-progress-cell">
+                          <span className="cell-icon">{r.icon}</span>
+                          <span className="cell-name">{r.name}</span>
+                          <progress className="cell-bar" max="3" value={stage} aria-label={`${r.name} 进度`}>
+                            {percent}%
+                          </progress>
+                          <span className="cell-count">{stage}/3</span>
+                        </div>
+                      )
+                    })}
+                  </div>
+                </div>
+              </div>
+            </details>
+
             <div className="hub-title">
               🗺️ 第 {stats.day} 天 · 今天去哪儿？（⚡×{stats.actionPoints}）
             </div>
+
             <div className="hub-grid">
               {Object.values(routes).map((route) => {
                 const stage = stats.routes[route.id] || 0
                 const completed = stage >= gameData.MAX_ROUTE_STAGE
                 const usable = !completed || route.repeatable
+                const isRecommended = recommendedRoutes.includes(route.id)
+
                 return (
                   <button
                     type="button"
                     key={route.id}
-                    className={`hub-card ${usable ? '' : 'disabled'}`}
+                    className={`hub-card ${usable ? '' : 'disabled'} ${isRecommended ? 'recommended-route' : ''}`}
                     disabled={!usable}
                     onClick={() => handleRouteSelect(route.id)}
                   >
+                    {isRecommended && <span className="recommended-badge">🌟 推荐</span>}
                     <span className="hub-card-icon">{route.icon}</span>
                     <span className="hub-card-name">{route.name}</span>
                     <span className="hub-card-desc">
@@ -730,16 +1040,46 @@ const YujieGameInner = ({ onExit }) => {
                   </button>
                 )
               })}
-              <button
-                type="button"
-                className="hub-card sleep-card"
-                onClick={() => gotoEvent('night_rest')}
-              >
-                <span className="hub-card-icon">😴</span>
-                <span className="hub-card-name">回屋睡觉</span>
-                <span className="hub-card-desc">跳过今天，直接进入明天</span>
-                <span className="hub-card-progress">💤 休息</span>
-              </button>
+
+              {/* 回屋睡觉卡片：AP 剩余时同卡内确认，不直接跳过，不用弹窗 */}
+              <div className="hub-card sleep-card">
+                {!showSleepConfirm ? (
+                  <button
+                    type="button"
+                    className="sleep-card-btn"
+                    onClick={handleSleepClick}
+                  >
+                    <span className="hub-card-icon">😴</span>
+                    <span className="hub-card-name">回屋睡觉</span>
+                    <span className="hub-card-desc">
+                      {stats.actionPoints > 0 ? '提早休息并跨入下一天' : '跳过今天，直接进入明天'}
+                    </span>
+                    <span className="hub-card-progress">💤 休息</span>
+                  </button>
+                ) : (
+                  <div className="sleep-confirm-area">
+                    <p className="sleep-confirm-text">
+                      还剩 <strong>{stats.actionPoints}</strong> 点体力，确定要提前休息吗？
+                    </p>
+                    <div className="sleep-confirm-actions">
+                      <button
+                        type="button"
+                        className="sleep-action-btn confirm"
+                        onClick={() => gotoEvent('night_rest')}
+                      >
+                        确认休息
+                      </button>
+                      <button
+                        type="button"
+                        className="sleep-action-btn cancel"
+                        onClick={() => setShowSleepConfirm(false)}
+                      >
+                        继续行动
+                      </button>
+                    </div>
+                  </div>
+                )}
+              </div>
             </div>
           </div>
         )}
@@ -761,7 +1101,7 @@ const YujieGameInner = ({ onExit }) => {
                       <span className="continue-icon">▼</span>
                     </button>
                   ) : (
-                    <ChoiceList choices={visibleChoices} onPick={handleChoice} />
+                    <ChoiceList choices={currentEvent.choices || []} stats={stats} onPick={handleChoice} />
                   )}
                 </>
               ) : (
@@ -788,12 +1128,12 @@ const YujieGameInner = ({ onExit }) => {
                       <span className="continue-icon">▼</span>
                     </button>
                   ) : (
-                    <ChoiceList choices={visibleChoices} onPick={handleChoice} />
+                    <ChoiceList choices={currentEvent.choices || []} stats={stats} onPick={handleChoice} />
                   )}
                 </>
               )
             ) : (
-              <ChoiceList choices={visibleChoices} onPick={handleChoice} />
+              <ChoiceList choices={currentEvent.choices || []} stats={stats} onPick={handleChoice} />
             )}
           </div>
         )}
@@ -802,9 +1142,22 @@ const YujieGameInner = ({ onExit }) => {
   )
 }
 
-// 选项列表（无可用选项时兜底推进，避免死局）
-const ChoiceList = ({ choices, onPick }) => {
-  if (!choices.length) {
+// 选项列表（含锁定项支持与无可用选项兜底）
+const ChoiceList = ({ choices, stats, onPick }) => {
+  // 过滤出可渲染项：条件满足的选项，或条件不满足但带 lockedHint 的锁定项；无 hint 且不满足的隐藏不泄密
+  const renderableChoices = choices
+    .map((choice) => {
+      const unlocked = checkCondition(choice.condition, stats)
+      const hasHint = Boolean(choice.lockedHint)
+      return {
+        ...choice,
+        unlocked,
+        visible: unlocked || hasHint
+      }
+    })
+    .filter((c) => c.visible)
+
+  if (!renderableChoices.length) {
     return (
       <div className="choices-container">
         <button
@@ -818,20 +1171,41 @@ const ChoiceList = ({ choices, onPick }) => {
       </div>
     )
   }
+
   return (
     <div className="choices-container">
       <div className="choices-title">做出你的选择：</div>
-      {choices.map((choice, idx) => (
-        <button
-          type="button"
-          key={choice.id}
-          className="choice-button"
-          onClick={() => onPick(choice)}
-        >
-          <span className="choice-number">{idx + 1}</span>
-          <span className="choice-text">{choice.text}</span>
-        </button>
-      ))}
+      {renderableChoices.map((choice, idx) => {
+        if (!choice.unlocked) {
+          return (
+            <button
+              type="button"
+              key={choice.id}
+              className="choice-button locked-choice"
+              disabled
+              aria-disabled="true"
+            >
+              <span className="choice-number">🔒</span>
+              <div className="choice-text-group">
+                <span className="choice-text locked">{choice.text}</span>
+                <span className="choice-locked-hint">（{choice.lockedHint}）</span>
+              </div>
+            </button>
+          )
+        }
+
+        return (
+          <button
+            type="button"
+            key={choice.id}
+            className="choice-button"
+            onClick={() => onPick(choice)}
+          >
+            <span className="choice-number">{idx + 1}</span>
+            <span className="choice-text">{choice.text}</span>
+          </button>
+        )
+      })}
     </div>
   )
 }

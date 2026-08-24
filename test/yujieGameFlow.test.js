@@ -3,6 +3,7 @@
  * 用与 UI 共用的纯逻辑引擎自动跑完整局游戏，验证：
  * 1. 九个结局全部可达
  * 2. 随机乱选也不会死局/死循环
+ * 3. 关键节点（D3、D6、D9、D12等）AP与天数精确流转
  */
 import { describe, expect, it } from 'vitest'
 import gameData from '../src/data/yujieGameData'
@@ -18,6 +19,82 @@ import {
 } from '../src/data/yujieGameEngine'
 
 const { endings, ALERT_GAME_OVER, ACTIONS_PER_DAY } = gameData
+
+// 纯单步状态推演辅助器（与组件/引擎规则严格保持一致）
+const stepEvent = (state, action) => {
+  let { stats, mode, eventId, ending } = state
+  if (ending) return state
+
+  if (mode === 'hub') {
+    const decision = action || 'sleep'
+    const evId = decision === 'sleep' ? null : routeEventId(decision, stats.routes[decision] || 0)
+    if (!evId || !gameEvents[evId]) {
+      return { stats, mode: 'event', eventId: 'night_rest', ending: null }
+    }
+    return {
+      stats: { ...stats, actionPoints: Math.max(0, stats.actionPoints - 1) },
+      mode: 'event',
+      eventId: evId,
+      ending: null
+    }
+  }
+
+  const event = gameEvents[eventId]
+  if (!event) {
+    throw new Error(`事件缺失: ${eventId}`)
+  }
+  const available = (event.choices || []).filter((c) => checkCondition(c.condition, stats))
+  if (!available.length) {
+    throw new Error(`死局: ${eventId} 没有可用选项`)
+  }
+
+  let choice = null
+  if (typeof action === 'string') {
+    choice = available.find((c) => c.id === action)
+    if (!choice) {
+      throw new Error(`选项未找到或不可用: ${action} 在事件 ${eventId}`)
+    }
+  } else if (action && typeof action === 'object' && action.id) {
+    choice = available.find((c) => c.id === action.id)
+    if (!choice) {
+      throw new Error(`选项未找到或不可用: ${action.id} 在事件 ${eventId}`)
+    }
+  } else if (typeof action === 'function') {
+    choice = action({ event, available, stats }) || available[0]
+  } else {
+    choice = available[0]
+  }
+
+  const nextStats = applyEffects(stats, choice)
+  const next = choice.next
+
+  if (nextStats.laokuaiAlert >= ALERT_GAME_OVER && !endings[next]) {
+    return { stats: nextStats, mode: 'ending', eventId: null, ending: 'ending_kicked' }
+  }
+
+  if (next === HUB) {
+    if (nextStats.actionPoints > 0) {
+      return { stats: nextStats, mode: 'hub', eventId: null, ending: null }
+    }
+    return { stats: nextStats, mode: 'event', eventId: 'night_rest', ending: null }
+  }
+
+  if (next === NIGHT) {
+    const nextDay = nextStats.day + 1
+    const resetStats = { ...nextStats, day: nextDay, actionPoints: ACTIONS_PER_DAY }
+    const morning = morningEventForDay(nextDay, resetStats.flags)
+    if (morning) {
+      return { stats: resetStats, mode: 'event', eventId: morning, ending: null }
+    }
+    return { stats: resetStats, mode: 'hub', eventId: null, ending: null }
+  }
+
+  if (endings[next]) {
+    return { stats: nextStats, mode: 'ending', eventId: null, ending: next }
+  }
+
+  return { stats: nextStats, mode: 'event', eventId: next, ending: null }
+}
 
 // 用与组件一致的规则自动打一局
 const simulate = (strategy = {}) => {
@@ -250,6 +327,153 @@ describe('雨姐游戏流程仿真', () => {
       })
       expect(ending, `第${run}局在${steps}步内应走到结局`).toBeTruthy()
       expect(steps).toBeLessThan(300)
+    }
+  })
+
+  it('静态断言：D6两个商人选择必须ap=-1且next=HUB', () => {
+    const noodleEvent = gameEvents.ev_noodle_man
+    expect(noodleEvent).toBeDefined()
+    const choice1 = noodleEvent.choices.find((c) => c.id === 'noodle_1')
+    const choice2 = noodleEvent.choices.find((c) => c.id === 'noodle_2')
+    expect(choice1).toBeDefined()
+    expect(choice2).toBeDefined()
+    expect(choice1.effects?.ap).toBe(-1)
+    expect(choice1.next).toBe(HUB)
+    expect(choice2.effects?.ap).toBe(-1)
+    expect(choice2.next).toBe(HUB)
+  })
+
+  it('D6完成固定事件后留在day=6、mode=hub且AP=1，再执行支线后AP=0并进入night_rest', () => {
+    let state = {
+      stats: { ...initialStats(), day: 6, actionPoints: ACTIONS_PER_DAY },
+      mode: 'event',
+      eventId: 'ev_market_day',
+      ending: null
+    }
+
+    state = stepEvent(state, 'mktd_1')
+    expect(state.eventId).toBe('ev_noodle_man')
+    expect(state.mode).toBe('event')
+
+    state = stepEvent(state, 'noodle_2')
+    expect(state.mode).toBe('hub')
+    expect(state.stats.day).toBe(6)
+    expect(state.stats.actionPoints).toBe(1)
+    expect(state.ending).toBeNull()
+
+    state = stepEvent(state, 'kitchen')
+    expect(state.mode).toBe('event')
+    expect(state.eventId).toBe('route_kitchen_1')
+    expect(state.stats.actionPoints).toBe(0)
+
+    state = stepEvent(state, 'kit_1_1')
+    expect(state.mode).toBe('event')
+    expect(state.eventId).toBe('night_rest')
+    expect(state.stats.day).toBe(6)
+    expect(state.stats.actionPoints).toBe(0)
+
+    state = stepEvent(state, 'night_1')
+    expect(state.stats.day).toBe(7)
+    expect(state.stats.actionPoints).toBe(ACTIONS_PER_DAY)
+    expect(state.mode).toBe('hub')
+  })
+
+  it('D3三条大鹅主分支分别跑到HUB后day=3且AP=2', () => {
+    const gooseFlows = [
+      { first: 'goose_a_1', intermediate: 'ev_goose_fight', second: 'goose_f_1' },
+      { first: 'goose_a_2', intermediate: 'ev_goose_run', second: 'goose_r_1' },
+      { first: 'goose_a_3', intermediate: 'ev_goose_save', second: 'goose_s_1' }
+    ]
+    for (const flow of gooseFlows) {
+      let state = {
+        stats: { ...initialStats(), day: 3, actionPoints: ACTIONS_PER_DAY },
+        mode: 'event',
+        eventId: 'ev_goose_attack',
+        ending: null
+      }
+      state = stepEvent(state, flow.first)
+      expect(state.eventId).toBe(flow.intermediate)
+      expect(state.mode).toBe('event')
+
+      state = stepEvent(state, flow.second)
+      expect(state.mode).toBe('hub')
+      expect(state.stats.day).toBe(3)
+      expect(state.stats.actionPoints).toBe(2)
+      expect(state.ending).toBeNull()
+    }
+  })
+
+  it('D9可用分支跑到HUB后day=9且AP=1', () => {
+    const unconditionalChoices = ['trouble_1', 'trouble_3']
+    for (const choiceId of unconditionalChoices) {
+      let state = {
+        stats: { ...initialStats(), day: 9, actionPoints: ACTIONS_PER_DAY },
+        mode: 'event',
+        eventId: 'ev_yujie_trouble',
+        ending: null
+      }
+      state = stepEvent(state, choiceId)
+      expect(state.mode).toBe('hub')
+      expect(state.stats.day).toBe(9)
+      expect(state.stats.actionPoints).toBe(1)
+      expect(state.ending).toBeNull()
+    }
+
+    let liveState = {
+      stats: {
+        ...initialStats(),
+        day: 9,
+        actionPoints: ACTIONS_PER_DAY,
+        flags: { liveSkill: true }
+      },
+      mode: 'event',
+      eventId: 'ev_yujie_trouble',
+      ending: null
+    }
+    liveState = stepEvent(liveState, 'trouble_2')
+    expect(liveState.mode).toBe('hub')
+    expect(liveState.stats.day).toBe(9)
+    expect(liveState.stats.actionPoints).toBe(1)
+    expect(liveState.ending).toBeNull()
+  })
+
+  it('D12分流后正确导向D13或翻车结局，且全流程不出现day>13', () => {
+    const resNoodle = simulate({
+      hub: () => 'sleep',
+      pick: ({ event, available }) => {
+        if (event.id === 'ev_noodle_man') {
+          return available.find((c) => c.id === 'noodle_1')
+        }
+        return available[0]
+      }
+    })
+    expect(resNoodle.ending).toBe('ending_noodle')
+    expect(resNoodle.stats.day).toBeLessThanOrEqual(13)
+
+    const resNormal = simulate({
+      hub: () => 'sleep',
+      pick: ({ event, available }) => {
+        if (event.id === 'ev_noodle_man') {
+          return available.find((c) => c.id === 'noodle_2')
+        }
+        return available[0]
+      }
+    })
+    expect(resNormal.ending).toBe('ending_bye')
+    expect(resNormal.stats.day).toBe(13)
+
+    let seed = 99
+    const rand = () => {
+      seed = (seed * 1103515245 + 12345) % 2147483648
+      return seed / 2147483648
+    }
+    const routeIds = ['kitchen', 'pigpen', 'market', 'riverside', 'laokuai', 'mountain', 'sleep']
+    for (let run = 0; run < 20; run++) {
+      const { stats } = simulate({
+        hub: () => routeIds[Math.floor(rand() * routeIds.length)],
+        pick: ({ available }) => available[Math.floor(rand() * available.length)]
+      })
+      expect(stats.day).toBeLessThanOrEqual(13)
     }
   })
 })

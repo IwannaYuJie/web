@@ -4,6 +4,47 @@
 
  ---
 
+## [2026-08-24] - 🎮 《雨姐的心动时刻》v2.2 流程指引与视觉演出升级
+
+### 🧭 流程与机制重构
+- **序章 + 四个正篇阶段结构**：重构流程为序章 + 四个正篇阶段（acts 共 5 段：D1 / D2-5 / D6-8 / D9-11 / D12-13），使 13 天乡村旅程节奏更加紧凑明晰。
+- **愿望系统与指引定位**：六种愿望仅作为指引推荐，不强行锁死玩家路线；第 3 天固定事件免费保留 2 AP，第 6/9 天各消耗 1 AP 并保留 1 AP 供自由探索，第 12 天接入 `specialSchedule` 机制。
+- **行动点与分支交互优化**：睡觉结算增加剩余 AP 内联确认提示；分支锁定仅在具备明确 `lockedHint` 时显示对应条件提示。
+
+### 🎨 画面与演出升级
+- **全新剧情 CG**：新增 6 张 1672x941 PNG 高清 CG，覆盖徒手扛猪、灶台做菜、杀猪大宴、大鹅突袭、深入鹅巢及热闹直播全套高潮剧情。
+- **立绘体系与视效适配**：新增 7 张透明背景动作立绘，大幅减少重复动作；CG 事件自动隐藏前景人物立绘；引入 `ResizeObserver` 动态计算 `--dialogue-height`，彻底解决全身立绘被底部对话框截腿的问题；CG 采用 `contain` 配合模糊渐变底图，防止手机端画面裁切。
+
+### 📱 界面与移动端体验
+- **旅程指引与面板丰富**：新增旅程指引、固定日程倒计时、推荐路线及旅途手记模块。
+- **数据兼容与 HUD 重构**：`wishId` 机制向下兼容旧版 `yujie_save_v2` 存档；360x800 与 390x844 常见移动端分辨率下，HUD 五项核心状态完整平铺展示，无需横向滑动。
+
+### 📊 数据与自动化测试
+- **内容数据扩充**：全量升级至 36 个事件（events）、59 条对话脚本（dialogue lines）与 83 个分支选项（choices）。
+- **测试矩阵与唯一映射**：补齐调度流程、心愿指引、姿态切换、CG 唯一映射和多分支推进测试套件。
+
+### 🤝 协作与责任边界
+- 视觉素材由 Codex 生成并进行质量检查；前端交互逻辑、视觉适配及工程文档由 gemini-3.7-flash-high 编写；最终由 Codex 原样应用并完成独立验收。
+
+### ✅ 本地验证（未正式上线）
+- ESLint 检查 0 warning；`tsc --noEmit` 类型校验通过。
+- Vitest 6 个测试文件、43 项自动化测试全量通过；`npm run build` 生产构建成功。
+- 本地 Chrome 1440x900、390x844、360x800 分辨率实机完成巡检，验证 D3 行动点结算、全身立绘比例、CG 唯一映射、睡觉内联确认及移动端 HUD 显示无异常。
+
+### 📌 影响范围
+- `src/components/YujieGame.jsx`
+- `src/components/YujieGame.css`
+- `src/data/yujieGameData.js`
+- `src/data/yujieGameEngine.js`
+- `src/data/yujieGameEvents.js`
+- `test/yujieGameData.test.js`
+- `test/yujieGameFlow.test.js`
+- `docs/雨姐游戏开发文档.md`
+- `docs/雨姐游戏使用说明.md`
+- `docs/CHANGELOG.md`
+- `public/images/游戏图片说明.md`
+- `public/images/yujie/`（13 张新增 v2 PNG 素材）
+
 ## [2026-08-24] - 🎮 《雨姐的心动时刻》v2.1 存档机制与 UI 深度优化
 
 ### ✨ 新特性与存档机制
@@ -523,7 +564,7 @@
   - 线性渐变背景（`var(--card-bg)` → `#FFF5E6`）
   - 3px 橘色实线边框
   - 悬停时触发径向渐变动态光晕（opacity 0 → 1）
-  
+
 - **悬停动画**：
   - 卡片整体向上提升 8px 并放大 1.03 倍
   - 图标旋转 10° 并放大 1.15 倍
@@ -571,10 +612,10 @@
    - 保留原快速导航样式（标记为备用）
 
 ### 🎯 设计目标达成
-✅ 突出开源项目核心入口，提升曝光度  
-✅ 桌面端左侧固定展示，移动端顶部优先  
-✅ 符合橘猫主题配色（橙色系 + 圆角设计）  
-✅ 响应式全覆盖（320px - 2560px 屏幕）  
+✅ 突出开源项目核心入口，提升曝光度
+✅ 桌面端左侧固定展示，移动端顶部优先
+✅ 符合橘猫主题配色（橙色系 + 圆角设计）
+✅ 响应式全覆盖（320px - 2560px 屏幕）
 ✅ 交互动画丰富（悬停/点击反馈充分）
 
 ---
@@ -679,10 +720,10 @@
 
 ### 🎯 优化效果
 
-✅ **视觉层次更清晰**：字号体系规范，标题与正文对比明显  
-✅ **交互反馈更丰富**：所有可点击元素均有明确的悬停/点击动画  
-✅ **移动体验提升**：抽屉式菜单、触控友好按钮、无横向滚动  
-✅ **加载体验优化**：页面元素依次淡入，减少突兀感  
+✅ **视觉层次更清晰**：字号体系规范，标题与正文对比明显
+✅ **交互反馈更丰富**：所有可点击元素均有明确的悬停/点击动画
+✅ **移动体验提升**：抽屉式菜单、触控友好按钮、无横向滚动
+✅ **加载体验优化**：页面元素依次淡入，减少突兀感
 ✅ **品牌一致性**：橘猫主题色贯穿所有组件，统一圆角胶囊设计
 
 ---
@@ -765,8 +806,8 @@ build: {
 ```javascript
 const headersToRemove = [
   'x-powered-by', 'server', 'x-vercel-id', 'x-cloudflare-request-id',
-  'x-amz-cf-id', 'x-amz-cf-pop', 'x-cache', 'via', 
-  'x-served-by', 'x-timer', 'x-fastly-request-id', 
+  'x-amz-cf-id', 'x-amz-cf-pop', 'x-cache', 'via',
+  'x-served-by', 'x-timer', 'x-fastly-request-id',
   'cf-ray', 'cf-cache-status'
 ];
 ```
@@ -781,7 +822,7 @@ const headersToRemove = [
 
 #### 3. 添加严格的 CSP（内容安全策略）
 ```javascript
-content-security-policy: 
+content-security-policy:
   "default-src 'self'; " +
   "script-src 'self' 'unsafe-inline' 'unsafe-eval'; " +
   "connect-src 'self'; " +  // 🔒 限制只能连接当前域名
@@ -795,7 +836,7 @@ content-security-policy:
 try {
   // ... 代理逻辑
 } catch (error) {
-  return new Response(JSON.stringify({ 
+  return new Response(JSON.stringify({
     error: 'Service temporarily unavailable'  // 🔒 不暴露具体错误
   }), { status: 503 });
 }
@@ -978,7 +1019,7 @@ Cloudflare 的安全规则会拦截带数字路径参数的 POST 请求（如 `P
 #### 前端修改 (`src/pages/ArticleManager.jsx`)
 ```javascript
 // 编辑文章
-const url = editingArticle 
+const url = editingArticle
   ? `/api/articles?id=${editingArticle.id}`  // 使用查询参数
   : '/api/articles'
 

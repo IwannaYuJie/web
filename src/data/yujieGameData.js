@@ -25,7 +25,8 @@ export const characters = {
       default: 'yujie/sprite_jack_default.png',
       happy: 'yujie/sprite_jack_happy.png',
       serious: 'yujie/sprite_jack_serious.png',
-      embarrassed: 'yujie/sprite_jack_embarrassed.png'
+      embarrassed: 'yujie/sprite_jack_embarrassed.png',
+      working: 'yujie/sprite_jack_working_v2.png'
     },
     emoji: '🧔🏿'
   },
@@ -48,7 +49,9 @@ export const characters = {
       gentle: 'yujie/sprite_yujie_gentle.png',
       serious: 'yujie/sprite_yujie_serious.png',
       shy: 'yujie/sprite_yujie_shy.png',
-      surprised: 'yujie/sprite_yujie_surprised.png'
+      surprised: 'yujie/sprite_yujie_surprised.png',
+      cooking: 'yujie/sprite_yujie_cooking_v2.png',
+      carrying: 'yujie/sprite_yujie_carrying_v2.png'
     },
     emoji: '💪'
   },
@@ -67,7 +70,8 @@ export const characters = {
       default: 'yujie/sprite_laokuai_default.png',
       proud: 'yujie/sprite_laokuai_proud.png',
       angry: 'yujie/sprite_laokuai_angry.png',
-      wronged: 'yujie/sprite_laokuai_wronged.png'
+      wronged: 'yujie/sprite_laokuai_wronged.png',
+      drinking: 'yujie/sprite_laokuai_drinking_v2.png'
     },
     emoji: '🥛'
   },
@@ -83,7 +87,8 @@ export const characters = {
     },
     sprites: {
       default: 'yujie/sprite_peisi_default.png',
-      happy: 'yujie/sprite_peisi_happy.png'
+      happy: 'yujie/sprite_peisi_happy.png',
+      bellows: 'yujie/sprite_peisi_bellows_v2.png'
     },
     emoji: '🔥'
   },
@@ -99,7 +104,8 @@ export const characters = {
     },
     sprites: {
       default: 'yujie/sprite_cuihua_default.png',
-      happy: 'yujie/sprite_cuihua_happy.png'
+      happy: 'yujie/sprite_cuihua_happy.png',
+      livestream: 'yujie/sprite_cuihua_livestream_v2.png'
     },
     emoji: '🌻'
   },
@@ -126,7 +132,8 @@ export const characters = {
     description: '本村真正的统治者，见你一次追你一次',
     avatar: 'yujie/char_goose.jpg',
     sprites: {
-      default: 'yujie/sprite_goose_default.png'
+      default: 'yujie/sprite_goose_default.png',
+      charge: 'yujie/sprite_goose_charge_v2.png'
     },
     emoji: '🪿'
   }
@@ -374,6 +381,115 @@ export const endings = {
   }
 }
 
+// ==================== 四幕剧结构 ====================
+export const acts = [
+  {
+    id: 'act_1',
+    title: '序章',
+    days: [1],
+    description: '初来乍到，结识大院众人'
+  },
+  {
+    id: 'act_2',
+    title: '融入大院',
+    days: [2, 3, 4, 5],
+    description: '熟悉农家日常，与雨姐和院里伙伴建立初步羁绊'
+  },
+  {
+    id: 'act_3',
+    title: '选择方向',
+    days: [6, 7, 8],
+    description: '赶集风波与考验，明确你想要奔赴的心愿方向'
+  },
+  {
+    id: 'act_4',
+    title: '最后冲刺',
+    days: [9, 10, 11],
+    description: '为大宴和农家乐筹备，冲刺关键好感与技能指标'
+  },
+  {
+    id: 'act_5',
+    title: '盛宴与告别',
+    days: [12, 13],
+    description: '全村盛宴与最终抉择，十三天旅程迎来落幕'
+  }
+]
+
+// ==================== 心愿导航 ====================
+export const wishGuides = {
+  love: {
+    id: 'love',
+    title: '赢得雨姐芳心',
+    endingId: 'ending_love',
+    description: '多去小河边散心谈心，用真诚打动雨姐，同时安抚好老蒯。',
+    recommendedRoutes: ['riverside', 'laokuai', 'mountain']
+  },
+  family: {
+    id: 'family',
+    title: '东北一家人',
+    endingId: 'ending_family',
+    description: '常去堂屋陪老蒯喝AD钙奶唠嗑，打消戒心结拜为兄弟。',
+    recommendedRoutes: ['laokuai', 'market']
+  },
+  chef: {
+    id: 'chef',
+    title: '金牌帮工大厨',
+    endingId: 'ending_chef',
+    description: '在大厨房切墩掌勺，在猪圈扛起半扇猪，杀猪大宴挑大梁。',
+    recommendedRoutes: ['kitchen', 'pigpen']
+  },
+  streamer: {
+    id: 'streamer',
+    title: '乡村带货新星',
+    endingId: 'ending_streamer',
+    description: '跟翠花学直播带货，帮雨姐出谋划策，坚守诚信拒卖木薯粉条。',
+    recommendedRoutes: ['market']
+  },
+  goose: {
+    id: 'goose',
+    title: '全村大鹅之主',
+    endingId: 'ending_goose',
+    description: '屡败屡战，摸蛋探巢，最终赢得全村大鹅的崇敬与拥戴。',
+    recommendedRoutes: ['mountain', 'pigpen']
+  },
+  casual: {
+    id: 'casual',
+    title: '随性农家时光',
+    endingId: 'ending_friend',
+    description: '不设具体目标，随心体验农家乐生活，享受纯朴自然的乡村日常。',
+    recommendedRoutes: []
+  }
+}
+
+// ==================== 固定日程概览 ====================
+export const scheduledEvents = {
+  3: {
+    day: 3,
+    name: '大鹅突袭',
+    hint: '晨间遭遇村霸大鹅，准备好应对挑衅！'
+  },
+  6: {
+    day: 6,
+    name: '赶集日',
+    hint: '十里八村大集，带够钱准备淘些稀罕物件。'
+  },
+  9: {
+    day: 9,
+    name: '雨姐的烦恼',
+    hint: '雨姐正为农家乐生意发愁，出谋划策的时候到了。'
+  },
+  12: {
+    day: 12,
+    name: '杀猪菜大宴',
+    hint: '全村盛宴，展示你全部手艺与力气的终极大考！'
+  },
+  13: {
+    day: 13,
+    name: '抉择日',
+    hint: '离别在即，面对全家做出你最后的决定。'
+  }
+}
+
 // ==================== 固定日期事件 ====================
 // advanceDay 时若命中则强制插入；day12 由引擎根据粉条flag/支线完成度另作分流
 export const dateEvents = {
@@ -396,6 +512,9 @@ export default {
   items,
   routes,
   endings,
+  acts,
+  wishGuides,
+  scheduledEvents,
   dateEvents,
   TOTAL_DAYS,
   ACTIONS_PER_DAY,
