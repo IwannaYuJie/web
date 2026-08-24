@@ -46,6 +46,7 @@ function App() {
 
             <Route path="/admin/articles" element={<ArticleManager />} />
             <Route path="/games" element={<GameHub />} />
+            <Route path="/games/yujie" element={<GameHub initialGameId="yujie-game" />} />
             <Route path="/creative" element={<CreativeShowcase />} />
             <Route path="/toolbox" element={<Toolbox />} />
             <Route path="/toolbox/sprite-sheet-to-gif" element={<SpriteSheetToGif />} />

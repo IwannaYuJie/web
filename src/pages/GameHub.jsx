@@ -1,5 +1,5 @@
-import { Suspense, lazy, useMemo, useState } from 'react'
-import { Link } from 'react-router-dom'
+import { Suspense, lazy, useEffect, useMemo, useState } from 'react'
+import { Link, useNavigate } from 'react-router-dom'
 import './GameHub.css'
 
 const GAME_COMPONENTS = {
@@ -43,20 +43,44 @@ function GameLoader({ icon = '🎮', label = '游戏加载中…' }) {
   )
 }
 
-function GameHub() {
-  const [selectedGameId, setSelectedGameId] = useState(null)
-  const selectedGame = useMemo(() => GAMES.find(g => g.id === selectedGameId) || null, [selectedGameId])
+function resolveValidGameId(id) {
+  if (!id) {
+    return null
+  }
+  const matched = GAMES.find((g) => g.id === id && g.status === 'active')
+  return matched ? matched.id : null
+}
+
+function GameHub({ initialGameId = null }) {
+  const navigate = useNavigate()
+  const [selectedGameId, setSelectedGameId] = useState(() => resolveValidGameId(initialGameId))
+
+  useEffect(() => {
+    setSelectedGameId(resolveValidGameId(initialGameId))
+  }, [initialGameId])
+
+  const selectedGame = useMemo(() => GAMES.find((g) => g.id === selectedGameId) || null, [selectedGameId])
   const ActiveGame = selectedGame ? GAME_COMPONENTS[selectedGame.id] : null
 
   const handleGameClick = (game) => {
+    if (!game) {
+      return
+    }
     if (game.status !== 'active') {
       window.alert('这个还没做完，再等等')
+      return
+    }
+    if (game.id === 'yujie-game') {
+      navigate('/games/yujie')
       return
     }
     setSelectedGameId(game.id)
   }
 
-  const handleBackToList = () => setSelectedGameId(null)
+  const handleBackToList = () => {
+    setSelectedGameId(null)
+    navigate('/games')
+  }
 
   if (selectedGame) {
     return (
