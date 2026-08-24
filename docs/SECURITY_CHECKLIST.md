@@ -17,6 +17,7 @@
 ### 3. 生产环境安全
 - [x] **VPS 密钥文件**：生产管理员密钥只保存在 `/etc/orange-cat-blog-admin-key`
 - [x] **Loopback 监听**：Node API 只监听 `127.0.0.1:8361`，由 Caddy 对外转发
+- [x] **源站访问限制**：正式橘猫域名只接受 Cloudflare 官方 IPv4/IPv6 地址，带正确域名直连源站返回 HTTP 403
 - [x] **数据备份**：原子写入、上一版本副本和每日定时备份均已启用
 - [x] **错误处理**：缺少环境变量时返回友好错误提示
 - [x] **CORS 保护**：仅允许必要的跨域请求
@@ -59,6 +60,9 @@ git status
 - [ ] 确认 `/etc/orange-cat-blog-admin-key` 权限未放宽
 - [ ] 确认 `orange-cat-blog.service` 与 `orange-cat-blog-backup.timer` 为 active
 - [ ] 确认 `127.0.0.1:8361` 未对公网开放
+- [ ] 对比 Cloudflare 官方 IPv4/IPv6 范围与线上 Caddy 白名单，确认没有过期或遗漏
+- [ ] 确认正式域名经 Cloudflare 返回 200，使用正确 SNI/Host 直连 `168.110.59.224` 返回 403
+- [ ] 确认同机的 `sbjumao.com`、`vps.doroai.net` 与 `dsh.doroai.net` 无 5xx
 
 ### Cloudflare Pages 回滚环境
 
@@ -161,14 +165,17 @@ git push origin --force --tags
 
 1. **开发环境保护**：
    - `vite.config.js` - 从环境变量读取，提供占位符提示
+2. **生产源站保护**：
+   - 正式橘猫域名仅允许 Cloudflare 出口地址访问，阻断绕过边缘防护的直连请求
 
 ### ⚠️ 注意事项
 
 - 本地开发需要配置 `.env` 文件
 - Cloudflare 回滚环境仍需保留对应环境变量
 - 定期检查新增代码是否引入硬编码
+- 每月及 Cloudflare 公告地址变更时刷新源站白名单，并复测公网 200 / 直连 403
 
 ---
 
-**最后更新**: 2026年8月13日
+**最后更新**: 2026年8月25日
 **检查频率**: 每次代码修改后 + 每月定期审查

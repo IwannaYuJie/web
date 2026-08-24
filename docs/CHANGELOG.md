@@ -4,6 +4,18 @@
 
  ---
 
+## [2026-08-25] - 🔐 正式域名源站访问加固
+
+### 🛡️ Cloudflare 源站限制
+- **关闭直连绕过路径**：正式域名 `jumaomaomaoju.cn` 与 `www.jumaomaomaoju.cn` 的 Caddy 站点块只接受 Cloudflare 官方 IPv4/IPv6 地址；使用正确 SNI/Host 直连源站现返回 HTTP 403。
+- **保持共享服务边界**：限制仅作用于橘猫正式域名，没有全局封锁 VPS 的 80/443 端口，因此 DSH、VPS Watch、`sbjumao.com` 和预览站继续按原配置运行。
+- **平滑生效与可回滚**：通过 Caddy graceful reload 生效，没有重启游戏/API 服务；上线前配置保存在 `/root/vps-change-backups/20260824T160321Z-orange-cat-cloudflare-only/Caddyfile.before`。
+
+### ✅ 线上验收
+- 分享页 `/games/yujie`、首页、文章 API 与健康检查经 Cloudflare 均返回 HTTP 200；无效文章写请求仍返回 HTTP 401。
+- 真实浏览器完成分享页打开、刷新、继续入口可见、返回游戏列表及再次进入的往返验收；v2.3 封面完整加载，控制台无错误。
+- 同机 `sbjumao.com`、`vps.doroai.net` 与 `dsh.doroai.net` 均无 5xx；仓库同步更新 Caddy 模板、部署说明和安全检查清单。
+
 ## [2026-08-24] - 🎮 《雨姐的心动时刻》v2.3 剧情回响与交互体验升级
 
 ### 🧭 剧情回响与叙事连续性

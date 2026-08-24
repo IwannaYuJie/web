@@ -8,6 +8,7 @@
 - 静态站点：Caddy 从 `/opt/orange-cat-blog/current/dist` 提供
 - 文章 API：`orange-cat-blog.service`，仅监听 `127.0.0.1:8361`
 - 文章数据：`/var/lib/orange-cat-blog/articles.json`
+- 源站访问：正式橘猫域名的 Caddy 站点块只接受 Cloudflare 官方出口地址；预览域名及同机其他站点不受该规则影响
 - 回滚站点：`https://web-b0b.pages.dev`
 
 ## 管理密钥
@@ -51,6 +52,18 @@ cat /var/lib/orange-cat-blog-deploy/deployed-commit
 - `deploy/backup-articles.sh`
 - `deploy/Caddyfile`
 
+## 源站访问限制
+
+正式域名 `jumaomaomaoju.cn` 与 `www.jumaomaomaoju.cn` 只能由 Cloudflare 官方 IPv4/IPv6 地址访问源站。带正确 SNI/Host 直连 `168.110.59.224` 时，Caddy 返回 HTTP 403；经 Cloudflare 的正常访问仍返回 HTTP 200。限制只写在橘猫正式域名的 Caddy 站点块中，因为同一台 VPS 的 80/443 端口还承载 DSH、VPS Watch、`sbjumao.com` 和预览站，不能在主机防火墙层统一封锁。
+
+Cloudflare 地址范围以 `https://www.cloudflare.com/ips-v4` 和 `https://www.cloudflare.com/ips-v6` 为准。每月或 Cloudflare 公告地址变更时，对比 `deploy/Caddyfile` 与线上 `/etc/caddy/Caddyfile`；更新后先执行 Caddy 配置校验，再使用 `systemctl reload caddy.service` 平滑加载。
+
+验收至少覆盖：
+
+- `https://jumaomaomaoju.cn/games/yujie`、`/api/articles` 和 `/healthz` 经 Cloudflare 返回 HTTP 200；
+- 使用 `--resolve jumaomaomaoju.cn:443:168.110.59.224` 直连源站返回 HTTP 403；
+- `sbjumao.com`、`vps.doroai.net` 与 `dsh.doroai.net` 无 5xx。
+
 ## 数据保护
 
 - 每次写入使用临时文件加原子替换，并保留 `articles.json.previous`。
@@ -64,6 +77,7 @@ cat /var/lib/orange-cat-blog-deploy/deployed-commit
 - 自动发布：先停用 `orange-cat-blog-deploy.timer`，再执行应用回滚；重新启用前确认 GitHub `main` 已修复，否则定时器会再次发布该提交。
 - 数据：先停止写入，再从 `articles.json.previous` 或每日备份恢复。
 - 域名：将 Cloudflare Pages 自定义域名重新绑定到 `web` 项目；观察期内保留 Pages 与 KV。
+- 源站限制：2026-08-25 上线前配置备份位于 `/root/vps-change-backups/20260824T160321Z-orange-cat-cloudflare-only/Caddyfile.before`。如需撤销，恢复为 `/etc/caddy/Caddyfile`，通过配置校验后平滑重载 Caddy。
 
 更完整的迁移记录、路径和验收结果见 [ORACLE_MIGRATION.md](ORACLE_MIGRATION.md)。
 
@@ -73,3 +87,4 @@ cat /var/lib/orange-cat-blog-deploy/deployed-commit
 - API 端口保持 loopback，不在主机防火墙或 OCI 安全列表额外开放。
 - 写操作继续要求 `X-Admin-Key`；无效密钥应返回 HTTP 401。
 - 橘猫域名使用 `X-Frame-Options: SAMEORIGIN`：外部网站不能嵌入，本站 `/creative` 可以加载同域快速预览。
+- 不要只依赖隐藏源站 IP；Cloudflare 出口白名单需随官方地址范围同步更新，并保留公网 200 / 直连 403 的双向验收。
