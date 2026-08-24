@@ -508,9 +508,12 @@
 
 .scene-background-main {
   position: absolute;
-  inset: 0;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: calc(var(--dialogue-height, 220px) + 12px + var(--sab));
   background-size: contain;
-  background-position: center;
+  background-position: center bottom;
   background-repeat: no-repeat;
   z-index: 3;
 }
