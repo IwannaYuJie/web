@@ -52,6 +52,8 @@ cat /var/lib/orange-cat-blog-deploy/deployed-commit
 - `deploy/backup-articles.sh`
 - `deploy/Caddyfile`
 
+静态站点的 `try_files` 顺序必须保留为 `{path} {path}/index.html /index.html`：先提供普通静态文件，再识别 Vite 多页面目录入口（例如 `/yujie/` 对应 `dist/yujie/index.html`），最后才回退到博客 SPA 的根 `index.html`。若缺少中间项，独立分发页会被错误地渲染成博客首页。
+
 ## 源站访问限制
 
 正式域名 `jumaomaomaoju.cn` 与 `www.jumaomaomaoju.cn` 只能由 Cloudflare 官方 IPv4/IPv6 地址访问源站。带正确 SNI/Host 直连 `168.110.59.224` 时，Caddy 返回 HTTP 403；经 Cloudflare 的正常访问仍返回 HTTP 200。限制只写在橘猫正式域名的 Caddy 站点块中，因为同一台 VPS 的 80/443 端口还承载 DSH、VPS Watch、`sbjumao.com` 和预览站，不能在主机防火墙层统一封锁。
