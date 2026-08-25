@@ -4,6 +4,48 @@
 
  ---
 
+## [2026-08-25] - 🎮 《雨姐的心动时刻》v2.4 人格养成与老蒯攻略扩展
+
+### 🧭 养成机制、剧情规模与多结局体系
+- **内容规模升级**：全篇扩充至 62 个事件、145 条对白、147 个分支选择与 14 个结局；完整保留既有 9 个旧结局，新增 5 个专属结局，唯一准确 ID 与名称为：`ending_love_soft`（倚怀向晚）、`ending_love_power`（盛木为荫）、`ending_laokuai_soulmate`（匠心同舟）、`ending_laokuai_romance`（默契生温）、`ending_shura`（冰碎雪崩）。
+- **告别全加好感**：分支选择引入 35.37% 风险/混合/负面收益，支持根据玩家当前属性与好感度动态计算判定结果（`outcomes`）并附带沉浸式叙事反馈（`feedback`）。
+- **雨姐相处性格回响**：雨姐性格回响划分为三种状态——`yujieSoftness > 10` 为“柔软依恋”，`[-10, 10]` 为“平衡搭档”，`< -10` 为“强势主导”；玩家强势担当会推动雨姐展现柔软依恋，玩家弱势/跟随则会推动雨姐强势主导。
+- **老蒯羁绊与双向路线**：新增老蒯 5 幕知己与成年双向浪漫路线；若同时触发脚踩两条船的 `doublePromise` 标记，将在第 12 天终局前夕直通修罗场。
+- **状态字段与存档迁移**：新增准确顶层状态字段 `yujieSoftness`、`laokuaiBond`、`laokuaiRomance`、`integrity`、`historyLog`；增加 `laokuaiAlert` 警觉机制与 flags 中的 `doublePromise` 等标记；接入特殊插曲、预警与木薯粉条补救逻辑，实现旧存档平滑向后兼容迁移。
+- **阶段词与旅途手记**：首周目采用性格阶段词隐去精确数值，通关后开启二周目精确数值手记与回响提示。
+
+### 📱 界面布局与移动端适配
+- 360px 与 390px 移动端视口下自由行动地图自适应双列排布，状态栏平铺展示无遮挡，核心交互按钮保持 44px 触控标准；1280px 桌面端视口保持完整视觉与交互体验。
+
+### 🎨 视觉素材独立配图
+- **独立素材生成**：内置 imagegen identity-preserve 生成 20 个新增事件独立 CG + 5 个新增结局独立画面。
+- **规格与哈希独立**：25 张全为 1672x941 PNG；25/25 SHA-256 唯一；与旧素材零内容哈希碰撞。
+- **设计与演出规范**：人物身份保持一致但成品文件、像素和构图完全不复用；CG 场景仍自动隐藏前景立绘，防止画面重叠。
+
+### 📊 验证与流程测试
+- ESLint 0 错；Vitest 63/63（含 49 项雨姐专项测试、精确映射与 Set 唯一性断言、500 局随机仿真）通过；另完成 25 文件、25/25 SHA-256 唯一、旧素材零碰撞、bad_dimensions=0 的独立机器检查；生产构建成功。
+- 本地内置浏览器三视口巡检，控制台零报错；实机交互完成 D2 厨房普通支线行动点 AP 从 2 准确扣减至 1 的验证；D3、D6、D9、D12 等固定日程时序与分支判定由自动化测试完整覆盖。
+
+### 🤝 协作与责任边界
+- 视觉资产由 Codex 使用内置 imagegen 生成并验图；事件/结局映射、自动化测试及工程文档由 gemini-3.7-flash-high 编写；Codex 原样应用、审查并独立验收。
+- **当前状态**：本地完成，尚未提交、推送或部署。
+
+### 📌 影响范围
+- `src/data/yujieGameData.js`
+- `src/data/yujieGameEngine.js`
+- `src/data/yujieGameEvents.js`
+- `src/components/YujieGame.jsx`
+- `src/components/YujieGame.css`
+- `src/pages/GameHub.jsx`
+- `test/yujieGameData.test.js`
+- `test/yujieGameFlow.test.js`
+- `docs/雨姐游戏开发文档.md`
+- `docs/雨姐游戏使用说明.md`
+- `docs/雨姐游戏v2.4剧情与养成设计.md`
+- `docs/CHANGELOG.md`
+- `public/images/yujie/README.md`
+- `public/images/yujie/v24_*.png`（25 张）
+
 ## [2026-08-25] - 🔐 正式域名源站访问加固
 
 ### 🛡️ Cloudflare 源站限制

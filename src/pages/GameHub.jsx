@@ -31,7 +31,7 @@ const GAMES = [
   { id: 'super-cat', name: '超级橘猫', icon: '🍄', description: '马里奥式横版闯关，顶砖、踩怪、跳坑，摸到终点旗就算赢。', best: '通关', status: 'active', color: '#E53935' },
   { id: 'gobang', name: '智能五子棋', icon: '🌌', description: '霓虹风五子棋，对手是内置 AI，不太好赢。', best: '无纪录', status: 'active', color: '#3B82F6' },
   { id: 'stacker', name: '炫彩叠叠乐', icon: '🧱', description: '把滑动的楼层对齐叠上去，歪出来的部分会被切掉，越叠越窄。', best: '无纪录', status: 'active', color: '#10B981' },
-  { id: 'yujie-game', name: '雨姐的心动时刻', icon: '💕', description: '重制版 Galgame：13 天自由行动、6 条支线、9 个结局收集，看你在东北农家乐活出哪种人生。', best: '结局图鉴', status: 'active', color: '#EC4899' },
+  { id: 'yujie-game', name: '雨姐的心动时刻', icon: '💕', description: 'v2.4 Galgame：13天、6条支线、14种结局；养成雨姐的相处性格，也能攻略老蒯知己/情愫线。', best: '结局图鉴', status: 'active', color: '#EC4899' },
 ]
 
 function GameLoader({ icon = '🎮', label = '游戏加载中…' }) {

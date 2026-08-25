@@ -1,8 +1,8 @@
 /**
- * 《雨姐的心动时刻》重制版 - 游戏基础数据
+ * 《雨姐的心动时刻》v2.4 - 游戏基础数据
  *
- * 结构：序章(第1天) → 自由行动(第2-12天，每天2行动点) → 终章(第13天)
- * 六条支线 + 固定日期事件 + 九个结局
+ * 结构：序章(第1天) → 自由行动(第2-11天，全流程共 18 AP) → 盛宴(第12天) → 终章(第13天)
+ * 六条支线 + 固定日期回响/主线事件 + 14 个结局矩阵
  */
 
 // ==================== 角色 ====================
@@ -260,8 +260,9 @@ export const routes = {
     icon: '🍳',
     scene: 'kitchen',
     description: '跟佩斯学手艺，还能赚工钱',
-    repeatable: true, // 走完后仍可帮厨打工
-    repeatText: '帮厨打工（+15元）'
+    maxStage: 3,
+    repeatable: true, // 走完后仍可帮厨做菜
+    repeatText: '做家常菜（稳健提升好感与品控）'
   },
   pigpen: {
     id: 'pigpen',
@@ -269,6 +270,7 @@ export const routes = {
     icon: '🐷',
     scene: 'pigpen',
     description: '喂猪、起名、扛半扇猪',
+    maxStage: 3,
     repeatable: false
   },
   market: {
@@ -277,6 +279,7 @@ export const routes = {
     icon: '🛒',
     scene: 'market',
     description: '翠花姐的地盘，情报与商机',
+    maxStage: 3,
     repeatable: false
   },
   riverside: {
@@ -285,6 +288,7 @@ export const routes = {
     icon: '🌊',
     scene: 'riverside',
     description: '雨姐常去散心的地方（心动主线）',
+    maxStage: 3,
     repeatable: false
   },
   laokuai: {
@@ -292,7 +296,8 @@ export const routes = {
     name: '堂屋热炕',
     icon: '🥛',
     scene: 'hall',
-    description: '陪老蒯唠嗑，把警觉度喝下去',
+    description: '陪老蒯唠嗑，把警觉度喝下去，共话知己与浪漫',
+    maxStage: 5,
     repeatable: false
   },
   mountain: {
@@ -301,81 +306,122 @@ export const routes = {
     icon: '⛰️',
     scene: 'mountain',
     description: '采蘑菇软枣，小心大鹅的老巢',
+    maxStage: 3,
     repeatable: false
   }
 }
 
-// ==================== 结局 ====================
+// ==================== 结局（精确 14 个） ====================
 export const endings = {
   ending_love: {
     id: 'ending_love',
-    name: '心动结局',
+    name: '炊烟并蒂',
     icon: '💕',
-    hint: '好感≥90，警觉≤40，走完河边线',
+    hint: '好感≥90，警觉≤40，河边线≥3，人格平衡态，雨姐承诺，无双重承诺',
     image: 'yujie/ending_love.jpg',
     text: '第13天的夜里下起了雪。你把雨姐约到河边，把憋了十三天的话一口气说完。雨姐盯着你看半天，一巴掌拍你背上："磨叽啥呢！俺也稀罕你！" 远处，老蒯抱着一箱AD钙奶默默转身，肩膀一抽一抽的……后来他说，那是冻的。'
+  },
+  ending_love_soft: {
+    id: 'ending_love_soft',
+    name: '倚怀向晚',
+    icon: '🌸',
+    hint: '好感≥90，警觉≤40，河边线≥3，柔软依恋态(>10)，雨姐承诺，无双重承诺',
+    image: 'yujie/v24_ending_love_soft.png',
+    text: '杀猪宴散场后的雪夜里，大院静得能听见柴火微鸣。雨姐轻轻把头靠在你的肩膀上，卸下了一身在人前硬撑的防备："杰克，往后风雪再大，只要大院有你，姐心里就踏实了。" 两个人坐在炕沿，手挽着手看窗外雪落无声。'
+  },
+  ending_love_power: {
+    id: 'ending_love_power',
+    name: '盛木为荫',
+    icon: '👑',
+    hint: '好感≥90，警觉≤40，河边线≥3，强势主导态(<-10)，雨姐承诺，无双重承诺',
+    image: 'yujie/v24_ending_love_power.png',
+    text: '雨姐豪气干云地一脚踩在长凳上，把大院的账本和钥匙一股脑塞进你怀里，一把揽过你的肩膀："大家伙都听好了！这是姐的大宝贝杰克，以后大院里有姐一口肉吃，就少不了他一口肉吃！" 你笑着站在她身侧，甘心当她最坚强的后盾。'
+  },
+  ending_laokuai_soulmate: {
+    id: 'ending_laokuai_soulmate',
+    name: '匠心同舟',
+    icon: '🪵',
+    hint: '老蒯知己≥55，堂屋线≥5，老蒯浪漫<35，警觉≤20，无双重承诺',
+    image: 'yujie/v24_ending_laokuai_soulmate.png',
+    text: '木工棚里的刨花落了一层又一层。老蒯递给你一杯温热的烧酒，指着刚打好的长凳："杰克，往后大院后方的木工和重活，咱俩兄弟一人挑一半。" 没有多余的寒暄，两双布满老茧的手重重相握，这份过命的默契早已超越千言万语。'
+  },
+  ending_laokuai_romance: {
+    id: 'ending_laokuai_romance',
+    name: '默契生温',
+    icon: '🍶',
+    hint: '老蒯浪漫≥50，老蒯知己≥35，堂屋线≥4，双向确认，警觉≤20，无双重承诺',
+    image: 'yujie/v24_ending_laokuai_romance.png',
+    text: '昏黄的灯影下，老蒯将亲手雕刻的红木木雕轻轻放在你手心里，粗糙而温暖的手指慢慢收紧。"只要你不嫌弃……往后的日子，哥陪你一起过。" 堂屋里的AD钙奶排得整整齐齐，映着两人相依的身影，在这个漫长的冬夜里散发着清醒而真挚的温度。'
   },
   ending_family: {
     id: 'ending_family',
     name: '东北一家人',
     icon: '👨‍👩‍👦',
-    hint: '走完堂屋线，警觉≤20',
+    hint: '走完堂屋线≥3，老蒯知己≥30，警觉≤20，雨姐好感≥50',
     image: 'yujie/ending_family.jpg',
     text: '结拜仪式在堂屋举行，供桌上摆着一排AD钙奶。老蒯眼含热泪："弟啊！以后这就是你家！" 雨姐在旁边笑得直不起腰："得，俺家又添一口人！" 你成了这个家认证的"老弟"，户口本上没你，炕头上永远有你。'
   },
   ending_chef: {
     id: 'ending_chef',
-    name: '金牌帮工',
+    name: '关东名厨',
     icon: '🧑‍🍳',
-    hint: '走完厨房线和猪圈线，好感≥60',
+    hint: '厨房线≥3，猪圈线≥3，好感≥60，诚信品控≥10',
     image: 'yujie/ending_chef.jpg',
     text: '杀猪菜大宴上，你一个人撑起八个灶眼，佩斯当场失业，抱着灶台哭。雨姐一拍桌子："别走了！管吃管住，酸菜管够！" 你成了农家乐的金牌大厨，招牌菜：杰克炖大鹅……的土豆。'
   },
   ending_streamer: {
     id: 'ending_streamer',
-    name: '带货新星',
+    name: '顶流之星',
     icon: '📱',
-    hint: '走完大集线，第9天选择直播，且拒绝贴牌粉条',
+    hint: '大集线≥3，第9天选择直播带货，拒绝贴牌劣质粉条',
     image: 'yujie/ending_streamer.jpg',
     text: '你顶住高佣金的诱惑没碰贴牌粉条，转头把雨姐家的酸菜卖断了货。弹幕刷屏："这老外真实在！" 雨姐搂着你肩膀冲镜头喊："家人们！这是俺们家的卧龙！" 当晚，酸菜预售排到了明年开春。'
   },
-  ending_noodle: {
-    id: 'ending_noodle',
-    name: '翻车结局',
-    icon: '💥',
-    hint: '彩蛋：替人卖「木薯粉条」试试？',
-    image: 'yujie/ending_noodle.jpg',
-    text: '"家人们！纯红薯粉条，假一赔万！" 三天后，打假博主上门：这粉条里没有红薯，只有木薯。165元罚单（农家乐全部流动资金）贴在大门上，雨姐的大鹅在旁边幸灾乐祸地叫。你连夜扛着村口的火车跑路了……'
+  ending_goose: {
+    id: 'ending_goose',
+    name: '鹅中霸王',
+    icon: '🪿',
+    hint: '大鹅互动次数≥3，且收服大鹅结为盟友',
+    image: 'yujie/ending_goose.jpg',
+    text: '三次交锋与深层驯服之后，村里的大鹅们开了三天三夜的会，一致决定拥立你为新任鹅王。你被一群大鹅簇拥着巡视村庄，雨姐目瞪口呆，老蒯的AD钙奶掉在了地上。从此本村食物链顶端，写上了你的名字。'
   },
   ending_friend: {
     id: 'ending_friend',
-    name: '好友结局',
+    name: '农家挚友',
     icon: '🤝',
-    hint: '好感≥50',
+    hint: '雨姐好感≥50',
     image: 'yujie/ending_warm.jpg',
     text: '你走那天，雨姐往你包里硬塞了十斤酸菜："常回来啊老弟！" 老蒯递给你一瓶AD钙奶，啥也没说。你们成了铁哥们，此后每年冬天，你都雷打不动回来蹭一顿杀猪菜。'
   },
   ending_bye: {
     id: 'ending_bye',
-    name: '路人结局',
+    name: '客路匆匆',
     icon: '😶',
     hint: '无条件：终章始终可选',
     image: 'yujie/ending_bye.jpg',
     text: '十三天的农家乐体验卡到期了。你学会了几句东北话，胖了三斤，手机里多了几百张照片和一段大鹅追你的视频。雨姐在村口冲你挥手："有空再来啊！" 你想，大概会吧。'
   },
-  ending_goose: {
-    id: 'ending_goose',
-    name: '大鹅之主',
-    icon: '🪿',
-    hint: '？？？（多和大鹅打交道）',
-    image: 'yujie/ending_goose.jpg',
-    text: '三次交锋之后，村里的大鹅们开了三天三夜的会，一致决定拥立你为新任鹅王。你被一群大鹅簇拥着巡视村庄，雨姐目瞪口呆，老蒯的AD钙奶掉在了地上。从此本村食物链顶端，写上了你的名字。'
+  ending_shura: {
+    id: 'ending_shura',
+    name: '冰碎雪崩',
+    icon: '💔',
+    hint: '强制坏结局：同时对雨姐与老蒯许下排他承诺且未划清界限',
+    image: 'yujie/v24_ending_shura.png',
+    text: '盛宴当场，两份互斥的情感承诺被彻底揭穿。雨姐眼圈通红地摔了酒碗，老蒯默默提上行李转身离去，满院乡亲面面相觑。双重欺瞒彻底击碎了大院原本的安宁，你只能在冰天雪地中狼狈收场离开。'
+  },
+  ending_noodle: {
+    id: 'ending_noodle',
+    name: '盛宴翻车',
+    icon: '💥',
+    hint: '强制坏结局：采购劣质粉条且盛宴前未补救',
+    image: 'yujie/ending_noodle.jpg',
+    text: '"家人们！纯红薯粉条，假一赔万！" 三天后，打假博主上门：这粉条里没有红薯，只有木薯。165元罚单（农家乐全部流动资金）贴在大门上，雨姐的大鹅在旁边幸灾乐祸地叫。你连夜扛着村口的火车跑路了……'
   },
   ending_kicked: {
     id: 'ending_kicked',
-    name: '被赶走',
+    name: '逐出山门',
     icon: '😡',
-    hint: '警觉≥45，老蒯忍无可忍',
+    hint: '强制坏结局：警觉≥45，老蒯忍无可忍即时轰人',
     image: 'yujie/ending_sad.jpg',
     text: '老蒯把你每天干了啥记了满满一本，当众宣读。你被雨姐拎着行李丢出大门，大鹅在你身后追出二里地。从此，这个小村庄成了你地图上的禁区。'
   }
@@ -421,21 +467,35 @@ export const wishGuides = {
     id: 'love',
     title: '赢得雨姐芳心',
     endingId: 'ending_love',
-    description: '多去小河边散心谈心，用真诚打动雨姐，同时安抚好老蒯。',
-    recommendedRoutes: ['riverside', 'laokuai', 'mountain']
+    description: '多去小河边散心谈心，用真诚打动雨姐，在回响中定调相处风格。',
+    recommendedRoutes: ['riverside', 'kitchen', 'mountain']
+  },
+  laokuai_soulmate: {
+    id: 'laokuai_soulmate',
+    title: '老蒯匠心知己',
+    endingId: 'ending_laokuai_soulmate',
+    description: '常去堂屋与猪圈分担重活，在第4幕坦白知己兄弟边界，走完5幕收下木雕。',
+    recommendedRoutes: ['laokuai', 'pigpen', 'mountain']
+  },
+  laokuai_romance: {
+    id: 'laokuai_romance',
+    title: '老蒯默契生温',
+    endingId: 'ending_laokuai_romance',
+    description: '深层关照老蒯心事，在第4幕清醒双向确认，走完4幕以上解锁温情定情。',
+    recommendedRoutes: ['laokuai', 'pigpen', 'riverside']
   },
   family: {
     id: 'family',
     title: '东北一家人',
     endingId: 'ending_family',
-    description: '常去堂屋陪老蒯喝AD钙奶唠嗑，打消戒心结拜为兄弟。',
-    recommendedRoutes: ['laokuai', 'market']
+    description: '常去堂屋陪老蒯喝AD钙奶唠嗑，打消戒心结拜为大院一家人。',
+    recommendedRoutes: ['laokuai', 'market', 'kitchen']
   },
   chef: {
     id: 'chef',
     title: '金牌帮工大厨',
     endingId: 'ending_chef',
-    description: '在大厨房切墩掌勺，在猪圈扛起半扇猪，杀猪大宴挑大梁。',
+    description: '在大厨房切墩掌勺，在猪圈扛起半扇猪，严守食材品质挑起盛宴大梁。',
     recommendedRoutes: ['kitchen', 'pigpen']
   },
   streamer: {
@@ -443,13 +503,13 @@ export const wishGuides = {
     title: '乡村带货新星',
     endingId: 'ending_streamer',
     description: '跟翠花学直播带货，帮雨姐出谋划策，坚守诚信拒卖木薯粉条。',
-    recommendedRoutes: ['market']
+    recommendedRoutes: ['market', 'kitchen']
   },
   goose: {
     id: 'goose',
     title: '全村大鹅之主',
     endingId: 'ending_goose',
-    description: '屡败屡战，摸蛋探巢，最终赢得全村大鹅的崇敬与拥戴。',
+    description: '屡败屡战，后山探巢，达成和解并赢得全村大鹅的崇敬与拥戴。',
     recommendedRoutes: ['mountain', 'pigpen']
   },
   casual: {
@@ -468,20 +528,35 @@ export const scheduledEvents = {
     name: '大鹅突袭',
     hint: '晨间遭遇村霸大鹅，准备好应对挑衅！'
   },
+  5: {
+    day: 5,
+    name: '雨姐风格定调',
+    hint: '晨间回响，初步确立与雨姐的搭档协作方式。'
+  },
   6: {
     day: 6,
     name: '赶集日',
-    hint: '十里八村大集，带够钱准备淘些稀罕物件。'
+    hint: '十里八村大集，谨防低价原料诱惑，守住品质底线。'
+  },
+  8: {
+    day: 8,
+    name: '雨姐烦恼回响',
+    hint: '面对外界恶评与经营压力，分担雨姐内心的忧虑。'
   },
   9: {
     day: 9,
-    name: '雨姐的烦恼',
-    hint: '雨姐正为农家乐生意发愁，出谋划策的时候到了。'
+    name: '客栈发愁与破局',
+    hint: '雨姐正为农家乐生意发愁，出谋划策确立发展方向。'
+  },
+  10: {
+    day: 10,
+    name: '盛宴筹备回响',
+    hint: '盛宴前夕的未来规划，消除隐患，确认彼此心意。'
   },
   12: {
     day: 12,
     name: '杀猪菜大宴',
-    hint: '全村盛宴，展示你全部手艺与力气的终极大考！'
+    hint: '全村盛宴专场，展示手艺与诚信的终极大考！'
   },
   13: {
     day: 13,
@@ -490,19 +565,23 @@ export const scheduledEvents = {
   }
 }
 
-// ==================== 固定日期事件 ====================
-// advanceDay 时若命中则强制插入；day12 由引擎根据粉条flag/支线完成度另作分流
+// ==================== 固定日期事件调度映射 ====================
+// 晨间事件或固定日程（D3/D5/D8/D10 免费晨间事件；D6/D9 主线事件；D12 盛宴专场；D13 终章）
 export const dateEvents = {
   3: 'ev_goose_attack',
+  5: 'ev_echo_d5',
   6: 'ev_market_day',
+  8: 'ev_echo_d8',
   9: 'ev_yujie_trouble',
+  10: 'ev_echo_d10',
+  12: 'ev_echo_d12',
   13: 'ev_final'
 }
 
 export const TOTAL_DAYS = 13
 export const ACTIONS_PER_DAY = 2
 export const ALERT_GAME_OVER = 45 // 警觉度达到即强制触发被赶走结局
-export const MAX_ROUTE_STAGE = 3
+export const MAX_ROUTE_STAGE = 3 // 兼容旧调用的全局默认最大阶段
 export const GALLERY_KEY = 'yujie_gallery_v2'
 
 // 导出默认配置

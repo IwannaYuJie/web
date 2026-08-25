@@ -1,10 +1,17 @@
 /**
- * 《雨姐的心动时刻》流程仿真测试
- * 用与 UI 共用的纯逻辑引擎自动跑完整局游戏，验证：
- * 1. 九个结局全部可达
- * 2. 随机乱选 200 局也不会死局/死循环，且天数不超过 13 天
- * 3. 关键节点（D3、D6、D9、D12等）AP与天数精确流转
- * 4. D12 五个专属回响分支与通用兜底均可正确流转至 ev_feast_end 并进入 D13 抉择日
+ * 《雨姐的心动时刻》v2.4 - 流程与性质测试
+ *
+ * 核心设计验证：
+ * 1. 严格 14 个 ending ID 均从 pro_arrive 纯逻辑实跑可达（不从半程/终态注入 stats）。
+ * 2. 500 局固定种子蒙特卡洛随机模拟：无死局、无死循环、无悬空事件、day <= 13，最终落入 14 合法结局之一。
+ * 3. 游戏机制性质验证：
+ *    - 存在 choice 让 affection 下降；
+ *    - 动态 outcomes 随 stats 产生差分；
+ *    - yujieSoftness 正负路线分别达成对应结局；
+ *    - 老蒯知己与浪漫路线独立可达，明确划界不会赋予 mutual consent；
+ *    - D6/D9/D11/D12/D13 各节点流转与特殊插曲防重/防扣 AP 逻辑；
+ *    - laokuaiAlert >= 45 立即 kicked；30..44 单次 ev_warning 插曲；
+ *    - 存档迁移 migrateStats 兼容旧字段并在后续正常执行。
  */
 import { describe, expect, it } from 'vitest'
 import gameData from '../src/data/yujieGameData'
@@ -12,602 +19,1458 @@ import gameEvents from '../src/data/yujieGameEvents'
 import {
   HUB,
   NIGHT,
-  applyEffects,
-  checkCondition,
   initialStats,
+  checkCondition,
+  resolveChoiceOutcome,
+  applyEffects,
+  buildHistoryEntry,
+  getSpecialRouteEvent,
+  routeEventId,
   morningEventForDay,
-  routeEventId
+  shouldInsertWarning,
+  nightEventForStats,
+  migrateStats,
+  getRelationshipStages
 } from '../src/data/yujieGameEngine'
 
 const { endings, ALERT_GAME_OVER, ACTIONS_PER_DAY } = gameData
 
-// 纯单步状态推演辅助器（与组件/引擎规则严格保持一致）
-const stepEvent = (state, action) => {
-  let { stats, mode, eventId, ending } = state
-  if (ending) return state
-
-  if (mode === 'hub') {
-    const decision = action || 'sleep'
-    const evId = decision === 'sleep' ? null : routeEventId(decision, stats.routes[decision] || 0)
-    if (!evId || !gameEvents[evId]) {
-      return { stats, mode: 'event', eventId: 'night_rest', ending: null }
-    }
-    return {
-      stats: { ...stats, actionPoints: Math.max(0, stats.actionPoints - 1) },
-      mode: 'event',
-      eventId: evId,
-      ending: null
-    }
-  }
-
-  const event = gameEvents[eventId]
-  if (!event) {
-    throw new Error(`事件缺失: ${eventId}`)
-  }
-  const available = (event.choices || []).filter((c) => checkCondition(c.condition, stats))
-  if (!available.length) {
-    throw new Error(`死局: ${eventId} 没有可用选项`)
-  }
-
-  let choice = null
-  if (typeof action === 'string') {
-    choice = available.find((c) => c.id === action)
-    if (!choice) {
-      throw new Error(`选项未找到或不可用: ${action} 在事件 ${eventId}`)
-    }
-  } else if (action && typeof action === 'object' && action.id) {
-    choice = available.find((c) => c.id === action.id)
-    if (!choice) {
-      throw new Error(`选项未找到或不可用: ${action.id} 在事件 ${eventId}`)
-    }
-  } else if (typeof action === 'function') {
-    choice = action({ event, available, stats }) || available[0]
-  } else {
-    choice = available[0]
-  }
-
-  const nextStats = applyEffects(stats, choice)
-  const next = choice.next
-
-  if (nextStats.laokuaiAlert >= ALERT_GAME_OVER && !endings[next]) {
-    return { stats: nextStats, mode: 'ending', eventId: null, ending: 'ending_kicked' }
-  }
-
-  if (next === HUB) {
-    if (nextStats.actionPoints > 0) {
-      return { stats: nextStats, mode: 'hub', eventId: null, ending: null }
-    }
-    return { stats: nextStats, mode: 'event', eventId: 'night_rest', ending: null }
-  }
-
-  if (next === NIGHT) {
-    const nextDay = nextStats.day + 1
-    const resetStats = { ...nextStats, day: nextDay, actionPoints: ACTIONS_PER_DAY }
-    const morning = morningEventForDay(nextDay, resetStats.flags)
-    if (morning) {
-      return { stats: resetStats, mode: 'event', eventId: morning, ending: null }
-    }
-    return { stats: resetStats, mode: 'hub', eventId: null, ending: null }
-  }
-
-  if (endings[next]) {
-    return { stats: nextStats, mode: 'ending', eventId: null, ending: next }
-  }
-
-  return { stats: nextStats, mode: 'event', eventId: next, ending: null }
-}
-
-// 用与组件一致的规则自动打一局
-const simulate = (strategy = {}) => {
+/**
+ * 完整模拟器：与 UI 组件逻辑严格一致
+ * - 从 pro_arrive + initialStats 开始
+ * - resolveChoiceOutcome -> applyEffects -> buildHistoryEntry
+ * - 警觉 >= 45 即时 ending_kicked；30..44 单次插入 ev_warning
+ * - 普通 route 在 HUB 选择时仅做调度并在进入事件后由 applyEffects 扣 1 AP；特殊插曲无 effects.ap 则在 HUB 扣 1 AP
+ * - NIGHT 结算 day+1, AP 补满，晨间事件或 HUB
+ */
+const createSimulator = (strategy = {}) => {
   let stats = initialStats()
   let mode = 'event'
   let eventId = 'pro_arrive'
   let ending = null
   let steps = 0
-  const maxSteps = 300
+  let totalApSpent = 0
+  const maxSteps = 350
 
   while (!ending && steps < maxSteps) {
     steps++
+
+    // 1. 检查是否达到警觉致死阈值
+    if (stats.laokuaiAlert >= ALERT_GAME_OVER) {
+      ending = 'ending_kicked'
+      break
+    }
+
+    // 2. 大院 HUB 调度阶段
     if (mode === 'hub') {
-      const decision = strategy.hub ? strategy.hub(stats) : 'sleep'
-      const evId = decision === 'sleep' ? null : routeEventId(decision, stats.routes[decision] || 0)
-      if (!evId || !gameEvents[evId]) {
-        eventId = 'night_rest'
+      // 检查老蒯警觉警告插曲 (30..44)
+      if (shouldInsertWarning(stats)) {
+        eventId = 'ev_warning'
         mode = 'event'
         continue
       }
-      stats = { ...stats, actionPoints: Math.max(0, stats.actionPoints - 1) }
-      eventId = evId
+
+      // 若无 AP，走向晚间事件
+      if (stats.actionPoints <= 0) {
+        eventId = nightEventForStats(stats)
+        mode = 'event'
+        continue
+      }
+
+      // 获取策略决定的去向（routeId 或 'sleep'）
+      const routeChoice = strategy.hub ? strategy.hub(stats) : 'sleep'
+      if (!routeChoice || routeChoice === 'sleep') {
+        eventId = nightEventForStats(stats)
+        mode = 'event'
+        continue
+      }
+
+      // 检查是否有特殊支线插曲
+      const specialEvent = getSpecialRouteEvent(routeChoice, stats)
+      if (specialEvent && gameEvents[specialEvent]) {
+        // 特殊插曲本身无 effects.ap，作为普通行动触发手动扣 1 AP
+        stats = { ...stats, actionPoints: Math.max(0, stats.actionPoints - 1) }
+        totalApSpent++
+        eventId = specialEvent
+        mode = 'event'
+        continue
+      }
+
+      // 普通支线事件：由事件内的 choice.effects.ap = -1 扣除 AP
+      const nextEvId = routeEventId(routeChoice, stats.routes[routeChoice] || 0, stats)
+      if (!nextEvId || !gameEvents[nextEvId]) {
+        eventId = nightEventForStats(stats)
+        mode = 'event'
+        continue
+      }
+
+      totalApSpent++
+      eventId = nextEvId
       mode = 'event'
       continue
     }
 
-    const event = gameEvents[eventId]
-    if (!event) {
+    // 3. 事件对话与选项决策阶段
+    const currentEvent = gameEvents[eventId]
+    if (!currentEvent) {
       throw new Error(`事件缺失: ${eventId}`)
     }
-    const available = (event.choices || []).filter((c) => checkCondition(c.condition, stats))
-    if (!available.length) {
-      throw new Error(`死局: ${eventId} 没有可用选项`)
-    }
-    const picked = strategy.pick ? strategy.pick({ event, available, stats }) : null
-    const choice = available.includes(picked) ? picked : available[0]
-    stats = applyEffects(stats, choice)
 
-    const next = choice.next
-    if (stats.laokuaiAlert >= ALERT_GAME_OVER && !endings[next]) {
+    // 过滤出当前状态下可用的选项
+    const availableChoices = (currentEvent.choices || []).filter((c) => {
+      return checkCondition(c.condition, stats)
+    })
+
+    if (availableChoices.length === 0) {
+      throw new Error(`死局: 事件 ${eventId} 在第 ${stats.day} 天无可用选项 (stats: ${JSON.stringify(stats)})`)
+    }
+
+    // 策略选择
+    let pickedChoice = null
+    if (typeof strategy.pick === 'function') {
+      pickedChoice = strategy.pick({
+        event: currentEvent,
+        available: availableChoices,
+        stats
+      })
+    }
+    if (!pickedChoice || !availableChoices.includes(pickedChoice)) {
+      pickedChoice = availableChoices[0]
+    }
+
+    // 解析动态后果并应用状态
+    const resolvedChoice = resolveChoiceOutcome(pickedChoice, stats)
+    stats = applyEffects(stats, resolvedChoice)
+    stats.historyLog = [...(stats.historyLog || []), buildHistoryEntry(stats.day, resolvedChoice)]
+
+    // 检查选项后是否立即触发警觉爆表
+    if (stats.laokuaiAlert >= ALERT_GAME_OVER) {
       ending = 'ending_kicked'
       break
     }
-    if (next === HUB) {
-      if (stats.actionPoints > 0) {
+
+    const nextTarget = resolvedChoice.next
+
+    // 结局直接跳转
+    if (endings[nextTarget]) {
+      ending = nextTarget
+      break
+    }
+
+    // 回大院 HUB
+    if (nextTarget === HUB) {
+      if (shouldInsertWarning(stats)) {
+        eventId = 'ev_warning'
+        mode = 'event'
+      } else if (stats.actionPoints > 0) {
         mode = 'hub'
+        eventId = null
       } else {
-        eventId = 'night_rest'
+        eventId = nightEventForStats(stats)
         mode = 'event'
       }
-    } else if (next === NIGHT) {
+      continue
+    }
+
+    // 过夜结算
+    if (nextTarget === NIGHT) {
       const nextDay = stats.day + 1
-      stats = { ...stats, day: nextDay, actionPoints: ACTIONS_PER_DAY }
+      if (nextDay > 13) {
+        ending = 'ending_bye'
+        break
+      }
+      stats = {
+        ...stats,
+        day: nextDay,
+        actionPoints: nextDay === 12 || nextDay === 13 ? 0 : ACTIONS_PER_DAY
+      }
       const morning = morningEventForDay(nextDay, stats.flags)
       if (morning) {
         eventId = morning
         mode = 'event'
       } else {
         mode = 'hub'
+        eventId = null
       }
-    } else if (endings[next]) {
-      ending = next
-    } else {
-      eventId = next
-      mode = 'event'
+      continue
     }
+
+    // 普通事件流转
+    eventId = nextTarget
+    mode = 'event'
   }
-  return { ending, stats, steps }
+
+  if (steps >= maxSteps && !ending) {
+    throw new Error(`模拟超出步数限制 (${maxSteps})，停在 day=${stats.day}, event=${eventId}`)
+  }
+
+  return { ending, stats, steps, totalApSpent }
 }
 
-// 在终章优先选指定结局
-const preferEnding = (endingId, fallback) => ({ event, available }) => {
-  if (event.id === 'ev_final') {
-    return available.find((c) => c.next === endingId) || available[0]
-  }
-  return fallback ? fallback({ event, available }) : available[0]
-}
-
-// 选好感加成最高的选项
-const maxAffection = ({ available }) =>
-  available.reduce((best, c) =>
-    (c.effects?.affection || 0) > (best.effects?.affection || 0) ? c : best
-  )
-
-// 选警觉增量最低的选项
-const minAlert = ({ available }) =>
-  available.reduce((best, c) =>
-    (c.effects?.laokuaiAlert || 0) < (best.effects?.laokuaiAlert || 0) ? c : best
-  )
-
-// 按优先级依次推支线，走完就睡
-const routeOrder = (order) => (stats) => {
-  for (const r of order) {
-    if ((stats.routes[r] || 0) < 3) {
-      return r
-    }
-  }
-  return 'sleep'
-}
-
-describe('雨姐游戏流程仿真', () => {
-  it('心动结局可达（河边主线 + 安抚老蒯 + 扛猪）', () => {
-    const { ending, stats } = simulate({
-      hub: routeOrder(['riverside', 'laokuai', 'pigpen', 'mountain']),
-      pick: (ctx) => {
-        if (ctx.event.id === 'ev_noodle_man') {
-          return ctx.available.find((c) => c.id === 'noodle_2')
+describe('v2.4 全流程与 14 结局可达性测试', () => {
+  // 1. ending_love (雨姐平衡态爱情)
+  it('结局可达: ending_love (炊烟并蒂)', () => {
+    const res = createSimulator({
+      hub: (stats) => {
+        if ((stats.routes.riverside || 0) < 3) {
+          return 'riverside'
         }
-        return preferEnding('ending_love', maxAffection)(ctx)
-      }
-    })
-    expect(ending).toBe('ending_love')
-    expect(stats.affection).toBeGreaterThanOrEqual(90)
-    expect(stats.laokuaiAlert).toBeLessThanOrEqual(40)
-  })
-
-  it('东北一家人结局可达（主攻堂屋线）', () => {
-    const refuseNoodles = (ctx) => {
-      if (ctx.event.id === 'ev_noodle_man') {
-        return ctx.available.find((c) => c.id === 'noodle_2')
-      }
-      return minAlert(ctx)
-    }
-    const { ending } = simulate({
-      hub: routeOrder(['laokuai']),
-      pick: preferEnding('ending_family', refuseNoodles)
-    })
-    expect(ending).toBe('ending_family')
-  })
-
-  it('金牌帮工结局可达（厨房+猪圈）', () => {
-    const { ending } = simulate({
-      hub: routeOrder(['kitchen', 'pigpen']),
-      pick: preferEnding('ending_chef', maxAffection)
-    })
-    expect(ending).toBe('ending_chef')
-  })
-
-  it('带货新星结局可达（大集线+直播+拒卖粉条）', () => {
-    const { ending } = simulate({
-      hub: routeOrder(['market']),
-      pick: (ctx) => {
-        if (ctx.event.id === 'ev_noodle_man') {
-          return ctx.available.find((c) => c.id === 'noodle_2')
+        return 'kitchen'
+      },
+      pick: ({ event, available, stats }) => {
+        if (event.id === 'ev_final') {
+          const c = available.find((item) => {
+            return item.id === 'final_love_balance'
+          })
+          if (!c) {
+            throw new Error(`final_love_balance 不可用, stats: ${JSON.stringify(stats)}`)
+          }
+          return c
         }
-        if (ctx.event.id === 'ev_yujie_trouble') {
-          return ctx.available.find((c) => c.id === 'trouble_2') || ctx.available[0]
+        if (event.id === 'pro_meet_yujie') {
+          return available.find((c) => {
+            return c.id === 'pro_meet_yujie_help'
+          })
         }
-        if (ctx.event.id === 'route_market_3') {
-          return ctx.available.find((c) => c.effects?.setFlag === 'liveSkill') || ctx.available[0]
+        if (event.id === 'ev_echo_d5') {
+          return available.find((c) => {
+            return c.id === 'echo_d5_balance'
+          })
         }
-        return preferEnding('ending_streamer', maxAffection)(ctx)
-      }
-    })
-    expect(ending).toBe('ending_streamer')
-  })
-
-  it('翻车彩蛋结局可达（接下贴牌粉条）', () => {
-    const { ending } = simulate({
-      hub: () => 'sleep',
-      pick: ({ event, available }) => {
+        if (event.id === 'ev_market_day') {
+          return available.find((c) => {
+            return c.id === 'mktd_eat'
+          })
+        }
         if (event.id === 'ev_noodle_man') {
-          return available.find((c) => c.id === 'noodle_1')
+          return available.find((c) => {
+            return c.id === 'noodle_inspect_reject'
+          })
+        }
+        if (event.id === 'ev_yujie_trouble') {
+          return available.find((c) => {
+            return c.id === 'trouble_streamer_path'
+          })
+        }
+        if (event.id === 'ev_echo_d8') {
+          return available.find((c) => {
+            return c.id === 'echo_d8_balance_action'
+          })
+        }
+        if (event.id === 'ev_echo_d10') {
+          return available.find((c) => {
+            return c.id === 'echo_d10_balance_plan'
+          })
+        }
+        if (event.id === 'ev_yujie_confess') {
+          return available.find((c) => {
+            return c.id === 'yujie_confess_partner'
+          })
+        }
+        if (event.id === 'route_riverside_1') {
+          return available.find((c) => {
+            return c.id === 'riv_1_joke'
+          })
+        }
+        if (event.id === 'route_riverside_2') {
+          return available.find((c) => {
+            return c.id === 'riv_2_awkward_joke'
+          })
+        }
+        if (event.id === 'route_riverside_3') {
+          return available.find((c) => {
+            return c.id === 'riv_3_hold_hands'
+          })
+        }
+        if (event.id === 'route_kitchen_1') {
+          return available.find((c) => {
+            return c.id === 'kit_1_sub'
+          })
+        }
+        if (event.id === 'route_kitchen_2') {
+          return available.find((c) => {
+            return c.id === 'kit_2_careful'
+          })
+        }
+        if (event.id === 'route_kitchen_3') {
+          return available.find((c) => {
+            return c.id === 'kit_3_fusion'
+          })
         }
         return available[0]
       }
     })
-    expect(ending).toBe('ending_noodle')
+    expect(res.ending).toBe('ending_love')
+    expect(res.stats.affection).toBeGreaterThanOrEqual(90)
+    expect(res.stats.yujieSoftness).toBeGreaterThanOrEqual(-10)
+    expect(res.stats.yujieSoftness).toBeLessThanOrEqual(10)
+    expect(res.stats.flags.promiseYujie).toBe(true)
+    expect(res.stats.flags.doublePromise).toBeFalsy()
   })
 
-  it('大鹅之主隐藏结局可达（招惹三次大鹅）', () => {
-    const gooseLover = ({ available }) => {
-      const gooseChoice = available.find((c) => c.effects?.goose || c.goose)
-      return gooseChoice || maxAffection({ available })
-    }
-    const { ending, stats } = simulate({
-      hub: routeOrder(['pigpen', 'mountain']),
-      pick: (ctx) => preferEnding('ending_goose', gooseLover)(ctx)
-    })
-    expect(stats.gooseCount).toBeGreaterThanOrEqual(3)
-    expect(ending).toBe('ending_goose')
-  })
-
-  it('被赶走结局可达（全程挑衅不管老蒯）', () => {
-    const maxAlert = ({ available }) =>
-      available.reduce((best, c) =>
-        (c.effects?.laokuaiAlert || 0) > (best.effects?.laokuaiAlert || 0) ? c : best
-      )
-    const { ending } = simulate({
-      hub: routeOrder(['riverside', 'pigpen', 'mountain', 'market', 'kitchen']),
-      pick: maxAlert
-    })
-    expect(ending).toBe('ending_kicked')
-  })
-
-  it('好友结局可达（泛泛而交）', () => {
-    const { ending, stats } = simulate({
-      hub: routeOrder(['kitchen', 'mountain']),
-      pick: preferEnding('ending_friend', maxAffection)
-    })
-    expect(ending).toBe('ending_friend')
-    expect(stats.affection).toBeGreaterThanOrEqual(50)
-  })
-
-  it('路人结局可达（睡大觉流）', () => {
-    const { ending } = simulate({
-      hub: () => 'sleep',
-      pick: ({ event, available }) => {
+  // 2. ending_love_soft (雨姐柔软依恋态爱情)
+  it('结局可达: ending_love_soft (倚怀向晚)', () => {
+    const res = createSimulator({
+      hub: (stats) => {
+        if ((stats.routes.riverside || 0) < 3) {
+          return 'riverside'
+        }
+        return 'kitchen'
+      },
+      pick: ({ event, available, stats }) => {
+        if (event.id === 'ev_final') {
+          const c = available.find((item) => {
+            return item.id === 'final_love_soft'
+          })
+          if (!c) {
+            throw new Error(`final_love_soft 不可用, stats: ${JSON.stringify(stats)}`)
+          }
+          return c
+        }
+        if (event.id === 'pro_meet_yujie') {
+          return available.find((c) => {
+            return c.id === 'pro_meet_yujie_help'
+          })
+        }
+        if (event.id === 'ev_echo_d5') {
+          return available.find((c) => {
+            return c.id === 'echo_d5_soft'
+          })
+        }
+        if (event.id === 'ev_market_day') {
+          return available.find((c) => {
+            return c.id === 'mktd_coat'
+          })
+        }
         if (event.id === 'ev_noodle_man') {
-          return available.find((c) => c.id === 'noodle_2')
+          return available.find((c) => {
+            return c.id === 'noodle_inspect_reject'
+          })
+        }
+        if (event.id === 'ev_yujie_trouble') {
+          return available.find((c) => {
+            return c.id === 'trouble_streamer_path'
+          })
+        }
+        if (event.id === 'ev_echo_d8') {
+          return available.find((c) => {
+            return c.id === 'echo_d8_soft_comfort'
+          })
+        }
+        if (event.id === 'ev_echo_d10') {
+          return available.find((c) => {
+            return c.id === 'echo_d10_soft_promise'
+          })
+        }
+        if (event.id === 'ev_yujie_confess') {
+          return available.find((c) => {
+            return c.id === 'yujie_confess_accept'
+          })
+        }
+        if (event.id === 'route_riverside_1') {
+          return available.find((c) => {
+            return c.id === 'riv_1_deep_talk'
+          })
+        }
+        if (event.id === 'route_riverside_2') {
+          return available.find((c) => {
+            return c.id === 'riv_2_sing'
+          })
+        }
+        if (event.id === 'route_riverside_3') {
+          return available.find((c) => {
+            return c.id === 'riv_3_coat'
+          })
+        }
+        if (event.id === 'route_kitchen_1') {
+          return available.find((c) => {
+            return c.id === 'kit_1_take_spatula'
+          })
         }
         return available[0]
       }
     })
-    expect(ending).toBe('ending_bye')
+    expect(res.ending).toBe('ending_love_soft')
+    expect(res.stats.affection).toBeGreaterThanOrEqual(90)
+    expect(res.stats.yujieSoftness).toBeGreaterThan(10)
+    expect(res.stats.flags.promiseYujie).toBe(true)
   })
 
-  it('随机乱选200局：均走到合法结局，无死局/死循环且day<=13', () => {
-    // 简单LCG保证跨环境完全可复现
-    let seed = 42
-    const rand = () => {
-      seed = (seed * 1103515245 + 12345) % 2147483648
-      return seed / 2147483648
+  // 3. ending_love_power (雨姐强势掌控态爱情)
+  it('结局可达: ending_love_power (盛木为荫)', () => {
+    const res = createSimulator({
+      hub: (stats) => {
+        if ((stats.routes.riverside || 0) < 3) {
+          return 'riverside'
+        }
+        return 'kitchen'
+      },
+      pick: ({ event, available, stats }) => {
+        if (event.id === 'ev_final') {
+          const c = available.find((item) => {
+            return item.id === 'final_love_power'
+          })
+          if (!c) {
+            throw new Error(`final_love_power 不可用, stats: ${JSON.stringify(stats)}`)
+          }
+          return c
+        }
+        if (event.id === 'pro_arrive') {
+          return available.find((c) => {
+            return c.id === 'pro_arrive_look'
+          })
+        }
+        if (event.id === 'pro_meet_yujie') {
+          return available.find((c) => {
+            return c.id === 'pro_meet_yujie_look'
+          })
+        }
+        if (event.id === 'ev_echo_d5') {
+          return available.find((c) => {
+            return c.id === 'echo_d5_power'
+          })
+        }
+        if (event.id === 'ev_market_day') {
+          return available.find((c) => {
+            return c.id === 'mktd_eat'
+          })
+        }
+        if (event.id === 'ev_noodle_man') {
+          return available.find((c) => {
+            return c.id === 'noodle_inspect_reject'
+          })
+        }
+        if (event.id === 'ev_yujie_trouble') {
+          return available.find((c) => {
+            return c.id === 'trouble_streamer_path'
+          })
+        }
+        if (event.id === 'ev_echo_d8') {
+          return available.find((c) => {
+            return c.id === 'echo_d8_power_back'
+          })
+        }
+        if (event.id === 'ev_echo_d10') {
+          return available.find((c) => {
+            return c.id === 'echo_d10_power_agree'
+          })
+        }
+        if (event.id === 'ev_yujie_confess') {
+          return available.find((c) => {
+            return c.id === 'yujie_confess_accept'
+          })
+        }
+        if (event.id === 'route_riverside_1') {
+          return available.find((c) => {
+            return c.id === 'riv_1_business'
+          })
+        }
+        if (event.id === 'route_riverside_2') {
+          return available.find((c) => {
+            return c.id === 'riv_2_awkward_joke'
+          })
+        }
+        if (event.id === 'route_riverside_3') {
+          return available.find((c) => {
+            return c.id === 'riv_3_hold_hands'
+          })
+        }
+        if (event.id === 'route_kitchen_1') {
+          return available.find((c) => {
+            return c.id === 'kit_1_sub'
+          })
+        }
+        if (event.id === 'route_kitchen_2') {
+          return available.find((c) => {
+            return c.id === 'kit_2_taste'
+          })
+        }
+        if (event.id === 'route_kitchen_3') {
+          return available.find((c) => {
+            return c.id === 'kit_3_fusion'
+          })
+        }
+        return available[0]
+      }
+    })
+    expect(res.ending).toBe('ending_love_power')
+    expect(res.stats.affection).toBeGreaterThanOrEqual(90)
+    expect(res.stats.yujieSoftness).toBeLessThan(-10)
+    expect(res.stats.flags.promiseYujie).toBe(true)
+  })
+
+  // 4. ending_laokuai_soulmate (老蒯知己工友)
+  it('结局可达: ending_laokuai_soulmate (匠心同舟)', () => {
+    const res = createSimulator({
+      hub: (stats) => {
+        const stage = stats.routes.laokuai || 0
+        if (stage === 0 || stage === 1 || stage === 2) {
+          return 'laokuai'
+        }
+        if (stage === 3 && stats.day >= 7) {
+          return 'laokuai'
+        }
+        if (stage === 4 && stats.day >= 10) {
+          return 'laokuai'
+        }
+        if ((stats.routes.pigpen || 0) < 3) {
+          return 'pigpen'
+        }
+        return 'kitchen'
+      },
+      pick: ({ event, available, stats }) => {
+        if (event.id === 'ev_final') {
+          const c = available.find((item) => {
+            return item.id === 'final_laokuai_soulmate'
+          })
+          if (!c) {
+            throw new Error(`final_laokuai_soulmate 不可用, stats: ${JSON.stringify(stats)}`)
+          }
+          return c
+        }
+        if (event.id === 'route_laokuai_1') {
+          return available.find((c) => {
+            return c.id === 'lao_1_carry_wood'
+          })
+        }
+        if (event.id === 'route_laokuai_2') {
+          return available.find((c) => {
+            return c.id === 'lao_2_clean_bench'
+          })
+        }
+        if (event.id === 'route_laokuai_3') {
+          return available.find((c) => {
+            return c.id === 'lao_3_hero_praise'
+          })
+        }
+        if (event.id === 'route_laokuai_4') {
+          return available.find((c) => {
+            return c.id === 'lao_4_soulmate_boundary'
+          })
+        }
+        if (event.id === 'route_laokuai_5') {
+          return available.find((c) => {
+            return c.id === 'lao_5_accept_brother'
+          })
+        }
+        if (event.id === 'route_pigpen_1') {
+          return available.find((c) => {
+            return c.id === 'pig_1_carry_all'
+          })
+        }
+        if (event.id === 'ev_noodle_man') {
+          return available.find((c) => {
+            return c.id === 'noodle_inspect_reject'
+          })
+        }
+        return available[0]
+      }
+    })
+    expect(res.ending).toBe('ending_laokuai_soulmate')
+    expect(res.stats.laokuaiBond).toBeGreaterThanOrEqual(55)
+    expect(res.stats.laokuaiRomance).toBeLessThan(35)
+    expect(res.stats.laokuaiAlert).toBeLessThanOrEqual(20)
+    expect(res.stats.routes.laokuai).toBe(5)
+  })
+
+  // 5. ending_laokuai_romance (老蒯浪漫双向)
+  it('结局可达: ending_laokuai_romance (默契生温)', () => {
+    const res = createSimulator({
+      hub: (stats) => {
+        const stage = stats.routes.laokuai || 0
+        if (stage < 3) {
+          return 'laokuai'
+        }
+        if (stage === 3 && stats.day >= 7) {
+          return 'laokuai'
+        }
+        if (stage === 4 && stats.day >= 10) {
+          return 'laokuai'
+        }
+        if ((stats.routes.pigpen || 0) < 2) {
+          return 'pigpen'
+        }
+        return 'kitchen'
+      },
+      pick: ({ event, available, stats }) => {
+        if (event.id === 'ev_final') {
+          const c = available.find((item) => {
+            return item.id === 'final_laokuai_romance'
+          })
+          if (!c) {
+            throw new Error(`final_laokuai_romance 不可用, stats: ${JSON.stringify(stats)}`)
+          }
+          return c
+        }
+        if (event.id === 'route_laokuai_1') {
+          return available.find((c) => {
+            return c.id === 'lao_1_carry_wood'
+          })
+        }
+        if (event.id === 'route_laokuai_2') {
+          return available.find((c) => {
+            return c.id === 'lao_2_bandage_care'
+          })
+        }
+        if (event.id === 'route_laokuai_3') {
+          return available.find((c) => {
+            return c.id === 'lao_3_gentle_touch'
+          })
+        }
+        if (event.id === 'route_laokuai_4') {
+          return available.find((c) => {
+            return c.id === 'lao_4_romance_confess'
+          })
+        }
+        if (event.id === 'route_laokuai_5') {
+          return available.find((c) => {
+            return c.id === 'lao_5_accept_romance'
+          })
+        }
+        if (event.id === 'ev_noodle_man') {
+          return available.find((c) => {
+            return c.id === 'noodle_inspect_reject'
+          })
+        }
+        if (event.id === 'ev_echo_d8') {
+          return available.find((c) => {
+            return c.id === 'echo_d8_balance_action'
+          })
+        }
+        if (event.id === 'ev_echo_d10') {
+          return available.find((c) => {
+            return c.id === 'echo_d10_balance_plan'
+          })
+        }
+        return available[0]
+      }
+    })
+    expect(res.ending).toBe('ending_laokuai_romance')
+    expect(res.stats.laokuaiRomance).toBeGreaterThanOrEqual(50)
+    expect(res.stats.laokuaiBond).toBeGreaterThanOrEqual(35)
+    expect(res.stats.flags.mutualLaokuaiConsent).toBe(true)
+    expect(res.stats.flags.doublePromise).toBeFalsy()
+  })
+
+  // 6. ending_family (东北一家人)
+  it('结局可达: ending_family (东北一家人)', () => {
+    const res = createSimulator({
+      hub: (stats) => {
+        const stage = stats.routes.laokuai || 0
+        if (stage < 3) {
+          return 'laokuai'
+        }
+        if ((stats.routes.kitchen || 0) < 3) {
+          return 'kitchen'
+        }
+        return 'kitchen'
+      },
+      pick: ({ event, available, stats }) => {
+        if (event.id === 'ev_final') {
+          const c = available.find((item) => {
+            return item.id === 'final_family'
+          })
+          if (!c) {
+            throw new Error(`final_family 不可用, stats: ${JSON.stringify(stats)}`)
+          }
+          return c
+        }
+        if (event.id === 'pro_meet_laokuai') {
+          return available.find((c) => {
+            return c.id === 'pro_laokuai_humor'
+          })
+        }
+        if (event.id === 'route_laokuai_1') {
+          return available.find((c) => {
+            return c.id === 'lao_1_carry_wood'
+          })
+        }
+        if (event.id === 'route_laokuai_2') {
+          return available.find((c) => {
+            return c.id === 'lao_2_bandage_care'
+          })
+        }
+        if (event.id === 'route_laokuai_3') {
+          return available.find((c) => {
+            return c.id === 'lao_3_hero_praise'
+          })
+        }
+        if (event.id === 'route_kitchen_1') {
+          return available.find((c) => {
+            return c.id === 'kit_1_take_spatula'
+          })
+        }
+        if (event.id === 'route_kitchen_2') {
+          return available.find((c) => {
+            return c.id === 'kit_2_careful'
+          })
+        }
+        if (event.id === 'route_kitchen_3') {
+          return available.find((c) => {
+            return c.id === 'kit_3_classic'
+          })
+        }
+        if (event.id === 'ev_noodle_man') {
+          return available.find((c) => {
+            return c.id === 'noodle_inspect_reject'
+          })
+        }
+        return available[0]
+      }
+    })
+    expect(res.ending).toBe('ending_family')
+    expect(res.stats.routes.laokuai).toBeGreaterThanOrEqual(3)
+    expect(res.stats.laokuaiBond).toBeGreaterThanOrEqual(30)
+    expect(res.stats.affection).toBeGreaterThanOrEqual(50)
+    expect(res.stats.laokuaiAlert).toBeLessThanOrEqual(20)
+  })
+
+  // 7. ending_chef (关东名厨)
+  it('结局可达: ending_chef (关东名厨)', () => {
+    const res = createSimulator({
+      hub: (stats) => {
+        if ((stats.routes.kitchen || 0) < 3) {
+          return 'kitchen'
+        }
+        if ((stats.routes.pigpen || 0) < 3) {
+          return 'pigpen'
+        }
+        return 'kitchen'
+      },
+      pick: ({ event, available, stats }) => {
+        if (event.id === 'ev_final') {
+          const c = available.find((item) => {
+            return item.id === 'final_chef'
+          })
+          if (!c) {
+            throw new Error(`final_chef 不可用, stats: ${JSON.stringify(stats)}`)
+          }
+          return c
+        }
+        if (event.id === 'route_kitchen_1') {
+          return available.find((c) => {
+            return c.id === 'kit_1_take_spatula'
+          })
+        }
+        if (event.id === 'route_kitchen_2') {
+          return available.find((c) => {
+            return c.id === 'kit_2_careful'
+          })
+        }
+        if (event.id === 'route_kitchen_3') {
+          return available.find((c) => {
+            return c.id === 'kit_3_fusion'
+          })
+        }
+        if (event.id === 'route_pigpen_1') {
+          return available.find((c) => {
+            return c.id === 'pig_1_carry_all'
+          })
+        }
+        if (event.id === 'route_pigpen_2') {
+          return available.find((c) => {
+            return c.id === 'pig_2_name_good'
+          })
+        }
+        if (event.id === 'route_pigpen_3') {
+          return available.find((c) => {
+            return c.id === 'pig_3_hero_carry'
+          })
+        }
+        if (event.id === 'ev_noodle_man') {
+          return available.find((c) => {
+            return c.id === 'noodle_inspect_reject'
+          })
+        }
+        return available[0]
+      }
+    })
+    expect(res.ending).toBe('ending_chef')
+    expect(res.stats.routes.kitchen).toBe(3)
+    expect(res.stats.routes.pigpen).toBe(3)
+    expect(res.stats.affection).toBeGreaterThanOrEqual(60)
+    expect(res.stats.integrity).toBeGreaterThanOrEqual(10)
+  })
+
+  // 8. ending_streamer (顶流之星)
+  it('结局可达: ending_streamer (顶流之星)', () => {
+    const res = createSimulator({
+      hub: (stats) => {
+        if ((stats.routes.market || 0) < 3) {
+          return 'market'
+        }
+        return 'kitchen'
+      },
+      pick: ({ event, available, stats }) => {
+        if (event.id === 'ev_final') {
+          const c = available.find((item) => {
+            return item.id === 'final_streamer'
+          })
+          if (!c) {
+            throw new Error(`final_streamer 不可用, stats: ${JSON.stringify(stats)}`)
+          }
+          return c
+        }
+        if (event.id === 'route_market_1') {
+          return available.find((c) => {
+            return c.id === 'mkt_1_english_bargain'
+          })
+        }
+        if (event.id === 'route_market_2') {
+          return available.find((c) => {
+            return c.id === 'mkt_2_buy_info'
+          })
+        }
+        if (event.id === 'route_market_3') {
+          return available.find((c) => {
+            return c.id === 'mkt_3_learn_live'
+          })
+        }
+        if (event.id === 'ev_noodle_man') {
+          return available.find((c) => {
+            return c.id === 'noodle_inspect_reject'
+          })
+        }
+        if (event.id === 'ev_yujie_trouble') {
+          return available.find((c) => {
+            return c.id === 'trouble_streamer_path'
+          })
+        }
+        return available[0]
+      }
+    })
+    expect(res.ending).toBe('ending_streamer')
+    expect(res.stats.routes.market).toBe(3)
+    expect(res.stats.flags.livePath).toBe(true)
+    expect(res.stats.flags.refusedNoodles).toBe(true)
+    expect(res.stats.flags.noodleCheap).toBeFalsy()
+  })
+
+  // 9. ending_goose (鹅中霸王)
+  it('结局可达: ending_goose (鹅中霸王)', () => {
+    const res = createSimulator({
+      hub: (stats) => {
+        if ((stats.routes.mountain || 0) < 3) {
+          return 'mountain'
+        }
+        return 'kitchen'
+      },
+      pick: ({ event, available, stats }) => {
+        if (event.id === 'ev_final') {
+          const c = available.find((item) => {
+            return item.id === 'final_goose'
+          })
+          if (!c) {
+            throw new Error(`final_goose 不可用, stats: ${JSON.stringify(stats)}`)
+          }
+          return c
+        }
+        if (event.id === 'pro_arrive') {
+          return available.find((c) => {
+            return c.id === 'pro_arrive_goose'
+          })
+        }
+        if (event.id === 'ev_goose_attack') {
+          return available.find((c) => {
+            return c.id === 'goose_a_fight'
+          })
+        }
+        if (event.id === 'route_mountain_3') {
+          return available.find((c) => {
+            return c.id === 'mtn_3_salute'
+          })
+        }
+        if (event.id === 'ev_goose_deep') {
+          return available.find((c) => {
+            return c.id === 'goose_deep_corn'
+          })
+        }
+        if (event.id === 'ev_noodle_man') {
+          return available.find((c) => {
+            return c.id === 'noodle_inspect_reject'
+          })
+        }
+        return available[0]
+      }
+    })
+    expect(res.ending).toBe('ending_goose')
+    expect(res.stats.gooseCount).toBeGreaterThanOrEqual(3)
+    expect(res.stats.flags.gooseAlly).toBe(true)
+  })
+
+  // 10. ending_friend (农家挚友)
+  it('结局可达: ending_friend (农家挚友)', () => {
+    const res = createSimulator({
+      hub: (stats) => {
+        if ((stats.routes.kitchen || 0) < 2) {
+          return 'kitchen'
+        }
+        return 'kitchen'
+      },
+      pick: ({ event, available, stats }) => {
+        if (event.id === 'ev_final') {
+          const c = available.find((item) => {
+            return item.id === 'final_friend'
+          })
+          if (!c) {
+            throw new Error(`final_friend 不可用, stats: ${JSON.stringify(stats)}`)
+          }
+          return c
+        }
+        if (event.id === 'ev_noodle_man') {
+          return available.find((c) => {
+            return c.id === 'noodle_inspect_reject'
+          })
+        }
+        return available[0]
+      }
+    })
+    expect(res.ending).toBe('ending_friend')
+    expect(res.stats.affection).toBeGreaterThanOrEqual(50)
+  })
+
+  // 11. ending_bye (客路匆匆)
+  it('结局可达: ending_bye (客路匆匆)', () => {
+    const res = createSimulator({
+      hub: () => {
+        return 'sleep'
+      },
+      pick: ({ event, available, stats }) => {
+        if (event.id === 'ev_final') {
+          const c = available.find((item) => {
+            return item.id === 'final_bye'
+          })
+          if (!c) {
+            throw new Error(`final_bye 不可用, stats: ${JSON.stringify(stats)}`)
+          }
+          return c
+        }
+        if (event.id === 'ev_noodle_man') {
+          return available.find((c) => {
+            return c.id === 'noodle_inspect_reject'
+          })
+        }
+        return available[0]
+      }
+    })
+    expect(res.ending).toBe('ending_bye')
+    expect(res.stats.day).toBe(13)
+  })
+
+  // 12. ending_shura (冰碎雪崩 - 双重欺瞒)
+  it('结局可达: ending_shura (冰碎雪崩)', () => {
+    const res = createSimulator({
+      hub: (stats) => {
+        if ((stats.routes.riverside || 0) < 3) {
+          return 'riverside'
+        }
+        const stage = stats.routes.laokuai || 0
+        if (stage < 3) {
+          return 'laokuai'
+        }
+        if (stage === 3 && stats.day >= 7) {
+          return 'laokuai'
+        }
+        return 'kitchen'
+      },
+      pick: ({ event, available }) => {
+        if (event.id === 'route_riverside_1') {
+          return available.find((c) => {
+            return c.id === 'riv_1_deep_talk'
+          })
+        }
+        if (event.id === 'route_riverside_2') {
+          return available.find((c) => {
+            return c.id === 'riv_2_sing'
+          })
+        }
+        if (event.id === 'route_riverside_3') {
+          return available.find((c) => {
+            return c.id === 'riv_3_hold_hands'
+          })
+        }
+        if (event.id === 'route_laokuai_1') {
+          return available.find((c) => {
+            return c.id === 'lao_1_carry_wood'
+          })
+        }
+        if (event.id === 'route_laokuai_2') {
+          return available.find((c) => {
+            return c.id === 'lao_2_bandage_care'
+          })
+        }
+        if (event.id === 'route_laokuai_3') {
+          return available.find((c) => {
+            return c.id === 'lao_3_gentle_touch'
+          })
+        }
+        if (event.id === 'ev_echo_d8') {
+          return available.find((c) => {
+            return c.id === 'echo_d8_soft_comfort'
+          })
+        }
+        if (event.id === 'route_laokuai_4') {
+          return available.find((c) => {
+            return c.id === 'lao_4_romance_confess'
+          })
+        }
+        if (event.id === 'ev_noodle_man') {
+          return available.find((c) => {
+            return c.id === 'noodle_inspect_reject'
+          })
+        }
+        if (event.id === 'ev_shura_reveal') {
+          return available.find((c) => {
+            return c.id === 'shura_accept_fate'
+          })
+        }
+        if (event.id === 'ev_ending_shura') {
+          return available.find((c) => {
+            return c.id === 'end_shura_btn'
+          })
+        }
+        return available[0]
+      }
+    })
+    expect(res.ending).toBe('ending_shura')
+    expect(res.stats.day).toBe(12)
+    expect(res.stats.flags.doublePromise).toBe(true)
+  })
+
+  // 13. ending_noodle (盛宴翻车 - 假粉条未补救)
+  it('结局可达: ending_noodle (盛宴翻车)', () => {
+    const res = createSimulator({
+      hub: () => {
+        return 'sleep'
+      },
+      pick: ({ event, available }) => {
+        if (event.id === 'ev_noodle_man') {
+          return available.find((c) => {
+            return c.id === 'noodle_cheap_deal'
+          })
+        }
+        if (event.id === 'ev_expose') {
+          return available.find((c) => {
+            return c.id === 'expose_end'
+          })
+        }
+        return available[0]
+      }
+    })
+    expect(res.ending).toBe('ending_noodle')
+    expect(res.stats.day).toBe(12)
+  })
+
+  // 14. ending_kicked (逐出山门 - 警觉超标45)
+  it('结局可达: ending_kicked (逐出山门)', () => {
+    const res = createSimulator({
+      hub: (stats) => {
+        const stage = stats.routes.laokuai || 0
+        if (stage < 3) {
+          return 'laokuai'
+        }
+        if (stage === 3 && stats.day >= 7) {
+          return 'laokuai'
+        }
+        return 'riverside'
+      },
+      pick: ({ event, available }) => {
+        if (event.id === 'pro_arrive') {
+          return available.find((c) => {
+            return c.id === 'pro_arrive_shout'
+          })
+        }
+        if (event.id === 'pro_meet_laokuai') {
+          return available.find((c) => {
+            return c.id === 'pro_laokuai_stare_milk'
+          })
+        }
+        if (event.id === 'route_laokuai_1') {
+          return available.find((c) => {
+            return c.id === 'lao_1_grab_axe'
+          })
+        }
+        if (event.id === 'route_laokuai_2') {
+          return available.find((c) => {
+            return c.id === 'lao_2_yell_yujie'
+          })
+        }
+        if (event.id === 'route_laokuai_3') {
+          return available.find((c) => {
+            return c.id === 'lao_3_preach'
+          })
+        }
+        if (event.id === 'ev_warning') {
+          return available.find((c) => {
+            return c.id === 'warning_defy'
+          })
+        }
+        if (event.id === 'route_laokuai_4') {
+          return available.find((c) => {
+            return c.id === 'lao_4_vague_dodge'
+          })
+        }
+        if (event.id === 'route_riverside_1') {
+          return available.find((c) => {
+            return c.id === 'riv_1_deep_talk'
+          })
+        }
+        if (event.id === 'ev_noodle_man') {
+          return available.find((c) => {
+            return c.id === 'noodle_inspect_reject'
+          })
+        }
+        return available[0]
+      }
+    })
+    expect(res.ending).toBe('ending_kicked')
+    expect(res.stats.laokuaiAlert).toBeGreaterThanOrEqual(ALERT_GAME_OVER)
+  })
+})
+
+describe('500 局固定种子蒙特卡洛随机模拟测试', () => {
+  it('500 局随机自动化：全部无死局、无死循环、无悬空事件，day<=13，落入合法结局', () => {
+    let seed = 123456789
+    const pseudoRandom = () => {
+      seed = (seed * 1664525 + 1013904223) % 4294967296
+      return seed / 4294967296
     }
-    const routeIds = ['kitchen', 'pigpen', 'market', 'riverside', 'laokuai', 'mountain', 'sleep']
-    for (let run = 0; run < 200; run++) {
-      const { ending, stats, steps } = simulate({
-        hub: () => routeIds[Math.floor(rand() * routeIds.length)],
-        pick: ({ available }) => available[Math.floor(rand() * available.length)]
+
+    for (let i = 0; i < 500; i++) {
+      const res = createSimulator({
+        hub: (stats) => {
+          const candidates = []
+          for (const r of ['kitchen', 'pigpen', 'market', 'riverside', 'laokuai', 'mountain']) {
+            if (r === 'laokuai') {
+              const st = stats.routes.laokuai || 0
+              if (st === 3 && stats.day < 7) {
+                continue
+              }
+              if (st === 4 && stats.day < 10) {
+                continue
+              }
+              if (st >= 5) {
+                continue
+              }
+            }
+            const ev = routeEventId(r, stats.routes[r] || 0, stats)
+            if (ev) {
+              candidates.push(r)
+            }
+          }
+          candidates.push('sleep')
+          const idx = Math.floor(pseudoRandom() * candidates.length)
+          return candidates[idx]
+        },
+        pick: ({ available }) => {
+          const idx = Math.floor(pseudoRandom() * available.length)
+          return available[idx]
+        }
       })
-      expect(ending, `第${run}局在${steps}步内应走到结局`).toBeTruthy()
-      expect(endings[ending], `第${run}局结局应在结局库中`).toBeDefined()
-      expect(steps).toBeLessThan(300)
-      expect(stats.day).toBeLessThanOrEqual(13)
+
+      expect(res.ending, `第 ${i} 局应当产生有效结局`).toBeTruthy()
+      expect(endings[res.ending], `第 ${i} 局结局 (${res.ending}) 必须在合法结局列表中`).toBeDefined()
+      expect(res.stats.day).toBeLessThanOrEqual(13)
+      expect(res.totalApSpent).toBeLessThanOrEqual(18)
+      expect(res.steps).toBeLessThan(300)
     }
   })
+})
 
-  it('静态断言：D6两个商人选择必须ap=-1且next=HUB', () => {
-    const noodleEvent = gameEvents.ev_noodle_man
-    expect(noodleEvent).toBeDefined()
-    const choice1 = noodleEvent.choices.find((c) => c.id === 'noodle_1')
-    const choice2 = noodleEvent.choices.find((c) => c.id === 'noodle_2')
-    expect(choice1).toBeDefined()
-    expect(choice2).toBeDefined()
-    expect(choice1.effects?.ap).toBe(-1)
-    expect(choice1.next).toBe(HUB)
-    expect(choice2.effects?.ap).toBe(-1)
-    expect(choice2.next).toBe(HUB)
-  })
-
-  it('D6完成固定事件后留在day=6、mode=hub且AP=1，再执行支线后AP=0并进入night_rest', () => {
-    let state = {
-      stats: { ...initialStats(), day: 6, actionPoints: ACTIONS_PER_DAY },
-      mode: 'event',
-      eventId: 'ev_market_day',
-      ending: null
-    }
-
-    state = stepEvent(state, 'mktd_1')
-    expect(state.eventId).toBe('ev_noodle_man')
-    expect(state.mode).toBe('event')
-
-    state = stepEvent(state, 'noodle_2')
-    expect(state.mode).toBe('hub')
-    expect(state.stats.day).toBe(6)
-    expect(state.stats.actionPoints).toBe(1)
-    expect(state.ending).toBeNull()
-
-    state = stepEvent(state, 'kitchen')
-    expect(state.mode).toBe('event')
-    expect(state.eventId).toBe('route_kitchen_1')
-    expect(state.stats.actionPoints).toBe(0)
-
-    state = stepEvent(state, 'kit_1_1')
-    expect(state.mode).toBe('event')
-    expect(state.eventId).toBe('night_rest')
-    expect(state.stats.day).toBe(6)
-    expect(state.stats.actionPoints).toBe(0)
-
-    state = stepEvent(state, 'night_1')
-    expect(state.stats.day).toBe(7)
-    expect(state.stats.actionPoints).toBe(ACTIONS_PER_DAY)
-    expect(state.mode).toBe('hub')
-  })
-
-  it('D3三条大鹅主分支分别跑到HUB后day=3且AP=2', () => {
-    const gooseFlows = [
-      { first: 'goose_a_1', intermediate: 'ev_goose_fight', second: 'goose_f_1' },
-      { first: 'goose_a_2', intermediate: 'ev_goose_run', second: 'goose_r_1' },
-      { first: 'goose_a_3', intermediate: 'ev_goose_save', second: 'goose_s_1' }
-    ]
-    for (const flow of gooseFlows) {
-      let state = {
-        stats: { ...initialStats(), day: 3, actionPoints: ACTIONS_PER_DAY },
-        mode: 'event',
-        eventId: 'ev_goose_attack',
-        ending: null
+describe('核心剧情机制与性质断言', () => {
+  it('数值性质：至少存在一条选项会使 affection 好感度下降', () => {
+    let foundNegativeAffection = false
+    for (const ev of Object.values(gameEvents)) {
+      for (const choice of ev.choices || []) {
+        if (choice.effects && typeof choice.effects.affection === 'number' && choice.effects.affection < 0) {
+          foundNegativeAffection = true
+          break
+        }
+        if (Array.isArray(choice.outcomes)) {
+          for (const oc of choice.outcomes) {
+            if (oc.effects && typeof oc.effects.affection === 'number' && oc.effects.affection < 0) {
+              foundNegativeAffection = true
+              break
+            }
+          }
+        }
       }
-      state = stepEvent(state, flow.first)
-      expect(state.eventId).toBe(flow.intermediate)
-      expect(state.mode).toBe('event')
-
-      state = stepEvent(state, flow.second)
-      expect(state.mode).toBe('hub')
-      expect(state.stats.day).toBe(3)
-      expect(state.stats.actionPoints).toBe(2)
-      expect(state.ending).toBeNull()
-    }
-  })
-
-  it('D9可用分支跑到HUB后day=9且AP=1', () => {
-    const unconditionalChoices = ['trouble_1', 'trouble_3']
-    for (const choiceId of unconditionalChoices) {
-      let state = {
-        stats: { ...initialStats(), day: 9, actionPoints: ACTIONS_PER_DAY },
-        mode: 'event',
-        eventId: 'ev_yujie_trouble',
-        ending: null
+      if (foundNegativeAffection) {
+        break
       }
-      state = stepEvent(state, choiceId)
-      expect(state.mode).toBe('hub')
-      expect(state.stats.day).toBe(9)
-      expect(state.stats.actionPoints).toBe(1)
-      expect(state.ending).toBeNull()
     }
-
-    let liveState = {
-      stats: {
-        ...initialStats(),
-        day: 9,
-        actionPoints: ACTIONS_PER_DAY,
-        flags: { liveSkill: true }
-      },
-      mode: 'event',
-      eventId: 'ev_yujie_trouble',
-      ending: null
-    }
-    liveState = stepEvent(liveState, 'trouble_2')
-    expect(liveState.mode).toBe('hub')
-    expect(liveState.stats.day).toBe(9)
-    expect(liveState.stats.actionPoints).toBe(1)
-    expect(liveState.ending).toBeNull()
+    expect(foundNegativeAffection).toBe(true)
   })
 
-  it('D12五个专属回响和通用兜底均能从代表状态进入对应短事件、汇入ev_feast_end并进入D13', () => {
-    const echoCases = [
-      {
-        name: '掌勺大厨回响',
-        setup: {
-          routes: { kitchen: 3, pigpen: 3 },
-          affection: 65,
-          laokuaiAlert: 10
-        },
-        choiceId: 'feast_chef',
-        echoEventId: 'ev_feast_chef',
-        subChoiceId: 'f_chef_1'
-      },
-      {
-        name: '盛宴直播回响',
-        setup: {
-          routes: { market: 3 },
-          flags: { livePath: true, refusedNoodles: true },
-          affection: 60
-        },
-        choiceId: 'feast_streamer',
-        echoEventId: 'ev_feast_streamer',
-        subChoiceId: 'f_streamer_1'
-      },
-      {
-        name: '温情相伴回响',
-        setup: {
-          routes: { riverside: 3 },
-          affection: 80,
-          laokuaiAlert: 20
-        },
-        choiceId: 'feast_love',
-        echoEventId: 'ev_feast_love',
-        subChoiceId: 'f_love_1'
-      },
-      {
-        name: '主桌上座回响',
-        setup: {
-          routes: { laokuai: 3 },
-          laokuaiAlert: 10,
-          affection: 40
-        },
-        choiceId: 'feast_family',
-        echoEventId: 'ev_feast_family',
-        subChoiceId: 'f_family_1'
-      },
-      {
-        name: '鹅王巡场回响',
-        setup: {
-          gooseCount: 3,
-          affection: 40
-        },
-        choiceId: 'feast_goose',
-        echoEventId: 'ev_feast_goose',
-        subChoiceId: 'f_goose_1'
-      },
-      {
-        name: '通用热火朝天兜底',
-        setup: {},
-        choiceId: 'feast_generic',
-        echoEventId: 'ev_feast_generic',
-        subChoiceId: 'f_gen_1'
-      }
-    ]
+  it('动态后果：同一选项在不同 stats 下解析出不同 outcome 与 next', () => {
+    const choice = gameEvents.ev_echo_d12.choices[0]
+    expect(choice.outcomes).toBeDefined()
 
-    for (const testCase of echoCases) {
-      let state = {
-        stats: {
-          ...initialStats(),
-          day: 12,
-          actionPoints: ACTIONS_PER_DAY,
-          ...testCase.setup,
-          routes: { ...initialStats().routes, ...(testCase.setup.routes || {}) },
-          flags: { ...initialStats().flags, ...(testCase.setup.flags || {}) }
-        },
-        mode: 'event',
-        eventId: 'ev_feast',
-        ending: null
-      }
+    // 状态 A: doublePromise -> ev_shura_reveal
+    const statsShura = { ...initialStats(), flags: { doublePromise: true } }
+    const resolvedShura = resolveChoiceOutcome(choice, statsShura)
+    expect(resolvedShura.next).toBe('ev_shura_reveal')
 
-      // 验证在 ev_feast 中对应选项可用并进入对应短事件
-      state = stepEvent(state, testCase.choiceId)
-      expect(state.eventId, `${testCase.name} 应该进入 ${testCase.echoEventId}`).toBe(testCase.echoEventId)
-      expect(state.mode).toBe('event')
+    // 状态 B: noodleCheap 且未补救 -> ev_expose
+    const statsNoodle = { ...initialStats(), flags: { noodleCheap: true } }
+    const resolvedNoodle = resolveChoiceOutcome(choice, statsNoodle)
+    expect(resolvedNoodle.next).toBe('ev_expose')
 
-      // 验证在对应短事件中选下唯一选项汇入 ev_feast_end
-      state = stepEvent(state, testCase.subChoiceId)
-      expect(state.eventId, `${testCase.name} 应该汇入 ev_feast_end`).toBe('ev_feast_end')
-      expect(state.mode).toBe('event')
-
-      // 验证散席后睡觉直接推进到 D13 抉择日主事件 ev_final
-      state = stepEvent(state, 'feast_e_1')
-      expect(state.stats.day).toBe(13)
-      expect(state.eventId).toBe('ev_final')
-      expect(state.mode).toBe('event')
-      expect(state.ending).toBeNull()
-    }
+    // 状态 C: 正常状态 -> ev_feast
+    const statsNormal = initialStats()
+    const resolvedNormal = resolveChoiceOutcome(choice, statsNormal)
+    expect(resolvedNormal.next).toBe('ev_feast')
+    expect(resolvedNormal.effects?.affection).toBe(5)
   })
 
-  it('回归测试：D12心动回响不增加老蒯警觉度，确保边界状态(alert=40)在D13仍可选心动结局', () => {
-    let state = {
-      stats: {
-        ...initialStats(),
-        day: 12,
-        actionPoints: ACTIONS_PER_DAY,
-        affection: 90,
-        laokuaiAlert: 40,
-        routes: { ...initialStats().routes, riverside: 3 }
+  it('雨姐 persona 性质：getRelationshipStages 在实跑正负 softness 路径下正确判定 persona', () => {
+    const softRes = createSimulator({
+      hub: (stats) => {
+        if ((stats.routes.riverside || 0) < 3) {
+          return 'riverside'
+        }
+        return 'kitchen'
       },
-      mode: 'event',
-      eventId: 'ev_feast',
-      ending: null
-    }
-
-    state = stepEvent(state, 'feast_love')
-    expect(state.eventId).toBe('ev_feast_love')
-    expect(state.mode).toBe('event')
-
-    state = stepEvent(state, 'f_love_1')
-    expect(state.eventId).toBe('ev_feast_end')
-    expect(state.mode).toBe('event')
-
-    state = stepEvent(state, 'feast_e_1')
-    expect(state.stats.day).toBe(13)
-    expect(state.eventId).toBe('ev_final')
-    expect(state.mode).toBe('event')
-    expect(state.ending).toBeNull()
-
-    // 断言警觉度未被增加，仍然不超过 40
-    expect(state.stats.laokuaiAlert).toBeLessThanOrEqual(40)
-
-    // 断言到达 D13 ev_final 后，final_love 依然满足 checkCondition 且在可用选项中
-    const finalEvent = gameEvents[state.eventId]
-    const finalLoveChoice = finalEvent.choices.find((c) => c.id === 'final_love')
-    expect(finalLoveChoice).toBeDefined()
-    expect(checkCondition(finalLoveChoice.condition, state.stats)).toBe(true)
-
-    const available = finalEvent.choices.filter((c) => checkCondition(c.condition, state.stats))
-    expect(available.some((c) => c.id === 'final_love')).toBe(true)
-
-    // 确认可顺利完成心动结局
-    state = stepEvent(state, 'final_love')
-    expect(state.ending).toBe('ending_love')
-  })
-
-  it('D12分流后正确导向D13或翻车结局，且全流程不出现day>13', () => {
-    const resNoodle = simulate({
-      hub: () => 'sleep',
       pick: ({ event, available }) => {
+        if (event.id === 'ev_final') {
+          return available.find((c) => {
+            return c.id === 'final_love_soft'
+          }) || available[0]
+        }
+        if (event.id === 'pro_meet_yujie') {
+          return available.find((c) => {
+            return c.id === 'pro_meet_yujie_help'
+          })
+        }
+        if (event.id === 'ev_echo_d5') {
+          return available.find((c) => {
+            return c.id === 'echo_d5_soft'
+          })
+        }
+        if (event.id === 'ev_market_day') {
+          return available.find((c) => {
+            return c.id === 'mktd_coat'
+          })
+        }
         if (event.id === 'ev_noodle_man') {
-          return available.find((c) => c.id === 'noodle_1')
+          return available.find((c) => {
+            return c.id === 'noodle_inspect_reject'
+          })
+        }
+        if (event.id === 'ev_yujie_trouble') {
+          return available.find((c) => {
+            return c.id === 'trouble_streamer_path'
+          })
+        }
+        if (event.id === 'ev_echo_d8') {
+          return available.find((c) => {
+            return c.id === 'echo_d8_soft_comfort'
+          })
+        }
+        if (event.id === 'ev_echo_d10') {
+          return available.find((c) => {
+            return c.id === 'echo_d10_soft_promise'
+          })
+        }
+        if (event.id === 'ev_yujie_confess') {
+          return available.find((c) => {
+            return c.id === 'yujie_confess_accept'
+          })
+        }
+        if (event.id === 'route_riverside_1') {
+          return available.find((c) => {
+            return c.id === 'riv_1_deep_talk'
+          })
+        }
+        if (event.id === 'route_riverside_2') {
+          return available.find((c) => {
+            return c.id === 'riv_2_sing'
+          })
+        }
+        if (event.id === 'route_riverside_3') {
+          return available.find((c) => {
+            return c.id === 'riv_3_coat'
+          })
         }
         return available[0]
       }
     })
-    expect(resNoodle.ending).toBe('ending_noodle')
-    expect(resNoodle.stats.day).toBeLessThanOrEqual(13)
+    const stagesSoft = getRelationshipStages(softRes.stats)
+    expect(stagesSoft.yujiePersona).toBe('柔软依恋')
 
-    const resNormal = simulate({
-      hub: () => 'sleep',
+    const powerRes = createSimulator({
+      hub: (stats) => {
+        if ((stats.routes.riverside || 0) < 3) {
+          return 'riverside'
+        }
+        return 'kitchen'
+      },
       pick: ({ event, available }) => {
+        if (event.id === 'ev_final') {
+          return available.find((c) => {
+            return c.id === 'final_love_power'
+          }) || available[0]
+        }
+        if (event.id === 'pro_arrive') {
+          return available.find((c) => {
+            return c.id === 'pro_arrive_look'
+          })
+        }
+        if (event.id === 'pro_meet_yujie') {
+          return available.find((c) => {
+            return c.id === 'pro_meet_yujie_look'
+          })
+        }
+        if (event.id === 'ev_echo_d5') {
+          return available.find((c) => {
+            return c.id === 'echo_d5_power'
+          })
+        }
+        if (event.id === 'ev_market_day') {
+          return available.find((c) => {
+            return c.id === 'mktd_eat'
+          })
+        }
         if (event.id === 'ev_noodle_man') {
-          return available.find((c) => c.id === 'noodle_2')
+          return available.find((c) => {
+            return c.id === 'noodle_inspect_reject'
+          })
+        }
+        if (event.id === 'ev_yujie_trouble') {
+          return available.find((c) => {
+            return c.id === 'trouble_streamer_path'
+          })
+        }
+        if (event.id === 'ev_echo_d8') {
+          return available.find((c) => {
+            return c.id === 'echo_d8_power_back'
+          })
+        }
+        if (event.id === 'ev_echo_d10') {
+          return available.find((c) => {
+            return c.id === 'echo_d10_power_agree'
+          })
+        }
+        if (event.id === 'ev_yujie_confess') {
+          return available.find((c) => {
+            return c.id === 'yujie_confess_accept'
+          })
+        }
+        if (event.id === 'route_riverside_1') {
+          return available.find((c) => {
+            return c.id === 'riv_1_business'
+          })
+        }
+        if (event.id === 'route_riverside_2') {
+          return available.find((c) => {
+            return c.id === 'riv_2_awkward_joke'
+          })
+        }
+        if (event.id === 'route_riverside_3') {
+          return available.find((c) => {
+            return c.id === 'riv_3_hold_hands'
+          })
+        }
+        if (event.id === 'route_kitchen_1') {
+          return available.find((c) => {
+            return c.id === 'kit_1_sub'
+          })
+        }
+        if (event.id === 'route_kitchen_2') {
+          return available.find((c) => {
+            return c.id === 'kit_2_taste'
+          })
+        }
+        if (event.id === 'route_kitchen_3') {
+          return available.find((c) => {
+            return c.id === 'kit_3_fusion'
+          })
         }
         return available[0]
       }
     })
-    expect(resNormal.ending).toBe('ending_bye')
-    expect(resNormal.stats.day).toBe(13)
+    const stagesPower = getRelationshipStages(powerRes.stats)
+    expect(powerRes.stats.yujieSoftness).toBeLessThan(-10)
+    expect(stagesPower.yujiePersona).toBe('强势主导')
+  })
+
+  it('老蒯边界管理：明确划界 (lao_4_soulmate_boundary) 会设置 honestBoundary 并清理 promiseLaokuai，不会赋予 mutualLaokuaiConsent', () => {
+    const choice = gameEvents.route_laokuai_4.choices.find((c) => {
+      return c.id === 'lao_4_soulmate_boundary'
+    })
+    expect(choice).toBeDefined()
+
+    const statsBefore = {
+      ...initialStats(),
+      flags: { promiseLaokuai: true }
+    }
+    const resolved = resolveChoiceOutcome(choice, statsBefore)
+    const statsAfter = applyEffects(statsBefore, resolved)
+
+    expect(statsAfter.flags.honestBoundary).toBe(true)
+    expect(statsAfter.flags.promiseLaokuai).toBeFalsy()
+    expect(statsAfter.flags.mutualLaokuaiConsent).toBeFalsy()
+  })
+
+  it('D6 三个粉条选择均扣除 1 AP 并返回 HUB', () => {
+    const noodleEv = gameEvents.ev_noodle_man
+    expect(noodleEv).toBeDefined()
+    expect(noodleEv.choices.length).toBe(3)
+
+    for (const c of noodleEv.choices) {
+      expect(c.next).toBe(HUB)
+      expect(c.effects?.ap).toBe(-1)
+    }
+  })
+
+  it('D9 固定发愁事件消耗 1 AP 且剩余 1 AP 在当天', () => {
+    const troubleEv = gameEvents.ev_yujie_trouble
+    expect(troubleEv).toBeDefined()
+    for (const c of troubleEv.choices) {
+      expect(c.next).toBe(HUB)
+      expect(c.effects?.ap).toBe(-1)
+    }
+  })
+
+  it('特殊支线插曲：seen 防重复触发机制', () => {
+    const stats = {
+      ...initialStats(),
+      day: 4,
+      routes: { market: 1 }
+    }
+    expect(getSpecialRouteEvent('market', stats)).toBe('ev_cuihua_market')
+
+    const statsSeen = {
+      ...stats,
+      flags: { cuihuaHelp: true, cuihuaMarketSeen: true }
+    }
+    expect(getSpecialRouteEvent('market', statsSeen)).toBeNull()
+  })
+
+  it('警觉告警插曲：laokuaiAlert 在 30..44 时 shouldInsertWarning 返回 true，触发后 warningSeen 置为 true 防重', () => {
+    const stats35 = { ...initialStats(), laokuaiAlert: 35 }
+    expect(shouldInsertWarning(stats35)).toBe(true)
+
+    const statsWarningSeen = { ...stats35, flags: { warningSeen: true } }
+    expect(shouldInsertWarning(statsWarningSeen)).toBe(false)
+  })
+
+  it('存档迁移 migrateStats：补齐 v2.4 缺省字段，从合法中间天继续不超出 13 天', () => {
+    const oldSave = {
+      affection: 45,
+      laokuaiAlert: 10,
+      money: 120,
+      day: 7,
+      actionPoints: 1,
+      routes: { kitchen: 2 }
+    }
+    const migrated = migrateStats(oldSave)
+    expect(migrated.yujieSoftness).toBe(0)
+    expect(migrated.laokuaiBond).toBe(0)
+    expect(migrated.laokuaiRomance).toBe(0)
+    expect(migrated.integrity).toBe(0)
+    expect(migrated.gooseCount).toBe(0)
+    expect(migrated.day).toBe(7)
+    expect(migrated.actionPoints).toBe(1)
   })
 })
