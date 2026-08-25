@@ -1,3 +1,4 @@
+import { resolve } from 'node:path'
 import { defineConfig, loadEnv } from 'vite'
 import react from '@vitejs/plugin-react'
 import { createMockApiPlugin } from './dev/viteMocks'
@@ -26,10 +27,14 @@ export default defineConfig(({ mode }) => {
 
     // 构建配置
     build: {
-      outDir: 'dist', // 输出目录，适配 Cloudflare Pages
+      outDir: 'dist', // 适配 Cloudflare Pages
       sourcemap: false, // 🔒 禁用 Source Map，防止源代码泄露
-      minify: 'esbuild', // 使用 esbuild（Vite 内置，速度更快）
+      minify: 'esbuild', // Vite 内置
       rollupOptions: {
+        input: {
+          main: resolve(process.cwd(), 'index.html'),
+          yujie: resolve(process.cwd(), 'yujie/index.html'),
+        },
         output: {
           manualChunks(id) {
             if (!id.includes('node_modules')) {

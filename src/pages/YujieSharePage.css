@@ -1,0 +1,715 @@
+/* ==========================================================================
+   YujieSharePage.css - 《雨姐的心动时刻》独立分发页生产级专属样式表
+   视觉风格：东北冬夜独立游戏 / 炭黑底色 / 暖琥珀光晕 / 极光冷蓝 / 克制中国红
+   ========================================================================== */
+
+.yujie-share-page {
+  /* 变量定义 */
+  --yj-bg-base: #0a0e14;
+  --yj-bg-elevated: #111722;
+  --yj-bg-surface: #17202e;
+  --yj-bg-surface-hover: #1f2b3d;
+  --yj-border-subtle: rgba(255, 255, 255, 0.08);
+  --yj-border-gold: rgba(245, 158, 11, 0.35);
+  --yj-border-red: rgba(225, 29, 72, 0.4);
+  
+  --yj-text-primary: #f8fafc;
+  --yj-text-secondary: #cbd5e1;
+  --yj-text-muted: #94a3b8;
+  
+  --yj-accent-amber: #f59e0b;
+  --yj-accent-amber-light: #fbbf24;
+  --yj-accent-amber-glow: rgba(245, 158, 11, 0.25);
+  --yj-accent-red: #e11d48;
+  --yj-accent-red-hover: #be123c;
+  --yj-accent-red-glow: rgba(225, 29, 72, 0.35);
+  --yj-wood-brown: #3b2416;
+  --yj-wood-border: #78350f;
+
+  --yj-max-w: 1180px;
+  --yj-font-sans: system-ui, -apple-system, BlinkMacSystemFont, "PingFang SC", "Hiragino Sans GB", "Microsoft YaHei", "Noto Sans SC", sans-serif;
+  --yj-font-serif: "Songti SC", "Source Han Serif SC", "Noto Serif SC", "STSong", SimSun, serif;
+
+  /* 基础重置隔离 */
+  min-height: 100vh;
+  background-color: var(--yj-bg-base);
+  background-image: 
+    radial-gradient(ellipse 80% 50% at 50% -20%, rgba(225, 29, 72, 0.15), transparent 70%),
+    radial-gradient(ellipse 60% 40% at 85% 15%, rgba(245, 158, 11, 0.08), transparent 60%),
+    linear-gradient(180deg, #0d131d 0%, #080b0f 100%);
+  color: var(--yj-text-primary);
+  font-family: var(--yj-font-sans);
+  line-height: 1.6;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  box-sizing: border-box;
+  overflow-x: hidden;
+  position: relative;
+}
+
+.yujie-share-page *,
+.yujie-share-page *::before,
+.yujie-share-page *::after {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+}
+
+/* 链接重置 */
+.yujie-share-page a {
+  color: inherit;
+  text-decoration: none;
+}
+
+/* --------------------------------------------------------------------------
+   顶部导览 Header
+   -------------------------------------------------------------------------- */
+.yujie-share-header {
+  position: sticky;
+  top: 0;
+  z-index: 50;
+  height: 60px;
+  background: rgba(10, 14, 20, 0.82);
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+  border-bottom: 1px solid var(--yj-border-subtle);
+  display: flex;
+  align-items: center;
+}
+
+.yujie-share-header__inner {
+  width: 100%;
+  max-width: var(--yj-max-w);
+  margin: 0 auto;
+  padding: 0 20px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.yujie-share-header__brand {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  text-decoration: none;
+}
+
+.yujie-share-header__title {
+  font-size: 1.05rem;
+  font-weight: 700;
+  letter-spacing: 0.02em;
+  color: var(--yj-text-primary);
+  font-family: var(--yj-font-serif);
+}
+
+.yujie-share-header__version {
+  font-size: 0.72rem;
+  font-weight: 600;
+  color: var(--yj-accent-amber-light);
+  background: rgba(245, 158, 11, 0.12);
+  border: 1px solid rgba(245, 158, 11, 0.3);
+  padding: 2px 7px;
+  border-radius: 9999px;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+}
+
+.yujie-share-header__back {
+  font-size: 0.88rem;
+  color: var(--yj-text-muted);
+  display: inline-flex;
+  align-items: center;
+  min-height: 44px;
+  padding: 0 12px;
+  border-radius: 6px;
+  transition: color 0.2s ease, background-color 0.2s ease;
+}
+
+.yujie-share-header__back:hover {
+  color: var(--yj-text-primary);
+  background: rgba(255, 255, 255, 0.05);
+}
+
+.yujie-share-header__back:focus-visible {
+  outline: 2px solid var(--yj-accent-amber);
+  outline-offset: 2px;
+}
+
+/* --------------------------------------------------------------------------
+   主内容区域
+   -------------------------------------------------------------------------- */
+.yujie-share-main {
+  width: 100%;
+  max-width: var(--yj-max-w);
+  margin: 0 auto;
+  padding: 24px 20px 60px;
+  display: flex;
+  flex-direction: column;
+  gap: 56px;
+}
+
+/* 通用板块标题 */
+.yujie-share-section__title {
+  font-family: var(--yj-font-serif);
+  font-size: clamp(1.3rem, 2.2vw, 1.65rem);
+  font-weight: 700;
+  color: var(--yj-text-primary);
+  letter-spacing: 0.04em;
+  margin-bottom: 24px;
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.yujie-share-section__title::before {
+  content: "";
+  display: inline-block;
+  width: 4px;
+  height: 1.1em;
+  background: linear-gradient(180deg, var(--yj-accent-amber), var(--yj-accent-red));
+  border-radius: 2px;
+}
+
+/* --------------------------------------------------------------------------
+   Hero 首屏 (1280x720 严格对齐)
+   -------------------------------------------------------------------------- */
+.yujie-share-hero {
+  display: grid;
+  grid-template-columns: minmax(320px, 460px) 1fr;
+  gap: 40px;
+  align-items: center;
+  min-height: 480px;
+  background: linear-gradient(135deg, rgba(23, 32, 46, 0.6) 0%, rgba(10, 14, 20, 0.8) 100%);
+  border: 1px solid var(--yj-border-subtle);
+  border-radius: 16px;
+  padding: 32px;
+  box-shadow: 0 20px 40px -15px rgba(0, 0, 0, 0.7);
+  position: relative;
+  overflow: hidden;
+}
+
+.yujie-share-hero::after {
+  content: "";
+  position: absolute;
+  top: 0;
+  right: 0;
+  width: 300px;
+  height: 100%;
+  background: radial-gradient(circle at 100% 0%, rgba(225, 29, 72, 0.12), transparent 70%);
+  pointer-events: none;
+}
+
+.yujie-share-hero__cover-wrap {
+  width: 100%;
+  aspect-ratio: 16 / 10;
+  max-height: 380px;
+  border-radius: 12px;
+  overflow: hidden;
+  position: relative;
+  box-shadow: 0 12px 28px rgba(0, 0, 0, 0.6);
+  border: 1px solid rgba(255, 255, 255, 0.12);
+  background: #0f1520;
+}
+
+.yujie-share-hero__cover {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  object-position: 58% 30%;
+  display: block;
+  transition: transform 0.4s ease;
+}
+
+.yujie-share-hero:hover .yujie-share-hero__cover {
+  transform: scale(1.02);
+}
+
+.yujie-share-hero__content {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  z-index: 1;
+}
+
+.yujie-share-hero__eyebrow {
+  display: inline-block;
+  align-self: flex-start;
+  font-size: 0.82rem;
+  font-weight: 700;
+  letter-spacing: 0.12em;
+  color: var(--yj-accent-amber);
+  text-transform: uppercase;
+  margin-bottom: 12px;
+  padding: 4px 10px;
+  background: rgba(245, 158, 11, 0.1);
+  border-left: 2px solid var(--yj-accent-amber);
+  border-radius: 0 4px 4px 0;
+}
+
+.yujie-share-hero__heading {
+  font-family: var(--yj-font-serif);
+  font-size: clamp(1.8rem, 3.2vw, 2.6rem);
+  line-height: 1.25;
+  font-weight: 800;
+  color: #ffffff;
+  margin-bottom: 14px;
+  letter-spacing: 0.02em;
+  text-shadow: 0 2px 10px rgba(0, 0, 0, 0.5);
+}
+
+.yujie-share-hero__tagline {
+  font-size: clamp(0.95rem, 1.4vw, 1.12rem);
+  color: var(--yj-text-secondary);
+  line-height: 1.65;
+  margin-bottom: 24px;
+  max-width: 540px;
+}
+
+.yujie-share-hero__actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 14px;
+  align-items: center;
+  margin-bottom: 16px;
+}
+
+.yujie-share-hero__note {
+  font-size: 0.8rem;
+  color: var(--yj-text-muted);
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.yujie-share-hero__note::before {
+  content: "•";
+  color: var(--yj-accent-amber);
+}
+
+/* --------------------------------------------------------------------------
+   按钮组件 (触控高度 >=44px)
+   -------------------------------------------------------------------------- */
+.yujie-share-btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-height: 48px;
+  padding: 0 24px;
+  font-size: 0.95rem;
+  font-weight: 600;
+  border-radius: 8px;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  border: 1px solid transparent;
+  text-decoration: none;
+  white-space: nowrap;
+}
+
+.yujie-share-btn--primary {
+  background: linear-gradient(135deg, var(--yj-accent-red) 0%, #9f1239 100%);
+  color: #ffffff;
+  box-shadow: 0 4px 14px var(--yj-accent-red-glow);
+  border-color: rgba(255, 255, 255, 0.15);
+}
+
+.yujie-share-btn--primary:hover {
+  background: linear-gradient(135deg, #f43f5e 0%, var(--yj-accent-red) 100%);
+  box-shadow: 0 6px 20px var(--yj-accent-red-glow);
+  transform: translateY(-1px);
+}
+
+.yujie-share-btn--secondary {
+  background: rgba(255, 255, 255, 0.06);
+  color: var(--yj-text-primary);
+  border: 1px solid rgba(255, 255, 255, 0.14);
+}
+
+.yujie-share-btn--secondary:hover {
+  background: rgba(255, 255, 255, 0.12);
+  border-color: rgba(255, 255, 255, 0.28);
+  color: #ffffff;
+  transform: translateY(-1px);
+}
+
+.yujie-share-btn--lg {
+  min-height: 52px;
+  padding: 0 32px;
+  font-size: 1.05rem;
+  letter-spacing: 0.03em;
+}
+
+.yujie-share-btn:focus-visible {
+  outline: 2px solid var(--yj-accent-amber);
+  outline-offset: 3px;
+}
+
+.yujie-share-btn:active {
+  transform: translateY(1px);
+}
+
+/* --------------------------------------------------------------------------
+   数据概览 Stats Grid (桌面4列 / 手机2x2)
+   -------------------------------------------------------------------------- */
+.yujie-share-stats__grid {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 16px;
+}
+
+.yujie-share-stat-card {
+  background: linear-gradient(180deg, var(--yj-bg-elevated) 0%, rgba(17, 23, 34, 0.6) 100%);
+  border: 1px solid var(--yj-border-subtle);
+  border-radius: 12px;
+  padding: 20px 16px;
+  text-align: center;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  transition: transform 0.2s ease, border-color 0.2s ease;
+}
+
+.yujie-share-stat-card:hover {
+  border-color: var(--yj-border-gold);
+  transform: translateY(-2px);
+}
+
+.yujie-share-stat-card__value {
+  font-family: var(--yj-font-serif);
+  font-size: clamp(1.8rem, 2.8vw, 2.4rem);
+  font-weight: 800;
+  color: var(--yj-accent-amber-light);
+  line-height: 1;
+  margin-bottom: 6px;
+}
+
+.yujie-share-stat-card__unit {
+  font-size: 0.95rem;
+  font-weight: 500;
+  color: var(--yj-accent-amber);
+  margin-left: 2px;
+}
+
+.yujie-share-stat-card__label {
+  font-size: 0.85rem;
+  color: var(--yj-text-muted);
+  letter-spacing: 0.02em;
+}
+
+/* --------------------------------------------------------------------------
+   性格/支线选择 Choices
+   -------------------------------------------------------------------------- */
+.yujie-share-choices__list {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 20px;
+  list-style: none;
+}
+
+.yujie-share-choices__item {
+  background: var(--yj-bg-surface);
+  border: 1px solid var(--yj-border-subtle);
+  border-top: 3px solid var(--yj-accent-amber);
+  border-radius: 10px;
+  padding: 22px 20px;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.25);
+  transition: transform 0.2s ease, border-color 0.2s ease;
+}
+
+.yujie-share-choices__item:hover {
+  transform: translateY(-2px);
+  border-color: rgba(245, 158, 11, 0.4);
+}
+
+.yujie-share-choices__bullet {
+  font-family: var(--yj-font-serif);
+  font-size: 1.15rem;
+  font-weight: 700;
+  color: var(--yj-text-primary);
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.yujie-share-choices__bullet::before {
+  content: "◆";
+  font-size: 0.75rem;
+  color: var(--yj-accent-amber);
+}
+
+.yujie-share-choices__text {
+  font-size: 0.92rem;
+  color: var(--yj-text-secondary);
+  line-height: 1.6;
+}
+
+/* --------------------------------------------------------------------------
+   老蒯羁绊板块
+   -------------------------------------------------------------------------- */
+.yujie-share-laokuai__card {
+  background: linear-gradient(135deg, var(--yj-wood-brown) 0%, #1c140e 100%);
+  border: 1px solid var(--yj-wood-border);
+  border-radius: 12px;
+  padding: 24px 28px;
+  box-shadow: inset 0 0 30px rgba(0, 0, 0, 0.5), 0 8px 24px rgba(0, 0, 0, 0.4);
+  position: relative;
+}
+
+.yujie-share-laokuai__title {
+  font-family: var(--yj-font-serif);
+  font-size: 1.25rem;
+  font-weight: 700;
+  color: #fed7aa;
+  margin-bottom: 8px;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.yujie-share-laokuai__desc {
+  font-size: 0.95rem;
+  color: #e2e8f0;
+  line-height: 1.65;
+}
+
+/* --------------------------------------------------------------------------
+   剧照画廊 2x2
+   -------------------------------------------------------------------------- */
+.yujie-share-gallery__grid {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 20px;
+}
+
+.yujie-share-gallery__figure {
+  background: var(--yj-bg-elevated);
+  border: 1px solid var(--yj-border-subtle);
+  border-radius: 12px;
+  overflow: hidden;
+  display: flex;
+  flex-direction: column;
+  transition: transform 0.2s ease, border-color 0.2s ease;
+}
+
+.yujie-share-gallery__figure:hover {
+  transform: translateY(-2px);
+  border-color: rgba(255, 255, 255, 0.2);
+}
+
+.yujie-share-gallery__img {
+  width: 100%;
+  aspect-ratio: 16 / 9;
+  object-fit: cover;
+  display: block;
+  background: #0f1520;
+}
+
+.yujie-share-gallery__caption {
+  padding: 12px 16px;
+  font-size: 0.88rem;
+  color: var(--yj-text-secondary);
+  background: rgba(17, 23, 34, 0.95);
+  border-top: 1px solid var(--yj-border-subtle);
+}
+
+/* --------------------------------------------------------------------------
+   底部召唤卡片 CTA
+   -------------------------------------------------------------------------- */
+.yujie-share-cta {
+  background: radial-gradient(ellipse at 50% 0%, rgba(225, 29, 72, 0.22), transparent 75%),
+              linear-gradient(180deg, var(--yj-bg-surface) 0%, var(--yj-bg-base) 100%);
+  border: 1px solid var(--yj-border-red);
+  border-radius: 16px;
+  padding: 40px 24px;
+  text-align: center;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 20px;
+  box-shadow: 0 16px 36px rgba(0, 0, 0, 0.4);
+}
+
+.yujie-share-cta .yujie-share-section__title {
+  margin-bottom: 0;
+  justify-content: center;
+}
+
+.yujie-share-cta .yujie-share-section__title::before {
+  display: none;
+}
+
+.yujie-share-cta__actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 16px;
+  justify-content: center;
+  align-items: center;
+}
+
+/* 分享反馈 Toast/状态提示 */
+.yujie-share-feedback {
+  min-height: 24px;
+  font-size: 0.88rem;
+  color: var(--yj-accent-amber-light);
+  opacity: 0;
+  transform: translateY(4px);
+  transition: opacity 0.2s ease, transform 0.2s ease;
+  pointer-events: none;
+}
+
+.yujie-share-feedback--visible {
+  opacity: 1;
+  transform: translateY(0);
+}
+
+/* --------------------------------------------------------------------------
+   页脚 Footer
+   -------------------------------------------------------------------------- */
+.yujie-share-footer {
+  border-top: 1px solid var(--yj-border-subtle);
+  background: rgba(8, 11, 15, 0.95);
+  padding: 24px 20px;
+  margin-top: 20px;
+}
+
+.yujie-share-footer__inner {
+  max-width: var(--yj-max-w);
+  margin: 0 auto;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 8px;
+  text-align: center;
+}
+
+.yujie-share-footer__copy {
+  font-size: 0.82rem;
+  color: var(--yj-text-muted);
+}
+
+.yujie-share-footer__link {
+  font-size: 0.82rem;
+  color: var(--yj-text-secondary);
+  text-decoration: underline;
+  text-underline-offset: 3px;
+  padding: 4px 8px;
+  min-height: 44px;
+  display: inline-flex;
+  align-items: center;
+  transition: color 0.2s ease;
+}
+
+.yujie-share-footer__link:hover {
+  color: var(--yj-accent-amber-light);
+}
+
+.yujie-share-footer__link:focus-visible {
+  outline: 2px solid var(--yj-accent-amber);
+  outline-offset: 2px;
+}
+
+/* --------------------------------------------------------------------------
+   响应式断点控制
+   -------------------------------------------------------------------------- */
+
+/* 平板与小桌面适配 (< 900px) */
+@media (max-width: 900px) {
+  .yujie-share-hero {
+    grid-template-columns: 1fr;
+    gap: 24px;
+    padding: 24px;
+  }
+
+  .yujie-share-hero__cover-wrap {
+    max-height: 280px;
+    aspect-ratio: 16 / 9;
+  }
+
+  .yujie-share-choices__list {
+    grid-template-columns: 1fr;
+  }
+}
+
+/* 手机屏幕适配 (<= 640px, 特别是 390x844 / 360x800) */
+@media (max-width: 640px) {
+  .yujie-share-header {
+    height: 52px;
+  }
+  
+  .yujie-share-header__title {
+    font-size: 0.95rem;
+  }
+
+  .yujie-share-main {
+    padding: 16px 14px 40px;
+    gap: 36px;
+  }
+
+  .yujie-share-hero {
+    padding: 16px;
+    border-radius: 12px;
+    min-height: auto;
+  }
+
+  .yujie-share-hero__cover-wrap {
+    aspect-ratio: 16 / 9;
+    max-height: 220px;
+  }
+
+  .yujie-share-hero__heading {
+    font-size: 1.55rem;
+    margin-bottom: 8px;
+  }
+
+  .yujie-share-hero__tagline {
+    font-size: 0.92rem;
+    margin-bottom: 18px;
+  }
+
+  .yujie-share-hero__actions {
+    flex-direction: column;
+    align-items: stretch;
+    gap: 10px;
+  }
+
+  .yujie-share-btn {
+    width: 100%;
+  }
+
+  .yujie-share-stats__grid {
+    grid-template-columns: repeat(2, 1fr);
+    gap: 10px;
+  }
+
+  .yujie-share-stat-card {
+    padding: 14px 10px;
+  }
+
+  .yujie-share-gallery__grid {
+    grid-template-columns: 1fr;
+    gap: 14px;
+  }
+
+  .yujie-share-cta {
+    padding: 28px 16px;
+  }
+
+  .yujie-share-cta__actions {
+    flex-direction: column;
+    width: 100%;
+  }
+}
+
+/* 动效减弱适配 */
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+    scroll-behavior: auto !important;
+  }
+}
