@@ -809,9 +809,11 @@
 
         <!-- 水墨四季长卷实时交互视差画卷 -->
         <section class="ink-panorama-stage" aria-label="四时水墨动态长卷">
-          <canvas id="scrollLandscapeCanvas" class="ink-panorama-canvas" width="1200" height="380" aria-label="四时水墨山水画卷图"></canvas>
+          <div style="width: 100%; overflow: hidden; background: #1c1813;">
+            <img src="assets/images/ink_scroll.jpg" alt="北宋高古水墨青绿山水长卷：烟云出岫、松石飞瀑与高远幽深构图" style="width: 100%; height: auto; display: block; filter: contrast(1.08);">
+          </div>
           <div class="ink-scene-overlay">
-            <div class="scene-badge-top" id="sceneSeasonBadge">卷之一 · 春山听雨</div>
+            <div class="scene-badge-top" id="sceneSeasonBadge">北宋·千里烟江水墨长卷 // 卷首</div>
             <div class="scene-meta-bottom">
               <div>
                 <div class="scene-title-large" id="sceneTitle">空翠湿衣 · 远山带雨</div>

@@ -33,7 +33,7 @@ export const CREATIVE_BLOGS = [
     ],
     tags: ['网格系统', '瑞士平面', '无衬线', '极简主义'],
     htmlFile: '/creative-blogs/style-01-swiss.html',
-    thumbnail: '/creative-blogs/assets/images/blueprint_cad.jpg',
+    thumbnail: '/creative-blogs/assets/images/bauhaus_geometry.jpg',
   },
   {
     id: '02-newspaper',
@@ -57,7 +57,7 @@ export const CREATIVE_BLOGS = [
     ],
     tags: ['报刊排版', '衬线宋体', '首字下沉', '复古纸感'],
     htmlFile: '/creative-blogs/style-02-newspaper.html',
-    thumbnail: '/creative-blogs/assets/images/newspaper_woodcut.jpg',
+    thumbnail: '/creative-blogs/assets/images/vintage_newspaper_press.jpg',
   },
   {
     id: '03-cyberpunk',
@@ -129,7 +129,7 @@ export const CREATIVE_BLOGS = [
     ],
     tags: ['日式禅意', '竖排排版', '极简留白', '和风印章'],
     htmlFile: '/creative-blogs/style-05-zen.html',
-    thumbnail: '/creative-blogs/assets/images/zen_garden.jpg',
+    thumbnail: '/creative-blogs/assets/images/zen_rock_garden.jpg',
   },
   {
     id: '06-neobrutalism',
@@ -153,7 +153,7 @@ export const CREATIVE_BLOGS = [
     ],
     tags: ['新粗野主义', 'Neobrutalism', '硬投影', '波普撞色'],
     htmlFile: '/creative-blogs/style-06-neobrutalism.html',
-    thumbnail: '/creative-blogs/assets/images/comic_pop.jpg',
+    thumbnail: '/creative-blogs/assets/images/comic_pop_battle.jpg',
   },
   {
     id: '07-digital-garden',
@@ -225,7 +225,7 @@ export const CREATIVE_BLOGS = [
     ],
     tags: ['泥金手抄本', '羊皮纸', '火漆印章', '中世纪'],
     htmlFile: '/creative-blogs/style-09-medieval-codex.html',
-    thumbnail: '/creative-blogs/assets/images/medieval_alchemist.jpg',
+    thumbnail: '/creative-blogs/assets/images/medieval_manuscript.jpg',
   },
   {
     id: '10-terminal',
@@ -321,7 +321,7 @@ export const CREATIVE_BLOGS = [
     ],
     tags: ['时尚画报', 'Vogue 风格', '杂志排版', '衬线美学'],
     htmlFile: '/creative-blogs/style-13-fashion.html',
-    thumbnail: '/creative-blogs/assets/images/fashion_editorial.jpg',
+    thumbnail: '/creative-blogs/assets/images/fashion_editorial_photo.jpg',
   },
   {
     id: '14-pixel-rpg',
@@ -345,7 +345,7 @@ export const CREATIVE_BLOGS = [
     ],
     tags: ['像素风', '8-Bit', 'RPG 游戏', '地牢冒险'],
     htmlFile: '/creative-blogs/style-14-pixel-rpg.html',
-    thumbnail: '/creative-blogs/assets/images/pixel_dungeon.jpg',
+    thumbnail: '/creative-blogs/assets/images/pixel_rpg_dungeon.jpg',
   },
   {
     id: '15-glassmorphism',
@@ -369,7 +369,7 @@ export const CREATIVE_BLOGS = [
     ],
     tags: ['毛玻璃', 'Glassmorphism', '极光动效', '未来科技'],
     htmlFile: '/creative-blogs/style-15-glassmorphism.html',
-    thumbnail: '/creative-blogs/assets/images/cyberpunk_city.jpg',
+    thumbnail: '/creative-blogs/assets/images/y2k_chrome.jpg',
   },
   {
     id: '16-darkroom',
@@ -417,7 +417,7 @@ export const CREATIVE_BLOGS = [
     ],
     tags: ['二次元', '樱花飘落', 'Galgame', '日系物语'],
     htmlFile: '/creative-blogs/style-17-anime.html',
-    thumbnail: '/creative-blogs/assets/images/anime_banner.jpg',
+    thumbnail: '/creative-blogs/assets/images/anime_afterschool.jpg',
   },
   {
     id: '18-comic',
@@ -441,7 +441,7 @@ export const CREATIVE_BLOGS = [
     ],
     tags: ['美漫波普', '网点纸', '漫画分镜', '拟声词特效'],
     htmlFile: '/creative-blogs/style-18-comic.html',
-    thumbnail: '/creative-blogs/assets/images/comic_pop.jpg',
+    thumbnail: '/creative-blogs/assets/images/comic_pop_battle.jpg',
   },
   {
     id: '19-space',
@@ -465,7 +465,7 @@ export const CREATIVE_BLOGS = [
     ],
     tags: ['航天手册', 'NASA 风格', '深空探索', '遥测 HUD'],
     htmlFile: '/creative-blogs/style-19-space.html',
-    thumbnail: '/creative-blogs/assets/images/space_mission.jpg',
+    thumbnail: '/creative-blogs/assets/images/space_apollo_orbit.jpg',
   },
   {
     id: '20-steampunk',
@@ -489,7 +489,7 @@ export const CREATIVE_BLOGS = [
     ],
     tags: ['蒸汽朋克', '黄铜齿轮', '维多利亚', '机械档案'],
     htmlFile: '/creative-blogs/style-20-steampunk.html',
-    thumbnail: '/creative-blogs/assets/images/steampunk_lab.jpg',
+    thumbnail: '/creative-blogs/assets/images/steampunk_engine.jpg',
   },
   {
     id: '21-vinyl',
@@ -513,7 +513,7 @@ export const CREATIVE_BLOGS = [
     ],
     tags: ['黑胶唱片', '音乐杂志', '黑胶唱机', '爵士乐评'],
     htmlFile: '/creative-blogs/style-21-vinyl.html',
-    thumbnail: '/creative-blogs/assets/images/vinyl_turntable.jpg',
+    thumbnail: '/creative-blogs/assets/images/jazz_vinyl.jpg',
   },
   {
     id: '22-botanical',
@@ -537,7 +537,7 @@ export const CREATIVE_BLOGS = [
     ],
     tags: ['植物标本', '博物学', '石版画', '衬线手记'],
     htmlFile: '/creative-blogs/style-22-botanical.html',
-    thumbnail: '/creative-blogs/assets/images/botanical_folio.jpg',
+    thumbnail: '/creative-blogs/assets/images/botanical_specimen.jpg',
   },
   {
     id: '23-davinci',
@@ -561,7 +561,7 @@ export const CREATIVE_BLOGS = [
     ],
     tags: ['达芬奇手稿', '镜面字迹', '扑翼飞行', '文艺复兴'],
     htmlFile: '/creative-blogs/style-23-davinci.html',
-    thumbnail: '/creative-blogs/assets/images/davinci_sketch.jpg',
+    thumbnail: '/creative-blogs/assets/images/davinci_invention.jpg',
   },
   {
     id: '24-ink-wash',
@@ -705,7 +705,7 @@ export const CREATIVE_BLOGS = [
     ],
     tags: ['侦探档案', '牛皮纸袋', 'TOP SECRET', '脱敏解密'],
     htmlFile: '/creative-blogs/style-29-detective.html',
-    thumbnail: '/creative-blogs/assets/images/detective_dossier.jpg',
+    thumbnail: '/creative-blogs/assets/images/detective_evidence.jpg',
   },
   {
     id: '30-acid',

@@ -789,25 +789,25 @@
         
         <div class="specimen-canvas-frame">
           <div class="specimen-visual-wrap">
-            <img src="assets/images/botanical_folio.jpg" alt="皇家标本馆典藏：城市缝隙蒲公英物候与解剖标本图板" class="specimen-img" id="specimenMainImg">
+            <img src="assets/images/botanical_specimen.jpg" alt="皇家标本馆典藏：大英自然历史博物馆高山蕨类与野生蔷薇彩色石版画标本（Plate XLVIII）" class="specimen-img" id="specimenMainImg">
             
             <!-- 叶片与头状花序解剖注释层 -->
             <div class="anatomy-overlay" id="anatomyOverlay" aria-label="叶片解剖注释">
-              <div class="anno-pin anno-pin-1" title="头状花序与舌状小花">A. Capitulum / 头状花序</div>
-              <div class="anno-pin anno-pin-2" title="倒向羽状深裂叶片（倒齿裂）">B. Runcinate Leaf / 倒向羽状裂叶</div>
-              <div class="anno-pin anno-pin-3" title="具冠毛的瘦果与风力扩散单元">C. Pappus Cypsela / 冠毛瘦果</div>
+              <div class="anno-pin anno-pin-1" title="高山蕨羽状复叶与孢子囊群">A. Athyrium / 高山蹄盖蕨复叶</div>
+              <div class="anno-pin anno-pin-2" title="野生高山蔷薇花冠与皮刺">B. Rosa pendulina / 高山蔷薇花果</div>
+              <div class="anno-pin anno-pin-3" title="野外采集地与林奈双名学签名">C. Herbarium Stamp / 博物馆野外印鉴</div>
             </div>
           </div>
 
           <div class="scale-bar-module">
-            <span>FIGURE 01 · MORPHOLOGY</span>
+            <span>FIGURE 01 · BRITISH MUSEUM HERBARIUM</span>
             <div class="scale-ruler" aria-label="50毫米手绘比例尺">
               <div class="scale-tick"></div>
               <div class="scale-tick"></div>
               <div class="scale-tick"></div>
               <div class="scale-tick"></div>
             </div>
-            <span>SCALE: 1:1.5</span>
+            <span>SCALE: 1:1 NATURAL SIZE</span>
           </div>
         </div>
 
@@ -817,15 +817,15 @@
               <path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"></path>
               <circle cx="12" cy="12" r="3"></circle>
             </svg>
-            <span>切换叶片解剖注释</span>
+            <span>切换标本解剖注释</span>
           </button>
-          <button class="specimen-btn" id="btnToggleLabel">
+          <button class="specimen-btn" id="btnToggleSpecimen">
             <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
               <rect x="3" y="3" width="18" height="18" rx="2" ry="2"></rect>
               <line x1="3" y1="9" x2="21" y2="9"></line>
               <line x1="9" y1="21" x2="9" y2="9"></line>
             </svg>
-            <span id="labelBtnText">展开采集标签</span>
+            <span id="labelBtnText">切换对页蒲公英标本</span>
           </button>
         </div>
       </div>
@@ -1097,9 +1097,54 @@
         }
       });
 
-      // 3. 采集标签折叠与展开切换
-      const btnToggleLabel = document.getElementById('btnToggleLabel');
+      // 3. 双标本画廊切换
+      const btnToggleSpecimen = document.getElementById('btnToggleSpecimen');
+      const specimenMainImg = document.getElementById('specimenMainImg');
       const labelBtnText = document.getElementById('labelBtnText');
+      let currentSpecimenIndex = 0;
+      const specimenList = [
+        {
+          src: 'assets/images/botanical_specimen.jpg',
+          alt: '皇家标本馆典藏：大英自然历史博物馆高山蕨类与野生蔷薇彩色石版画标本（Plate XLVIII）',
+          btnLabel: '切换对页蒲公英标本',
+          pins: [
+            { text: 'A. Athyrium / 高山蹄盖蕨复叶', title: '高山蕨羽状复叶与孢子囊群' },
+            { text: 'B. Rosa pendulina / 高山蔷薇花果', title: '野生高山蔷薇花冠与皮刺' },
+            { text: 'C. Herbarium Stamp / 博物馆野外印鉴', title: '野外采集地与林奈双名学签名' }
+          ]
+        },
+        {
+          src: 'assets/images/botanical_folio.jpg',
+          alt: '皇家标本馆典藏：城市缝隙蒲公英物候与解剖标本图板',
+          btnLabel: '切换大英自然博物馆石版画',
+          pins: [
+            { text: 'A. Capitulum / 头状花序', title: '头状花序与舌状小花' },
+            { text: 'B. Runcinate Leaf / 倒向羽状裂叶', title: '倒向羽状深裂叶片（倒齿裂）' },
+            { text: 'C. Pappus Cypsela / 冠毛瘦果', title: '具冠毛的瘦果与风力扩散单元' }
+          ]
+        }
+      ];
+
+      if (btnToggleSpecimen) {
+        btnToggleSpecimen.addEventListener('click', () => {
+          currentSpecimenIndex = (currentSpecimenIndex + 1) % specimenList.length;
+          const current = specimenList[currentSpecimenIndex];
+          specimenMainImg.src = current.src;
+          specimenMainImg.alt = current.alt;
+          labelBtnText.textContent = current.btnLabel;
+          
+          // 更新针脚
+          const pins = anatomyOverlay.querySelectorAll('.anno-pin');
+          current.pins.forEach((p, idx) => {
+            if (pins[idx]) {
+              pins[idx].textContent = p.text;
+              pins[idx].title = p.title;
+            }
+          });
+        });
+      }
+
+      // 4. 采集标签折叠与展开切换
       const sheetToggleBtn = document.getElementById('sheetToggleBtn');
       const dataSheetBody = document.getElementById('dataSheetBody');
       const dataSheetHeader = document.getElementById('dataSheetHeader');
@@ -1108,23 +1153,16 @@
         const isCollapsed = dataSheetBody.classList.toggle('is-collapsed');
         if (isCollapsed) {
           sheetToggleBtn.textContent = '展开标签 [+]';
-          labelBtnText.textContent = '展开采集标签';
           sheetToggleBtn.setAttribute('aria-expanded', 'false');
         } else {
           sheetToggleBtn.textContent = '收起标签 [-]';
-          labelBtnText.textContent = '收起采集标签';
           sheetToggleBtn.setAttribute('aria-expanded', 'true');
         }
       }
 
-      btnToggleLabel.addEventListener('click', () => {
-        if (dataSheetBody.classList.contains('is-collapsed')) {
-          toggleSheet();
-        }
-        dataSheetBody.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
-      });
-
-      dataSheetHeader.addEventListener('click', toggleSheet);
+      if (dataSheetHeader) {
+        dataSheetHeader.addEventListener('click', toggleSheet);
+      }
 
       // 4. 加入观察簿交互
       const btnAddToLog = document.getElementById('btnAddToLog');

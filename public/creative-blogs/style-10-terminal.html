@@ -513,6 +513,7 @@
         <button class="quick-btn" onclick="runCommand('about')" aria-label="执行 about 指令"><code>about</code> (作者档案)</button>
         <button class="quick-btn" onclick="runCommand('ls notes')" aria-label="执行 ls notes 指令"><code>ls notes</code> (阅读列表)</button>
         <button class="quick-btn" onclick="runCommand('cat notes/agents.md')" aria-label="阅读 Agent 核心主叙事"><code>cat notes/agents.md</code> (主叙事)</button>
+        <button class="quick-btn" onclick="runCommand('view image')" aria-label="在终端中渲染机房遥测图版"><code>view image</code> (图版渲染)</button>
         <button class="quick-btn" onclick="runCommand('cat notes/slow-web.md')" aria-label="阅读慢网络随笔"><code>cat notes/slow-web.md</code> (独立思考)</button>
         <button class="quick-btn" onclick="runCommand('projects')" aria-label="执行 projects 指令"><code>projects</code> (实验状态)</button>
         <button class="quick-btn" onclick="runCommand('now')" aria-label="执行 now 指令"><code>now</code> (当下焦距)</button>
@@ -749,6 +750,26 @@
           </article>
         `;
         appendLog(cmd, out, doc.lines);
+      }
+
+      // 6.1 VIEW IMAGE (机房遥测图版)
+      else if (lower === 'view image' || lower === 'cat image.ascii' || lower === 'view') {
+        const out = `
+          <div class="cli-card cli-card-cyan">
+            <div class="cli-header-title">
+              <span>[FRAMEBUFFER: RENDERED AT 1080P // SERVER_NODE_MATRIX]</span>
+              <span class="cli-meta-tag">DEV: /dev/fb0</span>
+            </div>
+            <div style="border:1px solid #1e293b; border-radius:4px; overflow:hidden; margin:10px 0; background:#000;">
+              <img src="assets/images/cyberpunk_city.jpg" alt="赛博朋克深黑机房与高密度数据节点冷光摄影" style="width:100%; height:auto; display:block; filter:contrast(1.1);">
+            </div>
+            <div style="font-family:var(--font-mono); font-size:11px; color:var(--term-cyan); display:flex; justify-content:space-between;">
+              <span>RESOLUTION: 1920x1080 | COLOR: 32-BIT TRUECOLOR</span>
+              <span>TELEMETRY: ONLINE</span>
+            </div>
+          </div>
+        `;
+        appendLog(cmd, out, 12);
       }
 
       // 7. PROJECTS (次级栏目 1: 实验与状态)

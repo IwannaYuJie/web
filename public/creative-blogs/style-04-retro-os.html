@@ -695,6 +695,11 @@
       </button>
 
       <!-- 资料与系统文档 -->
+      <button class="desktop-icon-btn" onclick="openWindow('win-paint')" aria-label="打开 PAINT.EXE 画图与像素相册">
+        <div class="icon-symbol">🎨</div>
+        <div class="icon-title">PAINT.EXE</div>
+      </button>
+
       <button class="desktop-icon-btn" onclick="openWindow('win-changelog')" aria-label="打开 CHANGELOG_2026.TXT">
         <div class="icon-symbol">📜</div>
         <div class="icon-title">CHANGELOG.TXT</div>
@@ -705,6 +710,40 @@
         <div class="icon-title">系统属性</div>
       </button>
     </div>
+
+    <!-- 窗口 0: 画图板 PAINT.EXE -->
+    <section id="win-paint" class="win-modal" style="top: 50px; left: 180px; width: 620px; height: 460px; display: none;" aria-labelledby="title-paint">
+      <div class="win-header" onmousedown="focusWindow('win-paint')">
+        <div class="win-header-left">
+          <span>🎨</span>
+          <span id="title-paint">PAINT.EXE - 90s 位图画廊 [256色]</span>
+        </div>
+        <div class="win-controls">
+          <button class="win-ctrl-btn" onclick="minimizeWindow('win-paint')" aria-label="最小化">_</button>
+          <button class="win-ctrl-btn" onclick="maximizeWindow('win-paint')" aria-label="最大化">□</button>
+          <button class="win-ctrl-btn" onclick="closeWindow('win-paint')" aria-label="关闭">✕</button>
+        </div>
+      </div>
+      <nav class="win-menu" aria-label="画图菜单">
+        <span class="menu-item">文件(F)</span>
+        <span class="menu-item">查看(V)</span>
+        <span class="menu-item">图像(I)</span>
+        <span class="menu-item">调色板(C)</span>
+      </nav>
+      <div class="win-body" style="background: #808080; padding: 12px; display: flex; flex-direction: column; align-items: center;">
+        <div style="background: #ffffff; border: 2px solid #000; padding: 4px; box-shadow: 2px 2px 0 #000; max-width: 100%;">
+          <img src="assets/images/pixel_rpg_dungeon.jpg" alt="Win95 画图板加载的 16-Bit 复古像素地牢位图" style="width: 100%; height: auto; display: block; image-rendering: pixelated;">
+          <div style="padding: 6px 8px; font-family: var(--font-code); font-size: 13px; color: #000; background: #ffffcc; border-top: 1px solid #000; display: flex; justify-content: space-between;">
+            <span>DUNGEON_16BIT.BMP (640x480x256)</span>
+            <span>ZOOM: 100%</span>
+          </div>
+        </div>
+      </div>
+      <div class="win-statusbar">
+        <div class="sb-panel sb-grow">坐标: X: 320, Y: 240</div>
+        <div class="sb-panel">调色板: 标准 256 色 VGA</div>
+      </div>
+    </section>
 
     <!-- 窗口 1: 主叙事 README.TXT -->
     <section id="win-readme" class="win-modal active" style="top: 40px; left: 160px; width: 560px; height: 420px;" aria-labelledby="title-readme">
