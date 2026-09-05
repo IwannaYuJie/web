@@ -77,7 +77,7 @@ function ArticleManager() {
         }
 
         if (response.status === 500) {
-          alert(`服务器错误：${errorMsg}\n\n提示：如果是线上环境，请确保已在 Cloudflare 设置 ADMIN_KEY 环境变量，并【重新部署】了项目。`)
+          alert(`服务器错误：${errorMsg}\n\n提示：文章服务可能尚未配置管理密钥，请检查服务配置后重试。`)
         } else if (response.status === 401) {
           alert('密码错误，请重试！')
         } else {
@@ -275,7 +275,7 @@ function ArticleManager() {
         <div className="panel" style={{ background: 'var(--k3-bg)', padding: 30 }}>
           <div className="panel-h">🔑 后台登录</div>
           <p style={{ fontSize: 13.5, color: 'var(--ink-soft)', marginBottom: 18, lineHeight: 1.6 }}>
-            输完密钥才能改文章。数据存在 Cloudflare KV。
+            输入管理员密钥后，就可以新增、编辑和删除文章。
           </p>
           <form onSubmit={handleLogin}>
             <div style={{ position: 'relative', marginBottom: 14 }}>

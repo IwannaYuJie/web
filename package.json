@@ -8,7 +8,7 @@
     "build": "vite build",
     "preview": "vite preview",
     "start:api": "node server/index.mjs",
-    "lint": "eslint src server --ext .js,.jsx,.mjs --max-warnings 0",
+    "lint": "eslint src server shared dev functions --ext .js,.jsx,.mjs --max-warnings 0",
     "lint:fix": "eslint src --ext .js,.jsx --fix",
     "format": "prettier --write \"src/**/*.{js,jsx,css}\"",
     "format:check": "prettier --check \"src/**/*.{js,jsx,css}\"",

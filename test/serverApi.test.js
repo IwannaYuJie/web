@@ -111,4 +111,15 @@ describe('VPS article API', () => {
     const response = await fetch(`${baseUrl}/api/init-articles`, { method: 'POST' })
     expect(response.status).toBe(404)
   })
+
+  it('保留请求体大小上限，拒绝超限后仍能正常服务', async () => {
+    const response = await fetch(`${baseUrl}/api/articles`, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json', 'X-Admin-Key': ADMIN_KEY },
+      body: JSON.stringify({ content: 'x'.repeat(2 * 1024 * 1024) })
+    })
+    expect(response.status).toBe(413)
+    expect((await fetch(`${baseUrl}/healthz`)).status).toBe(200)
+    expect(JSON.parse(await readFile(dataFile, 'utf8'))).toHaveLength(1)
+  })
 })

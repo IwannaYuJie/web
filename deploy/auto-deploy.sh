@@ -156,11 +156,14 @@ install -d -o root -g root -m 0755 "$release_dir"
 cp -a "$work_dir/dist" "$release_dir/dist"
 cp -a "$work_dir/functions" "$release_dir/functions"
 cp -a "$work_dir/server" "$release_dir/server"
+cp -a "$work_dir/shared" "$release_dir/shared"
 install -o root -g root -m 0644 "$work_dir/package.json" "$release_dir/package.json"
 if [[ -f "$work_dir/package-lock.json" ]]; then
     install -o root -g root -m 0644 \
         "$work_dir/package-lock.json" "$release_dir/package-lock.json"
 fi
+# 在切换 current 前验证运行时依赖齐全，避免共享模块漏包后才发现启动失败。
+run_as_deployer node --input-type=module -e 'import(process.argv[1])' "$release_dir/server/app.mjs"
 printf '%s\n' "$remote_commit" >"$release_dir/.git-commit"
 date -u +%Y-%m-%dT%H:%M:%SZ >"$release_dir/.deployed-at"
 chown -R root:root "$release_dir"

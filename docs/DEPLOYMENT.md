@@ -15,7 +15,7 @@
 
 管理员密钥只保存在服务器的 `/etc/orange-cat-blog-admin-key`，权限为仅服务用户可读。仓库、构建产物、日志和文档都不保存真实密钥。
 
-本地开发可复制 `.env.example` 为 `.env`，使用 `DEV_ADMIN_KEY` 配合 Vite mock。直接运行 VPS API 时使用：
+本地开发可复制 `.env.example` 为 `.env`，使用 `DEV_ADMIN_KEY` 配合 Vite 内存 API（与 VPS 共用接口处理器和业务规则）。直接运行 VPS API 时使用：
 
 ```text
 ADMIN_KEY=本地测试密钥
@@ -53,6 +53,19 @@ cat /var/lib/orange-cat-blog-deploy/deployed-commit
 - `deploy/Caddyfile`
 
 静态站点的 `try_files` 顺序必须保留为 `{path} {path}/index.html /index.html`：先提供普通静态文件，再识别 Vite 多页面目录入口（例如 `/yujie/` 对应 `dist/yujie/index.html`），最后才回退到博客 SPA 的根 `index.html`。若缺少中间项，独立分发页会被错误地渲染成博客首页。
+
+## 首次发布此次架构调整
+
+2026-09-05 的分层调整新增 `shared/articles` 运行时依赖。新版 `deploy/auto-deploy.sh` 会复制 `shared`，并在切换版本前验证 API 模块可导入。
+
+服务器的 systemd 单元执行 `/usr/local/sbin/orange-cat-blog-deploy`，该文件是独立安装的脚本，推送仓库代码不会自动更新它。首次发布应按此顺序操作：
+
+1. 暂停发布定时器，确认没有正在运行的发布任务，备份当前已安装脚本并记录当前 release。
+2. 把已审阅的新版 `deploy/auto-deploy.sh` 同步安装到 `/usr/local/sbin/orange-cat-blog-deploy`，保留 root 所有权及执行权限，先通过 `bash -n` 语法检查。
+3. 推送应用提交并触发发布；确认 release 同时包含 `server` 与 `shared`，模块导入检查、本机 `/healthz` 和公开页面/API 检查通过后恢复定时器。
+4. 失败时保留上一版 release，按本文的应用回滚流程处理；数据格式没有变化，不需要迁移文章文件。
+
+本次已在本地按实际复制清单验证独立 release 的启动与健康检查，尚未执行服务器脚本更新、推送或线上部署。
 
 ## 源站访问限制
 

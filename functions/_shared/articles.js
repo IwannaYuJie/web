@@ -1,3 +1,5 @@
+import { parseArticleRequestMeta } from '../../shared/articles/request.js'
+
 export const ARTICLES_LIST_KEY = 'articles_list'
 
 export const articleCorsHeaders = {
@@ -26,17 +28,11 @@ export function errorResponse(message, status = 400, headers = articleCorsHeader
 }
 
 export function parseArticleRequest(request) {
-  const url = new URL(request.url)
-  let method = request.method
-  const pathParts = url.pathname.split('/').filter(Boolean)
-  const articleId = url.searchParams.get('id') || pathParts[2] || null
-
-  const methodOverride = request.headers.get('X-HTTP-Method-Override')
-  if (method === 'POST' && methodOverride) {
-    method = methodOverride.toUpperCase()
-  }
-
-  return { url, method, articleId }
+  return parseArticleRequestMeta({
+    url: request.url,
+    method: request.method,
+    methodOverride: request.headers.get('X-HTTP-Method-Override'),
+  })
 }
 
 export async function readArticles(env) {
@@ -46,39 +42,6 @@ export async function readArticles(env) {
 
 export async function writeArticles(env, articles) {
   await env.ARTICLES_KV.put(ARTICLES_LIST_KEY, JSON.stringify(articles))
-}
-
-export function sortArticlesByDate(articles) {
-  return [...articles].sort((a, b) => new Date(b.date) - new Date(a.date))
-}
-
-export function normalizeArticleInput(articleData = {}, fallbackDate = new Date().toISOString().split('T')[0]) {
-  return {
-    title: String(articleData.title || '').trim(),
-    description: String(articleData.description || '').trim(),
-    date: articleData.date || fallbackDate,
-    category: String(articleData.category || '').trim(),
-    readTime: String(articleData.readTime || '').trim(),
-    content: articleData.content || '',
-    tags: Array.isArray(articleData.tags)
-      ? articleData.tags.map((tag) => String(tag).trim()).filter(Boolean)
-      : [],
-    author: String(articleData.author || '橘猫博主').trim() || '橘猫博主',
-  }
-}
-
-export function validateRequiredArticleFields(articleData) {
-  const requiredFields = ['title', 'description', 'category', 'readTime']
-  const missingField = requiredFields.find((field) => !articleData[field])
-  return missingField || null
-}
-
-export function nextArticleId(articles) {
-  if (!articles.length) {
-    return 1
-  }
-
-  return Math.max(...articles.map((article) => Number(article.id) || 0)) + 1
 }
 
 export function requireAdminKey(request, env) {

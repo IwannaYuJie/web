@@ -2,10 +2,10 @@ import { describe, expect, it } from 'vitest'
 import {
   nextArticleId,
   normalizeArticleInput,
-  parseArticleRequest,
   sortArticlesByDate,
   validateRequiredArticleFields,
-} from '../functions/_shared/articles'
+} from '../shared/articles/model.js'
+import { parseArticleRequest } from '../functions/_shared/articles.js'
 
 describe('articles shared helpers', () => {
   it('parseArticleRequest should support method override and query id', () => {
