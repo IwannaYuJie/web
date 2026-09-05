@@ -65,7 +65,15 @@ cat /var/lib/orange-cat-blog-deploy/deployed-commit
 3. 推送应用提交并触发发布；确认 release 同时包含 `server` 与 `shared`，模块导入检查、本机 `/healthz` 和公开页面/API 检查通过后恢复定时器。
 4. 失败时保留上一版 release，按本文的应用回滚流程处理；数据格式没有变化，不需要迁移文章文件。
 
-本次已在本地按实际复制清单验证独立 release 的启动与健康检查，尚未执行服务器脚本更新、推送或线上部署。
+本次已在本地按实际复制清单验证独立 release 的启动与健康检查。
+
+### 2026-09-05 发布准备记录
+
+- 推送前确认远端 `main` 与原线上版本均为 `078ec25`，本地架构提交为 `891cd40`。
+- 已暂停定时器并取得发布锁，备份旧脚本、文章 JSON 和上一版 release 路径，再原子替换服务器发布脚本；完成后恢复原定时器。
+- 回滚目录：`/root/vps-change-backups/20260905T035130Z-orange-cat-architecture`，包含 `deploy.before`、`articles.before.json`、`articles.before.sha256` 和 `previous-release`。
+- 已安装脚本通过语法检查，SHA-256 为 `8d3ac13869e9de1d4a320953c2923770913e81d2ba0e7c10e661d84bb87214be`；准备阶段 API 健康检查通过，文章数为 16。
+- 发布结果通过远端 `main`、`deployed-commit`、当前 release 的 `.git-commit` 和公开接口共同核对；服务器备份目录的 `README.md` 用于记录本次实际发布验收结果。
 
 ## 源站访问限制
 

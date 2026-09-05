@@ -2,7 +2,7 @@
 
 ## 2026-09-05 整理结果
 
-文章 API 已拆为业务、接口、存储三层。本地开发、VPS 生产和 Pages 备用环境共用文章校验与增删改查；前端页面、路由、文章字段、管理密钥请求头、游戏存档及 JSON 数据格式保持兼容。本次架构调整已提交到本地 Git 仓库，尚未推送或部署。
+文章 API 已拆为业务、接口、存储三层。本地开发、VPS 生产和 Pages 备用环境共用文章校验与增删改查；前端页面、路由、文章字段、管理密钥请求头、游戏存档及 JSON 数据格式保持兼容。本次架构调整已提交到 Git 仓库，发布准备与回滚记录见部署文档。
 
 原先 `server/app.mjs` 同时处理 HTTP、鉴权和文章业务，并从 Pages 的 `functions/_shared` 导入规则；Vite 和 Pages 又各写了一套增删改查，造成校验不一致。现在业务规则集中在 `shared/articles`，平台代码单向依赖共享模块。
 
@@ -74,7 +74,7 @@ flowchart TD
 
 `deploy/auto-deploy.sh` 的 release 复制清单现在包含 `dist`、`server`、`shared`、`functions` 及包元数据；在切换 `current` 前以低权限账号导入 `server/app.mjs`，提前发现运行时依赖遗漏。Node 运行时没有新增第三方依赖。
 
-**首次上线前需要同步服务器上已安装的发布脚本**。systemd 使用的是 `/usr/local/sbin/orange-cat-blog-deploy`，不会自动执行仓库里的新版脚本；旧脚本漏复制 `shared` 会导致新版 API 启动失败。具体顺序见 [DEPLOYMENT.md](DEPLOYMENT.md#首次发布此次架构调整)。应用与文章文件格式兼容，仍可切回旧 release。
+**首次上线前需要同步服务器上已安装的发布脚本**（2026-09-05 已完成同步和备份）。systemd 使用的是 `/usr/local/sbin/orange-cat-blog-deploy`，不会自动执行仓库里的新版脚本；旧脚本漏复制 `shared` 会导致新版 API 启动失败。具体顺序见 [DEPLOYMENT.md](DEPLOYMENT.md#首次发布此次架构调整)。应用与文章文件格式兼容，仍可切回旧 release。
 
 ## 验证与进度
 
