@@ -37,6 +37,7 @@
 
 - 展示作者定位、维护原则、近期主题、项目入口和站点时间线。
 - 项目入口包括工具箱和小游戏中心。
+- 联系邮箱为 `jumaomaomaoju@gmail.com`（2026-09-10 更新）；页脚的「Email」和关于页的「邮件」共用 `src/data/blogProfile.js` 中的邮箱配置。
 
 ### 文章详情 `/article/:id`
 

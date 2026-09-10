@@ -4,7 +4,7 @@ export const blogProfile = {
   role: '写 Java 多一些，最近在玩 AI',
   avatar: '/images/cat-avatar.png',
   location: 'China',
-  email: 'hello@jumaomaomaoju.cn',
+  email: 'jumaomaomaoju@gmail.com',
   github: 'https://github.com/IwannaYuJie',
   site: 'https://jumaomaomaoju.cn',
   intro:
