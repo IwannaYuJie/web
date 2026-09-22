@@ -1,0 +1,20 @@
+{
+  "$schema": "./node_modules/wrangler/config-schema.json",
+  "name": "orange-cat-news-drafts",
+  "main": "src/entry.py",
+  "compatibility_date": "2026-09-22",
+  "compatibility_flags": ["python_workers", "python_workflows"],
+  "workers_dev": true,
+  "ai": { "binding": "AI" },
+  "workflows": [{
+    "name": "orange-cat-news-drafts",
+    "binding": "NEWS_WORKFLOW",
+    "class_name": "NewsDraftWorkflow"
+  }],
+  "triggers": { "crons": ["0 1 * * *"] },
+  "vars": {
+    "BLOG_ORIGIN": "https://jumaomaomaoju.cn",
+    "AI_MODEL": "@cf/qwen/qwen3-30b-a3b-fp8"
+  },
+  "observability": { "enabled": true }
+}

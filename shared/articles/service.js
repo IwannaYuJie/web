@@ -69,6 +69,7 @@ export function createArticleService(store, { today = () => new Date().toISOStri
         const normalized = normalizeAndValidate({ ...existing, ...data }, existing.date || now)
         const article = {
           ...normalized,
+          ...(existing.newsDraftId ? { newsDraftId: existing.newsDraftId } : {}),
           id: numericId,
           createdAt: existing.createdAt || now,
           updatedAt: now,

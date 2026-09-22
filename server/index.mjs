@@ -15,7 +15,16 @@ if (!adminKey) {
   process.exit(1)
 }
 
-const server = await createArticleApiServer({ dataFile, adminKey })
+const collectorTokenFile = process.env.NEWS_COLLECTOR_TOKEN_FILE || ''
+const collectorToken = process.env.NEWS_COLLECTOR_TOKEN || (
+  collectorTokenFile ? readFileSync(collectorTokenFile, 'utf8').trim() : ''
+)
+const server = await createArticleApiServer({
+  dataFile, adminKey,
+  newsDraftsDataFile: process.env.NEWS_DRAFTS_DATA_FILE ? resolve(process.env.NEWS_DRAFTS_DATA_FILE) : undefined,
+  collectorToken,
+  workerUrl: process.env.NEWS_WORKER_URL || '',
+})
 
 server.listen(port, host, () => {
   console.log(`Orange Cat API listening on http://${host}:${port}`)

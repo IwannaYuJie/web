@@ -1,7 +1,8 @@
-import { useEffect, useMemo, useState } from 'react'
-import { Link } from 'react-router-dom'
+import { useCallback, useEffect, useMemo, useState } from 'react'
+import { Link, useSearchParams } from 'react-router-dom'
 import ArticleEditor from '../components/article-manager/ArticleEditor'
 import ArticleListPanel from '../components/article-manager/ArticleListPanel'
+import NewsDraftPanel from '../components/article-manager/NewsDraftPanel'
 import { clearStoredAdminKey, createArticle, deleteArticle, getStoredAdminKey, saveAdminKey, updateArticle, verifyAdminKey } from '../services/articles'
 import { useArticlesData } from '../hooks'
 
@@ -23,6 +24,24 @@ function createInitialFormData() {
  * 提供文章的新增、编辑、删除功能
  */
 function ArticleManager() {
+  const [searchParams, setSearchParams] = useSearchParams()
+  const activeTab = searchParams.get('tab') === 'news' ? 'news' : 'articles'
+  const [newsHasChanges, setNewsHasChanges] = useState(false)
+  const changeTab = (tab) => {
+    if (activeTab === tab) {
+      return
+    }
+    if (newsHasChanges && !window.confirm('资讯草稿还有未保存的修改，确认离开？')) {
+      return
+    }
+    const nextParams = new URLSearchParams(searchParams)
+    if (tab === 'news') {
+      nextParams.set('tab', 'news')
+    } else {
+      nextParams.delete('tab')
+    }
+    setSearchParams(nextParams)
+  }
   const {
     articles,
     loading,
@@ -93,17 +112,19 @@ function ArticleManager() {
     }
   }
 
-  const handleLogout = () => {
+  const handleLogout = useCallback(() => {
     setAdminKey('')
     setIsAuthenticated(false)
     clearStoredAdminKey()
-  }
+  }, [])
 
   // 文章分类选项
-  const categories = [
+  const categories = [...new Set([
     'Java核心', 'Spring框架', '微服务', '数据库', 'JVM',
-    '中间件', '云原生', '架构设计', '搜索引擎', '持久层'
-  ]
+    '中间件', '云原生', '架构设计', '搜索引擎', '持久层', 'AI 资讯',
+    ...articles.map(article => article.category),
+    formData.category,
+  ].filter(Boolean))]
 
   /**
    * 处理表单输入变化
@@ -275,7 +296,7 @@ function ArticleManager() {
         <div className="panel" style={{ background: 'var(--k3-bg)', padding: 30 }}>
           <div className="panel-h">🔑 后台登录</div>
           <p style={{ fontSize: 13.5, color: 'var(--ink-soft)', marginBottom: 18, lineHeight: 1.6 }}>
-            输入管理员密钥后，就可以新增、编辑和删除文章。
+            输入管理员密钥后，就可以管理文章、审阅资讯草稿。
           </p>
           <form onSubmit={handleLogin}>
             <div style={{ position: 'relative', marginBottom: 14 }}>
@@ -313,19 +334,28 @@ function ArticleManager() {
             </p>
           </div>
           <div style={{ display: 'flex', gap: 10, flexWrap: 'wrap' }}>
-            <button onClick={handleAddNew} className="btn" disabled={showForm}>
-              ＋ 新增文章
-            </button>
-            <button onClick={fetchArticles} className="btn ghost" disabled={loading}>
-              🔄 刷新
-            </button>
+            {activeTab === 'articles' && <>
+              <button onClick={handleAddNew} className="btn" disabled={showForm}>
+                ＋ 新增文章
+              </button>
+              <button onClick={fetchArticles} className="btn ghost" disabled={loading}>
+                🔄 刷新
+              </button>
+            </>}
             <button onClick={handleLogout} className="btn ghost" title="退出登录">
               🔒 退出
             </button>
           </div>
         </div>
+        <nav className="article-manager-tabs" aria-label="内容管理">
+          <button type="button" className="btn ghost" aria-pressed={activeTab === 'articles'} onClick={() => changeTab('articles')}>已发布文章</button>
+          <button type="button" className="btn ghost" aria-pressed={activeTab === 'news'} onClick={() => changeTab('news')}>资讯草稿</button>
+        </nav>
       </header>
 
+      {activeTab === 'news' ? (
+        <NewsDraftPanel adminKey={adminKey} onUnauthorized={handleLogout} onPublished={fetchArticles} onDirtyChange={setNewsHasChanges} />
+      ) : <>
       {/* Form Modal/Section */}
       {showForm && (
         <ArticleEditor
@@ -356,6 +386,7 @@ function ArticleManager() {
         handleAddNew={handleAddNew}
         totalArticles={articles.length}
       />
+      </>}
     </div>
   )
 }

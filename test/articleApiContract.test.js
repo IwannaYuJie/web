@@ -35,14 +35,19 @@ describe.each(['VPS 文件存储', 'Vite 开发接口', 'Pages KV 适配'])('%s�
       return
     }
     if (runtime === 'Vite 开发接口') {
+      const directory = await mkdtemp(join(tmpdir(), 'orange-cat-vite-contract-'))
       const server = await createViteServer({
         configFile: false,
-        plugins: [createMockApiPlugin(ADMIN_KEY)],
+        cacheDir: join(directory, 'vite-cache'),
+        plugins: [createMockApiPlugin(ADMIN_KEY, { dataFile: join(directory, 'news-drafts.json') })],
         server: { host: '127.0.0.1', port: 0 },
         appType: 'custom',
         logLevel: 'silent',
       })
-      cleanup = () => server.close()
+      cleanup = async () => {
+        await server.close()
+        await rm(directory, { recursive: true, force: true })
+      }
       await server.listen()
       request = (path, options) => fetch(`http://127.0.0.1:${server.httpServer.address().port}${path}`, options)
       return

@@ -1,5 +1,52 @@
 # 橘猫小窝架构与维护入口
 
+## 资讯草稿箱（2026-09-22新增）
+
+本地新增 `/admin/articles?tab=news`，与已有文章管理共用管理员登录。Python 采集器、草稿保存和公开文章发布各自独立；采集成功只增加私有草稿，管理员确认后才写入文章列表。当前处于实现与验收阶段，尚未完成线上部署验收；详细进度见 [NEWS_DRAFTS.md](NEWS_DRAFTS.md)。
+
+```mermaid
+flowchart TD
+    Cron[每日 UTC 01:00] --> Worker[Python Worker]
+    Admin[管理员草稿箱] --> NewsAPI[Node 私有草稿接口]
+    NewsAPI -->|手动采集| Worker
+    Worker --> Workflow[持久化 Workflow]
+    Workflow --> RSS[固定官方 RSS]
+    Workflow --> AI[Workers AI]
+    Workflow -->|独立采集凭据| Collector[collector start / ingest / finish]
+    Collector --> Drafts[news-drafts.json]
+    NewsAPI --> Drafts
+    NewsAPI -->|管理员明确发布| Articles[articles.json]
+```
+
+### 新增模块与接口
+
+| 位置 | 职责 |
+| --- | --- |
+| `workers/news-drafts/src/entry.py` | Cron / 手动触发、Workflow 分步执行、Workers AI 调用、结果回写 |
+| `workers/news-drafts/src/news.py` | RSS 解析与来源约束、日期筛选、模型输入输出处理 |
+| `shared/news-drafts/model.js` | 官方来源白名单、字段校验、UTC+8 每日 3 条额度与活动锁判断 |
+| `shared/news-drafts/service.js` | 采集状态、来源去重、编辑/丢弃、幂等发布与来源署名 |
+| `server/newsDraftStore.mjs` | 独立 JSON 文件、写队列、原子替换与 `.previous` 备份 |
+| `server/newsDraftHandler.mjs` | 管理员和采集器两类鉴权、路由及错误映射 |
+| `src/services/newsDrafts.js` | 同源私有草稿 API 请求；管理员密钥仅随请求传递 |
+| `src/components/article-manager/NewsDraftPanel.jsx` | 采集与草稿状态、预览编辑、人工发布、有限轮询 |
+
+管理端统一要求 `X-Admin-Key`，包括 `GET /api/news-drafts`。`POST /collect` 启动采集；`PUT /:id` 编辑；`DELETE /:id` 丢弃；`POST /:id/publish` 发布。采集器仅可通过独立 Bearer token 调用 `/collector`、`/collector/start`、`/collector/ingest`、`/collector/finish`，不能使用文章写接口。
+
+### 状态与持久化边界
+
+- 生产默认草稿文件为文章文件同目录下的 `news-drafts.json`，也可通过 `NEWS_DRAFTS_DATA_FILE` 指定。文章和草稿分别保存，普通文章查询没有草稿内容。
+- 草稿状态为 `draft`、`published`、`dismissed`；丢弃项从管理列表隐藏，但保留原文 URL 和当日额度记录，避免再次采集。
+- `collector` 保存开始/结束时间、服务端计数和任务 ID。活动锁有 20 分钟期限，过期以可重试错误展示；每条成功保存会更新活动时间。
+- 发布先在文章文件写入并保留 `newsDraftId`，随后写草稿发布状态。若两次写入之间进程退出或响应丢失，重试复用同一篇文章。公开文章分类为 `AI 资讯`，追加官方来源与 AI 辅助整理说明。
+- Worker `/run` 的 202 只表示 Workflow 已排队。前端保留最长 3 分钟的启动等待，首轮查询仍是旧状态时继续跟踪；每 5 秒查询一次，自动查询最多持续 3 分钟。超过等待时间或网络失败后保留草稿与状态，可手动刷新恢复。
+- Markdown 预览使用局部错误边界。预览模块加载失败时仅显示预览错误，编辑内容、保存与其他管理操作保持可用，提示先保存再刷新。
+- Vite 共用生产草稿处理器，草稿使用独立开发文件，文章依旧使用种子内存数据。测试发布的文章会随 Vite 重启重置；请指定独立测试草稿文件，避免将此行为误当生产持久化验收。
+- Vite 接口契约测试为每个实例创建独立临时依赖缓存和草稿文件，避免与正在进行浏览器验收的开发服务器互相覆盖 `node_modules/.vite` 或草稿数据。
+- 单进程文件写队列约束保持不变；本次没有给旧 Pages 备用 API 增加草稿功能。
+
+生产服务需配置 `NEWS_WORKER_URL` 与 `NEWS_COLLECTOR_TOKEN_FILE`（或 `NEWS_COLLECTOR_TOKEN`）；Worker 使用相同 secret、`AI` 和 `NEWS_WORKFLOW` 绑定。仓库备份脚本已覆盖草稿文件，上线时仍需同步服务器已安装的脚本。部署 Python 采集器与真实采集验收详见 [采集器 README](../workers/news-drafts/README.md)。
+
 ## 2026-09-05 整理结果
 
 文章 API 已拆为业务、接口、存储三层。本地开发、VPS 生产和 Pages 备用环境共用文章校验与增删改查；前端页面、路由、文章字段、管理密钥请求头、游戏存档及 JSON 数据格式保持兼容。本次架构调整已提交到 Git 仓库，发布准备与回滚记录见部署文档。

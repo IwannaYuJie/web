@@ -12,7 +12,11 @@ export default defineConfig(({ mode }) => {
   return {
     plugins: [
       react(),
-      createMockApiPlugin(devAdminKey),
+      createMockApiPlugin(devAdminKey, {
+        dataFile: env.DEV_NEWS_DRAFTS_DATA_FILE || process.env.DEV_NEWS_DRAFTS_DATA_FILE,
+        collectorToken: env.DEV_NEWS_COLLECTOR_TOKEN || process.env.DEV_NEWS_COLLECTOR_TOKEN || '',
+        workerUrl: env.DEV_NEWS_WORKER_URL || process.env.DEV_NEWS_WORKER_URL || '',
+      }),
     ],
 
     esbuild: {

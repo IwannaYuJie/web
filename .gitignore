@@ -31,6 +31,13 @@ lerna-debug.log*
 .env.development.local
 .env.test.local
 
+# 本地私有草稿与 Python Worker 运行缓存
+/data/
+**/.dev.vars
+**/.venv/
+**/.wrangler/
+**/__pycache__/
+
 # VPS 迁移过程中的本地快照
 .migration-backups/
 
