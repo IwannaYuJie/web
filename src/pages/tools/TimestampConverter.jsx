@@ -100,12 +100,12 @@ function TimestampConverter() {
               value={tsInput}
               onChange={(e) => setTsInput(e.target.value)}
               placeholder="例如 1700000000"
-              className="flex-1 px-3 py-2 rounded-xl border-2 border-[var(--border-color)] bg-white focus:outline-none focus:border-primary font-mono"
+              className="flex-1 px-3 py-2 rounded border-2 border-[var(--border-color)] bg-surface focus:outline-none focus:border-primary font-mono"
             />
             <select
               value={unit}
               onChange={(e) => setUnit(e.target.value)}
-              className="px-3 py-2 rounded-xl border-2 border-[var(--border-color)] bg-white"
+              className="px-3 py-2 rounded border-2 border-[var(--border-color)] bg-surface"
             >
               <option value="s">秒</option>
               <option value="ms">毫秒</option>
@@ -133,7 +133,7 @@ function TimestampConverter() {
             value={dateInput}
             onChange={(e) => setDateInput(e.target.value)}
             placeholder="2025-01-01 12:00:00"
-            className="w-full px-3 py-2 mb-3 rounded-xl border-2 border-[var(--border-color)] bg-white focus:outline-none focus:border-primary font-mono"
+            className="w-full px-3 py-2 mb-3 rounded border-2 border-[var(--border-color)] bg-surface focus:outline-none focus:border-primary font-mono"
           />
 
           {dateError ? (
@@ -156,7 +156,7 @@ function TimestampConverter() {
 
 function ResultRows({ rows }) {
   return (
-    <div className="rounded-xl bg-white/60 border border-[var(--border-color)] divide-y divide-[var(--border-color)]">
+    <div className="rounded bg-surface/60 border border-[var(--border-color)] divide-y divide-[var(--border-color)]">
       {rows.map(([label, value]) => (
         <div key={label} className="flex items-center justify-between gap-3 px-3 py-2 text-sm">
           <span className="text-text-secondary">{label}</span>

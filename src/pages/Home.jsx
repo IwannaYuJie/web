@@ -1,293 +1,241 @@
 import { useEffect, useMemo, useState } from 'react'
-import { Link, useNavigate } from 'react-router-dom'
+import { Link } from 'react-router-dom'
 import Pagination from '../components/Pagination'
 import HomeCreativeSection from '../components/home/HomeCreativeSection'
+import { Birds, CloudDivider, Moon, Mountains, Seal } from '../components/xian/Ornaments'
 import { CAT_QUOTES, HOME_PAGE_SIZE } from '../constants/home'
+import { blogProfile, nowItems } from '../data/blogProfile'
 import { useArticlesData, useBackToTop } from '../hooks'
 import { filterArticles, getArticleCategories, paginateArticles, sortArticles } from '../utils/articleFilters'
 import { getBlogStats, getFeaturedArticles, getTagCloud } from '../utils/blogInsights'
+import { categoryTone, toHanMonth, toHanNumeral, toHanYear, toShichen } from '../utils/xianText'
+import './Home.css'
 
-const KCLASS_MAP = { 'Java核心': 'k1', 'JVM': 'k2', 'Spring框架': 'k3' }
-const KS = ['k1', 'k2', 'k3', 'k4']
-function kClassFor(category, i) {
-  return KCLASS_MAP[category] || KS[i % 4]
+function splitDate(date = '') {
+  const [y, m, d] = String(date).split('-')
+  return { y, m: Number(m), d: Number(d) }
 }
 
-function pad2(n) { return String(n).padStart(2, '0') }
-
-function greetingNow() {
-  const h = new Date().getHours()
-  if (h < 9) {return '早安'}
-  if (h < 12) {return '上午好'}
-  if (h < 18) {return '下午好'}
-  return '晚上好'
-}
-
-function Hero({ stats, cover }) {
-  const [greet, setGreet] = useState(greetingNow)
+function Hero({ stats }) {
+  const [shichen, setShichen] = useState(() => toShichen(new Date().getHours()))
   useEffect(() => {
-    const id = setInterval(() => setGreet(greetingNow()), 30000)
+    const id = setInterval(() => setShichen(toShichen(new Date().getHours())), 60000)
     return () => clearInterval(id)
   }, [])
 
   const items = [
-    [pad2(stats.articleCount), '篇文章'],
-    [pad2(stats.categoryCount), '个分类'],
-    [pad2(stats.tagCount), '个标签'],
-    [pad2(Math.min(stats.totalReadMinutes, 99)), '分钟读完'],
+    ['藏文', stats.articleCount, '篇'],
+    ['门类', stats.categoryCount, '门'],
+    ['签引', stats.tagCount, '枚'],
+    ['可读', stats.totalReadMinutes, '分钟'],
   ]
 
   return (
-    <section style={{ padding: '48px 0 30px' }}>
-      <div className="hero-grid" style={{ display: 'grid', gridTemplateColumns: 'minmax(0,1fr) minmax(380px,.92fr)', gap: 32, alignItems: 'stretch' }}>
-        <div style={{ display: 'flex', flexDirection: 'column' }}>
-          <div style={{ fontFamily: 'var(--disp)', fontSize: 13, fontWeight: 800, letterSpacing: '.1em', textTransform: 'uppercase', color: 'var(--berry)' }}>
-            {greet} · 来记一笔
+    <section className="xhero">
+      <div className="xhero-sky" aria-hidden="true">
+        <Moon className="xhero-moon" />
+        <Birds className="xhero-birds" />
+        <div className="xhero-cloudband b1" />
+        <div className="xhero-cloudband b2" />
+        <Mountains className="xhero-mountains" pavilion />
+      </div>
+
+      <div className="wrap xhero-grid">
+        <div className="xhero-copy">
+          <div className="kicker rise" style={{ '--i': 1 }}>
+            <span className="rule" />
+            {shichen} · 宜读书
           </div>
-          <h1 style={{ fontFamily: 'var(--serif)', fontWeight: 900, fontSize: 'clamp(52px, 8.5vw, 112px)', lineHeight: 0.9, letterSpacing: '-.02em', margin: '12px 0 4px', textShadow: '5px 5px 0 color-mix(in srgb, var(--sun) 55%, transparent)' }}>
-            <span style={{ color: 'var(--o)' }}>橘猫</span>
-            <span style={{ color: 'var(--berry)' }}>小窝</span>
-          </h1>
-          <p style={{ fontSize: 16, lineHeight: 1.75, color: 'var(--ink-soft)', maxWidth: 460, margin: '8px 0 0', fontWeight: 500 }}>
-            一个慢更的博客。后端、AI、自己折腾的小项目都丢在这里，
-            <b style={{ color: 'var(--ink)' }}>主要写给半年后的自己看</b>
-            。
+          <p className="xhero-verse elegant rise" style={{ '--i': 2 }}>
+            一窗灯火敲长夜，<br />
+            半卷代码记流年。
           </p>
-          <div style={{ display: 'flex', gap: 10, flexWrap: 'wrap', marginTop: 18 }}>
-            <span className="sticker" style={{ transform: 'rotate(-2deg)' }}>慢更</span>
-            <span className="sticker" style={{ transform: 'rotate(2deg)', background: 'var(--sun)' }}>凭印象写</span>
-            <span className="sticker" style={{ transform: 'rotate(-1deg)', background: 'var(--mint)', color: '#fff', borderColor: 'var(--mint)' }}>偶尔废话</span>
+          <p className="xhero-intro rise" style={{ '--i': 3 }}>{blogProfile.intro}</p>
+
+          <div className="xhero-actions rise" style={{ '--i': 4 }}>
+            <a href="#scrolls" className="btn">入山阅卷 <span className="arr">→</span></a>
+            <Link to="/archive" className="btn ghost">藏经阁</Link>
           </div>
-          <div style={{ display: 'flex', gap: 12, marginTop: 22, flexWrap: 'wrap' }}>
-            {cover ? (
-              <Link to={`/article/${cover.id}`} className="btn">看最新一篇</Link>
-            ) : (
-              <Link to="/archive" className="btn">看最新一篇</Link>
-            )}
-            <Link to="/archive" className="btn ghost">翻翻归档</Link>
-          </div>
-          <div className="hero-stats">
-            {items.map(([n, l]) => (
-              <div key={l} className="hero-stat">
-                <div className="n">{n}</div>
-                <div className="l">{l}</div>
+
+          <dl className="xhero-stats rise" style={{ '--i': 5 }}>
+            {items.map(([label, n, unit]) => (
+              <div key={label}>
+                <dt>{label}</dt>
+                <dd><span className="latin">{n}</span>{unit}</dd>
               </div>
             ))}
-          </div>
+          </dl>
         </div>
 
-        {cover && (
-          <Link to={`/article/${cover.id}`} className="ec k1 hideSm" style={{ padding: 32, display: 'flex', flexDirection: 'column', minHeight: 340, textDecoration: 'none' }}>
-            <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
-              <span className="cat-chip" style={{ color: 'var(--k1-fg)' }}>最新 · {cover.category}</span>
-              <span style={{ fontFamily: 'var(--disp)', fontSize: 12, fontWeight: 700, opacity: 0.55 }}>{cover.date}</span>
+        <div className="xhero-title" aria-label="橘猫小窝">
+          <h1 className="brush ink-in">橘猫小窝</h1>
+          <Seal text="慢更" size={42} className="xhero-seal" />
+        </div>
+      </div>
+
+      <div className="xhero-scrollhint" aria-hidden="true">
+        <span />
+      </div>
+    </section>
+  )
+}
+
+function LeadStory({ article }) {
+  if (!article) { return null }
+  const { y, m, d } = splitDate(article.date)
+  return (
+    <section className="xlead wrap">
+      <div className="xlead-label">
+        <span className="brush vertical">今日开卷</span>
+        <span className="line" />
+      </div>
+      <Link to={`/article/${article.id}`} className="xlead-card scroll-card">
+        <div className="xlead-date">
+          <span className="brush day">{toHanNumeral(d) || d}</span>
+          <span className="elegant month">{toHanMonth(m)}</span>
+          <span className="elegant year">{toHanYear(y)}</span>
+        </div>
+        <div className="xlead-body">
+          <span className="cat-label" style={{ '--tone': categoryTone(article.category) }}>
+            <span className="tone-dot" />{article.category}
+          </span>
+          <h2>{article.title}</h2>
+          <p>{article.description}</p>
+          <div className="xlead-foot">
+            <span className="elegant">约 {article.readTime} 分钟可读毕</span>
+            <span className="link-arrow">展卷细读 <span className="arr">→</span></span>
+          </div>
+        </div>
+        <span className="xlead-watermark brush" aria-hidden="true">卷</span>
+      </Link>
+    </section>
+  )
+}
+
+function FeaturedScrolls({ featured }) {
+  const items = featured.slice(1, 4)
+  if (items.length === 0) { return null }
+  return (
+    <section className="wrap xfeat">
+      <div className="section-h">
+        <h2>镇阁之作 <small>几篇可以先看的</small></h2>
+      </div>
+      <div className="xfeat-grid">
+        {items.map((a, i) => (
+          <Link key={a.id} to={`/article/${a.id}`} className="hang-scroll rise" style={{ '--i': i }}>
+            <span className="rod" aria-hidden="true" />
+            <div className="hang-body">
+              <span className="brush hang-num">{toHanNumeral(i + 1, { formal: true })}</span>
+              <span className="cat-label" style={{ '--tone': categoryTone(a.category) }}>
+                <span className="tone-dot" />{a.category}
+              </span>
+              <h3>{a.title}</h3>
+              <p>{a.description}</p>
+              <span className="hang-meta latin">{a.date}</span>
             </div>
-            <h2 style={{ fontFamily: 'var(--serif)', fontWeight: 900, fontSize: 'clamp(26px,2.4vw,34px)', lineHeight: 1.25, margin: '18px 0 14px', color: 'var(--ink)' }}>
-              {cover.title}
-            </h2>
-            <p style={{ fontSize: 14.5, lineHeight: 1.7, color: 'var(--ink-soft)', display: '-webkit-box', WebkitLineClamp: 3, WebkitBoxOrient: 'vertical', overflow: 'hidden' }}>
-              {cover.description}
-            </p>
-            <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginTop: 'auto', paddingTop: 22 }}>
-              <span style={{ fontSize: 13, color: 'var(--ink-soft)', fontWeight: 600 }}>{cover.readTime} 分钟阅读</span>
-              <span className="arrow" style={{ fontSize: 17 }}>阅读全文 →</span>
-            </div>
-            <div className="paw" style={{ fontSize: 44 }}>🐾</div>
+            <span className="rod bottom" aria-hidden="true" />
           </Link>
-        )}
+        ))}
       </div>
     </section>
   )
 }
 
-function FeaturedRow({ featured }) {
-  if (featured.length < 2) {return null}
-  const top = featured[1]
-  const side = featured.slice(2, 4)
+function QuoteScroll() {
+  const [index, setIndex] = useState(3)
+  const quote = CAT_QUOTES[index]
+  const next = () => setIndex(i => (i + 1 + Math.floor(Math.random() * (CAT_QUOTES.length - 1))) % CAT_QUOTES.length)
 
   return (
-    <section style={{ marginBottom: 44 }}>
-      <div className="section-h"><h2>几篇可以先看的</h2></div>
-      <div className="feat-grid" style={{ display: 'grid', gridTemplateColumns: side.length > 0 ? '1.3fr 1fr' : '1fr', gap: 16 }}>
-        <Link to={`/article/${top.id}`} className="ec k2" style={{ padding: 30, display: 'flex', flexDirection: 'column', justifyContent: 'space-between', minHeight: 260 }}>
-          <div>
-            <span className="cat-chip" style={{ color: 'var(--k2-fg)' }}>{top.category}</span>
-            <h3 style={{ fontSize: 30, lineHeight: 1.25, margin: '16px 0 12px' }}>{top.title}</h3>
-            <p style={{ fontSize: 14.5, lineHeight: 1.7, color: 'var(--ink-soft)' }}>{top.description}</p>
-          </div>
-          <div className="arrow" style={{ fontSize: 16 }}>阅读全文 →</div>
-          <div className="paw">🐾</div>
-        </Link>
-        {side.length > 0 && (
-          <div style={{ display: 'grid', gridTemplateRows: side.length === 2 ? '1fr 1fr' : '1fr', gap: 16 }}>
-            {side.map((a, i) => (
-              <Link to={`/article/${a.id}`} key={a.id} className={`ec ${kClassFor(a.category, i + 2)}`} style={{ padding: 22 }}>
-                <span className="cat cat-chip" style={{ border: 'none', padding: 0 }}>{a.category}</span>
-                <h3 style={{ fontSize: 19, margin: '6px 0' }}>{a.title}</h3>
-                <div className="arrow">阅读 →</div>
-              </Link>
-            ))}
-          </div>
-        )}
+    <div className="xquote scroll-card">
+      <div className="panel-h">箴言</div>
+      <blockquote key={index} className="xquote-text elegant ink-in">{quote.text}</blockquote>
+      <div className="xquote-foot">
+        <span className="elegant">—— {quote.author}</span>
+        <button type="button" className="link-arrow" onClick={next}>另取一签 <span className="arr">↻</span></button>
       </div>
-    </section>
-  )
-}
-
-function QuotePanel() {
-  const [quote, setQuote] = useState(CAT_QUOTES[3])
-  const [isSpinning, setIsSpinning] = useState(false)
-
-  const handleNewQuote = () => {
-    setIsSpinning(true)
-    setQuote(CAT_QUOTES[Math.floor(Math.random() * CAT_QUOTES.length)])
-    // Clear rotation state after animation duration
-    setTimeout(() => setIsSpinning(false), 600)
-  }
-
-  return (
-    <div className="panel dark">
-      <div className="panel-h" style={{ color: 'var(--sun)' }}>顺手抄一句</div>
-      <blockquote style={{ fontFamily: 'var(--serif)', fontSize: 17, lineHeight: 1.6, fontWeight: 700 }}>
-        “{quote.text}”
-      </blockquote>
-      <div style={{ textAlign: 'right', fontSize: 12.5, opacity: 0.8, marginTop: 8 }}>— {quote.author}</div>
-      <button
-        className="btn sun"
-        style={{ width: '100%', marginTop: 16 }}
-        onClick={handleNewQuote}
-      >
-        <span style={{
-          display: 'inline-block',
-          transform: isSpinning ? 'rotate(360deg)' : 'rotate(0deg)',
-          transition: isSpinning ? 'transform 0.6s cubic-bezier(0.19, 1, 0.22, 1)' : 'none'
-        }} />
-        换一句
-      </button>
     </div>
   )
 }
 
-function HomeSidebar({ cat, setCat, query, setQuery, categories, tags, articleCount }) {
-  const navigate = useNavigate()
+function Sidebar({ cat, setCat, query, setQuery, categories, tags, counts }) {
   return (
-    <aside style={{ display: 'flex', flexDirection: 'column', gap: 16, position: 'sticky', top: 84, alignSelf: 'start' }}>
-      <div className="panel" style={{ padding: 16 }}>
-        <div style={{ position: 'relative' }}>
-          <span style={{ position: 'absolute', left: 12, top: '50%', transform: 'translateY(-50%)', pointerEvents: 'none' }}>🔍</span>
+    <aside className="xside">
+      <div className="xside-block">
+        <div className="panel-h">寻踪</div>
+        <label className="field-line">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.6" aria-hidden="true">
+            <circle cx="11" cy="11" r="7" /><path d="m20 20-3.5-3.5" strokeLinecap="round" />
+          </svg>
           <input
-            type="text"
+            type="search"
             value={query}
             onChange={e => setQuery(e.target.value)}
-            placeholder="搜文章 / 标签…"
-            style={{ paddingLeft: 38 }}
+            placeholder="搜篇名、签引…"
+            aria-label="搜索文章"
           />
-        </div>
-        <div style={{ display: 'flex', flexWrap: 'wrap', gap: 7, marginTop: 12 }}>
-          {categories.map(c => (
-            <button
-              key={c}
-              onClick={() => setCat(c)}
-              style={{
-                fontSize: 13,
-                fontWeight: 700,
-                padding: '6px 13px',
-                borderRadius: 999,
-                border: '2px solid var(--ink)',
-                background: cat === c ? 'var(--ink)' : 'transparent',
-                color: cat === c ? 'var(--paper)' : 'var(--ink)',
-                cursor: 'pointer',
-              }}
-            >
-              {c}
-            </button>
-          ))}
-        </div>
+        </label>
       </div>
 
-      <QuotePanel />
+      <div className="xside-block">
+        <div className="panel-h">门类</div>
+        <ul className="xside-cats">
+          {categories.map(c => (
+            <li key={c}>
+              <button type="button" className={cat === c ? 'on' : ''} onClick={() => setCat(c)}>
+                <span className="tone-dot" style={{ '--tone': c === '全部' ? 'var(--gold)' : categoryTone(c) }} />
+                <span className="name">{c}</span>
+                <span className="dots" aria-hidden="true" />
+                <span className="latin">{counts[c] ?? 0}</span>
+              </button>
+            </li>
+          ))}
+        </ul>
+      </div>
 
-      <Link
-        to="/creative"
-        className="panel"
-        style={{
-          background: 'var(--k1-bg)',
-          textDecoration: 'none',
-          display: 'block',
-          border: '2px solid var(--ink)',
-          borderRadius: 20,
-          boxShadow: 'var(--shadow-hard)',
-          padding: 16,
-          transition: 'all var(--transition-fast)',
-        }}
-      >
-        <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
-          <span className="cat-chip" style={{ color: 'var(--o)' }}>🎨 创意矩阵</span>
-          <span style={{ fontSize: 12, fontWeight: 700, color: 'var(--ink-soft)' }}>30 款风格</span>
-        </div>
-        <div style={{ fontFamily: 'var(--serif)', fontWeight: 800, fontSize: 17, margin: '8px 0 4px', color: 'var(--ink)' }}>
-          排版与交互灵感工坊
-        </div>
-        <p style={{ fontSize: 12.5, color: 'var(--ink-soft)', lineHeight: 1.5, margin: 0 }}>
-          瑞士极简、赛博霓虹、Win95视窗、手账涂鸦、达芬奇手稿…
-        </p>
-        <div className="arrow" style={{ marginTop: 10, fontSize: 13, color: 'var(--o)' }}>去逛逛 ➔</div>
-      </Link>
+      <QuoteScroll />
 
       {tags.length > 0 && (
-        <div className="panel">
-          <div className="panel-h"># 热门标签</div>
-          <div style={{ display: 'flex', flexWrap: 'wrap', gap: 8 }}>
+        <div className="xside-block">
+          <div className="panel-h">签引</div>
+          <div className="xside-tags">
             {tags.map(item => (
-              <Link
-                key={item.tag}
-                to={`/tags?tag=${encodeURIComponent(item.tag)}`}
-                className="sticker"
-                style={{ fontSize: 12.5, padding: '6px 12px' }}
-              >
-                #{item.tag} <b style={{ color: 'var(--accent)' }}>{item.count}</b>
+              <Link key={item.tag} to={`/tags?tag=${encodeURIComponent(item.tag)}`} className="chip">
+                {item.tag}<span className="count">{item.count}</span>
               </Link>
             ))}
           </div>
         </div>
       )}
 
-      <div className="panel" style={{ background: 'var(--k4-bg)' }}>
-        <div className="panel-h" style={{ color: 'var(--mint)' }}>最近在干嘛</div>
-        <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 8, fontSize: 12 }}>
-          <div style={{ background: 'var(--paper)', border: '2px solid var(--ink)', borderRadius: 12, padding: 10 }}>
-            主线<div style={{ fontWeight: 800, fontSize: 16 }}>Java 25</div>
-          </div>
-          <div style={{ background: 'var(--paper)', border: '2px solid var(--ink)', borderRadius: 12, padding: 10 }}>
-            副线<div style={{ fontWeight: 800, fontSize: 16 }}>AI 工具</div>
-          </div>
-          <div style={{ background: 'var(--paper)', border: '2px solid var(--ink)', borderRadius: 12, padding: 10, gridColumn: 'span 2' }}>
-            已经攒了 {articleCount} 篇，下一篇还在拖
-          </div>
+      <Link to="/about" className="xside-owner scroll-card">
+        <img src={blogProfile.avatar} alt="" />
+        <div>
+          <div className="elegant name">{blogProfile.owner}</div>
+          <p>{nowItems[0]?.value}</p>
+          <span className="link-arrow">拜访洞府 <span className="arr">→</span></span>
         </div>
-        <button
-          onClick={() => navigate('/about')}
-          className="btn ghost"
-          style={{ width: '100%', marginTop: 14, justifyContent: 'center' }}
-        >
-          关于我
-        </button>
-      </div>
+      </Link>
     </aside>
   )
 }
 
 function Home() {
-  const { articles, loading: articlesLoading, error: articlesError, fetchArticles } = useArticlesData()
+  const { articles, loading, error, fetchArticles } = useArticlesData()
   const [selectedCategory, setSelectedCategory] = useState('全部')
-  const showBackToTop = useBackToTop(400)
+  const showBackToTop = useBackToTop(600)
   const [searchQuery, setSearchQuery] = useState('')
   const [currentPage, setCurrentPage] = useState(1)
 
   const categories = useMemo(() => getArticleCategories(articles), [articles])
   const stats = useMemo(() => getBlogStats(articles), [articles])
   const featuredArticles = useMemo(() => getFeaturedArticles(articles, 4), [articles])
-  const tagCloud = useMemo(() => getTagCloud(articles).slice(0, 12), [articles])
+  const tagCloud = useMemo(() => getTagCloud(articles).slice(0, 14), [articles])
+  const categoryCounts = useMemo(() => {
+    const counts = { 全部: articles.length }
+    articles.forEach(a => { counts[a.category] = (counts[a.category] || 0) + 1 })
+    return counts
+  }, [articles])
 
   const filteredArticles = useMemo(() => {
     return sortArticles(filterArticles(articles, { searchQuery, selectedCategory }), 'date', 'desc')
@@ -303,122 +251,106 @@ function Home() {
     setCurrentPage(1)
   }, [searchQuery, selectedCategory])
 
-  const scrollToTop = () => window.scrollTo({ top: 0, behavior: 'smooth' })
-
   return (
-    <div className="wrap" style={{ paddingBottom: 48 }}>
-      <Hero stats={stats} cover={featuredArticles[0]} />
-      <FeaturedRow featured={featuredArticles} />
+    <div className="xhome">
+      <Hero stats={stats} />
+      <LeadStory article={featuredArticles[0]} />
+      <FeaturedScrolls featured={featuredArticles} />
 
+      <div className="wrap"><CloudDivider /></div>
       <HomeCreativeSection />
+      <div className="wrap"><CloudDivider /></div>
 
-      <div className="home-main" style={{ display: 'grid', gridTemplateColumns: '1fr 340px', gap: 28 }}>
-        <div id="articles">
+      <div className="wrap xindex" id="scrolls">
+        <div className="xindex-main">
           <div className="section-h">
-            <h2>全部文章</h2>
-            <Link to="/archive" className="more">看归档 →</Link>
+            <h2>诸篇 <small>全部文章</small></h2>
+            <Link to="/archive" className="more">去藏经阁 →</Link>
           </div>
 
-          {articlesLoading ? (
-            <div className="panel" style={{ textAlign: 'center', padding: 48 }}>
-              <div className="animate-bounce" style={{ fontSize: 40 }}>🐱</div>
-              <p style={{ marginTop: 12, color: 'var(--ink-soft)' }}>文章加载中…</p>
-            </div>
-          ) : articlesError ? (
-            <div className="panel" style={{ textAlign: 'center', padding: 48, background: 'var(--k2-bg)' }}>
-              <div style={{ fontSize: 40 }} />
-              <p style={{ marginTop: 12, color: 'var(--ink-soft)' }}>{articlesError}</p>
-              <button onClick={fetchArticles} className="btn" style={{ marginTop: 16 }}>重试</button>
+          {loading ? (
+            <div className="state"><div className="loading-bar" />墨迹未干，稍候片刻…</div>
+          ) : error ? (
+            <div className="state">
+              <div className="state-mark">迷</div>
+              <p>{error}</p>
+              <button onClick={fetchArticles} className="btn" style={{ marginTop: 20 }}>再试一次</button>
             </div>
           ) : paginatedArticles.length > 0 ? (
             <>
-              <div style={{ display: 'flex', flexDirection: 'column', gap: 14 }}>
-                {paginatedArticles.map((a, i) => (
-                  <Link
-                    to={`/article/${a.id}`}
-                    key={a.id}
-                    className={`ec ${kClassFor(a.category, (currentPage - 1) * HOME_PAGE_SIZE + i)}`}
-                    style={{ display: 'grid', gridTemplateColumns: 'auto 1fr auto', gap: 18, alignItems: 'center', padding: '20px 24px' }}
-                  >
-                    <div className="idx" style={{ fontSize: 26 }}>{pad2((currentPage - 1) * HOME_PAGE_SIZE + i + 1)}</div>
-                    <div style={{ minWidth: 0 }}>
-                      <span className="cat cat-chip" style={{ border: 'none', padding: 0 }}>
-                        {a.category} · {a.date}
-                      </span>
-                      <h3 style={{ fontSize: 21, margin: '4px 0 0' }}>{a.title}</h3>
-                    </div>
-                    <div className="arrow hideSm">→</div>
-                  </Link>
-                ))}
-              </div>
+              <ol className="xlist">
+                {paginatedArticles.map((a, i) => {
+                  const n = (currentPage - 1) * HOME_PAGE_SIZE + i + 1
+                  return (
+                    <li key={a.id} className="rise" style={{ '--i': i }}>
+                      <Link to={`/article/${a.id}`} className="xrow">
+                        <span className="xrow-num brush">{toHanNumeral(n)}</span>
+                        <div className="xrow-body">
+                          <div className="xrow-meta">
+                            <span className="cat-label" style={{ '--tone': categoryTone(a.category) }}>
+                              <span className="tone-dot" />{a.category}
+                            </span>
+                            <span className="latin">{a.date}</span>
+                          </div>
+                          <h3>{a.title}</h3>
+                          <p>{a.description}</p>
+                        </div>
+                        <span className="xrow-go" aria-hidden="true">
+                          <span className="elegant">{a.readTime} 分</span>
+                          <span className="arr">→</span>
+                        </span>
+                      </Link>
+                    </li>
+                  )
+                })}
+              </ol>
 
               {totalPages > 1 && (
-                <div className="panel" style={{ marginTop: 18, padding: 16 }}>
-                  <Pagination
-                    currentPage={currentPage}
-                    totalPages={totalPages}
-                    totalCount={filteredArticles.length}
-                    onPageChange={(page) => {
-                      setCurrentPage(page)
-                      document.getElementById('articles')?.scrollIntoView({ behavior: 'smooth' })
-                    }}
-                  />
-                </div>
+                <Pagination
+                  currentPage={currentPage}
+                  totalPages={totalPages}
+                  totalCount={filteredArticles.length}
+                  onPageChange={(page) => {
+                    setCurrentPage(page)
+                    document.getElementById('scrolls')?.scrollIntoView({ behavior: 'smooth' })
+                  }}
+                />
               )}
             </>
           ) : (
-            <div className="panel" style={{ textAlign: 'center', padding: 48 }}>
-              <div style={{ fontSize: 40 }} />
-              <p style={{ marginTop: 12, color: 'var(--ink-soft)' }}>
-                {searchQuery ? `没找到包含 "${searchQuery}" 的文章` : '这个分类下还没东西，换一个看看'}
-              </p>
+            <div className="state">
+              <div className="state-mark">空</div>
+              <p>{searchQuery ? `寻遍山中，未见「${searchQuery}」` : '此门类下尚无文章'}</p>
               {(searchQuery || selectedCategory !== '全部') && (
                 <button
-                  onClick={() => {
-                    setSearchQuery('')
-                    setSelectedCategory('全部')
-                  }}
+                  onClick={() => { setSearchQuery(''); setSelectedCategory('全部') }}
                   className="btn ghost"
-                  style={{ marginTop: 16 }}
+                  style={{ marginTop: 20 }}
                 >
-                  清除筛选
+                  拂去尘埃，重新来过
                 </button>
               )}
             </div>
           )}
         </div>
 
-        <HomeSidebar
+        <Sidebar
           cat={selectedCategory}
           setCat={setSelectedCategory}
           query={searchQuery}
           setQuery={setSearchQuery}
           categories={categories}
           tags={tagCloud}
-          articleCount={articles.length}
+          counts={categoryCounts}
         />
       </div>
 
       <button
-        className="btn"
-        onClick={scrollToTop}
-        aria-label="返回顶部"
-        style={{
-          position: 'fixed',
-          bottom: 28,
-          right: 28,
-          zIndex: 40,
-          width: 52,
-          height: 52,
-          padding: 0,
-          borderRadius: 14,
-          opacity: showBackToTop ? 1 : 0,
-          pointerEvents: showBackToTop ? 'auto' : 'none',
-          transform: showBackToTop ? 'translateY(0)' : 'translateY(20px)',
-          transition: 'opacity 0.3s, transform 0.3s',
-        }}
+        className={`xtop ${showBackToTop ? 'show' : ''}`}
+        onClick={() => window.scrollTo({ top: 0, behavior: 'smooth' })}
+        aria-label="回到顶部"
       >
-        ↑
+        <span className="brush">顶</span>
       </button>
     </div>
   )

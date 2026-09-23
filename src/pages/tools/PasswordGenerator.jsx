@@ -167,7 +167,7 @@ function PasswordGenerator() {
               return (
                 <div
                   key={i}
-                  className="flex items-center gap-3 px-3 py-2 rounded-xl bg-white/60 border border-[var(--border-color)]"
+                  className="flex items-center gap-3 px-3 py-2 rounded bg-surface/60 border border-[var(--border-color)]"
                 >
                   <code className="flex-1 font-mono text-sm break-all">{pwd || '— 至少选择一个字符集 —'}</code>
                   <span

@@ -1,601 +1,81 @@
-# 🐱 橘猫小窝 - 设计规范文档
-
-## 📋 目录
-- [设计理念](#设计理念)
-- [配色方案](#配色方案)
-- [字体规范](#字体规范)
-- [圆角与阴影](#圆角与阴影)
-- [组件规范](#组件规范)
-- [图标使用](#图标使用)
-- [动画效果](#动画效果)
-- [响应式设计](#响应式设计)
-- [开发扩展指南](#开发扩展指南)
-
----
-
-## 🎨 设计理念
-
-### 核心概念
-**橘猫主题 - 温暖、清爽、可长期阅读**
-
-- 🧡 **温暖感**：保留橘猫橙作为品牌主色
-- 🌿 **清爽感**：使用青绿和蓝紫做辅助色，避免大面积单一奶油橘
-- 😊 **可爱风**：圆角设计、柔和阴影、趣味表情
-- 🐾 **橘猫元素**：融入猫咪相关的图标和装饰
-- 💫 **轻量化**：保持简洁，避免过度装饰
-
-### 设计原则
-1. **一致性**：所有页面保持统一的视觉风格
-2. **可读性**：确保文字清晰易读，对比度适中
-3. **互动性**：添加悬停效果和过渡动画
-4. **可爱度**：适度使用表情符号和装饰元素
-
----
-
-## 🎨 配色方案
-
-### 主色调 - 橘猫橙 + 清爽辅助色
-
-```css
-/* 主要颜色 */
---primary-color: #F58235;        /* 橘猫主色 */
---primary-hover: #D96A1D;        /* 悬停色 */
---secondary-color: #4EA59A;      /* 辅助色 - 青绿 */
---accent-color: #6C63D9;         /* 强调色 - 蓝紫 */
-```
-
-**使用场景**：
-- `primary-color`：按钮、链接、标题强调
-- `primary-hover`：交互元素的悬停状态
-- `secondary-color`：标签、数据辅助信息、悬停背景
-- `accent-color`：项目状态、特殊入口、高亮信息
-
-### 背景色系
-
-```css
-/* 背景颜色 */
---bg-color: #F3F6F2;             /* 背景色 - 浅灰绿 */
---card-bg: #FFFFFF;              /* 卡片背景 - 白色 */
---card-hover: #EFF8F6;           /* 卡片悬停 - 浅青绿 */
-```
-
-**使用场景**：
-- `bg-color`：页面整体背景
-- `card-bg`：卡片、面板背景
-- `card-hover`：卡片悬停状态
-
-### 文字色系
-
-```css
-/* 文字颜色 */
---text-color: #2F2A25;           /* 文字色 - 深中性色 */
---text-secondary: #6F6258;       /* 次要文字 - 暖灰色 */
-```
-
-**使用场景**：
-- `text-color`：正文、标题
-- `text-secondary`：辅助说明、日期
-
-### 边框色系
-
-```css
-/* 边框颜色 */
---border-color: #DCE5D8;         /* 边框色 - 浅灰绿 */
-```
-
-### 渐变色
-
-```css
-/* 渐变效果 */
---gradient-warm: linear-gradient(135deg, #F7A65B 0%, #F58235 54%, #D96A1D 100%);
---gradient-soft: linear-gradient(135deg, #FFFFFF 0%, #EAF7F4 100%);
-```
-
-**使用场景**：
-- `gradient-warm`：导航栏、按钮、重要区域
-- `gradient-soft`：页脚、背景装饰
-
-### 深色模式配色
-
-```css
-/* 夜间模式 */
---bg-color: #2D1F1A;             /* 深棕背景 */
---text-color: #FFE6CC;           /* 浅橙文字 */
---card-bg: #3D2B20;              /* 深色卡片 */
-```
-
----
-
-## 📝 字体规范
-
-### 字体家族
-
-```css
-font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', 
-             'Oxygen', 'Ubuntu', 'Cantarell', 'Fira Sans', 
-             'Droid Sans', 'Helvetica Neue', sans-serif;
-```
-
-### 字体大小
-
-| 用途 | 大小 | 字重 |
-|------|------|------|
-| 大标题 (h1) | 2.8rem | 800 |
-| 中标题 (h2) | 2.2rem | 700 |
-| 小标题 (h3) | 1.4rem | 700 |
-| 正文 | 1rem | 400 |
-| 辅助文字 | 0.9rem | 500 |
-
-### 行高
-
-- 标题：`1.3 - 1.4`
-- 正文：`1.6 - 1.8`
-
----
-
-## 🔲 圆角与阴影
-
-### 圆角规范
-
-```css
---radius-sm: 12px;    /* 小圆角 - 小元素 */
---radius-md: 16px;    /* 中圆角 - 卡片 */
---radius-lg: 24px;    /* 大圆角 - 大区块 */
---radius-full: 9999px; /* 完全圆角 - 按钮、标签 */
-```
-
-**使用指南**：
-- 按钮、标签 → `radius-full`
-- 卡片、面板 → `radius-md` 或 `radius-lg`
-- 小装饰元素 → `radius-sm`
-
-### 阴影规范
-
-```css
---shadow: 0 2px 8px 0 rgba(255, 159, 69, 0.15);        /* 基础阴影 */
---shadow-lg: 0 8px 24px 0 rgba(255, 159, 69, 0.25);   /* 大阴影 */
---shadow-hover: 0 12px 32px 0 rgba(255, 159, 69, 0.3); /* 悬停阴影 */
-```
-
-**使用场景**：
-- 卡片默认 → `shadow`
-- 导航栏、弹窗 → `shadow-lg`
-- 悬停效果 → `shadow-hover`
-
----
-
-## 🧩 组件规范
-
-### 按钮
-
-#### 主要按钮
-```css
-.primary-button {
-  background: var(--gradient-warm);
-  color: white;
-  padding: 0.9rem 2rem;
-  border-radius: var(--radius-full);
-  font-weight: 700;
-  box-shadow: var(--shadow-lg);
-}
-
-.primary-button:hover {
-  transform: translateY(-3px) scale(1.05);
-  box-shadow: var(--shadow-hover);
-}
-```
-
-#### 次要按钮
-```css
-.secondary-button {
-  background: white;
-  color: var(--primary-color);
-  border: 2px solid var(--border-color);
-  padding: 0.7rem 1.5rem;
-  border-radius: var(--radius-full);
-}
-```
-
-### 卡片
-
-```css
-.card {
-  background: var(--card-bg);
-  border: 2px solid var(--border-color);
-  border-radius: var(--radius-md);
-  padding: 2rem;
-  box-shadow: var(--shadow);
-  transition: all 0.3s ease;
-}
-
-.card:hover {
-  transform: translateY(-6px);
-  box-shadow: var(--shadow-hover);
-  border-color: var(--primary-color);
-  background: var(--card-hover);
-}
-```
-
-### 输入框
-
-```css
-.input {
-  background: var(--card-bg);
-  border: 2px solid var(--border-color);
-  border-radius: var(--radius-md);
-  padding: 0.8rem 1.2rem;
-  color: var(--text-color);
-  font-size: 1rem;
-}
-
-.input:focus {
-  border-color: var(--primary-color);
-  outline: none;
-  box-shadow: 0 0 0 3px rgba(255, 159, 69, 0.1);
-}
-```
-
----
-
-## 😺 图标使用
-
-### Emoji 表情规范
-
-#### 橘猫相关
-- 🐱 猫咪主图标
-- 🐾 猫爪印（装饰、链接）
-- 🧡 橙色心（喜欢、收藏）
-- 😺 笑脸猫（成功提示）
-- 😿 哭脸猫（错误提示）
-
-#### 功能图标
-- 🏠 首页
-- 📚 文章/博客
-- 🗓️ 日期
-- 🎲 随机
-- ✨ 特殊/亮点
-- ☕ 咖啡（关于、休息）
-- 💡 想法/提示
-- 🔍 搜索
-- ⚙️ 设置
-
-### 使用原则
-1. **适度使用**：每个标题/按钮最多 1-2 个表情
-2. **保持一致**：同类功能使用相同图标
-3. **语义清晰**：图标含义要明确
-4. **可访问性**：重要功能不能只依赖图标
-
----
-
-## 🎬 动画效果
-
-### 过渡动画
-
-```css
-/* 标准过渡 */
-transition: all 0.3s ease;
-
-/* 快速过渡 */
-transition: all 0.2s ease;
-
-/* 慢速过渡 */
-transition: all 0.5s ease;
-```
-
-### 悬停效果
-
-#### 卡片悬停
-```css
-transform: translateY(-6px);
-box-shadow: var(--shadow-hover);
-```
-
-#### 按钮悬停
-```css
-transform: translateY(-3px) scale(1.05);
-```
-
-#### 链接悬停
-```css
-transform: translateY(-2px);
-```
-
-### 装饰动画
-
-```css
-/* 橘猫爪印旋转 */
-.card:hover::after {
-  transform: scale(1.2) rotate(15deg);
-}
-```
-
----
-
-## 📱 响应式设计
-
-### 断点
-
-```css
-/* 移动端 */
-@media (max-width: 768px) {
-  /* 调整字体大小 */
-  .page-header h1 { font-size: 2rem; }
-  
-  /* 单列布局 */
-  .articles-grid { grid-template-columns: 1fr; }
-}
-
-/* 平板 */
-@media (min-width: 769px) and (max-width: 1024px) {
-  /* 两列布局 */
-  .articles-grid { grid-template-columns: repeat(2, 1fr); }
-}
-
-/* 桌面 */
-@media (min-width: 1025px) {
-  /* 多列布局 */
-  .articles-grid { grid-template-columns: repeat(auto-fill, minmax(300px, 1fr)); }
-}
-```
-
----
-
-## 🚀 开发扩展指南
-
-### 添加新页面
-
-1. **创建页面组件**
-```jsx
-// src/pages/NewPage.jsx
-function NewPage() {
-  return (
-    <div className="container">
-      <header className="page-header">
-        <h1>🐱 页面标题</h1>
-        <p>页面描述</p>
-      </header>
-      {/* 页面内容 */}
-    </div>
-  )
-}
-```
-
-2. **添加路由**
-```jsx
-// src/App.jsx
-<Route path="/new-page" element={<NewPage />} />
-```
-
-3. **添加导航链接**
-```jsx
-<Link to="/new-page">🔗 新页面</Link>
-```
-
-### 添加新组件
-
-#### 遵循命名规范
-```
-组件名称：PascalCase (如 ArticleCard)
-CSS 类名：kebab-case (如 article-card)
-变量名：camelCase (如 articleData)
-```
-
-#### 组件模板
-```jsx
-/**
- * 组件名称
- * 组件描述
- */
-function ComponentName({ prop1, prop2 }) {
-  return (
-    <div className="component-name">
-      {/* 组件内容 */}
-    </div>
-  )
-}
-
-export default ComponentName
-```
-
-#### 样式模板
-```css
-/* 组件名称 - 简短描述 */
-.component-name {
-  background: var(--card-bg);
-  border: 2px solid var(--border-color);
-  border-radius: var(--radius-md);
-  padding: 2rem;
-  transition: all 0.3s ease;
-}
-
-.component-name:hover {
-  transform: translateY(-4px);
-  box-shadow: var(--shadow-lg);
-}
-```
-
-### 添加新功能
-
-#### 1. API 调用
-```jsx
-const [data, setData] = useState(null)
-const [loading, setLoading] = useState(false)
-const [error, setError] = useState(null)
-
-const fetchData = async () => {
-  setLoading(true)
-  setError(null)
-  
-  try {
-    const response = await fetch('API_URL')
-    const data = await response.json()
-    setData(data)
-  } catch (err) {
-    setError(err.message)
-  } finally {
-    setLoading(false)
-  }
-}
-```
-
-#### 2. 表单处理
-```jsx
-const [formData, setFormData] = useState({
-  field1: '',
-  field2: ''
-})
-
-const handleChange = (e) => {
-  setFormData({
-    ...formData,
-    [e.target.name]: e.target.value
-  })
-}
-
-const handleSubmit = (e) => {
-  e.preventDefault()
-  // 处理提交
-}
-```
-
-### 主题扩展
-
-#### 添加新颜色
-```css
-/* 在 index.css 的 :root 中添加 */
-:root {
-  --new-color: #HEXCODE;
-}
-```
-
-#### 添加新渐变
-```css
---gradient-new: linear-gradient(135deg, color1, color2);
-```
-
-#### 添加深色模式变量
-```css
-@media (prefers-color-scheme: dark) {
-  :root {
-    --new-color: #HEXCODE;
-  }
-}
-```
-
-### 性能优化建议
-
-1. **图片优化**
-   - 使用 WebP 格式
-   - 添加懒加载：`loading="lazy"`
-   - 压缩图片大小
-
-2. **代码分割**
-   ```jsx
-   const LazyComponent = lazy(() => import('./Component'))
-   ```
-
-3. **CSS 优化**
-   - 避免过深的选择器嵌套
-   - 使用 CSS 变量减少重复
-   - 合并相似的样式规则
-
-### 可访问性指南
-
-1. **语义化 HTML**
-   ```jsx
-   <header>, <nav>, <main>, <article>, <section>, <footer>
-   ```
-
-2. **Alt 文本**
-   ```jsx
-   <img src="cat.jpg" alt="可爱的橘猫" />
-   ```
-
-3. **键盘导航**
-   - 确保所有交互元素可通过 Tab 访问
-   - 添加 focus 样式
-
-4. **颜色对比度**
-   - 文字与背景对比度 ≥ 4.5:1
-   - 使用工具检查：WebAIM Contrast Checker
-
----
-
-## 📦 常用代码片段
-
-### 橘猫卡片
-```jsx
-<div className="cat-card">
-  <h3>🐾 标题</h3>
-  <p>内容描述</p>
-</div>
-```
-
-### 橘猫按钮
-```jsx
-<button className="cat-button">
-  🐱 点击我
-</button>
-```
-
-### 加载状态
-```jsx
-{loading && <div className="loading">🐱 加载中...</div>}
-```
-
-### 错误提示
-```jsx
-{error && <div className="error">😿 {error}</div>}
-```
-
----
-
-## 🎯 设计检查清单
-
-在发布新功能前，请确认：
-
-- [ ] 使用了橘猫主题配色
-- [ ] 添加了适当的圆角和阴影
-- [ ] 实现了悬停动画效果
-- [ ] 添加了橘猫相关的表情符号
-- [ ] 在移动端测试过布局
-- [ ] 检查了深色模式显示
-- [ ] 代码添加了注释
-- [ ] 样式使用了 CSS 变量
-- [ ] 保持了整体风格一致性
-
----
-
-## 📚 参考资源
-
-### 设计灵感
-- [Dribbble - Cat Theme](https://dribbble.com/tags/cat)
-- [Behance - Cute Design](https://www.behance.net/search/projects?search=cute%20design)
-
-### 配色工具
-- [Coolors](https://coolors.co/) - 配色生成器
-- [Adobe Color](https://color.adobe.com/) - 配色方案
-
-### 图标资源
-- [Emojipedia](https://emojipedia.org/) - Emoji 查询
-- [Unicode Emoji](https://unicode.org/emoji/charts/full-emoji-list.html)
-
-### CSS 工具
-- [CSS Gradient](https://cssgradient.io/) - 渐变生成器
-- [Box Shadow Generator](https://cssgenerator.org/box-shadow-css-generator.html)
-
----
-
-## 🐾 结语
-
-这份设计规范是橘猫小窝的基础，随着项目发展会持续更新。
-
-**记住核心理念**：温暖、可爱、治愈 🧡
-
-保持代码整洁，保持设计一致，让每个访客都能感受到橘猫的温暖！
-
----
-
-**最后更新**：2025-01-27  
-**版本**：v1.0  
-**维护者**：Doro 🐕💕
+# 橘猫小窝 · 设计规范「云深处」
+
+> 2026-09-23 起，全站改为仙侠 / 中国古典风格。宣纸为底，黛墨为字，朱砂点睛，泥金勾线。
+> 远山、流云、灵光只做氛围，正文始终要清楚好读。
+
+## 设计原则
+
+1. **留白与细线**：用字体、留白、1px 细线和泥金双线分层次，不用粗边框和硬阴影。
+2. **朱砂只点睛**：强调色只有朱砂一种，用在当前态、印章、悬停与关键按钮上。
+3. **毛笔字只做标题**：`Ma Shan Zheng` 只用于页面大标题、序号和印章，正文与长句不用。
+4. **氛围不抢戏**：远山、云雾、灵光都在内容之后，`pointer-events: none`，并尊重 `prefers-reduced-motion`。
+5. **雅称加白话**：栏目用雅称，但必须同时给出白话（导航悬停、页头小字），不能让人猜。
+
+## 设计令牌（`src/index.css`）
+
+| 令牌 | 浅色（宣纸晨雾） | 深色（月夜） | 用途 |
+| --- | --- | --- | --- |
+| `--paper` / `--paper-2` | `#F4EFE4` / `#EBE4D4` | `#0D1216` / `#131A20` | 页面底色 |
+| `--surface` | `#FAF7F0` | `#121A20` | 卡片、卷面 |
+| `--ink` / `--ink-soft` / `--ink-mute` | 黛墨三档 | 月白三档 | 正文 / 次要 / 注释 |
+| `--o`（朱砂） | `#B8432F` | `#E0674F` | 唯一强调色 |
+| `--gold` / `--gold-soft` | `#A8844A` / `#CDB88C` | `#CDB07A` / `#7E6A45` | 泥金细线、小标题 |
+| `--jade` / `--celadon` | 石青 / 天青 | — | 辅助色 |
+| `--mount-far/mid/near` | 远山三层 | 夜山三层 | 水墨远山 |
+| `--tone-1…5` | 朱砂、石青、黛紫、泥金、竹青 | 提亮版 | 分类小菱形（`categoryTone()`） |
+
+深色模式跟随系统 `prefers-color-scheme`。小游戏仍在引用的旧变量（`--berry`、`--sun`、`--k1-bg` 等）保留为别名，别删。
+
+Tailwind 的 `primary`、`surface` 已映射为带 alpha 的 RGB 变量，`bg-primary/10`、`bg-surface/80` 这类写法可以用，并且会跟着深色模式变。不要再写 `bg-white`。
+
+## 字体
+
+| 变量 | 字体 | 用途 |
+| --- | --- | --- |
+| `--brush` | Ma Shan Zheng | 大标题、序号、印章 |
+| `--elegant` | ZCOOL XiaoWei | 副标题、导航、按钮、标签、元信息 |
+| `--serif` / `--body` | Noto Serif SC | 标题与正文 |
+| `--latin` | Cormorant Garamond 斜体 | 数字、日期 |
+| `--sans` | Noto Sans SC | 表单、表格 |
+| `--mono` | 系统等宽 | 代码 |
+
+## 装饰组件（`src/components/xian/`）
+
+- `Mountains`：三层水墨远山，可带小亭（`pavilion`）。
+- `Cloud` / `CloudDivider`：祥云纹与祥云分隔线。
+- `Seal`：朱砂印，两字竖排或四字成方（右列先读）。
+- `Moon`、`Birds`：明月与飞鸟。
+- `Atmosphere`：全站固定背景层，飘动的云雾和上升的灵光（在 `Layout` 中挂载）。
+- `PageHeader`：内页页头，参数为 `title`（雅称）、`plain`（白话）、`seal`、`sub`，`children` 放统计或按钮。
+
+## 全局样式类
+
+- 按钮：`.btn`（墨色，悬停变朱砂）、`.btn.accent`、`.btn.ghost`、`.btn.sm`；内衬细框像匾额。
+- 文字链接：`.link-arrow`，下划线从左划出，箭头放在 `<span className="arr">` 里。
+- 标签：`.chip`（`.on` 为选中），`.tabs` + `.tab`（选中态下方一枚朱砂菱形）。
+- 卷面：`.scroll-card`，宣纸底加泥金内框。
+- 其他：`.kicker`（泥金小字，配 `.rule` 细线）、`.panel-h`（菱形引首的小标题）、`.section-h`（毛笔标题 + `<small>` 白话）、`.field-line`（下划线输入框）。
+- 状态：`.state`，配 `.state-mark`（单个毛笔字，如「空」「迷」）或 `.loading-bar`。
+- 动效：`.rise`（用 `--i` 控制错峰）、`.ink-in`（墨迹晕开）、`.float`。
+- 中文数字：`src/utils/xianText.js` 中的 `toHanNumeral`、`toHanYear`、`toHanMonth`、`toShichen`。
+
+## 栏目雅称
+
+| 路径 | 雅称 | 白话 |
+| --- | --- | --- |
+| `/` | 山门 | 首页 |
+| `/archive` | 藏经阁 | 归档 |
+| `/tags` | 万象 | 标签 |
+| `/creative` | 百工坊 | 创意 |
+| `/games` | 游仙境 | 游戏 |
+| `/toolbox` | 法宝阁 | 工具箱 |
+| `/about` | 洞府 | 关于 |
+| `/admin/articles` | 执笔 | 管理 |
+
+新增栏目时，在 `src/components/Navbar.jsx` 的 `NAV_LINKS` 里同时写 `label` 和 `plain`。新增工具时，在 `src/data/tools.js` 里补上 `alias`（雅称）和 `glyph`（印章单字）。
+
+## 注意事项
+
+- **不要给 `main` 或页面根元素设置保留下来的 `transform` / `filter`**。它们会让内部 `position: fixed` 的弹窗改为相对该元素定位。换页动画只动 `opacity`，也不保留填充状态。
+- 竖排文字（`writing-mode: vertical-rl`）只用于短句：标题、对联、心法。含英文的长标题一律横排。
+- 移动端（≤ 760px）竖排大字改为横排，对联隐藏，菜单改为全屏竖排。

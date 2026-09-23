@@ -77,7 +77,7 @@ function Base64Tool() {
               <button
                 key={m}
                 onClick={() => setMode(m)}
-                className={`px-4 py-2 text-sm font-bold ${mode === m ? 'bg-primary text-white' : 'bg-white text-text-secondary'}`}
+                className={`px-4 py-2 text-sm font-bold ${mode === m ? 'bg-primary text-white' : 'bg-surface text-text-secondary'}`}
               >
                 {m === 'encode' ? '编码' : '解码'}
               </button>
@@ -96,7 +96,7 @@ function Base64Tool() {
               value={input}
               onChange={(e) => setInput(e.target.value)}
               spellCheck={false}
-              className="w-full h-56 p-3 rounded-xl border-2 border-[var(--border-color)] bg-white/80 font-mono text-sm focus:outline-none focus:border-primary"
+              className="w-full h-56 p-3 rounded border-2 border-[var(--border-color)] bg-surface/80 font-mono text-sm focus:outline-none focus:border-primary"
               placeholder={mode === 'encode' ? '把原文写在这里…' : '把 Base64 贴在这里…'}
             />
           </div>
@@ -112,11 +112,11 @@ function Base64Tool() {
               </button>
             </div>
             {result.ok ? (
-              <pre className="w-full h-56 overflow-auto p-3 rounded-xl border-2 border-[var(--border-color)] bg-white/80 font-mono text-sm whitespace-pre-wrap break-all">
+              <pre className="w-full h-56 overflow-auto p-3 rounded border-2 border-[var(--border-color)] bg-surface/80 font-mono text-sm whitespace-pre-wrap break-all">
                 {result.output || <span className="text-text-secondary">结果会显示在这~</span>}
               </pre>
             ) : (
-              <div className="w-full h-56 p-3 rounded-xl border-2 border-red-300 bg-red-50/60 text-red-700 text-sm font-mono">
+              <div className="w-full h-56 p-3 rounded border-2 border-red-300 bg-red-50/60 text-red-700 text-sm font-mono">
                 {result.error}
               </div>
             )}
@@ -126,7 +126,7 @@ function Base64Tool() {
 
       <div className="card">
         <h3 className="font-bold text-primary mb-3">📎 文件 → Base64 / Data URL</h3>
-        <label className="block border-2 border-dashed border-[var(--border-color)] rounded-xl p-6 text-center cursor-pointer hover:border-primary hover:bg-primary/5">
+        <label className="block border-2 border-dashed border-[var(--border-color)] rounded p-6 text-center cursor-pointer hover:border-primary hover:bg-primary/5">
           <input type="file" onChange={handleFile} className="hidden" />
           <div className="text-3xl mb-1">📤</div>
           <div className="text-sm text-text-secondary">点这里选文件（支持图片、文本什么的）</div>
@@ -165,7 +165,7 @@ function Base64Tool() {
             <textarea
               readOnly
               value={fileResult.base64}
-              className="w-full h-32 p-3 rounded-xl border border-[var(--border-color)] bg-white/60 font-mono text-xs"
+              className="w-full h-32 p-3 rounded border border-[var(--border-color)] bg-surface/60 font-mono text-xs"
             />
           </div>
         )}

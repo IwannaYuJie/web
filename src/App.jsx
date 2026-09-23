@@ -23,11 +23,8 @@ const PasswordGenerator = lazy(() => import('./pages/tools/PasswordGenerator'))
 
 function PageLoader() {
   return (
-    <div className="container flex-center min-h-[60vh]">
-      <div className="text-center animate-bounce">
-        <div className="text-6xl mb-4">🐱</div>
-        <h2 className="text-xl font-bold text-primary">页面加载中...</h2>
-      </div>
+    <div className="wrap flex-center" style={{ minHeight: '60vh' }}>
+      <div className="state"><div className="loading-bar" />云开雾散，稍候片刻…</div>
     </div>
   )
 }

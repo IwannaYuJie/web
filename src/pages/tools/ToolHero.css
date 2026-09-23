@@ -1,0 +1,43 @@
+.xtoolhero {
+  padding: 36px 0 30px;
+  margin-bottom: 32px;
+  border-bottom: 1px solid var(--gold-soft);
+}
+.xtoolhero-crumb {
+  display: flex;
+  gap: 10px;
+  font-size: 14px;
+  letter-spacing: 0.16em;
+  color: var(--ink-mute);
+  margin-bottom: 22px;
+}
+.xtoolhero-crumb a:hover { color: var(--o); }
+.xtoolhero-main {
+  display: flex;
+  align-items: center;
+  gap: 26px;
+}
+.xtoolhero-main > div { flex: 1; min-width: 0; }
+.xtoolhero h1 {
+  display: flex;
+  align-items: baseline;
+  flex-wrap: wrap;
+  gap: 6px 16px;
+  font-weight: 400;
+}
+.xtoolhero h1 .brush { font-size: clamp(38px, 5vw, 54px); line-height: 1.1; color: var(--ink); }
+.xtoolhero h1 small { font-size: 16px; letter-spacing: 0.2em; color: var(--o); }
+.xtoolhero p { margin-top: 8px; font-size: 15px; line-height: 1.9; color: var(--ink-soft); }
+.xtoolhero-tag {
+  align-self: flex-start;
+  font-size: 13px;
+  letter-spacing: 0.24em;
+  color: var(--gold);
+  border: 1px solid var(--gold-soft);
+  padding: 2px 12px;
+  border-radius: 2px;
+}
+@media (max-width: 600px) {
+  .xtoolhero-main { gap: 16px; }
+  .xtoolhero-tag { display: none; }
+}

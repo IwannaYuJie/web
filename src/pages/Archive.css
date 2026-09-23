@@ -1,0 +1,66 @@
+.xarchive-body { max-width: 980px; }
+
+.xarchive-filter {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+  margin-bottom: 56px;
+}
+.xarchive-filter-row {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 16px;
+  flex-wrap: wrap;
+}
+.xarchive-hint {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 12px;
+  flex-wrap: wrap;
+  font-family: var(--elegant);
+  font-size: 14px;
+  letter-spacing: 0.08em;
+  color: var(--ink-mute);
+}
+.xarchive-hint b { font-size: 18px; color: var(--o); font-weight: 500; }
+
+/* ---- 年轮时间线 ---- */
+.xyear {
+  display: grid;
+  grid-template-columns: 120px minmax(0, 1fr);
+  gap: 40px;
+  margin-bottom: 64px;
+}
+.xyear-head {
+  position: sticky;
+  top: 100px;
+  align-self: start;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 10px;
+}
+.xyear-head h2 {
+  writing-mode: vertical-rl;
+  font-weight: 400;
+  font-size: 44px;
+  line-height: 1;
+  letter-spacing: 0.08em;
+  color: var(--ink);
+}
+.xyear-head .elegant {
+  font-size: 13px;
+  letter-spacing: 0.2em;
+  color: var(--o);
+}
+
+.xarchive-tags { margin-top: 40px; }
+.xarchive-tag-list { display: flex; flex-wrap: wrap; gap: 10px; }
+
+@media (max-width: 700px) {
+  .xyear { grid-template-columns: 1fr; gap: 16px; }
+  .xyear-head { position: static; flex-direction: row; align-items: baseline; }
+  .xyear-head h2 { writing-mode: horizontal-tb; font-size: 36px; }
+}

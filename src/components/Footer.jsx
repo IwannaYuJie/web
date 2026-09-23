@@ -1,57 +1,51 @@
-import { useState, useEffect, memo } from 'react'
+import { memo } from 'react'
 import { Link } from 'react-router-dom'
 import { blogProfile } from '../data/blogProfile'
+import { NAV_LINKS } from './Navbar'
+import { Cloud, Mountains, Seal } from './xian/Ornaments'
 import './Footer.css'
 
-const FOOT_LINKS = [
-  { path: '/', label: '首页' },
-  { path: '/archive', label: '归档' },
-  { path: '/tags', label: '标签' },
-  { path: '/about', label: '关于' },
-  { path: '/toolbox', label: '工具箱' },
-  { path: '/games', label: '游戏' },
-]
+const SITE_START = new Date('2025-05-25T00:00:00')
 
 function Footer() {
-  const [visitors, setVisitors] = useState(12480)
-
-  useEffect(() => {
-    const id = setInterval(() => {
-      setVisitors(v => v + (Math.random() < 0.5 ? 1 : 0))
-    }, 4000)
-    return () => clearInterval(id)
-  }, [])
+  const days = Math.max(0, Math.floor((Date.now() - SITE_START.getTime()) / 86400000))
 
   return (
-    <footer className="foot">
-      <div className="foot-inner">
-        <div>
-          <div className="foot-brand">
-            <span className="mk"><img src={blogProfile.avatar} alt="" /></span>
-            橘猫小窝
-          </div>
-          <p className="foot-intro">{blogProfile.intro}</p>
-          <div className="foot-stickers">
-            <a href={blogProfile.github} target="_blank" rel="noreferrer">🐱 GitHub</a>
-            <a href={`mailto:${blogProfile.email}`}>Email</a>
-          </div>
-        </div>
+    <footer className="xfoot">
+      <Mountains className="xfoot-mountains" pavilion />
 
-        <div>
-          <div className="panel-h" style={{ color: 'var(--sun)' }}>导航</div>
-          <div className="foot-links">
-            {FOOT_LINKS.map(l => (
+      <div className="xfoot-inner">
+        {/* 对联：右为上联，左为下联 */}
+        <p className="couplet right brush" aria-label="上联">闲敲代码消长夜</p>
+
+        <div className="xfoot-center">
+          <Cloud size={96} />
+          <div className="xfoot-title">
+            <span className="brush">橘猫小窝</span>
+            <Seal text="橘猫小窝" size={46} />
+          </div>
+          <p className="xfoot-intro">{blogProfile.intro}</p>
+
+          <nav className="xfoot-links" aria-label="页脚导航">
+            {NAV_LINKS.map(l => (
               <Link key={l.path} to={l.path}>{l.label}</Link>
             ))}
+          </nav>
+
+          <div className="xfoot-contact">
+            <a href={blogProfile.github} target="_blank" rel="noreferrer">GitHub</a>
+            <span aria-hidden="true">·</span>
+            <a href={`mailto:${blogProfile.email}`}>飞鸽传书</a>
           </div>
+
+          <p className="xfoot-meta">
+            乙巳年五月结庐于此，已历 <b>{days}</b> 日
+            <span aria-hidden="true"> · </span>
+            © {new Date().getFullYear()} 橘猫小窝
+          </p>
         </div>
 
-        <div>
-          <div className="panel-h" style={{ color: 'var(--sun)' }}>小窝状态</div>
-          <div className="foot-visits">{visitors.toLocaleString()}</div>
-          <div className="foot-visits-label">累计访客</div>
-          <p className="foot-copy">© {new Date().getFullYear()} 橘猫小窝 · 慢更但还在更</p>
-        </div>
+        <p className="couplet left brush" aria-label="下联">慢写文章寄旧年</p>
       </div>
     </footer>
   )

@@ -60,7 +60,7 @@ function JsonFormatter() {
             value={input}
             onChange={(e) => setInput(e.target.value)}
             spellCheck={false}
-            className="w-full h-80 p-3 rounded-xl border-2 border-[var(--border-color)] bg-white/80 font-mono text-sm focus:outline-none focus:border-primary"
+            className="w-full h-80 p-3 rounded border-2 border-[var(--border-color)] bg-surface/80 font-mono text-sm focus:outline-none focus:border-primary"
             placeholder="把 JSON 贴到这里…"
           />
           <div className="mt-3 flex flex-wrap items-center gap-3 text-sm text-text-secondary">
@@ -69,7 +69,7 @@ function JsonFormatter() {
               <select
                 value={indent}
                 onChange={(e) => setIndent(Number(e.target.value))}
-                className="px-2 py-1 rounded-md border border-[var(--border-color)] bg-white"
+                className="px-2 py-1 rounded-md border border-[var(--border-color)] bg-surface"
               >
                 <option value={2}>2 空格</option>
                 <option value={4}>4 空格</option>
@@ -106,11 +106,11 @@ function JsonFormatter() {
           </div>
 
           {result.ok ? (
-            <pre className="w-full h-80 overflow-auto p-3 rounded-xl border-2 border-[var(--border-color)] bg-white/80 font-mono text-sm whitespace-pre-wrap break-all">
+            <pre className="w-full h-80 overflow-auto p-3 rounded border-2 border-[var(--border-color)] bg-surface/80 font-mono text-sm whitespace-pre-wrap break-all">
                {result.output || <span className="text-text-secondary">格式化后的内容会显示在这~</span>}
             </pre>
           ) : (
-            <div className="w-full h-80 p-3 rounded-xl border-2 border-red-300 bg-red-50/60 text-red-700 text-sm font-mono whitespace-pre-wrap">
+            <div className="w-full h-80 p-3 rounded border-2 border-red-300 bg-red-50/60 text-red-700 text-sm font-mono whitespace-pre-wrap">
               {result.error}
             </div>
           )}

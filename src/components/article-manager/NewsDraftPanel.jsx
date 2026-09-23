@@ -398,7 +398,7 @@ function NewsDraftPanel({ adminKey, onUnauthorized, onPublished, onDirtyChange }
         </div>
         {!data && loading ? <div className="panel news-empty" role="status">正在打开草稿箱…</div> : !data ? <div className="panel news-empty"><h3>草稿箱暂时没有打开</h3><p>稍后点击「重新加载」再试一次。</p></div> : drafts.length === 0 ? (
           <div className="panel news-empty">
-            <span className="news-empty-icon" aria-hidden="true">{filter === 'published' ? '📚' : '✍️'}</span>
+            <span className="news-empty-icon" aria-hidden="true">{filter === 'published' ? '藏' : '空'}</span>
             <h3>{filter === 'published' ? '还没有发布的资讯' : running ? '第一批草稿正在路上' : '这里等着你的第一篇资讯'}</h3>
             <p>{filter === 'published' ? '在待审阅中打开草稿，检查内容后发布。' : running ? '采集完成后，草稿会自动出现在这里。' : '点「采集一批」试试，或等每天早上的自动采集。'}</p>
             <p className="news-muted">草稿会留在这里，审阅发布后才会出现在博客。</p>

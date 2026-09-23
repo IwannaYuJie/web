@@ -1,0 +1,86 @@
+.xtags-body { max-width: 1040px; }
+
+/* 签引星图：字号随篇数，轻轻浮动 */
+.xcloud {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  align-items: baseline;
+  gap: 14px 30px;
+  padding: 20px 0 64px;
+}
+.xcloud-tag {
+  position: relative;
+  background: none;
+  border: none;
+  padding: 4px 2px;
+  font-family: var(--elegant);
+  line-height: 1.3;
+  letter-spacing: 0.06em;
+  color: color-mix(in srgb, var(--ink) calc(45% + var(--w) * 55%), var(--gold));
+  animation: floaty 7s ease-in-out infinite;
+  animation-delay: var(--delay);
+  transition: color 0.3s, transform 0.4s var(--ease-out);
+}
+.xcloud-tag sup {
+  font-size: 12px;
+  margin-left: 3px;
+  color: var(--gold);
+  vertical-align: super;
+}
+.xcloud-tag::after {
+  content: '';
+  position: absolute;
+  left: 2px;
+  right: 2px;
+  bottom: 0;
+  height: 1px;
+  background: var(--o);
+  transform: scaleX(0);
+  transition: transform 0.45s var(--ease-out);
+}
+.xcloud-tag:hover { color: var(--o); }
+.xcloud-tag:hover::after { transform: scaleX(1); }
+.xcloud-tag.on {
+  color: #fff;
+  background: var(--o);
+  padding: 4px 14px;
+  border-radius: 2px;
+  animation: none;
+  box-shadow: 0 10px 24px -10px rgb(var(--rgb-accent) / 0.7);
+}
+.xcloud-tag.on sup { color: rgb(255 255 255 / 0.8); }
+.xcloud-tag.on::after { display: none; }
+
+.xtags-result { margin-bottom: 72px; }
+
+/* 门类卡 */
+.xsects-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(230px, 1fr));
+  gap: 22px;
+}
+.xsect {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 8px;
+  text-align: left;
+  cursor: pointer;
+  border-top: 2px solid var(--tone);
+  transition: box-shadow 0.4s var(--ease), transform 0.4s var(--ease-out);
+}
+.xsect:hover { box-shadow: var(--shadow-2); transform: translateY(-3px); }
+.xsect.on { box-shadow: var(--glow); }
+.xsect-num { font-size: 30px; line-height: 1; color: var(--tone); }
+.xsect-name { font-family: var(--serif); font-size: 19px; font-weight: 700; color: var(--ink); }
+.xsect-stat { font-size: 13.5px; letter-spacing: 0.1em; color: var(--ink-mute); }
+.xsect-latest {
+  margin-top: 6px;
+  padding-top: 10px;
+  border-top: 1px dashed var(--line);
+  width: 100%;
+  font-size: 13px;
+  line-height: 1.7;
+  color: var(--ink-soft);
+}

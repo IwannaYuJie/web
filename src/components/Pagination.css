@@ -1,0 +1,35 @@
+.xpager {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 16px;
+  flex-wrap: wrap;
+  padding-top: 22px;
+  border-top: 1px solid var(--gold-soft);
+}
+.xpager-info {
+  font-family: var(--elegant);
+  font-size: 14px;
+  letter-spacing: 0.08em;
+  color: var(--ink-mute);
+}
+.xpager-info b { font-size: 17px; color: var(--o); font-weight: 500; }
+.xpager-nav { display: flex; align-items: center; gap: 6px; }
+.xpager-step,
+.xpager-num {
+  background: none;
+  border: 1px solid transparent;
+  font-family: var(--elegant);
+  font-size: 15px;
+  letter-spacing: 0.08em;
+  color: var(--ink-soft);
+  padding: 6px 12px;
+  border-radius: 2px;
+  transition: color 0.25s, border-color 0.25s, background-color 0.25s;
+}
+.xpager-num { min-width: 38px; }
+.xpager-step:hover:not(:disabled),
+.xpager-num:hover { color: var(--o); border-color: var(--gold-soft); }
+.xpager-num.on { background: var(--o); border-color: var(--o); color: #fff; }
+.xpager-step:disabled { opacity: 0.35; cursor: not-allowed; }
+.xpager-gap { color: var(--ink-mute); padding: 0 4px; }

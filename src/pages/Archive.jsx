@@ -1,33 +1,15 @@
 import { useMemo, useState } from 'react'
 import { Link } from 'react-router-dom'
+import PageHeader from '../components/xian/PageHeader'
 import { useArticlesData } from '../hooks'
 import { filterArticles, getArticleCategories, sortArticles } from '../utils/articleFilters'
 import { getArchiveGroups, getBlogStats, getTagCloud } from '../utils/blogInsights'
+import { categoryTone, toHanMonth, toHanNumeral, toHanYear } from '../utils/xianText'
+import './Archive.css'
 
-const KCLASS_MAP = { 'Java核心': 'k1', 'JVM': 'k2', 'Spring框架': 'k3' }
-const KS = ['k1', 'k2', 'k3', 'k4']
-function kClassFor(category, i) {
-  return KCLASS_MAP[category] || KS[i % 4]
-}
-
-function PageHead({ emoji, title, sub }) {
-  return (
-    <div style={{ padding: '34px 0 24px' }}>
-      <h1 style={{ fontFamily: 'var(--serif)', fontWeight: 900, fontSize: 'clamp(40px,7vw,72px)', lineHeight: 1, letterSpacing: '-.02em' }}>
-        {emoji} {title}
-      </h1>
-      {sub && <p style={{ fontSize: 16, color: 'var(--ink-soft)', marginTop: 12, fontWeight: 500 }}>{sub}</p>}
-    </div>
-  )
-}
-
-function StatPanel({ value, label }) {
-  return (
-    <div className="panel" style={{ textAlign: 'center', padding: '18px 8px' }}>
-      <div style={{ fontFamily: 'var(--disp)', fontSize: 34, fontWeight: 700, color: 'var(--accent)' }}>{value}</div>
-      <div style={{ fontSize: 12, color: 'var(--ink-soft)', fontWeight: 600 }}>{label}</div>
-    </div>
-  )
+function hanMonthDay(date = '') {
+  const [, m, d] = String(date).split('-').map(Number)
+  return m && d ? `${toHanMonth(m)}${toHanNumeral(d)}` : ''
 }
 
 function Archive() {
@@ -51,7 +33,14 @@ function Archive() {
     return sortArticles(filtered, 'date', sortOrder)
   }, [articles, searchQuery, selectedCategory, selectedTag, sortOrder])
 
-  const archiveGroups = useMemo(() => getArchiveGroups(filteredArticles), [filteredArticles])
+  // getArchiveGroups 总是新的在前；"由古及今"时把年份也倒过来
+  const archiveGroups = useMemo(() => {
+    const groups = getArchiveGroups(filteredArticles)
+    if (sortOrder === 'asc') {
+      return groups.reverse().map(g => ({ ...g, items: [...g.items].reverse() }))
+    }
+    return groups
+  }, [filteredArticles, sortOrder])
 
   const clearFilters = () => {
     setSearchQuery('')
@@ -63,138 +52,129 @@ function Archive() {
   const hasFilters = searchQuery || selectedCategory !== '全部' || selectedTag
 
   return (
-    <div className="wrap" style={{ maxWidth: 900, paddingBottom: 48 }}>
-      <PageHead emoji="" title="文章归档" sub="按年份翻一翻" />
+    <div className="xarchive">
+      <PageHeader title="藏经阁" plain="文章归档" seal="藏经" sub="按年份翻检旧卷，每一篇都在这里。">
+        <dl className="ph-stats">
+          <div><dt>藏卷</dt><dd><span className="latin">{stats.articleCount}</span>篇</dd></div>
+          <div><dt>门类</dt><dd><span className="latin">{stats.categoryCount}</span>门</dd></div>
+          <div><dt>签引</dt><dd><span className="latin">{stats.tagCount}</span>枚</dd></div>
+          <div><dt>通读</dt><dd><span className="latin">{stats.totalReadMinutes}</span>分钟</dd></div>
+        </dl>
+      </PageHeader>
 
-      <div style={{ display: 'grid', gridTemplateColumns: 'repeat(4, 1fr)', gap: 12, marginBottom: 28 }}>
-        <StatPanel value={stats.articleCount} label="篇文章" />
-        <StatPanel value={stats.categoryCount} label="个分类" />
-        <StatPanel value={stats.tagCount} label="个标签" />
-        <StatPanel value={stats.totalReadMinutes} label="分钟读完" />
-      </div>
-
-      <div className="panel" style={{ padding: 18, marginBottom: 24 }}>
-        <div style={{ display: 'grid', gridTemplateColumns: '1fr auto', gap: 12 }}>
-          <div style={{ position: 'relative' }}>
-            <span style={{ position: 'absolute', left: 12, top: '50%', transform: 'translateY(-50%)', pointerEvents: 'none' }}>🔍</span>
+      <div className="wrap xarchive-body">
+        <div className="xarchive-filter">
+          <label className="field-line">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.6" aria-hidden="true">
+              <circle cx="11" cy="11" r="7" /><path d="m20 20-3.5-3.5" strokeLinecap="round" />
+            </svg>
             <input
-              type="text"
+              type="search"
               value={searchQuery}
               onChange={e => setSearchQuery(e.target.value)}
-              placeholder="搜标题、正文、描述或标签…"
-              style={{ paddingLeft: 38 }}
+              placeholder="搜篇名、正文、签引…"
+              aria-label="搜索文章"
             />
-          </div>
-          <select
-            value={sortOrder}
-            onChange={e => setSortOrder(e.target.value)}
-            style={{ width: 'auto', minWidth: 140 }}
-          >
-            <option value="desc">最新优先</option>
-            <option value="asc">最早优先</option>
-          </select>
-        </div>
-
-        <div style={{ display: 'flex', flexWrap: 'wrap', gap: 7, marginTop: 14 }}>
-          {categories.map(c => (
+          </label>
+          <div className="xarchive-filter-row">
+            <div className="tabs" role="tablist" aria-label="门类">
+              {categories.map(c => (
+                <button
+                  key={c}
+                  type="button"
+                  role="tab"
+                  aria-selected={selectedCategory === c}
+                  className={`tab ${selectedCategory === c ? 'on' : ''}`}
+                  onClick={() => setSelectedCategory(c)}
+                >
+                  {c}
+                </button>
+              ))}
+            </div>
             <button
-              key={c}
-              onClick={() => setSelectedCategory(c)}
-              style={{
-                fontSize: 13,
-                fontWeight: 700,
-                padding: '6px 13px',
-                borderRadius: 999,
-                border: '2px solid var(--ink)',
-                background: selectedCategory === c ? 'var(--ink)' : 'transparent',
-                color: selectedCategory === c ? 'var(--paper)' : 'var(--ink)',
-                cursor: 'pointer',
-              }}
+              type="button"
+              className="link-arrow"
+              onClick={() => setSortOrder(o => (o === 'desc' ? 'asc' : 'desc'))}
             >
-              {c}
+              {sortOrder === 'desc' ? '由今溯古' : '由古及今'} <span className="arr">⇅</span>
             </button>
-          ))}
+          </div>
+          {hasFilters && (
+            <div className="xarchive-hint">
+              <span>
+                检得 <b className="latin">{filteredArticles.length}</b> 篇
+                {selectedTag && <> · 签引「{selectedTag}」</>}
+              </span>
+              <button type="button" className="link-arrow" onClick={clearFilters}>拂去筛选 <span className="arr">↻</span></button>
+            </div>
+          )}
         </div>
 
-        {hasFilters && (
-          <div style={{ display: 'flex', flexWrap: 'wrap', justifyContent: 'space-between', alignItems: 'center', gap: 12, paddingTop: 12, marginTop: 12, borderTop: '2px solid var(--line)', fontSize: 13, color: 'var(--ink-soft)' }}>
-            <span>当前筛选到 <b style={{ color: 'var(--accent)' }}>{filteredArticles.length}</b> 篇文章{selectedTag && <> · 标签 #{selectedTag}</>}</span>
-            <button onClick={clearFilters} style={{ background: 'none', border: 'none', color: 'var(--accent)', fontWeight: 700, cursor: 'pointer' }}>
-              清除筛选 ↻
-            </button>
+        {loading ? (
+          <div className="state"><div className="loading-bar" />正在翻检藏卷…</div>
+        ) : error ? (
+          <div className="state">
+            <div className="state-mark">迷</div>
+            <p>{error}</p>
+            <button type="button" onClick={fetchArticles} className="btn" style={{ marginTop: 20 }}>再试一次</button>
+          </div>
+        ) : archiveGroups.length === 0 ? (
+          <div className="state">
+            <div className="state-mark">空</div>
+            <p>此处未见所寻之卷</p>
+            {hasFilters && <button type="button" onClick={clearFilters} className="btn ghost" style={{ marginTop: 20 }}>拂去筛选</button>}
+          </div>
+        ) : (
+          <div className="xtimeline">
+            {archiveGroups.map(group => (
+              <section key={group.year} className="xyear">
+                <header className="xyear-head">
+                  <h2 className="brush">{toHanYear(group.year)}</h2>
+                  <span className="elegant">凡 {toHanNumeral(group.items.length)} 篇</span>
+                </header>
+                <ol className="xyear-list">
+                  {group.items.map((a, i) => (
+                    <li key={a.id} className="rise" style={{ '--i': Math.min(i, 8) }}>
+                      <Link to={`/article/${a.id}`} className="xentry">
+                        <span className="xentry-date elegant">{hanMonthDay(a.date)}</span>
+                        <div className="xentry-body">
+                          <h3>{a.title}</h3>
+                          <div className="xentry-meta">
+                            <span className="cat-label" style={{ '--tone': categoryTone(a.category) }}>
+                              <span className="tone-dot" />{a.category}
+                            </span>
+                            <span className="elegant">约 {a.readTime} 分钟</span>
+                          </div>
+                        </div>
+                        <span className="xentry-arr" aria-hidden="true">→</span>
+                      </Link>
+                    </li>
+                  ))}
+                </ol>
+              </section>
+            ))}
           </div>
         )}
-      </div>
 
-      {loading ? (
-        <div className="panel" style={{ textAlign: 'center', padding: 48 }}>
-          <div className="animate-bounce" style={{ fontSize: 40 }}>🐱</div>
-          <p style={{ marginTop: 12, color: 'var(--ink-soft)' }}>归档加载中…</p>
-        </div>
-      ) : error ? (
-        <div className="panel" style={{ textAlign: 'center', padding: 48, background: 'var(--k2-bg)' }}>
-          <p style={{ marginBottom: 16, color: 'var(--ink-soft)' }}>{error}</p>
-          <button onClick={fetchArticles} className="btn">重试</button>
-        </div>
-      ) : archiveGroups.length === 0 ? (
-        <div className="panel" style={{ textAlign: 'center', padding: 48 }}>
-          <div style={{ fontSize: 40 }} />
-          <p style={{ marginTop: 12, color: 'var(--ink-soft)' }}>这个条件下没找到东西。</p>
-          {hasFilters && <button onClick={clearFilters} className="btn ghost" style={{ marginTop: 16 }}>清除筛选</button>}
-        </div>
-      ) : (
-        archiveGroups.map((group, gi) => (
-          <section key={group.year} style={{ marginBottom: 32 }}>
-            <div className="section-h">
-              <h2>
-                {group.year}
-                <span style={{ fontFamily: 'var(--disp)', fontSize: 15, fontWeight: 600, color: 'var(--ink-soft)' }}>
-                  · {group.items.length} 篇
-                </span>
-              </h2>
-            </div>
-            <div style={{ display: 'flex', flexDirection: 'column', gap: 12 }}>
-              {group.items.map((a, i) => (
-                <Link
-                  key={a.id}
-                  to={`/article/${a.id}`}
-                  className={`ec ${kClassFor(a.category, gi * 7 + i)}`}
-                  style={{ display: 'grid', gridTemplateColumns: 'auto auto 1fr auto', gap: 16, alignItems: 'center', padding: '18px 22px' }}
+        {tags.length > 0 && (
+          <section className="xarchive-tags">
+            <div className="section-h"><h2>签引 <small>点选以筛</small></h2></div>
+            <div className="xarchive-tag-list">
+              {tags.slice(0, 30).map(item => (
+                <button
+                  key={item.tag}
+                  type="button"
+                  onClick={() => setSelectedTag(item.tag === selectedTag ? '' : item.tag)}
+                  className={`chip ${selectedTag === item.tag ? 'on' : ''}`}
+                  aria-pressed={selectedTag === item.tag}
                 >
-                  <span style={{ fontFamily: 'var(--disp)', fontSize: 13, fontWeight: 700, opacity: 0.55 }}>
-                    {a.date ? a.date.slice(5) : ''}
-                  </span>
-                  <span className="cat cat-chip" style={{ border: 'none', padding: 0 }}>{a.category}</span>
-                  <h3 style={{ fontSize: 19, margin: 0 }}>{a.title}</h3>
-                  <span className="arrow">→</span>
-                </Link>
+                  {item.tag}<span className="count">{item.count}</span>
+                </button>
               ))}
             </div>
           </section>
-        ))
-      )}
-
-      {tags.length > 0 && (
-        <section style={{ marginTop: 32 }}>
-          <div className="section-h"><h2># 热门标签</h2></div>
-          <div className="panel" style={{ display: 'flex', flexWrap: 'wrap', gap: 8 }}>
-            {tags.slice(0, 24).map(item => (
-              <button
-                key={item.tag}
-                onClick={() => setSelectedTag(item.tag === selectedTag ? '' : item.tag)}
-                className="sticker"
-                style={
-                  selectedTag === item.tag
-                    ? { background: 'var(--accent)', color: '#fff', borderColor: 'var(--accent)' }
-                    : { fontSize: 12.5, padding: '6px 12px' }
-                }
-              >
-                #{item.tag} <b style={{ color: selectedTag === item.tag ? 'var(--sun)' : 'var(--accent)' }}>{item.count}</b>
-              </button>
-            ))}
-          </div>
-        </section>
-      )}
+        )}
+      </div>
     </div>
   )
 }

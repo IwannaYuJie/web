@@ -1,7 +1,31 @@
-import { useMemo, useRef } from 'react'
+import { Children, isValidElement, useMemo, useState } from 'react'
 import ReactMarkdown from 'react-markdown'
 import remarkGfm from 'remark-gfm'
 import { extractMarkdownToc } from '../utils/markdownUtils'
+import './MarkdownRenderer.css'
+
+function CodeBlock({ language, code }) {
+  const [copied, setCopied] = useState(false)
+  const copy = async () => {
+    try {
+      await navigator.clipboard.writeText(code)
+      setCopied(true)
+      window.setTimeout(() => setCopied(false), 1500)
+    } catch {
+      setCopied(false)
+    }
+  }
+
+  return (
+    <figure className="md-code">
+      <figcaption>
+        <span className="md-code-lang">{language || 'code'}</span>
+        <button type="button" onClick={copy}>{copied ? '已誊抄' : '誊抄'}</button>
+      </figcaption>
+      <pre><code>{code}</code></pre>
+    </figure>
+  )
+}
 
 /**
  * Markdown 渲染组件
@@ -9,110 +33,77 @@ import { extractMarkdownToc } from '../utils/markdownUtils'
  */
 function MarkdownRenderer({ content, className = '', toc: providedToc }) {
   const toc = useMemo(() => providedToc || extractMarkdownToc(content), [content, providedToc])
-  const headingIndexRef = useRef(0)
-  headingIndexRef.current = 0
 
-  const getNextHeadingId = () => {
-    const current = toc[headingIndexRef.current]
-    headingIndexRef.current += 1
-    return current?.id
-  }
+  // 按源码行号给标题分配锚点，与 extractMarkdownToc 的扫描顺序一致。
+  // 不能在渲染时累加计数：StrictMode 会重复渲染，计数就会错位。
+  const idByLine = useMemo(() => {
+    const map = new Map()
+    let index = 0
+    String(content || '').split('\n').forEach((line, i) => {
+      const trimmed = line.trim()
+      if (trimmed.startsWith('## ') || trimmed.startsWith('### ')) {
+        if (toc[index]) { map.set(i + 1, toc[index].id) }
+        index += 1
+      }
+    })
+    return map
+  }, [content, toc])
+  const headingId = (node) => idByLine.get(node?.position?.start?.line)
 
   if (!content) {
     return (
-      <div className="text-center py-12 text-text-light">
-        <div className="text-4xl mb-4">📝</div>
-        <p>该文章暂无详细内容，敬请期待更新～</p>
+      <div className="state">
+        <div className="state-mark">空</div>
+        <p>此卷尚无正文，静待落笔。</p>
       </div>
     )
   }
 
   return (
-    <div className={`markdown-content ${className}`}>
+    <div className={`md ${className}`}>
       <ReactMarkdown
         skipHtml
         remarkPlugins={[remarkGfm]}
         components={{
           h1({ children }) {
-            return <h1 className="text-3xl font-extrabold mt-12 mb-6 text-gradient">{children}</h1>
+            return <h1>{children}</h1>
           },
-          h2({ children }) {
-            const id = getNextHeadingId()
-            return (
-              <h2 id={id} className="text-2xl font-bold mt-10 mb-5 text-primary flex items-center gap-3 scroll-mt-24">
-                <span className="w-2 h-8 bg-primary rounded-full" />
-                <span>{children}</span>
-              </h2>
-            )
+          h2({ node, children }) {
+            return <h2 id={headingId(node)}>{children}</h2>
           },
-          h3({ children }) {
-            const id = getNextHeadingId()
-            return (
-              <h3 id={id} className="text-xl font-bold mt-8 mb-4 text-text-color flex items-center gap-2 scroll-mt-24">
-                <span className="w-1.5 h-6 bg-secondary rounded-full" />
-                <span>{children}</span>
-              </h3>
-            )
-          },
-          p({ children }) {
-            return <p className="my-4 leading-relaxed text-text-color text-justify">{children}</p>
+          h3({ node, children }) {
+            return <h3 id={headingId(node)}>{children}</h3>
           },
           a({ href, children }) {
+            const external = /^https?:/i.test(href || '')
             return (
-              <a href={href} target="_blank" rel="noopener noreferrer" className="text-primary hover:underline">
+              <a href={href} target={external ? '_blank' : undefined} rel={external ? 'noopener noreferrer' : undefined}>
                 {children}
               </a>
             )
           },
           img({ src, alt }) {
-            return <img src={src} alt={alt || ''} className="rounded-xl max-w-full my-4 shadow-md" />
-          },
-          ul({ children }) {
-            return <ul className="list-disc ml-6 my-4 space-y-2 text-text-color">{children}</ul>
-          },
-          ol({ children }) {
-            return <ol className="list-decimal ml-6 my-4 space-y-2 text-text-color">{children}</ol>
-          },
-          li({ children }) {
-            return <li className="leading-relaxed">{children}</li>
-          },
-          blockquote({ children }) {
+            // 图片会被包在 <p> 里，所以不用 figure
             return (
-              <blockquote className="border-l-4 border-primary bg-primary/5 px-6 py-4 my-6 rounded-r-xl italic text-text-secondary">
-                {children}
-              </blockquote>
+              <span className="md-figure">
+                <img src={src} alt={alt || ''} loading="lazy" />
+                {alt && <span className="md-caption">{alt}</span>}
+              </span>
             )
           },
-          hr() {
-            return <hr className="my-8 border-0 h-px bg-gradient-to-r from-transparent via-border-color to-transparent" />
+          table({ children }) {
+            return <div className="md-table"><table>{children}</table></div>
           },
-          code({ inline, className: codeClassName, children }) {
-            const codeText = String(children).replace(/\n$/, '')
-            const language = codeClassName?.replace('language-', '') || ''
-
-            if (inline) {
-              return <code className="bg-gray-100 text-primary px-2 py-1 rounded text-sm font-mono">{children}</code>
-            }
-
-            return (
-              <div className="my-6 rounded-xl overflow-hidden shadow-md">
-                {language && (
-                  <div className="bg-gray-800 text-gray-300 px-4 py-2 text-sm font-mono flex items-center justify-between">
-                    <span>{language}</span>
-                    <button
-                      type="button"
-                      className="text-xs hover:text-white transition-colors"
-                      onClick={() => navigator.clipboard.writeText(codeText)}
-                    >
-                      📋 复制
-                    </button>
-                  </div>
-                )}
-                <pre className="bg-gray-900 text-gray-100 p-4 overflow-x-auto">
-                  <code className="text-sm font-mono leading-relaxed whitespace-pre">{codeText}</code>
-                </pre>
-              </div>
-            )
+          // 代码块由 pre 接管；code 只处理行内代码
+          pre({ children }) {
+            const child = Children.toArray(children).find(isValidElement)
+            const codeClass = child?.props?.className || ''
+            const language = codeClass.replace(/^language-/, '')
+            const code = String(child?.props?.children ?? '').replace(/\n$/, '')
+            return <CodeBlock language={language} code={code} />
+          },
+          code({ children }) {
+            return <code className="md-inline">{children}</code>
           },
         }}
       >

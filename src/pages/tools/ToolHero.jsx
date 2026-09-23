@@ -1,20 +1,32 @@
-function ToolHero({ emoji, tag, title, desc }) {
+import { Link, useLocation } from 'react-router-dom'
+import { Seal } from '../../components/xian/Ornaments'
+import { TOOLS } from '../../data/tools'
+import './ToolHero.css'
+
+/** 单个法宝页的页头：面包屑 + 印章 + 雅称与白话名 */
+function ToolHero({ tag, title, desc }) {
+  const { pathname } = useLocation()
+  const tool = TOOLS.find(t => t.path === pathname)
+
   return (
-    <section className="glass rounded-[32px] p-6 md:p-10 mb-8 flex flex-col md:flex-row items-center justify-between gap-6 relative overflow-hidden">
-      <div className="relative z-10 text-center md:text-left max-w-2xl">
-        <div className="inline-flex items-center gap-2 bg-white/50 px-4 py-1 rounded-full mb-3 text-primary font-bold text-sm backdrop-blur-sm">
-          <span>{emoji}</span>
-          <span>{tag}</span>
+    <header className="xtoolhero">
+      <nav className="xtoolhero-crumb elegant" aria-label="面包屑">
+        <Link to="/toolbox">法宝阁</Link>
+        <span aria-hidden="true">·</span>
+        <span>{tool?.alias || title}</span>
+      </nav>
+      <div className="xtoolhero-main">
+        <Seal text={tool?.glyph || title.slice(0, 1)} size={64} />
+        <div>
+          <h1>
+            <span className="brush">{tool?.alias || title}</span>
+            {tool && <small className="elegant">{title}</small>}
+          </h1>
+          <p>{desc}</p>
         </div>
-        <h1 className="text-3xl md:text-4xl font-extrabold mb-3 text-gradient leading-tight">
-          {title}
-        </h1>
-        <p className="text-base text-text-secondary leading-relaxed">{desc}</p>
+        {tag && <span className="xtoolhero-tag elegant">{tag}</span>}
       </div>
-      <div className="relative z-10 text-6xl md:text-7xl select-none" aria-hidden="true">🐱</div>
-      <div className="absolute top-0 right-0 w-56 h-56 bg-primary/10 rounded-full blur-3xl -translate-y-1/2 translate-x-1/2 pointer-events-none"></div>
-      <div className="absolute bottom-0 left-0 w-56 h-56 bg-secondary/10 rounded-full blur-3xl translate-y-1/2 -translate-x-1/2 pointer-events-none"></div>
-    </section>
+    </header>
   )
 }
 

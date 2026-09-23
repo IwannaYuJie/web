@@ -1,0 +1,64 @@
+/* 法宝：符箓式竖卡 */
+.xtalismans {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
+  gap: 30px;
+}
+.xtalisman {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  text-align: center;
+  gap: 10px;
+  padding: 34px 26px 22px;
+  color: var(--ink);
+  background:
+    linear-gradient(180deg, color-mix(in srgb, var(--gold-soft) 22%, transparent), transparent 40%),
+    var(--surface);
+  border: 1px solid var(--line);
+  border-top: 3px solid var(--o);
+  border-radius: 2px;
+  transition: transform 0.5s var(--ease-out), box-shadow 0.5s var(--ease), border-color 0.3s;
+}
+.xtalisman::before {
+  content: '';
+  position: absolute;
+  inset: 8px;
+  border: 1px solid color-mix(in srgb, var(--o) 22%, transparent);
+  pointer-events: none;
+}
+.xtalisman:hover {
+  transform: translateY(-6px);
+  box-shadow: var(--glow), var(--shadow-3);
+}
+.xtalisman-no { position: absolute; top: 16px; left: 18px; font-size: 12px; letter-spacing: 0.2em; color: var(--ink-mute); }
+.xtalisman-seal { margin: 8px 0 4px; transition: transform 0.7s var(--ease-out); }
+.xtalisman:hover .xtalisman-seal { transform: rotate(6deg) scale(1.08); }
+.xtalisman-alias { font-size: 26px; color: var(--ink); line-height: 1.2; }
+.xtalisman h3 {
+  font-family: var(--elegant);
+  font-weight: 400;
+  font-size: 15px;
+  letter-spacing: 0.16em;
+  color: var(--o);
+}
+.xtalisman p {
+  flex: 1;
+  font-size: 13.5px;
+  line-height: 1.9;
+  color: var(--ink-soft);
+}
+.xtalisman-foot {
+  align-self: stretch;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-top: 8px;
+  padding-top: 14px;
+  border-top: 1px dashed var(--line);
+  font-size: 13px;
+  letter-spacing: 0.2em;
+  color: var(--ink-mute);
+}
+.xtalisman-foot .link-arrow { font-size: 14px; }

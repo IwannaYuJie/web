@@ -1,20 +1,15 @@
 import { useMemo, useState } from 'react'
 import { Link, useSearchParams } from 'react-router-dom'
+import PageHeader from '../components/xian/PageHeader'
 import { useArticlesData } from '../hooks'
 import { filterArticles, getArticleCategories } from '../utils/articleFilters'
-import { getTagCloud } from '../utils/blogInsights'
+import { getSortedArticles, getTagCloud } from '../utils/blogInsights'
+import { categoryTone, toHanMonth, toHanNumeral } from '../utils/xianText'
+import './Tags.css'
 
-const KS = ['k1', 'k2', 'k3', 'k4']
-
-function PageHead({ emoji, title, sub }) {
-  return (
-    <div style={{ padding: '34px 0 24px' }}>
-      <h1 style={{ fontFamily: 'var(--serif)', fontWeight: 900, fontSize: 'clamp(40px,7vw,72px)', lineHeight: 1, letterSpacing: '-.02em' }}>
-        {emoji} {title}
-      </h1>
-      {sub && <p style={{ fontSize: 16, color: 'var(--ink-soft)', marginTop: 12, fontWeight: 500 }}>{sub}</p>}
-    </div>
-  )
+function hanMonthDay(date = '') {
+  const [, m, d] = String(date).split('-').map(Number)
+  return m && d ? `${toHanMonth(m)}${toHanNumeral(d)}` : ''
 }
 
 function Tags() {
@@ -24,133 +19,141 @@ function Tags() {
 
   const selectedTag = searchParams.get('tag') || ''
   const tags = useMemo(() => getTagCloud(articles), [articles])
-  const categories = useMemo(() => getArticleCategories(articles), [articles])
+  const categories = useMemo(() => getArticleCategories(articles).filter(c => c !== '全部'), [articles])
+  const maxCount = tags[0]?.count || 1
+
+  // 门派：每个分类的篇数、总阅读时长与最新一篇
+  const sects = useMemo(() => categories.map(c => {
+    const items = getSortedArticles(articles.filter(a => a.category === c))
+    return {
+      name: c,
+      count: items.length,
+      minutes: items.reduce((sum, a) => sum + (Number.parseInt(a.readTime, 10) || 0), 0),
+      latest: items[0],
+    }
+  }), [articles, categories])
 
   const filteredArticles = useMemo(() => {
-    return filterArticles(articles, {
+    return getSortedArticles(filterArticles(articles, {
       selectedCategory,
       selectedTags: selectedTag ? [selectedTag] : [],
-    })
+    }))
   }, [articles, selectedCategory, selectedTag])
 
   const selectTag = (tag) => {
-    if (tag === selectedTag) {
-      setSearchParams({})
-      return
-    }
-    setSearchParams({ tag })
+    setSearchParams(tag === selectedTag ? {} : { tag })
   }
 
+  const clear = () => {
+    setSelectedCategory('全部')
+    setSearchParams({})
+  }
+
+  const hasSelection = selectedTag || selectedCategory !== '全部'
+
   return (
-    <div className="wrap" style={{ maxWidth: 900, paddingBottom: 48 }}>
-      <PageHead emoji="#" title="标签" sub="按出现次数排，越常写的越大一些" />
+    <div className="xtags">
+      <PageHeader title="万象" plain="标签与门类" seal="万象" sub="字越大，写得越多。点一枚签引，便能寻到相关的文章。" />
 
-      {loading ? (
-        <div className="panel" style={{ textAlign: 'center', padding: 48 }}>
-          <div className="animate-bounce" style={{ fontSize: 40 }}>🐱</div>
-          <p style={{ marginTop: 12, color: 'var(--ink-soft)' }}>标签加载中…</p>
-        </div>
-      ) : error ? (
-        <div className="panel" style={{ textAlign: 'center', padding: 48, background: 'var(--k2-bg)' }}>
-          <p style={{ marginBottom: 16, color: 'var(--ink-soft)' }}>{error}</p>
-          <button onClick={fetchArticles} className="btn">重试</button>
-        </div>
-      ) : (
-        <>
-          <div style={{ display: 'flex', flexWrap: 'wrap', gap: 12, marginBottom: 32 }}>
-            {tags.map((item, i) => {
-              const active = selectedTag === item.tag
-              const kc = KS[i % 4]
-              return (
-                <button
-                  key={item.tag}
-                  onClick={() => selectTag(item.tag)}
-                  className={active ? 'ec' : `ec ${kc}`}
-                  style={{
-                    padding: '14px 20px',
-                    display: 'flex',
-                    alignItems: 'center',
-                    gap: 10,
-                    background: active ? 'var(--ink)' : undefined,
-                    color: active ? 'var(--paper)' : undefined,
-                  }}
-                >
-                  <span style={{ fontFamily: 'var(--serif)', fontWeight: 900, fontSize: 14 + item.count * 3 }}>
-                    #{item.tag}
-                  </span>
-                  <span style={{ fontFamily: 'var(--disp)', fontWeight: 700, fontSize: 13, opacity: 0.6 }}>
-                    {item.count}
-                  </span>
-                </button>
-              )
-            })}
+      <div className="wrap xtags-body">
+        {loading ? (
+          <div className="state"><div className="loading-bar" />正在观星…</div>
+        ) : error ? (
+          <div className="state">
+            <div className="state-mark">迷</div>
+            <p>{error}</p>
+            <button type="button" onClick={fetchArticles} className="btn" style={{ marginTop: 20 }}>再试一次</button>
           </div>
-
-          {(selectedTag || selectedCategory !== '全部') && (
-            <>
-              <div className="section-h">
-                <h2>
-                  {selectedTag ? `#${selectedTag}` : selectedCategory}
-                  <span style={{ fontFamily: 'var(--disp)', fontSize: 15, fontWeight: 600, color: 'var(--ink-soft)' }}>
-                    · {filteredArticles.length} 篇
-                  </span>
-                </h2>
-                <button
-                  onClick={() => {
-                    setSelectedCategory('全部')
-                    setSearchParams({})
-                  }}
-                  style={{ background: 'none', border: 'none', color: 'var(--accent)', fontFamily: 'var(--disp)', fontWeight: 700, fontSize: 14, cursor: 'pointer' }}
-                >
-                  清除筛选 ↻
-                </button>
-              </div>
-
-              <div style={{ display: 'flex', flexDirection: 'column', gap: 12 }}>
-                {filteredArticles.map((a, i) => (
-                  <Link
-                    key={a.id}
-                    to={`/article/${a.id}`}
-                    className={`ec ${KS[i % 4]}`}
-                    style={{ display: 'grid', gridTemplateColumns: 'auto auto 1fr auto', gap: 16, alignItems: 'center', padding: '18px 22px' }}
-                  >
-                    <span style={{ fontFamily: 'var(--disp)', fontSize: 13, fontWeight: 700, opacity: 0.55 }}>
-                      {a.date ? a.date.slice(5) : ''}
-                    </span>
-                    <span className="cat cat-chip" style={{ border: 'none', padding: 0 }}>{a.category}</span>
-                    <h3 style={{ fontSize: 19, margin: 0 }}>{a.title}</h3>
-                    <span className="arrow">→</span>
-                  </Link>
-                ))}
-                {filteredArticles.length === 0 && (
-                  <div className="panel" style={{ textAlign: 'center', padding: 36 }}>
-                    <div style={{ fontSize: 40 }} />
-                    <p style={{ marginTop: 12, color: 'var(--ink-soft)' }}>这个标签下还没文章。</p>
-                  </div>
-                )}
-              </div>
-            </>
-          )}
-
-          {!selectedTag && selectedCategory === '全部' && categories.length > 1 && (
-            <>
-              <div className="section-h"><h2>按分类看</h2></div>
-              <div className="panel" style={{ display: 'flex', flexWrap: 'wrap', gap: 8 }}>
-                {categories.map(c => (
+        ) : (
+          <>
+            {/* 签引星图 */}
+            <div className="xcloud" role="list" aria-label="全部签引">
+              {tags.map((item, i) => {
+                const weight = Math.sqrt(item.count / maxCount)
+                const active = selectedTag === item.tag
+                return (
                   <button
-                    key={c}
-                    onClick={() => setSelectedCategory(c)}
-                    className="sticker"
-                    style={c === '全部' ? { background: 'var(--ink)', color: 'var(--paper)', borderColor: 'var(--ink)' } : undefined}
+                    key={item.tag}
+                    type="button"
+                    role="listitem"
+                    aria-pressed={active}
+                    onClick={() => selectTag(item.tag)}
+                    className={`xcloud-tag ${active ? 'on' : ''}`}
+                    style={{
+                      '--w': weight,
+                      '--delay': `${(i % 7) * -1.3}s`,
+                      fontSize: `${15 + weight * 22}px`,
+                    }}
                   >
-                    {c}
+                    {item.tag}
+                    <sup className="latin">{item.count}</sup>
                   </button>
-                ))}
-              </div>
-            </>
-          )}
-        </>
-      )}
+                )
+              })}
+            </div>
+
+            {hasSelection && (
+              <section className="xtags-result">
+                <div className="section-h">
+                  <h2>
+                    {selectedTag ? `「${selectedTag}」` : selectedCategory}
+                    <small>凡 {toHanNumeral(filteredArticles.length)} 篇</small>
+                  </h2>
+                  <button type="button" className="more link-arrow" onClick={clear}>拂去筛选 <span className="arr">↻</span></button>
+                </div>
+                {filteredArticles.length === 0 ? (
+                  <div className="state"><div className="state-mark">空</div><p>此签之下尚无文章</p></div>
+                ) : (
+                  <ol className="xyear-list">
+                    {filteredArticles.map((a, i) => (
+                      <li key={a.id} className="rise" style={{ '--i': Math.min(i, 8) }}>
+                        <Link to={`/article/${a.id}`} className="xentry">
+                          <span className="xentry-date elegant">{hanMonthDay(a.date)}</span>
+                          <div className="xentry-body">
+                            <h3>{a.title}</h3>
+                            <div className="xentry-meta">
+                              <span className="cat-label" style={{ '--tone': categoryTone(a.category) }}>
+                                <span className="tone-dot" />{a.category}
+                              </span>
+                              <span className="elegant">约 {a.readTime} 分钟</span>
+                            </div>
+                          </div>
+                          <span className="xentry-arr" aria-hidden="true">→</span>
+                        </Link>
+                      </li>
+                    ))}
+                  </ol>
+                )}
+              </section>
+            )}
+
+            {sects.length > 0 && (
+              <section className="xsects">
+                <div className="section-h"><h2>门类 <small>按分类看</small></h2></div>
+                <div className="xsects-grid">
+                  {sects.map((s, i) => (
+                    <button
+                      key={s.name}
+                      type="button"
+                      className={`xsect scroll-card ${selectedCategory === s.name ? 'on' : ''}`}
+                      style={{ '--tone': categoryTone(s.name) }}
+                      onClick={() => { setSearchParams({}); setSelectedCategory(selectedCategory === s.name ? '全部' : s.name) }}
+                      aria-pressed={selectedCategory === s.name}
+                    >
+                      <span className="xsect-num brush">{toHanNumeral(i + 1, { formal: true })}</span>
+                      <span className="xsect-name">{s.name}</span>
+                      <span className="xsect-stat elegant">
+                        {toHanNumeral(s.count)} 篇 · 共 {s.minutes} 分钟
+                      </span>
+                      {s.latest && <span className="xsect-latest">新作：{s.latest.title}</span>}
+                    </button>
+                  ))}
+                </div>
+              </section>
+            )}
+          </>
+        )}
+      </div>
     </div>
   )
 }

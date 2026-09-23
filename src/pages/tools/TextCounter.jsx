@@ -56,13 +56,13 @@ function TextCounter() {
             value={text}
             onChange={(e) => setText(e.target.value)}
             placeholder="把文本贴到这里…"
-            className="w-full h-96 p-3 rounded-xl border-2 border-[var(--border-color)] bg-white/80 text-sm focus:outline-none focus:border-primary"
+            className="w-full h-96 p-3 rounded border-2 border-[var(--border-color)] bg-surface/80 text-sm focus:outline-none focus:border-primary"
           />
         </div>
 
         <div className="card">
           <h3 className="font-bold text-primary mb-3">统计结果</h3>
-          <div className="rounded-xl bg-white/60 border border-[var(--border-color)] divide-y divide-[var(--border-color)]">
+          <div className="rounded bg-surface/60 border border-[var(--border-color)] divide-y divide-[var(--border-color)]">
             {items.map(([label, value]) => (
               <div key={label} className="flex justify-between px-3 py-2 text-sm">
                 <span className="text-text-secondary">{label}</span>

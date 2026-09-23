@@ -92,14 +92,14 @@ function ColorConverter() {
       <div className="grid grid-cols-1 lg:grid-cols-[280px_1fr] gap-5">
         <div className="card flex flex-col items-center gap-4">
           <div
-            className="w-full aspect-square rounded-2xl border-2 border-[var(--border-color)] shadow-inner"
+            className="w-full aspect-square rounded-md border-2 border-[var(--border-color)] shadow-inner"
             style={{ background: isValid ? hex : 'transparent' }}
           />
           <input
             type="color"
             value={isValid ? hex : '#000000'}
             onChange={(e) => setHex(e.target.value.toUpperCase())}
-            className="w-full h-12 rounded-xl border border-[var(--border-color)] cursor-pointer"
+            className="w-full h-12 rounded border border-[var(--border-color)] cursor-pointer"
           />
           <div className="flex flex-wrap gap-2 justify-center">
             {presets.map((p) => (
@@ -121,7 +121,7 @@ function ColorConverter() {
               <input
                 value={hex}
                 onChange={(e) => setHex(e.target.value)}
-                className={`flex-1 px-3 py-2 rounded-xl border-2 bg-white font-mono focus:outline-none ${isValid ? 'border-[var(--border-color)] focus:border-primary' : 'border-red-300'}`}
+                className={`flex-1 px-3 py-2 rounded border-2 bg-surface font-mono focus:outline-none ${isValid ? 'border-[var(--border-color)] focus:border-primary' : 'border-red-300'}`}
               />
               <CopyButton value={hex} />
             </div>
@@ -140,13 +140,13 @@ function ColorConverter() {
                     max={255}
                     value={rgb[k]}
                     onChange={(e) => updateRgb(k, e.target.value)}
-                    className="w-full px-3 py-2 rounded-xl border-2 border-[var(--border-color)] bg-white font-mono focus:outline-none focus:border-primary"
+                    className="w-full px-3 py-2 rounded border-2 border-[var(--border-color)] bg-surface font-mono focus:outline-none focus:border-primary"
                   />
                 </label>
               ))}
             </div>
             <div className="flex items-center gap-2">
-              <code className="flex-1 px-3 py-2 rounded-xl bg-white/60 border border-[var(--border-color)] text-sm">{cssRgb}</code>
+              <code className="flex-1 px-3 py-2 rounded bg-surface/60 border border-[var(--border-color)] text-sm">{cssRgb}</code>
               <CopyButton value={cssRgb} />
             </div>
           </div>
@@ -163,13 +163,13 @@ function ColorConverter() {
                     max={max}
                     value={hsl[k]}
                     onChange={(e) => updateHsl(k, e.target.value)}
-                    className="w-full px-3 py-2 rounded-xl border-2 border-[var(--border-color)] bg-white font-mono focus:outline-none focus:border-primary"
+                    className="w-full px-3 py-2 rounded border-2 border-[var(--border-color)] bg-surface font-mono focus:outline-none focus:border-primary"
                   />
                 </label>
               ))}
             </div>
             <div className="flex items-center gap-2">
-              <code className="flex-1 px-3 py-2 rounded-xl bg-white/60 border border-[var(--border-color)] text-sm">{cssHsl}</code>
+              <code className="flex-1 px-3 py-2 rounded bg-surface/60 border border-[var(--border-color)] text-sm">{cssHsl}</code>
               <CopyButton value={cssHsl} />
             </div>
           </div>
@@ -189,7 +189,7 @@ function CopyButton({ value }) {
   return (
     <button
       onClick={onClick}
-      className="px-3 py-2 rounded-xl bg-primary text-white text-sm font-bold hover:bg-primary-hover whitespace-nowrap"
+      className="px-3 py-2 rounded bg-primary text-white text-sm font-bold hover:bg-primary-hover whitespace-nowrap"
     >
       {done ? '✓' : '复制'}
     </button>

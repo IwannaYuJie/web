@@ -18,11 +18,11 @@ function ArticleEditor({
   submitting,
 }) {
   return (
-    <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/20 backdrop-blur-sm p-4 animate-fade-in">
-      <div className="glass w-full max-w-3xl max-h-[90vh] overflow-y-auto rounded-2xl shadow-2xl border border-white/40 animate-slide-up">
-        <div className="p-6 border-b border-white/20 sticky top-0 bg-white/80 backdrop-blur-md z-10 flex justify-between items-center">
-          <h2 className="text-xl font-bold flex items-center gap-2">
-            {editingArticle ? '✏️ 编辑文章' : '➕ 新增文章'}
+    <div className="fixed inset-0 z-[1000] flex items-center justify-center bg-black/50 backdrop-blur-sm p-4 animate-fade-in">
+      <div className="w-full max-w-3xl max-h-[90vh] overflow-y-auto rounded-md shadow-2xl border border-border-color bg-bg-color animate-slide-up">
+        <div className="px-6 py-4 border-b border-border-color sticky top-0 bg-surface/90 backdrop-blur-md z-10 flex justify-between items-center">
+          <h2 className="brush text-3xl font-normal">
+            {editingArticle ? '修订此篇' : '新撰一篇'}
           </h2>
           <button onClick={handleCancel} className="text-text-light hover:text-primary text-xl">✕</button>
         </div>
@@ -37,7 +37,7 @@ function ArticleEditor({
                 value={formData.title}
                 onChange={handleInputChange}
                 placeholder="例如：☕ Spring Boot 3.0 新特性"
-                className="w-full p-3 rounded-xl border border-border-color bg-white/50 focus:bg-white focus:border-primary outline-none transition-all"
+                className="w-full p-3 rounded border border-border-color bg-surface/50 focus:bg-surface focus:border-primary outline-none transition-all"
                 required
               />
             </div>
@@ -47,7 +47,7 @@ function ArticleEditor({
                 name="category"
                 value={formData.category}
                 onChange={handleInputChange}
-                className="w-full p-3 rounded-xl border border-border-color bg-white/50 focus:bg-white focus:border-primary outline-none transition-all"
+                className="w-full p-3 rounded border border-border-color bg-surface/50 focus:bg-surface focus:border-primary outline-none transition-all"
                 required
               >
                 {categories.map(cat => (
@@ -65,7 +65,7 @@ function ArticleEditor({
               onChange={handleInputChange}
               placeholder="用一两句话大概介绍一下写了啥..."
               rows="3"
-              className="w-full p-3 rounded-xl border border-border-color bg-white/50 focus:bg-white focus:border-primary outline-none transition-all resize-none"
+              className="w-full p-3 rounded border border-border-color bg-surface/50 focus:bg-surface focus:border-primary outline-none transition-all resize-none"
               required
             />
           </div>
@@ -79,7 +79,7 @@ function ArticleEditor({
                 value={formData.readTime}
                 onChange={handleInputChange}
                 placeholder="比如：15"
-                className="w-full p-3 rounded-xl border border-border-color bg-white/50 focus:bg-white focus:border-primary outline-none transition-all"
+                className="w-full p-3 rounded border border-border-color bg-surface/50 focus:bg-surface focus:border-primary outline-none transition-all"
                 required
               />
             </div>
@@ -90,7 +90,7 @@ function ArticleEditor({
                 name="date"
                 value={formData.date}
                 onChange={handleInputChange}
-                className="w-full p-3 rounded-xl border border-border-color bg-white/50 focus:bg-white focus:border-primary outline-none transition-all"
+                className="w-full p-3 rounded border border-border-color bg-surface/50 focus:bg-surface focus:border-primary outline-none transition-all"
               />
             </div>
           </div>
@@ -103,7 +103,7 @@ function ArticleEditor({
               value={formData.author}
               onChange={handleInputChange}
               placeholder="作者名称"
-              className="w-full p-3 rounded-xl border border-border-color bg-white/50 focus:bg-white focus:border-primary outline-none transition-all"
+              className="w-full p-3 rounded border border-border-color bg-surface/50 focus:bg-surface focus:border-primary outline-none transition-all"
             />
           </div>
 
@@ -121,7 +121,7 @@ function ArticleEditor({
                   }
                 }}
                 placeholder="写个标签，回车或者点右边添加"
-                className="flex-1 p-3 rounded-xl border border-border-color bg-white/50 focus:bg-white focus:border-primary outline-none transition-all"
+                className="flex-1 p-3 rounded border border-border-color bg-surface/50 focus:bg-surface focus:border-primary outline-none transition-all"
               />
               <button
                 type="button"
@@ -161,13 +161,13 @@ function ArticleEditor({
                   onClick={() => setShowPreview(!showPreview)}
                   className="text-xs font-normal text-primary hover:underline"
                 >
-                  {showPreview ? '📝 编辑' : '👁️ 预览'}
+                  {showPreview ? '回到书写' : '预览成卷'}
                 </button>
                 <span className="text-xs font-normal text-text-light">支持 Markdown</span>
               </div>
             </label>
             {showPreview ? (
-              <div className="w-full p-4 rounded-xl border border-border-color bg-white min-h-[300px] max-h-[500px] overflow-y-auto">
+              <div className="w-full p-4 rounded border border-border-color bg-surface min-h-[300px] max-h-[500px] overflow-y-auto">
                 <Suspense fallback={<div className="text-center py-12 text-text-light">Markdown 预览加载中...</div>}>
                   <MarkdownRenderer content={formData.content} />
                 </Suspense>
@@ -179,7 +179,7 @@ function ArticleEditor({
                 onChange={handleInputChange}
                 placeholder="在这里用 Markdown 语法写正文..."
                 rows="12"
-                className="w-full p-4 rounded-xl border border-border-color bg-white/50 focus:bg-white focus:border-primary outline-none transition-all font-mono text-sm leading-relaxed"
+                className="w-full p-4 rounded border border-border-color bg-surface/50 focus:bg-surface focus:border-primary outline-none transition-all font-mono text-sm leading-relaxed"
               />
             )}
           </div>
@@ -198,7 +198,7 @@ function ArticleEditor({
               className="btn btn-primary px-8"
               disabled={submitting}
             >
-              {submitting ? '⏳ 正在提交...' : (editingArticle ? '💾 保存修改' : '✅ 马上发布')}
+              {submitting ? '落笔中…' : (editingArticle ? '保存修订' : '付梓发布')}
             </button>
           </div>
         </form>

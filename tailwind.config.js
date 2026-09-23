@@ -7,10 +7,13 @@ export default {
   theme: {
     extend: {
       colors: {
-        primary: "var(--primary-color)",
+        // 带 alpha 通道，支持 bg-primary/10 这类写法
+        primary: "rgb(var(--rgb-accent) / <alpha-value>)",
+        surface: "rgb(var(--rgb-surface) / <alpha-value>)",
         "primary-hover": "var(--primary-hover)",
         secondary: "var(--secondary-color)",
         accent: "var(--accent-color)",
+        gold: "var(--gold)",
         "bg-color": "var(--bg-color)",
         "surface-color": "var(--surface-color)",
         "text-color": "var(--text-color)",

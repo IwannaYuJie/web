@@ -3,75 +3,30 @@
   flex-direction: column;
   min-height: 100vh;
   position: relative;
-  background: var(--paper);
 }
 
 .main-content {
   flex: 1;
   width: 100%;
-  position: relative;
-  z-index: 1;
+  position: relative;   /* 不设 z-index：避免把弹窗困在 main 的层叠上下文里 */
 }
 
-/* Scroll Progress indicator */
+/* 顶部一线朱砂，随阅读推进 */
 .scroll-progress {
   position: fixed;
   top: 0;
   left: 0;
-  height: 4px;
-  background: linear-gradient(90deg, var(--o), var(--berry), var(--vi));
+  right: 0;
+  height: 2px;
+  background: linear-gradient(90deg, var(--gold), var(--o));
+  transform-origin: left;
   z-index: 1000;
-  transition: width 0.08s ease-out;
   pointer-events: none;
 }
 
-/* Page fade-in/slide-up transition */
-@keyframes pageFadeIn {
-  from {
-    opacity: 0;
-    transform: translateY(14px);
-  }
-  to {
-    opacity: 1;
-    transform: translateY(0);
-  }
+/* 换页淡入。只动 opacity 且不保留填充：filter / transform 会让 fixed 子元素改以 main 定位 */
+@keyframes pageEnter {
+  from { opacity: 0; }
+  to { opacity: 1; }
 }
-
-.page-fade-in {
-  animation: pageFadeIn 0.45s cubic-bezier(0.2, 0.8, 0.2, 1) forwards;
-}
-
-/* Click particle explosion */
-.click-particle {
-  position: fixed;
-  pointer-events: none;
-  font-size: 24px;
-  z-index: 9999;
-  transform: translate(-50%, -50%);
-  animation: floatUpAndFade 0.8s cubic-bezier(0.25, 1, 0.5, 1) forwards;
-  user-select: none;
-}
-
-@keyframes floatUpAndFade {
-  0% {
-    transform: translate(-50%, -50%) scale(0.6) rotate(0deg);
-    opacity: 1;
-  }
-  30% {
-    opacity: 1;
-  }
-  100% {
-    transform: translate(-50%, -120px) scale(1.4) rotate(35deg);
-    opacity: 0;
-  }
-}
-
-@media (prefers-reduced-motion: reduce) {
-  .page-fade-in {
-    animation: none;
-  }
-  .click-particle {
-    animation: none;
-    display: none;
-  }
-}
+.page-enter { animation: pageEnter 0.7s var(--ease-out); }
