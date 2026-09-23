@@ -7,6 +7,14 @@
    宣纸为底，黛墨为字，朱砂点睛，泥金勾线。
    远山、流云、灵光只做氛围，正文始终清楚好读。
    ============================================================ */
+/* ZCOOL XiaoWei 的「回」(U+56DE) 字形是实心方块，单独让这个字改用系统宋体/黑体 */
+@font-face {
+  font-family: 'Elegant Glyph Fix';
+  src: local('Noto Serif SC'), local('Source Han Serif SC'), local('Songti SC'), local('STSong'),
+    local('SimSun'), local('NSimSun'), local('PingFang SC'), local('Microsoft YaHei');
+  unicode-range: U+56DE;
+}
+
 * {
   margin: 0;
   padding: 0;
@@ -90,7 +98,7 @@
 
   /* Typography */
   --brush: 'Ma Shan Zheng', 'STXingkai', 'KaiTi', serif;          /* 毛笔字，只用于大标题 */
-  --elegant: 'ZCOOL XiaoWei', 'Noto Serif SC', 'Songti SC', serif; /* 雅致标宋，副标题 */
+  --elegant: 'Elegant Glyph Fix', 'ZCOOL XiaoWei', 'Noto Serif SC', 'Songti SC', serif; /* 雅致标宋，副标题 */
   --serif: 'Noto Serif SC', 'Songti SC', 'STSong', serif;
   --latin: 'Cormorant Garamond', 'Noto Serif SC', Georgia, serif;
   --body: 'Noto Serif SC', 'Songti SC', serif;

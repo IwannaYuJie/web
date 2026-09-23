@@ -76,6 +76,8 @@ Tailwind 的 `primary`、`surface` 已映射为带 alpha 的 RGB 变量，`bg-pr
 
 ## 注意事项
 
+- ZCOOL XiaoWei 的「回」字字形是实心方块，`--elegant` 字体栈最前面的 `Elegant Glyph Fix` 专门替换这个字，不要删。
+
 - **不要给 `main` 或页面根元素设置保留下来的 `transform` / `filter`**。它们会让内部 `position: fixed` 的弹窗改为相对该元素定位。换页动画只动 `opacity`，也不保留填充状态。
 - 竖排文字（`writing-mode: vertical-rl`）只用于短句：标题、对联、心法。含英文的长标题一律横排。
 - 移动端（≤ 760px）竖排大字改为横排，对联隐藏，菜单改为全屏竖排。

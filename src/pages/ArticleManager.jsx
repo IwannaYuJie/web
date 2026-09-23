@@ -289,7 +289,7 @@ function ArticleManager() {
 
   if (!isAuthenticated) {
     return (
-      <div className="xadmin">
+      <div className="xadmin-gate">
         <PageHeader title="执笔" plain="文章管理" seal="掌门" compact />
         <div className="wrap xadmin-login">
           <form onSubmit={handleLogin} className="scroll-card">
