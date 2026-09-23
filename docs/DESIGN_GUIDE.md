@@ -45,6 +45,7 @@ Tailwind 的 `primary`、`surface` 已映射为带 alpha 的 RGB 变量，`bg-pr
 - `Cloud` / `CloudDivider`：祥云纹与祥云分隔线。
 - `Seal`：朱砂印，两字竖排或四字成方（右列先读）。
 - `Moon`、`Birds`：明月与飞鸟。
+- `PlumBranch`：墨梅一枝（枯笔 + 飞白 + 红梅），`Petals`：飘落花瓣，`Crane`：会扇翅的丹顶鹤。
 - `Atmosphere`：全站固定背景层，飘动的云雾和上升的灵光（在 `Layout` 中挂载）。
 - `PageHeader`：内页页头，参数为 `title`（雅称）、`plain`（白话）、`seal`、`sub`，`children` 放统计或按钮。
 
@@ -56,7 +57,8 @@ Tailwind 的 `primary`、`surface` 已映射为带 alpha 的 RGB 变量，`bg-pr
 - 卷面：`.scroll-card`，宣纸底加泥金内框。
 - 其他：`.kicker`（泥金小字，配 `.rule` 细线）、`.panel-h`（菱形引首的小标题）、`.section-h`（毛笔标题 + `<small>` 白话）、`.field-line`（下划线输入框）。
 - 状态：`.state`，配 `.state-mark`（单个毛笔字，如「空」「迷」）或 `.loading-bar`。
-- 动效：`.rise`（用 `--i` 控制错峰）、`.ink-in`（墨迹晕开）、`.float`。
+- 动效：`.rise`（挂载即播放，用 `--i` 控制错峰）、`.reveal`（进入视口才播放，用 `--d` 毫秒控制延迟）、`.ink-in`（墨迹晕开）、`.float`。首屏以下的内容用 `.reveal`。
+- 纹样：`.fret-band`（回纹带）；`.section-h` 标题进入视口时自动刷出淡金笔触。
 - 中文数字：`src/utils/xianText.js` 中的 `toHanNumeral`、`toHanYear`、`toHanMonth`、`toShichen`。
 
 ## 栏目雅称

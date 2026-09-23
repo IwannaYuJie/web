@@ -316,3 +316,115 @@
   .xentry::before { top: 24px; }
   .xentry-arr { display: none; }
 }
+
+/* ---- 墨梅 ---- */
+.xian-plum { display: block; overflow: visible; pointer-events: none; }
+.xian-plum .plum-wood path {
+  stroke: var(--ink);
+  stroke-linecap: round;
+  stroke-linejoin: round;
+  opacity: 0.86;
+}
+.xian-plum .plum-wood .plum-flywhite {
+  stroke: var(--paper);
+  stroke-width: 1.6;
+  opacity: 0.55;
+}
+.xian-plum .plum-knot { fill: var(--ink); opacity: 0.8; }
+.xian-plum .petal { fill: var(--blossom); opacity: 0.88; }
+.xian-plum .plum-blossom .petal:nth-child(odd) { fill: color-mix(in srgb, var(--blossom) 65%, var(--blossom-soft)); }
+.xian-plum .heart { fill: #E9C46A; }
+.xian-plum .stamen { stroke: #B8862F; stroke-width: 0.7; }
+.xian-plum .bud { fill: var(--blossom); opacity: 0.92; }
+/* 整枝随风轻摆 */
+.xian-plum .plum-sway {
+  transform-box: view-box;
+  transform-origin: 0 0;
+  animation: plumSway 9s ease-in-out infinite;
+}
+@keyframes plumSway {
+  0%, 100% { transform: rotate(0deg); }
+  50% { transform: rotate(1.4deg); }
+}
+
+/* ---- 丹顶鹤 ---- */
+.xian-crane { display: block; overflow: visible; }
+.xian-crane .body,
+.xian-crane .head,
+.xian-crane .feather {
+  fill: #FBF8F1;
+  stroke: color-mix(in srgb, #1F2A30 50%, transparent);
+  stroke-width: 0.8;
+}
+.xian-crane .neck { stroke: #1F2A30; stroke-width: 3; stroke-linecap: round; fill: none; }
+.xian-crane .tip,
+.xian-crane .tail { fill: #1F2A30; }
+.xian-crane .leg { stroke: #3A3F3F; stroke-width: 1.6; stroke-linecap: round; fill: none; }
+.xian-crane .beak { fill: #6F6A4E; }
+.xian-crane .crown { fill: #C8392B; }
+.xian-crane .wing {
+  transform-box: view-box;
+  transform-origin: 98px 58px;
+  animation: craneFlap 1.6s ease-in-out infinite alternate;
+}
+.xian-crane .wing.far { animation-delay: -0.2s; opacity: 0.92; }
+@keyframes craneFlap {
+  from { transform: rotate(-6deg) scaleY(1); }
+  to { transform: rotate(14deg) scaleY(0.72); }
+}
+
+/* ---- 落梅 ---- */
+.xian-petals {
+  position: absolute;
+  inset: 0;
+  overflow: hidden;
+  pointer-events: none;
+}
+.xian-petals span {
+  position: absolute;
+  top: -20px;
+  border-radius: 60% 0 60% 0;
+  background: linear-gradient(135deg, var(--blossom-soft), var(--blossom));
+  opacity: 0;
+  animation-name: petalFall;
+  animation-timing-function: linear;
+  animation-iteration-count: infinite;
+}
+@keyframes petalFall {
+  0% { transform: translate3d(0, 0, 0) rotate(0deg); opacity: 0; }
+  8% { opacity: 0.85; }
+  50% { transform: translate3d(calc(var(--drift) * 0.45), 45vh, 0) rotate(220deg); }
+  85% { opacity: 0.6; }
+  100% { transform: translate3d(var(--drift), 92vh, 0) rotate(420deg); opacity: 0; }
+}
+
+/* ---- 回纹带 ---- */
+.fret-band {
+  height: 12px;
+  background: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='16' height='12' viewBox='0 0 16 12' fill='none' stroke='%23A8844A' stroke-width='1.1'><path d='M0 11.5H16M12.5 11.5V1.5H3.5V8.5H9V5'/></svg>") repeat-x left center / 16px 12px;
+  opacity: 0.55;
+}
+@media (prefers-color-scheme: dark) {
+  .fret-band {
+    background-image: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='16' height='12' viewBox='0 0 16 12' fill='none' stroke='%23CDB07A' stroke-width='1.1'><path d='M0 11.5H16M12.5 11.5V1.5H3.5V8.5H9V5'/></svg>");
+    opacity: 0.4;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .xian-petals { display: none; }
+}
+
+/* 内页页头：左上一枝小梅 + 零星落花 */
+.xian-pagehead .ph-plum {
+  position: absolute;
+  top: 70px;
+  left: -30px;
+  width: clamp(200px, 22vw, 320px);
+  z-index: -1;
+  opacity: 0.9;
+}
+.xian-pagehead .ph-petals { z-index: -1; }
+@media (max-width: 760px) {
+  .xian-pagehead .ph-plum { width: 170px; top: 60px; left: -50px; opacity: 0.6; }
+}

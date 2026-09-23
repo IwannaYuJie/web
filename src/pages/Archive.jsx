@@ -127,14 +127,14 @@ function Archive() {
         ) : (
           <div className="xtimeline">
             {archiveGroups.map(group => (
-              <section key={group.year} className="xyear">
+              <section key={group.year} className="xyear reveal">
                 <header className="xyear-head">
                   <h2 className="brush">{toHanYear(group.year)}</h2>
                   <span className="elegant">凡 {toHanNumeral(group.items.length)} 篇</span>
                 </header>
                 <ol className="xyear-list">
-                  {group.items.map((a, i) => (
-                    <li key={a.id} className="rise" style={{ '--i': Math.min(i, 8) }}>
+                  {group.items.map(a => (
+                    <li key={a.id}>
                       <Link to={`/article/${a.id}`} className="xentry">
                         <span className="xentry-date elegant">{hanMonthDay(a.date)}</span>
                         <div className="xentry-body">

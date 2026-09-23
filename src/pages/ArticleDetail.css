@@ -69,9 +69,28 @@
 .xart-grid.has-toc { grid-template-columns: minmax(0, 820px) 220px; }
 
 .xart-paper {
-  padding: 64px 72px 48px;
+  padding: 76px 72px 64px;
   box-shadow: var(--shadow-2);
   background: var(--surface);
+}
+/* 卷首卷尾的回纹 */
+.xart-fret { position: absolute; left: 22px; right: 22px; }
+.xart-fret.top { top: 22px; }
+.xart-fret.bottom { bottom: 22px; }
+
+/* 首字下沉：朱砂毛笔 */
+/* flow-root：首段较短时，下沉字不会漏到下一段 */
+.xart-paper .md > p:first-of-type { display: flow-root; }
+.xart-paper .md > p:first-of-type::first-letter {
+  float: left;
+  font-family: var(--brush);
+  font-size: 3.3em;
+  line-height: 1;
+  margin: 0.08em 0.14em 0 0;
+  padding: 0.06em 0.12em;
+  color: var(--o);
+  border: 1px solid color-mix(in srgb, var(--o) 35%, transparent);
+  border-radius: 2px;
 }
 
 /* 落款 */
@@ -197,7 +216,10 @@ a.xart-pager-item:hover strong { color: var(--o); }
 @media (max-width: 700px) {
   .xart-head { padding: 120px 0 90px; }
   .xart-back { margin-bottom: 22px; }
-  .xart-paper { padding: 36px 22px 32px; }
+  .xart-paper { padding: 50px 22px 48px; }
+  .xart-fret { left: 12px; right: 12px; }
+  .xart-fret.top { top: 14px; }
+  .xart-fret.bottom { bottom: 14px; }
   .xart-grid { margin-top: -40px; }
   .xart-pager, .xart-related-grid { grid-template-columns: 1fr; }
   .xart-pager-item.right { border-left: none; border-top: 1px solid var(--gold-soft); }

@@ -1,8 +1,8 @@
-import { useEffect, useMemo, useState } from 'react'
+import { useEffect, useMemo, useRef, useState } from 'react'
 import { Link } from 'react-router-dom'
 import Pagination from '../components/Pagination'
 import HomeCreativeSection from '../components/home/HomeCreativeSection'
-import { Birds, CloudDivider, Moon, Mountains, Seal } from '../components/xian/Ornaments'
+import { CloudDivider, Crane, Moon, Mountains, Petals, PlumBranch, Seal } from '../components/xian/Ornaments'
 import { CAT_QUOTES, HOME_PAGE_SIZE } from '../constants/home'
 import { blogProfile, nowItems } from '../data/blogProfile'
 import { useArticlesData, useBackToTop } from '../hooks'
@@ -16,10 +16,58 @@ function splitDate(date = '') {
   return { y, m: Number(m), d: Number(d) }
 }
 
+// 首屏轮换的诗句：第一联是小窝自己的，其余摘自古诗
+const VERSES = [
+  ['一窗灯火敲长夜，', '半卷代码记流年。'],
+  ['行到水穷处，', '坐看云起时。'],
+  ['云深不知处，', '只在此山中。'],
+  ['采菊东篱下，', '悠然见南山。'],
+]
+
+/** 首屏视差：滚动时远近山层错速，鼠标移动时明月与梅枝微微偏移 */
+function useHeroParallax(ref) {
+  useEffect(() => {
+    const el = ref.current
+    if (!el || window.matchMedia('(prefers-reduced-motion: reduce)').matches) { return undefined }
+    let raf = 0
+    let sy = 0
+    let mx = 0
+    let my = 0
+    const apply = () => {
+      raf = 0
+      el.style.setProperty('--sy', String(sy))
+      el.style.setProperty('--mx', mx.toFixed(3))
+      el.style.setProperty('--my', my.toFixed(3))
+    }
+    const queue = () => { if (!raf) { raf = requestAnimationFrame(apply) } }
+    const onScroll = () => { sy = Math.min(window.scrollY, el.offsetHeight); queue() }
+    const onMove = (e) => {
+      mx = (e.clientX / window.innerWidth) * 2 - 1
+      my = (e.clientY / window.innerHeight) * 2 - 1
+      queue()
+    }
+    onScroll()
+    window.addEventListener('scroll', onScroll, { passive: true })
+    window.addEventListener('pointermove', onMove, { passive: true })
+    return () => {
+      window.removeEventListener('scroll', onScroll)
+      window.removeEventListener('pointermove', onMove)
+      if (raf) { cancelAnimationFrame(raf) }
+    }
+  }, [ref])
+}
+
 function Hero({ stats }) {
+  const heroRef = useRef(null)
+  useHeroParallax(heroRef)
   const [shichen, setShichen] = useState(() => toShichen(new Date().getHours()))
+  const [verse, setVerse] = useState(0)
   useEffect(() => {
     const id = setInterval(() => setShichen(toShichen(new Date().getHours())), 60000)
+    return () => clearInterval(id)
+  }, [])
+  useEffect(() => {
+    const id = setInterval(() => setVerse(v => (v + 1) % VERSES.length), 8000)
     return () => clearInterval(id)
   }, [])
 
@@ -31,13 +79,18 @@ function Hero({ stats }) {
   ]
 
   return (
-    <section className="xhero">
+    <section className="xhero" ref={heroRef}>
       <div className="xhero-sky" aria-hidden="true">
-        <Moon className="xhero-moon" />
-        <Birds className="xhero-birds" />
+        <div className="xhero-moon-wrap"><Moon className="xhero-moon" /></div>
+        <div className="xhero-cranes">
+          <Crane className="crane-a" />
+          <Crane className="crane-b" />
+        </div>
         <div className="xhero-cloudband b1" />
         <div className="xhero-cloudband b2" />
         <Mountains className="xhero-mountains" pavilion />
+        <div className="xhero-plum-wrap"><PlumBranch className="xhero-plum" /></div>
+        <Petals className="xhero-petals" />
       </div>
 
       <div className="wrap xhero-grid">
@@ -46,9 +99,10 @@ function Hero({ stats }) {
             <span className="rule" />
             {shichen} · 宜读书
           </div>
-          <p className="xhero-verse elegant rise" style={{ '--i': 2 }}>
-            一窗灯火敲长夜，<br />
-            半卷代码记流年。
+          <p className="xhero-verse elegant rise" style={{ '--i': 2 }} aria-live="polite">
+            <span key={verse} className="xhero-verse-line ink-in">
+              {VERSES[verse][0]}<br />{VERSES[verse][1]}
+            </span>
           </p>
           <p className="xhero-intro rise" style={{ '--i': 3 }}>{blogProfile.intro}</p>
 
@@ -84,7 +138,7 @@ function LeadStory({ article }) {
   if (!article) { return null }
   const { y, m, d } = splitDate(article.date)
   return (
-    <section className="xlead wrap">
+    <section className="xlead wrap reveal">
       <div className="xlead-label">
         <span className="brush vertical">今日开卷</span>
         <span className="line" />
@@ -122,7 +176,12 @@ function FeaturedScrolls({ featured }) {
       </div>
       <div className="xfeat-grid">
         {items.map((a, i) => (
-          <Link key={a.id} to={`/article/${a.id}`} className="hang-scroll rise" style={{ '--i': i }}>
+          <Link
+            key={a.id}
+            to={`/article/${a.id}`}
+            className="hang-scroll reveal"
+            style={{ '--d': i * 140, '--silk': `var(--silk-${(i % 3) + 1})` }}
+          >
             <span className="rod" aria-hidden="true" />
             <div className="hang-body">
               <span className="brush hang-num">{toHanNumeral(i + 1, { formal: true })}</span>
@@ -282,7 +341,7 @@ function Home() {
                 {paginatedArticles.map((a, i) => {
                   const n = (currentPage - 1) * HOME_PAGE_SIZE + i + 1
                   return (
-                    <li key={a.id} className="rise" style={{ '--i': i }}>
+                    <li key={a.id} className="reveal" style={{ '--d': i * 70 }}>
                       <Link to={`/article/${a.id}`} className="xrow">
                         <span className="xrow-num brush">{toHanNumeral(n)}</span>
                         <div className="xrow-body">

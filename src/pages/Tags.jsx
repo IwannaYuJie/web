@@ -128,7 +128,7 @@ function Tags() {
             )}
 
             {sects.length > 0 && (
-              <section className="xsects">
+              <section className="xsects reveal">
                 <div className="section-h"><h2>门类 <small>按分类看</small></h2></div>
                 <div className="xsects-grid">
                   {sects.map((s, i) => (

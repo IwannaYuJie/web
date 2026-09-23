@@ -100,3 +100,126 @@ export function CloudDivider({ className = '' }) {
     </div>
   )
 }
+
+// 梅枝主干：折线走势（梅枝多"折角"），粗细逐段收细
+const PLUM_TRUNK = [
+  [-10, 14], [40, 30], [78, 40], [112, 64], [160, 86], [206, 104],
+  [252, 124], [296, 140], [334, 160], [372, 184], [404, 208], [430, 232],
+]
+const PLUM_TWIGS = [
+  ['M112 64L126 44L150 34L192 20', 3.2],
+  ['M252 124L266 104L290 92L338 82', 3],
+  ['M334 160L360 150L386 146L418 122', 2.4],
+  ['M206 104L212 130L208 156L194 196', 2.8],
+  ['M372 184L388 198L400 214', 1.8],
+  ['M78 40L70 22L76 4', 2.2],
+  ['M296 140L302 166L322 182', 1.8],
+  ['M160 86L176 66L178 48', 1.8],
+]
+// 梅花：[x, y, 缩放, 旋转]
+const PLUM_BLOSSOMS = [
+  [192, 20, 1.5, 10], [150, 36, 1.2, 40], [176, 50, 1.1, -20], [126, 46, 1.3, 70],
+  [236, 112, 1.55, -12], [290, 92, 1.3, 25], [338, 82, 1.5, 5], [312, 104, 1.05, 55],
+  [386, 146, 1.35, 50], [418, 122, 1.2, -8], [208, 150, 1.25, -30], [194, 196, 1.3, 15],
+  [430, 232, 1.35, 30], [322, 182, 1.1, 60], [76, 6, 1.2, 0], [60, 34, 0.95, 35],
+]
+const PLUM_BUDS = [[102, 56], [270, 132], [352, 174], [220, 176], [398, 212], [166, 90], [40, 26]]
+
+function Blossom({ x, y, s, r }) {
+  return (
+    <g transform={`translate(${x} ${y}) rotate(${r}) scale(${s})`} className="plum-blossom">
+      {[0, 72, 144, 216, 288].map(a => (
+        <ellipse key={a} cx="0" cy="-5.6" rx="5" ry="5.8" transform={`rotate(${a})`} className="petal" />
+      ))}
+      <circle r="2.2" className="heart" />
+      {[20, 95, 170, 245, 320].map(a => (
+        <line key={a} x1="0" y1="0" x2="0" y2="-5.2" transform={`rotate(${a})`} className="stamen" />
+      ))}
+    </g>
+  )
+}
+
+/** 墨梅一枝：折角枯枝带飞白，红梅开得正盛，随风轻摆 */
+export function PlumBranch({ className = '' }) {
+  const uid = useId().replace(/:/g, '')
+  const segments = PLUM_TRUNK.slice(1).map((pt, i) => {
+    const prev = PLUM_TRUNK[i]
+    return { d: `M${prev[0]} ${prev[1]}L${pt[0]} ${pt[1]}`, w: 13 - i * 1.05 }
+  })
+  const trunkPath = `M${PLUM_TRUNK.map(p => p.join(' ')).join('L')}`
+  return (
+    <svg className={`xian-plum ${className}`} viewBox="-12 -8 470 260" fill="none" aria-hidden="true">
+      <defs>
+        {/* 枯笔的毛边 */}
+        <filter id={`${uid}-dry`} x="-5%" y="-5%" width="110%" height="110%">
+          <feTurbulence type="fractalNoise" baseFrequency="0.7" numOctaves="2" result="n" />
+          <feDisplacementMap in="SourceGraphic" in2="n" scale="3" />
+        </filter>
+      </defs>
+      <g className="plum-sway">
+        <g className="plum-wood" filter={`url(#${uid}-dry)`}>
+          {segments.map((seg, i) => <path key={i} d={seg.d} strokeWidth={seg.w} />)}
+          {PLUM_TWIGS.map(([d, w]) => <path key={d} d={d} strokeWidth={w} />)}
+          {/* 飞白：主干上断续的浅色笔痕 */}
+          <path className="plum-flywhite" d={trunkPath} strokeDasharray="18 7 4 12 26 6 9 14" />
+          <circle className="plum-knot" cx="112" cy="64" r="4.5" />
+          <circle className="plum-knot" cx="252" cy="124" r="3.4" />
+        </g>
+        <g className="plum-flowers">
+          {PLUM_BLOSSOMS.map(([x, y, sc, r], i) => <Blossom key={i} x={x} y={y} s={sc} r={r} />)}
+          {PLUM_BUDS.map(([x, y], i) => <circle key={i} cx={x} cy={y} r="3.6" className="bud" />)}
+        </g>
+      </g>
+    </svg>
+  )
+}
+
+/** 丹顶鹤：修长白身、黑色飞羽、头顶一点朱红，双翅缓缓扇动 */
+export function Crane({ className = '', style }) {
+  return (
+    <svg className={`xian-crane ${className}`} style={style} viewBox="20 0 180 90" aria-hidden="true">
+      <g className="wing far">
+        <path className="feather" d="M92 57C86 40 76 22 52 6C60 20 62 30 60 42C70 44 82 50 92 57Z" />
+        <path className="tip" d="M52 6L58 14L55 16L61 22L58 24L63 31C60 22 57 14 52 6Z" />
+      </g>
+      <path className="leg" d="M76 64L32 70M76 66L30 76M32 70L28 68M30 76L26 75" />
+      <path className="tail" d="M76 60C66 58 58 62 53 68C61 68 69 67 78 65Z" />
+      <path className="body" d="M70 62C80 53 104 51 121 55C113 62 96 68 78 67C74 66 71 64 70 62Z" />
+      <path className="neck" d="M118 56C132 50 148 45 166 42" />
+      <circle className="head" cx="169" cy="41.5" r="4.2" />
+      <path className="beak" d="M172.5 41L192 44L172.5 43.4Z" />
+      <circle className="crown" cx="167.6" cy="38.8" r="2" />
+      <g className="wing near">
+        <path className="feather" d="M100 58C106 34 122 16 156 4C150 12 146 16 142 22L146 22L138 30L142 30L132 38C124 46 112 54 100 58Z" />
+        <path className="tip" d="M156 4C150 12 146 16 142 22L146 22L138 30L142 30L132 38C138 28 146 16 156 4Z" />
+      </g>
+    </svg>
+  )
+}
+
+// 花瓣：[left%, 延迟s, 周期s, 大小px, 横向飘移vw]
+const PETALS = [
+  [8, 0, 16, 11, 14], [18, 5, 19, 9, 10], [27, 11, 17, 12, 18], [36, 2, 21, 8, 8],
+  [12, 8, 18, 10, 20], [22, 14, 20, 9, 12], [4, 17, 15, 12, 16], [31, 20, 22, 8, 22],
+]
+
+/** 落梅：花瓣从梅枝下斜斜飘落 */
+export function Petals({ className = '', count = PETALS.length }) {
+  return (
+    <div className={`xian-petals ${className}`} aria-hidden="true">
+      {PETALS.slice(0, count).map(([left, delay, dur, size, drift], i) => (
+        <span
+          key={i}
+          style={{
+            left: `${left}%`,
+            width: size,
+            height: size * 0.8,
+            animationDelay: `-${delay}s`,
+            animationDuration: `${dur}s`,
+            '--drift': `${drift}vw`,
+          }}
+        />
+      ))}
+    </div>
+  )
+}

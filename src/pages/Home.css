@@ -17,28 +17,55 @@
   z-index: -1;
   background: linear-gradient(180deg, var(--sky-top) 0%, color-mix(in srgb, var(--sky-top) 40%, var(--paper)) 55%, var(--paper) 100%);
 }
-.xhero-moon {
+.xhero-moon-wrap {
   position: absolute;
   top: 16%;
   right: 12%;
+  transform: translate(calc(var(--mx, 0) * -14px), calc(var(--my, 0) * -10px + var(--sy, 0) * 0.45px));
+  transition: transform 0.6s var(--ease-out);
+}
+.xhero-moon {
   width: clamp(120px, 15vw, 210px);
   height: clamp(120px, 15vw, 210px);
   animation: floaty 14s ease-in-out infinite;
 }
-.xhero-birds {
-  position: absolute;
-  width: 120px;
-  top: 30%;
-  left: 46%;
-  animation: birdsFly 38s linear infinite;
-}
-@keyframes birdsFly {
-  from { transform: translate(-30vw, 20px); opacity: 0; }
-  10% { opacity: 1; }
-  90% { opacity: 1; }
-  to { transform: translate(40vw, -40px); opacity: 0; }
-}
 
+/* 远山分层视差：越远越慢 */
+.xhero-mountains .m-far { transform: translate(calc(var(--mx, 0) * -10px), calc(var(--sy, 0) * 0.32px)); }
+.xhero-mountains .m-mid { transform: translate(calc(var(--mx, 0) * -6px), calc(var(--sy, 0) * 0.2px)); }
+.xhero-mountains .m-near { transform: translate(calc(var(--mx, 0) * -3px), calc(var(--sy, 0) * 0.08px)); }
+.xhero-mountains .m-pavilion { transform: translate(calc(var(--mx, 0) * -10px), calc(var(--sy, 0) * 0.32px)); }
+
+/* 左上一枝红梅，花瓣从枝下飘落 */
+.xhero-plum-wrap {
+  position: absolute;
+  top: 64px;
+  left: -20px;
+  width: 340px;
+  z-index: 2;
+  transform: translate(calc(var(--mx, 0) * 6px), calc(var(--my, 0) * 4px));
+  transition: transform 0.8s var(--ease-out);
+}
+.xhero-petals { z-index: 2; }
+
+/* 两只丹顶鹤从左向右掠过 */
+.xhero-cranes { position: absolute; inset: 0; pointer-events: none; overflow: hidden; }
+.xhero-cranes .xian-crane {
+  position: absolute;
+  left: 0;
+  width: 130px;
+  opacity: 0;
+  animation: craneFly 46s linear infinite;
+}
+.xhero-cranes .crane-a { top: 22%; }
+.xhero-cranes .crane-b { top: 30%; width: 96px; animation-delay: -6s; animation-duration: 52s; }
+@keyframes craneFly {
+  0% { transform: translate(-15vw, 40px) rotate(-4deg); opacity: 0; }
+  6% { opacity: 0.95; }
+  50% { transform: translate(45vw, -10px) rotate(-2deg); }
+  92% { opacity: 0.9; }
+  100% { transform: translate(110vw, -60px) rotate(-6deg); opacity: 0; }
+}
 /* 横贯山腰的云带 */
 .xhero-cloudband {
   position: absolute;
@@ -80,6 +107,18 @@
   color: var(--ink);
   margin: 22px 0 18px;
 }
+.xhero-verse { min-height: 3.2em; }
+/* 给左上的梅枝让出位置 */
+.xhero-copy { padding-left: 150px; }
+@media (max-width: 1279px) {
+  .xhero-copy { padding-left: 110px; }
+  .xhero-plum-wrap { width: 240px; top: 70px; }
+}
+@media (max-width: 999px) {
+  .xhero-copy { padding-left: 0; }
+  .xhero-plum-wrap { display: none; }
+}
+.xhero-verse-line { display: block; }
 .xhero-intro {
   max-width: 470px;
   font-size: 15.5px;
@@ -255,8 +294,10 @@
   flex-direction: column;
   align-items: stretch;
   color: var(--ink);
-  transition: transform 0.6s var(--ease-out);
+  transition: opacity 1s var(--ease-out), transform 0.6s var(--ease-out);
+  transition-delay: calc(var(--d, 0) * 1ms);
 }
+.hang-scroll:hover { transition-delay: 0ms; }
 .hang-scroll:hover { transform: translateY(-6px) rotate(-0.4deg); }
 .hang-scroll .rod {
   position: relative;
@@ -285,13 +326,15 @@
   display: flex;
   flex-direction: column;
   gap: 12px;
-  padding: 34px 28px 28px;
+  padding: 44px 36px 36px;
+  /* 装裱绫边：上宽下窄，内衬一线泥金 */
+  border: 12px solid var(--silk, var(--line));
+  border-top-width: 18px;
+  border-bottom-width: 22px;
   background:
     linear-gradient(180deg, color-mix(in srgb, var(--gold-soft) 18%, transparent), transparent 18%),
     var(--surface);
-  border-left: 1px solid var(--line);
-  border-right: 1px solid var(--line);
-  box-shadow: var(--shadow-1);
+  box-shadow: var(--shadow-1), inset 0 0 0 1px color-mix(in srgb, var(--gold) 45%, transparent);
   transition: box-shadow 0.5s var(--ease);
 }
 .hang-body::before {
@@ -528,7 +571,9 @@
   .xhero-title h1 { writing-mode: horizontal-tb; font-size: clamp(58px, 17vw, 88px); }
   .xhero-seal { margin: 0; }
   .xhero-moon { top: 10%; right: 6%; }
-  .xhero-birds { display: none; }
+  .xhero-plum-wrap { display: none; }
+  .xhero-cranes .crane-a { top: 34%; width: 90px; }
+  .xhero-cranes .crane-b { display: none; }
   .xhero-stats > div { padding: 0 16px; }
   .xhero-stats dd .latin { font-size: 26px; }
   .xside { grid-template-columns: 1fr; }

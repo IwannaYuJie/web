@@ -41,11 +41,11 @@ function About() {
         <CloudDivider />
 
         {/* 心法：竖排三则 */}
-        <section className="xcreed">
+        <section className="xcreed reveal">
           <div className="section-h"><h2>心法 <small>写东西的时候我会</small></h2></div>
           <ol className="xcreed-list">
             {blogProfile.manifesto.map((m, i) => (
-              <li key={m} className="scroll-card rise" style={{ '--i': i }}>
+              <li key={m} className="scroll-card">
                 <span className="xcreed-num brush">{toHanNumeral(i + 1, { formal: true })}</span>
                 <p className="xcreed-text">{m}</p>
               </li>
@@ -54,7 +54,7 @@ function About() {
         </section>
 
         {/* 近况 */}
-        <section className="xnow">
+        <section className="xnow reveal">
           <div className="section-h"><h2>近况 <small>最近在忙什么</small></h2></div>
           <dl className="xnow-list">
             {nowItems.map(item => (
@@ -67,7 +67,7 @@ function About() {
         </section>
 
         {/* 小物 */}
-        <section className="xworks">
+        <section className="xworks reveal">
           <div className="section-h"><h2>顺手炼的小物 <small>项目入口</small></h2></div>
           <div className="xworks-grid">
             {blogProjects.map(p => (
@@ -82,7 +82,7 @@ function About() {
         </section>
 
         {/* 修行纪事 */}
-        <section className="xchron">
+        <section className="xchron reveal">
           <div className="section-h"><h2>修行纪事 <small>小窝改过什么</small></h2></div>
           <ol className="xchron-list">
             {blogMilestones.map(item => (

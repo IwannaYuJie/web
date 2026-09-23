@@ -1,4 +1,4 @@
-import { Birds, Cloud, Mountains, Seal } from './Ornaments'
+import { Birds, Cloud, Mountains, Petals, PlumBranch, Seal } from './Ornaments'
 import './xian.css'
 
 /**
@@ -10,6 +10,8 @@ function PageHeader({ title, plain, sub, seal, children, compact = false }) {
     <header className={`xian-pagehead ${compact ? 'compact' : ''}`}>
       <Mountains className="ph-mountains" />
       <Birds className="ph-birds" />
+      <PlumBranch className="ph-plum" />
+      <Petals className="ph-petals" count={4} />
       <div className="wrap ph-inner">
         <div className="kicker rise" style={{ '--i': 0 }}>
           <span className="rule" />

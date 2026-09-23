@@ -127,6 +127,7 @@ function ArticleDetail() {
 
       <div className={`wrap xart-grid ${toc.length > 0 ? 'has-toc' : ''}`}>
         <div className="xart-paper scroll-card">
+          <div className="fret-band xart-fret top" aria-hidden="true" />
           <Suspense fallback={<div className="state"><div className="loading-bar" />墨迹未干…</div>}>
             <MarkdownRenderer content={article.content} toc={toc} />
           </Suspense>
@@ -157,6 +158,7 @@ function ArticleDetail() {
               {copyStatus || '传阅此文'}
             </button>
           </div>
+          <div className="fret-band xart-fret bottom" aria-hidden="true" />
         </div>
 
         {toc.length > 0 && (
@@ -174,7 +176,7 @@ function ArticleDetail() {
       </div>
 
       <div className="wrap xart-after">
-        <nav className="xart-pager" aria-label="上下篇">
+        <nav className="xart-pager reveal" aria-label="上下篇">
           {articleNavigation.newer ? (
             <Link to={`/article/${articleNavigation.newer.id}`} className="xart-pager-item">
               <span className="elegant">← 后一篇</span>
@@ -190,7 +192,7 @@ function ArticleDetail() {
         </nav>
 
         {relatedArticles.length > 0 && (
-          <section className="xart-related">
+          <section className="xart-related reveal">
             <div className="section-h"><h2>同道之文 <small>相关阅读</small></h2></div>
             <div className="xart-related-grid">
               {relatedArticles.map(a => (
