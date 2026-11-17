@@ -1,3 +1,4 @@
+import { invalidateArticlesCache, loadArticlesList } from './articles'
 import { extractErrorMessage, parseJsonBody } from './http'
 
 async function newsRequest(path, adminKey, options = {}) {
@@ -40,6 +41,9 @@ export function dismissNewsDraft(id, adminKey) {
   return newsRequest(`/${encodeURIComponent(id)}`, adminKey, { method: 'DELETE' })
 }
 
-export function publishNewsDraft(id, adminKey) {
-  return newsRequest(`/${encodeURIComponent(id)}/publish`, adminKey, { method: 'POST' })
+export async function publishNewsDraft(id, adminKey) {
+  const result = await newsRequest(`/${encodeURIComponent(id)}/publish`, adminKey, { method: 'POST' })
+  invalidateArticlesCache()
+  loadArticlesList({ force: true }).catch(() => {})
+  return result
 }

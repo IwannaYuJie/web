@@ -5,20 +5,50 @@
     <link rel="icon" type="image/png" href="/images/cat-avatar.png" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <meta name="description" content="橘猫小窝：随手记的技术笔记。Java、AI、自己折腾的小项目都丢在这，想到再写，更得很慢。" />
-    <link rel="preconnect" href="https://fonts.googleapis.com">
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,500;1,400;1,500&family=Ma+Shan+Zheng&family=Noto+Sans+SC:wght@400;500;700&family=Noto+Serif+SC:wght@400;500;600;700;900&family=Space+Grotesk:wght@500;600;700&family=ZCOOL+XiaoWei&display=swap" rel="stylesheet">
-    <meta name="theme-color" content="#F4EFE4" media="(prefers-color-scheme: light)" />
-    <meta name="theme-color" content="#0D1216" media="(prefers-color-scheme: dark)" />
+    <meta property="og:type" content="website" />
+    <meta property="og:locale" content="zh_CN" />
+    <meta property="og:site_name" content="橘猫小窝" />
+    <meta property="og:title" content="橘猫小窝 · 云深不知处" />
+    <meta property="og:description" content="橘猫小窝：随手记的技术笔记。Java、AI、自己折腾的小项目都丢在这，想到再写，更得很慢。" />
+    <meta property="og:image" content="https://jumaomaomaoju.cn/images/cat-avatar.png" />
+    <meta name="twitter:card" content="summary" />
+    <meta name="twitter:title" content="橘猫小窝 · 云深不知处" />
+    <meta name="twitter:description" content="橘猫小窝：随手记的技术笔记。Java、AI、自己折腾的小项目都丢在这，想到再写，更得很慢。" />
+    <meta name="twitter:image" content="https://jumaomaomaoju.cn/images/cat-avatar.png" />
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      rel="stylesheet"
+      href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,500;1,400;1,500&family=Ma+Shan+Zheng&family=Noto+Sans+SC:wght@400;500;700&family=Noto+Serif+SC:wght@400;500;600;700;900&family=Space+Grotesk:wght@500;600;700&family=ZCOOL+XiaoWei&display=swap"
+      media="print"
+      onload="this.media='all'"
+    />
+    <noscript>
+      <link
+        rel="stylesheet"
+        href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,500;1,400;1,500&family=Ma+Shan+Zheng&family=Noto+Sans+SC:wght@400;500;700&family=Noto+Serif+SC:wght@400;500;600;700;900&family=Space+Grotesk:wght@500;600;700&family=ZCOOL+XiaoWei&display=swap"
+      />
+    </noscript>
+    <meta id="theme-color-meta" name="theme-color" content="#F4EFE4" />
     <script>
       (function() {
         try {
-          document.documentElement.removeAttribute('data-theme');
+          var root = document.documentElement;
+          root.removeAttribute('data-theme');
           localStorage.removeItem('cat_blog_theme_style');
+          var saved = localStorage.getItem('orange_cat_color_mode');
+          var mode = (saved === 'light' || saved === 'dark')
+            ? saved
+            : (window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light');
+          root.setAttribute('data-color-mode', mode);
+          var meta = document.getElementById('theme-color-meta');
+          if (meta) {
+            meta.setAttribute('content', mode === 'dark' ? '#0D1216' : '#F4EFE4');
+          }
         } catch (e) {}
       })();
     </script>
-    <title>橘猫小窝 - 个人博客</title>
+    <title>橘猫小窝 · 云深不知处</title>
   </head>
   <body>
     <!-- React 应用挂载点 -->

@@ -1,9 +1,13 @@
 import { Suspense, lazy, useState, useEffect, useMemo } from 'react'
+import { createPortal } from 'react-dom'
 import { useParams, Link, useNavigate } from 'react-router-dom'
 import { Mountains, Seal } from '../components/xian/Ornaments'
 import { useArticle, useArticlesData } from '../hooks/useArticles'
+import { prefetchArticleById } from '../services/articles'
 import { getRelatedArticles, getSortedArticles } from '../utils/blogInsights'
-import { extractMarkdownToc } from '../utils/markdownUtils'
+import { setDocumentMeta } from '../utils/documentMeta'
+import { extractMarkdownToc, getArticleReadingStats } from '../utils/markdownUtils'
+import { prefetchRoute } from '../utils/routePrefetch'
 import { categoryTone, toHanMonth, toHanNumeral, toHanYear } from '../utils/xianText'
 import './ArticleDetail.css'
 
@@ -49,10 +53,15 @@ function ArticleDetail() {
   const { article, loading, error, liked, toggleLike } = useArticle(id)
   const { articles: allArticles } = useArticlesData()
   const [copyStatus, setCopyStatus] = useState('')
+  const [tocDrawerOpen, setTocDrawerOpen] = useState(false)
 
   const toc = useMemo(() => (article ? extractMarkdownToc(article.content) : []), [article])
   const tocIds = useMemo(() => toc.map(item => item.id), [toc])
   const activeId = useActiveHeading(tocIds)
+  const readingStats = useMemo(
+    () => (article ? getArticleReadingStats(article.content, article.readTime) : { wordCount: 0, readMinutes: 1 }),
+    [article]
+  )
   const relatedArticles = useMemo(() => getRelatedArticles(article, allArticles, 2), [article, allArticles])
 
   const articleNavigation = useMemo(() => {
@@ -65,6 +74,39 @@ function ArticleDetail() {
     }
   }, [article, allArticles])
 
+  useEffect(() => {
+    setTocDrawerOpen(false)
+  }, [id])
+
+  useEffect(() => {
+    if (!tocDrawerOpen) {
+      return undefined
+    }
+    const onKeyDown = (e) => {
+      if (e.key === 'Escape') {
+        e.preventDefault()
+        setTocDrawerOpen(false)
+      }
+    }
+    window.addEventListener('keydown', onKeyDown)
+    return () => window.removeEventListener('keydown', onKeyDown)
+  }, [tocDrawerOpen])
+
+  useEffect(() => {
+    if (article) {
+      setDocumentMeta({
+        title: `${article.title} | 橘猫小窝`,
+        description: article.description || `${article.title} — 橘猫小窝技术笔记`,
+        type: 'article',
+      })
+    } else if (!loading && (error || !article)) {
+      setDocumentMeta({
+        title: '此卷已不知所踪 | 橘猫小窝',
+        description: '该文章可能已移动或尚未公开。',
+      })
+    }
+  }, [article, loading, error])
+
   const copyCurrentUrl = async () => {
     try {
       await navigator.clipboard.writeText(window.location.href)
@@ -73,6 +115,11 @@ function ArticleDetail() {
       setCopyStatus('誊抄未成')
     }
     window.setTimeout(() => setCopyStatus(''), 1600)
+  }
+
+  const prefetchTargetArticle = (targetId) => {
+    prefetchRoute(`/article/${targetId}`)
+    prefetchArticleById(targetId)
   }
 
   if (loading) {
@@ -114,7 +161,9 @@ function ArticleDetail() {
             <i aria-hidden="true" />
             <time dateTime={article.date}>{formatHanDate(article.date)}</time>
             <i aria-hidden="true" />
-            <span>约 {article.readTime} 分钟</span>
+            <span>全篇约 {readingStats.wordCount.toLocaleString('zh-CN')} 字</span>
+            <i aria-hidden="true" />
+            <span>预计阅读 {readingStats.readMinutes} 分钟</span>
             {article.updatedAt && article.updatedAt !== article.date && (
               <>
                 <i aria-hidden="true" />
@@ -175,16 +224,82 @@ function ArticleDetail() {
         )}
       </div>
 
+      {toc.length > 0 && (
+        <>
+          <button
+            type="button"
+            className="xart-toc-fab"
+            onClick={() => setTocDrawerOpen(true)}
+            aria-label="打开展卷目录"
+            aria-expanded={tocDrawerOpen}
+          >
+            <span className="brush">展卷目录</span>
+            <span className="xart-toc-fab-count latin">{toc.length}</span>
+          </button>
+
+          {tocDrawerOpen && typeof document !== 'undefined' && createPortal(
+            <div
+              className="xart-toc-backdrop"
+              role="dialog"
+              aria-modal="true"
+              aria-label="展卷目录"
+              onClick={(e) => {
+                if (e.target === e.currentTarget) {
+                  setTocDrawerOpen(false)
+                }
+              }}
+            >
+              <aside className="xart-toc-drawer scroll-card">
+                <div className="xart-toc-drawer-head">
+                  <span className="brush">展卷目录</span>
+                  <button
+                    type="button"
+                    className="xart-toc-drawer-close"
+                    onClick={() => setTocDrawerOpen(false)}
+                    aria-label="收起目录"
+                  >
+                    收卷 ×
+                  </button>
+                </div>
+                <ol className="xart-toc-drawer-list">
+                  {toc.map(item => (
+                    <li key={item.id} className={`lv${item.level} ${activeId === item.id ? 'on' : ''}`}>
+                      <a
+                        href={`#${item.id}`}
+                        onClick={() => setTocDrawerOpen(false)}
+                      >
+                        {item.text}
+                      </a>
+                    </li>
+                  ))}
+                </ol>
+              </aside>
+            </div>,
+            document.body
+          )}
+        </>
+      )}
+
       <div className="wrap xart-after">
         <nav className="xart-pager reveal" aria-label="上下篇">
           {articleNavigation.newer ? (
-            <Link to={`/article/${articleNavigation.newer.id}`} className="xart-pager-item">
+            <Link
+              to={`/article/${articleNavigation.newer.id}`}
+              className="xart-pager-item"
+              onMouseEnter={() => prefetchTargetArticle(articleNavigation.newer.id)}
+              onTouchStart={() => prefetchTargetArticle(articleNavigation.newer.id)}
+            >
               <span className="elegant">← 后一篇</span>
               <strong>{articleNavigation.newer.title}</strong>
             </Link>
           ) : <span className="xart-pager-item empty"><span className="elegant">已是最新一篇</span></span>}
           {articleNavigation.older ? (
-            <Link to={`/article/${articleNavigation.older.id}`} className="xart-pager-item right">
+            <Link
+              to={`/article/${articleNavigation.older.id}`}
+              className="xart-pager-item right"
+              onMouseEnter={() => prefetchTargetArticle(articleNavigation.older.id)}
+              onTouchStart={() => prefetchTargetArticle(articleNavigation.older.id)}
+            >
               <span className="elegant">前一篇 →</span>
               <strong>{articleNavigation.older.title}</strong>
             </Link>
@@ -196,7 +311,13 @@ function ArticleDetail() {
             <div className="section-h"><h2>同道之文 <small>相关阅读</small></h2></div>
             <div className="xart-related-grid">
               {relatedArticles.map(a => (
-                <Link key={a.id} to={`/article/${a.id}`} className="xart-related-card scroll-card">
+                <Link
+                  key={a.id}
+                  to={`/article/${a.id}`}
+                  className="xart-related-card scroll-card"
+                  onMouseEnter={() => prefetchTargetArticle(a.id)}
+                  onTouchStart={() => prefetchTargetArticle(a.id)}
+                >
                   <span className="cat-label" style={{ '--tone': categoryTone(a.category) }}>
                     <span className="tone-dot" />{a.category}
                   </span>

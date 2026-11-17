@@ -2,6 +2,8 @@ import { useMemo, useState } from 'react'
 import { Link } from 'react-router-dom'
 import PageHeader from '../components/xian/PageHeader'
 import { useArticlesData } from '../hooks'
+import { prefetchArticleById } from '../services/articles'
+import { prefetchRoute } from '../utils/routePrefetch'
 import { filterArticles, getArticleCategories, sortArticles } from '../utils/articleFilters'
 import { getArchiveGroups, getBlogStats, getTagCloud } from '../utils/blogInsights'
 import { categoryTone, toHanMonth, toHanNumeral, toHanYear } from '../utils/xianText'
@@ -135,7 +137,12 @@ function Archive() {
                 <ol className="xyear-list">
                   {group.items.map(a => (
                     <li key={a.id}>
-                      <Link to={`/article/${a.id}`} className="xentry">
+                      <Link
+                        to={`/article/${a.id}`}
+                        className="xentry"
+                        onMouseEnter={() => { prefetchRoute(`/article/${a.id}`); prefetchArticleById(a.id) }}
+                        onTouchStart={() => { prefetchRoute(`/article/${a.id}`); prefetchArticleById(a.id) }}
+                      >
                         <span className="xentry-date elegant">{hanMonthDay(a.date)}</span>
                         <div className="xentry-body">
                           <h3>{a.title}</h3>

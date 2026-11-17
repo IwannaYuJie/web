@@ -2,6 +2,8 @@ import { useMemo, useState } from 'react'
 import { Link, useSearchParams } from 'react-router-dom'
 import PageHeader from '../components/xian/PageHeader'
 import { useArticlesData } from '../hooks'
+import { prefetchArticleById } from '../services/articles'
+import { prefetchRoute } from '../utils/routePrefetch'
 import { filterArticles, getArticleCategories } from '../utils/articleFilters'
 import { getSortedArticles, getTagCloud } from '../utils/blogInsights'
 import { categoryTone, toHanMonth, toHanNumeral } from '../utils/xianText'
@@ -107,7 +109,12 @@ function Tags() {
                   <ol className="xyear-list">
                     {filteredArticles.map((a, i) => (
                       <li key={a.id} className="rise" style={{ '--i': Math.min(i, 8) }}>
-                        <Link to={`/article/${a.id}`} className="xentry">
+                        <Link
+                          to={`/article/${a.id}`}
+                          className="xentry"
+                          onMouseEnter={() => { prefetchRoute(`/article/${a.id}`); prefetchArticleById(a.id) }}
+                          onTouchStart={() => { prefetchRoute(`/article/${a.id}`); prefetchArticleById(a.id) }}
+                        >
                           <span className="xentry-date elegant">{hanMonthDay(a.date)}</span>
                           <div className="xentry-body">
                             <h3>{a.title}</h3>

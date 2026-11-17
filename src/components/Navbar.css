@@ -32,7 +32,7 @@
   display: flex;
   align-items: center;
   justify-content: space-between;
-  gap: 24px;
+  gap: 16px;
 }
 
 .xnav-logo {
@@ -40,6 +40,7 @@
   align-items: center;
   gap: 14px;
   color: var(--ink);
+  flex-shrink: 0;
 }
 .xnav-logo .xian-seal { transition: transform 0.6s var(--ease-out); }
 .xnav-logo:hover .xian-seal { transform: rotate(4deg) scale(1.06); }
@@ -56,21 +57,21 @@
 .xnav-links {
   display: flex;
   align-items: center;
-  gap: 4px;
+  gap: 2px;
 }
 .xnav-links a {
   position: relative;
   display: flex;
   flex-direction: column;
   align-items: center;
-  padding: 6px 14px 10px;
+  padding: 6px 12px 10px;
   color: var(--ink-soft);
   transition: color 0.3s;
 }
 .xnav-links a .zh {
   font-family: var(--elegant);
-  font-size: 16.5px;
-  letter-spacing: 0.14em;
+  font-size: 16px;
+  letter-spacing: 0.12em;
   line-height: 1.3;
 }
 /* 白话释义：悬停时从下方浮现 */
@@ -104,11 +105,11 @@
 .xnav-links a.on::after { transform: translateX(-50%) rotate(45deg) scale(1); }
 
 .xnav-links .xnav-admin {
-  margin-left: 12px;
-  padding: 5px 14px;
+  margin-left: 8px;
+  padding: 5px 12px;
   font-family: var(--elegant);
   font-size: 14px;
-  letter-spacing: 0.2em;
+  letter-spacing: 0.16em;
   border: 1px solid var(--gold-soft);
   border-radius: 2px;
   color: var(--ink-soft);
@@ -117,13 +118,55 @@
 .xnav-links .xnav-admin:hover,
 .xnav-links .xnav-admin.on { color: var(--o); border-color: var(--o); }
 
+/* 寻踪与晨雾/月夜开关 */
+.xnav-actions {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  flex-shrink: 0;
+}
+
+.xnav-tool-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  height: 34px;
+  padding: 0 11px;
+  background: color-mix(in srgb, var(--surface) 78%, transparent);
+  border: 1px solid var(--gold-soft);
+  border-radius: 2px;
+  font-family: var(--elegant);
+  font-size: 13.5px;
+  letter-spacing: 0.08em;
+  color: var(--ink-soft);
+  transition: color 0.25s, border-color 0.25s, background-color 0.25s;
+}
+.xnav-tool-btn:hover {
+  color: var(--o);
+  border-color: var(--o);
+  background: var(--surface);
+}
+.xnav-kbd {
+  font-family: var(--mono);
+  font-size: 10.5px;
+  letter-spacing: 0;
+  padding: 1px 5px;
+  border-radius: 2px;
+  background: color-mix(in srgb, var(--paper-2) 85%, transparent);
+  border: 1px solid var(--line);
+  color: var(--ink-mute);
+}
+.xnav-mode-btn.is-night {
+  color: var(--gold);
+}
+
 /* ---- 移动端 ---- */
 .xnav-menu-btn {
   display: none;
   position: relative;
   z-index: 120;
-  width: 44px;
-  height: 44px;
+  width: 40px;
+  height: 40px;
   background: none;
   border: 1px solid var(--gold-soft);
   border-radius: 2px;
@@ -139,9 +182,9 @@
   border-radius: 2px;
   transition: transform 0.4s var(--ease-out), opacity 0.3s, width 0.3s;
 }
-.xnav-menu-btn span:nth-child(1) { width: 20px; }
-.xnav-menu-btn span:nth-child(2) { width: 14px; }
-.xnav-menu-btn span:nth-child(3) { width: 20px; }
+.xnav-menu-btn span:nth-child(1) { width: 18px; }
+.xnav-menu-btn span:nth-child(2) { width: 12px; }
+.xnav-menu-btn span:nth-child(3) { width: 18px; }
 .xnav-menu-btn.open span:nth-child(1) { transform: translateY(6.5px) rotate(45deg); }
 .xnav-menu-btn.open span:nth-child(2) { opacity: 0; }
 .xnav-menu-btn.open span:nth-child(3) { transform: translateY(-6.5px) rotate(-45deg); }
@@ -151,8 +194,10 @@
   inset: 0;
   z-index: 85;
   display: flex;
+  flex-direction: column;
   align-items: center;
   justify-content: center;
+  gap: 28px;
   background:
     radial-gradient(ellipse at 50% 110%, color-mix(in srgb, var(--mount-far) 60%, transparent), transparent 60%),
     color-mix(in srgb, var(--paper) 96%, transparent);
@@ -200,10 +245,27 @@
 }
 .xnav-sheet-links a.on { color: var(--o); }
 
+.xnav-sheet-tools {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+@media (max-width: 1140px) {
+  .xnav-links a { padding: 6px 8px 10px; }
+  .xnav-links a .zh { font-size: 15px; letter-spacing: 0.08em; }
+  .xnav-kbd { display: none; }
+}
 @media (max-width: 1000px) {
   .xnav-links { display: none; }
   .xnav-menu-btn { display: inline-flex; }
 }
 @media (min-width: 1001px) {
   .xnav-sheet { display: none; }
+}
+@media (max-width: 520px) {
+  .xnav-name .brush { font-size: 23px; }
+  .xnav-name small { letter-spacing: 0.28em; font-size: 10.5px; }
+  .xnav-tool-btn { padding: 0 9px; height: 36px; }
+  .xnav-tool-label { display: none; }
 }

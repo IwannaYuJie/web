@@ -6,6 +6,8 @@ import { CloudDivider, Crane, Moon, Mountains, Petals, PlumBranch, Seal } from '
 import { CAT_QUOTES, HOME_PAGE_SIZE } from '../constants/home'
 import { blogProfile, nowItems } from '../data/blogProfile'
 import { useArticlesData, useBackToTop } from '../hooks'
+import { prefetchArticleById } from '../services/articles'
+import { prefetchRoute } from '../utils/routePrefetch'
 import { filterArticles, getArticleCategories, paginateArticles, sortArticles } from '../utils/articleFilters'
 import { getBlogStats, getFeaturedArticles, getTagCloud } from '../utils/blogInsights'
 import { categoryTone, toHanMonth, toHanNumeral, toHanYear, toShichen } from '../utils/xianText'
@@ -143,7 +145,12 @@ function LeadStory({ article }) {
         <span className="brush vertical">今日开卷</span>
         <span className="line" />
       </div>
-      <Link to={`/article/${article.id}`} className="xlead-card scroll-card">
+      <Link
+        to={`/article/${article.id}`}
+        className="xlead-card scroll-card"
+        onMouseEnter={() => { prefetchRoute(`/article/${article.id}`); prefetchArticleById(article.id) }}
+        onTouchStart={() => { prefetchRoute(`/article/${article.id}`); prefetchArticleById(article.id) }}
+      >
         <div className="xlead-date">
           <span className="brush day">{toHanNumeral(d) || d}</span>
           <span className="elegant month">{toHanMonth(m)}</span>
@@ -180,6 +187,8 @@ function FeaturedScrolls({ featured }) {
             key={a.id}
             to={`/article/${a.id}`}
             className="hang-scroll reveal"
+            onMouseEnter={() => { prefetchRoute(`/article/${a.id}`); prefetchArticleById(a.id) }}
+            onTouchStart={() => { prefetchRoute(`/article/${a.id}`); prefetchArticleById(a.id) }}
             style={{ '--d': i * 140, '--silk': `var(--silk-${(i % 3) + 1})` }}
           >
             <span className="rod" aria-hidden="true" />
@@ -342,7 +351,12 @@ function Home() {
                   const n = (currentPage - 1) * HOME_PAGE_SIZE + i + 1
                   return (
                     <li key={a.id} className="reveal" style={{ '--d': i * 70 }}>
-                      <Link to={`/article/${a.id}`} className="xrow">
+                      <Link
+                        to={`/article/${a.id}`}
+                        className="xrow"
+                        onMouseEnter={() => { prefetchRoute(`/article/${a.id}`); prefetchArticleById(a.id) }}
+                        onTouchStart={() => { prefetchRoute(`/article/${a.id}`); prefetchArticleById(a.id) }}
+                      >
                         <span className="xrow-num brush">{toHanNumeral(n)}</span>
                         <div className="xrow-body">
                           <div className="xrow-meta">

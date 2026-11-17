@@ -1,4 +1,5 @@
-import { Children, isValidElement, useMemo, useState } from 'react'
+import { Children, isValidElement, useEffect, useMemo, useState } from 'react'
+import { createPortal } from 'react-dom'
 import ReactMarkdown from 'react-markdown'
 import remarkGfm from 'remark-gfm'
 import { extractMarkdownToc } from '../utils/markdownUtils'
@@ -27,12 +28,69 @@ function CodeBlock({ language, code }) {
   )
 }
 
+function ImageLightbox({ image, onClose }) {
+  useEffect(() => {
+    if (!image) {
+      return undefined
+    }
+    const prevOverflow = document.body.style.overflow
+    document.body.style.overflow = 'hidden'
+    const onKeyDown = (e) => {
+      if (e.key === 'Escape') {
+        e.preventDefault()
+        onClose()
+      }
+    }
+    window.addEventListener('keydown', onKeyDown)
+    return () => {
+      document.body.style.overflow = prevOverflow
+      window.removeEventListener('keydown', onKeyDown)
+    }
+  }, [image, onClose])
+
+  if (!image || typeof document === 'undefined') {
+    return null
+  }
+
+  return createPortal(
+    <div
+      className="md-lightbox-backdrop"
+      role="dialog"
+      aria-modal="true"
+      aria-label={image.alt ? `配图大图：${image.alt}` : '配图大图预览'}
+      onClick={(e) => {
+        if (e.target === e.currentTarget) {
+          onClose()
+        }
+      }}
+    >
+      <div className="md-lightbox-stage" onClick={(e) => { if (e.target === e.currentTarget) { onClose() } }}>
+        <button
+          type="button"
+          className="md-lightbox-close"
+          onClick={onClose}
+          aria-label="关闭大图预览"
+        >
+          收起 ×
+        </button>
+        <img src={image.src} alt={image.alt || ''} className="md-lightbox-img" />
+        <div className="md-lightbox-foot">
+          {image.alt && <p className="md-lightbox-caption elegant">{image.alt}</p>}
+          <span className="md-lightbox-hint">点击空白处或按 ESC 键关闭</span>
+        </div>
+      </div>
+    </div>,
+    document.body
+  )
+}
+
 /**
  * Markdown 渲染组件
  * 使用 GitHub Flavored Markdown，并直接忽略原生 HTML 节点。
  */
 function MarkdownRenderer({ content, className = '', toc: providedToc }) {
   const toc = useMemo(() => providedToc || extractMarkdownToc(content), [content, providedToc])
+  const [lightboxImage, setLightboxImage] = useState(null)
 
   // 按源码行号给标题分配锚点，与 extractMarkdownToc 的扫描顺序一致。
   // 不能在渲染时累加计数：StrictMode 会重复渲染，计数就会错位。
@@ -83,10 +141,17 @@ function MarkdownRenderer({ content, className = '', toc: providedToc }) {
             )
           },
           img({ src, alt }) {
-            // 图片会被包在 <p> 里，所以不用 figure
+            // 图片会被包在 <p> 里，使用 button + span 保持合法语义并支持键盘/点击灯箱预览
             return (
               <span className="md-figure">
-                <img src={src} alt={alt || ''} loading="lazy" />
+                <button
+                  type="button"
+                  className="md-img-btn"
+                  onClick={() => src && setLightboxImage({ src, alt: alt || '' })}
+                  aria-label={alt ? `点击放大查看配图：${alt}` : '点击放大查看配图'}
+                >
+                  <img src={src} alt={alt || ''} loading="lazy" />
+                </button>
                 {alt && <span className="md-caption">{alt}</span>}
               </span>
             )
@@ -109,6 +174,8 @@ function MarkdownRenderer({ content, className = '', toc: providedToc }) {
       >
         {content}
       </ReactMarkdown>
+
+      <ImageLightbox image={lightboxImage} onClose={() => setLightboxImage(null)} />
     </div>
   )
 }

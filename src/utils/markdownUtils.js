@@ -49,3 +49,36 @@ export function extractMarkdownToc(content = '') {
       }
     })
 }
+
+/**
+ * 统计 Markdown 正文字数（CJK 字符 + 英文/数字词）并估算阅读分钟数
+ * @param {string} content
+ * @param {string|number} [fallbackReadTime]
+ * @returns {{ wordCount: number, cjkCount: number, latinWordCount: number, readMinutes: number }}
+ */
+export function getArticleReadingStats(content = '', fallbackReadTime) {
+  const cleaned = String(content || '')
+    .replace(/```[\s\S]*?```/g, (block) => block.replace(/```[^\n]*\n?|```/g, ' '))
+    .replace(/!\[([^\]]*)\]\([^)]*\)/g, '$1')
+    .replace(/\[([^\]]+)\]\([^)]*\)/g, '$1')
+    .replace(/[`*_>#~|-]/g, ' ')
+
+  const cjkMatches = cleaned.match(/[\u4E00-\u9FFF\u3400-\u4DBF\uF900-\uFAFF]/g)
+  const cjkCount = cjkMatches ? cjkMatches.length : 0
+
+  const withoutCjk = cleaned.replace(/[\u4E00-\u9FFF\u3400-\u4DBF\uF900-\uFAFF]/g, ' ')
+  const latinMatches = withoutCjk.match(/[A-Za-z0-9]+(?:[._-][A-Za-z0-9]+)*/g)
+  const latinWordCount = latinMatches ? latinMatches.length : 0
+
+  const wordCount = cjkCount + latinWordCount
+  const computedMinutes = wordCount > 0 ? Math.max(1, Math.ceil(cjkCount / 350 + latinWordCount / 200)) : 1
+  const parsedFallback = Number.parseInt(String(fallbackReadTime || ''), 10)
+  const readMinutes = Number.isFinite(parsedFallback) && parsedFallback > 0 ? parsedFallback : computedMinutes
+
+  return {
+    wordCount,
+    cjkCount,
+    latinWordCount,
+    readMinutes,
+  }
+}

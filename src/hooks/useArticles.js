@@ -1,50 +1,86 @@
 import { useState, useEffect, useMemo, useCallback, useRef } from 'react'
-import { fetchArticlesList, fetchArticleById, getLikedArticleIds, setLikedArticleIds } from '../services/articles'
+import {
+  getCachedArticleById,
+  getCachedArticlesList,
+  getLikedArticleIds,
+  isArticleStale,
+  isArticlesListStale,
+  loadArticleById,
+  loadArticlesList,
+  setLikedArticleIds,
+  subscribeArticlesCache,
+} from '../services/articles'
 import { filterArticles, getArticleCategories, getArticleTags, paginateArticles, sortArticles } from '../utils/articleFilters'
 
 /**
- * 文章列表数据 Hook
- * 统一处理文章列表的获取、刷新和请求取消。
+ * 文章列表数据 Hook（带内存 SWR 缓存与后台静默刷新）
  */
 export function useArticlesData() {
-  const [articles, setArticles] = useState([])
-  const [loading, setLoading] = useState(true)
+  const [articles, setArticles] = useState(() => getCachedArticlesList() || [])
+  const [loading, setLoading] = useState(() => !getCachedArticlesList())
   const [error, setError] = useState(null)
-  const abortRef = useRef(null)
+  const mountedRef = useRef(true)
 
-  const fetchArticles = useCallback(async () => {
-    abortRef.current?.abort()
-    const controller = new AbortController()
-    abortRef.current = controller
-    setLoading(true)
-    setError(null)
+  useEffect(() => {
+    mountedRef.current = true
+    return () => {
+      mountedRef.current = false
+    }
+  }, [])
+
+  const fetchArticles = useCallback(async ({ silent = false, force = true } = {}) => {
+    const hasCached = Boolean(getCachedArticlesList())
+    if (!silent && !hasCached) {
+      setLoading(true)
+    }
+    if (!silent) {
+      setError(null)
+    }
 
     try {
-      const data = await fetchArticlesList(controller.signal)
-      if (!controller.signal.aborted) {
+      const data = await loadArticlesList({ force })
+      if (mountedRef.current) {
         setArticles(data)
+        setError(null)
       }
+      return data
     } catch (err) {
-      if (err.name === 'AbortError') {
-        return
-      }
       console.error('获取文章失败:', err)
-      if (!controller.signal.aborted) {
+      if (mountedRef.current && !hasCached) {
         setError(err.message)
       }
+      return null
     } finally {
-      if (!controller.signal.aborted && abortRef.current === controller) {
+      if (mountedRef.current) {
         setLoading(false)
       }
     }
   }, [])
 
   useEffect(() => {
-    fetchArticles()
-
-    return () => {
-      abortRef.current?.abort()
+    const cached = getCachedArticlesList()
+    if (cached) {
+      setArticles(cached)
+      setLoading(false)
+      if (isArticlesListStale()) {
+        fetchArticles({ silent: true, force: true })
+      }
+    } else {
+      fetchArticles({ silent: false, force: false })
     }
+
+    const unsubscribe = subscribeArticlesCache((event) => {
+      if (!mountedRef.current) {
+        return
+      }
+      if (event?.type === 'list' && Array.isArray(event.data)) {
+        setArticles(event.data)
+        setLoading(false)
+        setError(null)
+      }
+    })
+
+    return unsubscribe
   }, [fetchArticles])
 
   return {
@@ -171,12 +207,12 @@ export function useArticles(options = {}) {
 }
 
 /**
- * 单篇文章管理 Hook
+ * 单篇文章管理 Hook（带内存 SWR 缓存）
  * 提供文章详情获取、点赞等功能
  */
 export function useArticle(id) {
-  const [article, setArticle] = useState(null)
-  const [loading, setLoading] = useState(true)
+  const [article, setArticle] = useState(() => getCachedArticleById(id))
+  const [loading, setLoading] = useState(() => !getCachedArticleById(id))
   const [error, setError] = useState(null)
   const [liked, setLiked] = useState(false)
 
@@ -186,37 +222,62 @@ export function useArticle(id) {
     setLiked(likedArticles.includes(parseInt(id, 10)))
   }, [id])
 
-  // 获取文章详情
+  // 获取文章详情（命中缓存立即展示，过期则后台静默刷新）
   useEffect(() => {
-    const controller = new AbortController()
-
-    const fetchArticle = async () => {
-      if (!id) {
-        return
-      }
-
-      setLoading(true)
-      setError(null)
-
-      try {
-        const data = await fetchArticleById(id, controller.signal)
-        setArticle(data)
-      } catch (err) {
-        if (err.name === 'AbortError') {
-          return
-        }
-        console.error('获取文章详情失败:', err)
-        setError(err.message)
-      } finally {
-        if (!controller.signal.aborted) {
-          setLoading(false)
-        }
-      }
+    if (!id) {
+      return undefined
     }
 
-    fetchArticle()
+    let active = true
+    const cached = getCachedArticleById(id)
 
-    return () => controller.abort()
+    if (cached) {
+      setArticle(cached)
+      setLoading(false)
+      setError(null)
+    } else {
+      setArticle(null)
+      setLoading(true)
+      setError(null)
+    }
+
+    if (!cached || isArticleStale(id)) {
+      loadArticleById(id, { force: Boolean(cached) })
+        .then((data) => {
+          if (!active) {
+            return
+          }
+          setArticle(data)
+          setError(null)
+          setLoading(false)
+        })
+        .catch((err) => {
+          if (!active) {
+            return
+          }
+          console.error('获取文章详情失败:', err)
+          if (!cached) {
+            setError(err.message)
+            setLoading(false)
+          }
+        })
+    }
+
+    const unsubscribe = subscribeArticlesCache((event) => {
+      if (!active) {
+        return
+      }
+      if (event?.type === 'detail' && event.id === String(id)) {
+        setArticle(event.data)
+        setLoading(false)
+        setError(null)
+      }
+    })
+
+    return () => {
+      active = false
+      unsubscribe()
+    }
   }, [id])
 
   // 点赞文章

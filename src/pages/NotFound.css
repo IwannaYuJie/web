@@ -1,0 +1,65 @@
+.x404 {
+  position: relative;
+  min-height: calc(100vh - 180px);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 96px 0 140px;
+  overflow: hidden;
+  isolation: isolate;
+  text-align: center;
+}
+
+.x404-mountains {
+  position: absolute;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  height: 55%;
+  z-index: -1;
+  opacity: 0.78;
+}
+
+.x404-inner {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  max-width: 680px;
+}
+
+.x404-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 16px;
+  margin-top: 14px;
+}
+
+.x404-code {
+  font-size: clamp(46px, 8vw, 72px);
+  line-height: 1;
+  color: var(--gold);
+  letter-spacing: 0.08em;
+}
+
+.x404-title {
+  font-size: clamp(38px, 6vw, 62px);
+  line-height: 1.2;
+  font-weight: 400;
+  margin: 18px 0 16px;
+  color: var(--ink);
+}
+
+.x404-desc {
+  font-size: 16.5px;
+  line-height: 2;
+  letter-spacing: 0.08em;
+  color: var(--ink-soft);
+}
+
+.x404-actions {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: 12px;
+  margin-top: 32px;
+}

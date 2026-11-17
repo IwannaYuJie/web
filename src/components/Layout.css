@@ -20,6 +20,7 @@
   height: 2px;
   background: linear-gradient(90deg, var(--gold), var(--o));
   transform-origin: left;
+  will-change: transform;
   z-index: 1000;
   pointer-events: none;
 }

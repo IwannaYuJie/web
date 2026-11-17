@@ -7,6 +7,7 @@ const ArticleDetail = lazy(() => import('./pages/ArticleDetail'))
 const Archive = lazy(() => import('./pages/Archive'))
 const Tags = lazy(() => import('./pages/Tags'))
 const About = lazy(() => import('./pages/About'))
+const NotFound = lazy(() => import('./pages/NotFound'))
 
 const ArticleManager = lazy(() => import('./pages/ArticleManager'))
 const GameHub = lazy(() => import('./pages/GameHub'))
@@ -44,6 +45,7 @@ function App() {
             <Route path="/admin/articles" element={<ArticleManager />} />
             <Route path="/games" element={<GameHub />} />
             <Route path="/games/yujie" element={<GameHub initialGameId="yujie-game" />} />
+            <Route path="/games/:gameId" element={<GameHub />} />
             <Route path="/creative" element={<CreativeShowcase />} />
             <Route path="/toolbox" element={<Toolbox />} />
             <Route path="/toolbox/sprite-sheet-to-gif" element={<SpriteSheetToGif />} />
@@ -53,6 +55,7 @@ function App() {
             <Route path="/toolbox/color" element={<ColorConverter />} />
             <Route path="/toolbox/text-counter" element={<TextCounter />} />
             <Route path="/toolbox/password" element={<PasswordGenerator />} />
+            <Route path="*" element={<NotFound />} />
           </Routes>
         </Suspense>
       </Layout>

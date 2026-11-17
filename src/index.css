@@ -104,14 +104,14 @@
   --gap: 16px;
 
   /* Typography */
-  --brush: 'Ma Shan Zheng', 'STXingkai', 'KaiTi', serif;          /* 毛笔字，只用于大标题 */
-  --elegant: 'Elegant Glyph Fix', 'ZCOOL XiaoWei', 'Noto Serif SC', 'Songti SC', serif; /* 雅致标宋，副标题 */
-  --serif: 'Noto Serif SC', 'Songti SC', 'STSong', serif;
-  --latin: 'Cormorant Garamond', 'Noto Serif SC', Georgia, serif;
-  --body: 'Noto Serif SC', 'Songti SC', serif;
-  --sans: 'Noto Sans SC', -apple-system, 'PingFang SC', sans-serif;
+  --brush: 'Ma Shan Zheng', 'STXingkai', 'KaiTi', 'Kaiti SC', 'STKaiti', 'BiauKai', serif;          /* 毛笔字，只用于大标题 */
+  --elegant: 'Elegant Glyph Fix', 'ZCOOL XiaoWei', 'Noto Serif SC', 'Songti SC', 'STSong', 'SimSun', serif; /* 雅致标宋，副标题 */
+  --serif: 'Noto Serif SC', 'Songti SC', 'STSong', 'SimSun', Georgia, serif;
+  --latin: 'Cormorant Garamond', 'Noto Serif SC', Georgia, 'Times New Roman', serif;
+  --body: 'Noto Serif SC', 'Songti SC', 'STSong', 'SimSun', serif;
+  --sans: 'Noto Sans SC', -apple-system, BlinkMacSystemFont, 'PingFang SC', 'Hiragino Sans GB', 'Microsoft YaHei', sans-serif;
   --mono: ui-monospace, 'SF Mono', 'JetBrains Mono', Menlo, Consolas, monospace;
-  --disp: 'Space Grotesk', 'Noto Sans SC', sans-serif;
+  --disp: 'Space Grotesk', 'Noto Sans SC', -apple-system, 'PingFang SC', 'Microsoft YaHei', sans-serif;
 
   --ease: cubic-bezier(0.25, 0.7, 0.2, 1);
   --ease-out: cubic-bezier(0.16, 1, 0.3, 1);
@@ -143,9 +143,66 @@
   --gradient-glass: var(--surface);
 }
 
-/* 月夜 */
+/* 月夜（支持手动切换与系统暗色兜底） */
+:root[data-color-mode="dark"] {
+    color-scheme: dark;
+
+    --paper: #0D1216;
+    --paper-2: #131A20;
+    --surface: #121A20;
+    --rgb-surface: 18 26 32;
+    --mist: #18222A;
+    --sky-top: #16222B;
+
+    --ink: #E8E2D3;
+    --rgb-ink: 232 226 211;
+    --ink-soft: #AEB4B1;
+    --ink-mute: #727C7E;
+    --line: #26323B;
+    --line-soft: #1B252D;
+
+    --o: #E0674F;
+    --rgb-accent: 224 103 79;
+    --o-ink: #F08B74;
+    --o-wash: #34191362;
+
+    --gold: #CDB07A;
+    --gold-soft: #7E6A45;
+    --jade: #74A7A6;
+    --celadon: #4E7775;
+
+    --mount-far: #2C3E48;
+    --mount-mid: #22323C;
+    --mount-near: #19252D;
+
+    --blossom: #E97A6C;
+    --blossom-soft: #F4B5AB;
+    --silk-1: #3E5654;
+    --silk-2: #4A4A68;
+    --silk-3: #5E4938;
+
+    --tone-1: #E0674F;
+    --tone-2: #74A7A6;
+    --tone-3: #9CA0DA;
+    --tone-4: #CDB07A;
+    --tone-5: #A7B874;
+
+    --berry: #F08B74;
+    --vi: #9CA0DA;
+    --mint: #74A7A6;
+    --sun: #D8B774;
+    --k1-bg: #2C1914; --k1-fg: #F08B74;
+    --k2-bg: #2A2416; --k2-fg: #D8B774;
+    --k3-bg: #1E2034; --k3-fg: #9CA0DA;
+    --k4-bg: #152A2B; --k4-fg: #74A7A6;
+
+    --shadow-1: 0 1px 2px rgb(0 0 0 / 0.4);
+    --shadow-2: 0 2px 6px rgb(0 0 0 / 0.3), 0 20px 44px -14px rgb(0 0 0 / 0.7);
+    --shadow-3: 0 4px 10px rgb(0 0 0 / 0.35), 0 36px 80px -20px rgb(0 0 0 / 0.8);
+    --glow: 0 0 0 1px rgb(205 176 122 / 0.22), 0 20px 60px -20px rgb(205 176 122 / 0.28);
+}
 @media (prefers-color-scheme: dark) {
-  :root {
+  :root:not([data-color-mode="light"]) {
     color-scheme: dark;
 
     --paper: #0D1216;
@@ -233,8 +290,9 @@ body::before {
   mix-blend-mode: multiply;
   background-image: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='220' height='220'><filter id='n'><feTurbulence type='fractalNoise' baseFrequency='.7' numOctaves='3' stitchTiles='stitch'/><feColorMatrix values='0 0 0 0 0.45  0 0 0 0 0.38  0 0 0 0 0.25  0 0 0 0.08 0'/></filter><rect width='100%' height='100%' filter='url(%23n)'/></svg>");
 }
+html[data-color-mode="dark"] body::before { mix-blend-mode: screen; opacity: 0.22; }
 @media (prefers-color-scheme: dark) {
-  body::before { mix-blend-mode: screen; opacity: 0.22; }
+  html:not([data-color-mode="light"]) body::before { mix-blend-mode: screen; opacity: 0.22; }
 }
 
 #root { position: relative; z-index: 1; }
