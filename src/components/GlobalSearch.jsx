@@ -1,22 +1,32 @@
-import { useEffect, useMemo, useRef, useState } from 'react'
+import { useCallback, useDeferredValue, useEffect, useMemo, useRef, useState } from 'react'
 import { createPortal } from 'react-dom'
 import { useNavigate } from 'react-router-dom'
 import { GAMES } from '../data/games'
 import { TOOLS } from '../data/tools'
 import { useArticlesData } from '../hooks/useArticles'
-import { prefetchArticleById, prefetchArticlesList } from '../services/articles'
+import { prefetchArticleById } from '../services/articles'
 import { getSortedArticles } from '../utils/blogInsights'
+import { restoreFocus, trapFocusOnTab } from '../utils/focusTrap'
 import { prefetchRoute } from '../utils/routePrefetch'
 import { categoryTone } from '../utils/xianText'
 import { Seal } from './xian/Ornaments'
 import './GlobalSearch.css'
 
-function buildSnippet(article, q) {
+const INDEXED_TOOLS = TOOLS.map((tool) => ({
+  tool,
+  searchableText: `${tool.title} ${tool.alias} ${tool.description} ${tool.tag} ${tool.id}`.toLowerCase(),
+}))
+
+const INDEXED_GAMES = GAMES.map((game) => ({
+  game,
+  searchableText: `${game.name} ${game.description} ${game.glyph} ${game.best} ${game.id}`.toLowerCase(),
+}))
+
+function buildSnippet(entry, q) {
+  const { article, content, lowerContent } = entry
   if (!q) {
     return article.description || ''
   }
-  const content = String(article.content || '')
-  const lowerContent = content.toLowerCase()
   const idx = lowerContent.indexOf(q)
   if (idx >= 0) {
     const start = Math.max(0, idx - 22)
@@ -27,74 +37,77 @@ function buildSnippet(article, q) {
   return article.description || ''
 }
 
-export default function GlobalSearch({ isOpen, onClose }) {
+function GlobalSearchDialog({ onClose }) {
   const navigate = useNavigate()
   const inputRef = useRef(null)
+  const modalRef = useRef(null)
+  const itemRefs = useRef([])
+  const shouldScrollActiveRef = useRef(false)
   const [query, setQuery] = useState('')
+  const deferredQuery = useDeferredValue(query)
   const [activeIndex, setActiveIndex] = useState(0)
   const { articles, loading } = useArticlesData()
 
   useEffect(() => {
-    if (!isOpen) {
-      return undefined
-    }
-    prefetchArticlesList()
-    setQuery('')
-    setActiveIndex(0)
-
+    const previousFocus = typeof document !== 'undefined' ? document.activeElement : null
     const prevOverflow = document.body.style.overflow
     document.body.style.overflow = 'hidden'
-    const focusTimer = window.setTimeout(() => {
-      inputRef.current?.focus()
-    }, 10)
+    inputRef.current?.focus()
 
     return () => {
-      window.clearTimeout(focusTimer)
       document.body.style.overflow = prevOverflow
+      restoreFocus(previousFocus)
     }
-  }, [isOpen])
+  }, [])
 
-  const normalizedQuery = query.trim().toLowerCase()
+  const indexedArticles = useMemo(() => {
+    return getSortedArticles(articles).map((article) => {
+      const tagsText = Array.isArray(article.tags) ? article.tags.join(' ') : ''
+      const content = String(article.content || '')
+      const lowerContent = content.toLowerCase()
+      const searchableMeta = `${article.title || ''} ${article.description || ''} ${article.category || ''} ${tagsText}`.toLowerCase()
+      return {
+        article,
+        content,
+        lowerContent,
+        searchableMeta,
+      }
+    })
+  }, [articles])
+
+  const trimmedQuery = deferredQuery.trim()
+  const normalizedQuery = trimmedQuery.toLowerCase()
 
   const { articleResults, toolResults, gameResults, flatItems } = useMemo(() => {
-    const sortedArticles = getSortedArticles(articles)
-
     const matchedArticles = normalizedQuery
-      ? sortedArticles
-          .filter((a) => {
-            const tagsText = Array.isArray(a.tags) ? a.tags.join(' ') : ''
-            const haystack = `${a.title || ''} ${a.description || ''} ${a.category || ''} ${tagsText} ${a.content || ''}`.toLowerCase()
-            return haystack.includes(normalizedQuery)
-          })
+      ? indexedArticles
+          .filter((entry) => entry.searchableMeta.includes(normalizedQuery) || entry.lowerContent.includes(normalizedQuery))
           .slice(0, 6)
-      : sortedArticles.slice(0, 4)
+      : indexedArticles.slice(0, 4)
 
     const matchedTools = normalizedQuery
-      ? TOOLS.filter((t) => {
-          const haystack = `${t.title} ${t.alias} ${t.description} ${t.tag} ${t.id}`.toLowerCase()
-          return haystack.includes(normalizedQuery)
-        }).slice(0, 5)
+      ? INDEXED_TOOLS.filter((entry) => entry.searchableText.includes(normalizedQuery)).map((entry) => entry.tool).slice(0, 5)
       : TOOLS.slice(0, 4)
 
     const matchedGames = normalizedQuery
-      ? GAMES.filter((g) => {
-          const haystack = `${g.name} ${g.description} ${g.glyph} ${g.best} ${g.id}`.toLowerCase()
-          return haystack.includes(normalizedQuery)
-        }).slice(0, 5)
+      ? INDEXED_GAMES.filter((entry) => entry.searchableText.includes(normalizedQuery)).map((entry) => entry.game).slice(0, 5)
       : GAMES.slice(0, 4)
 
     const flat = [
-      ...matchedArticles.map((a) => ({
-        key: `article-${a.id}`,
-        kind: 'article',
-        path: `/article/${a.id}`,
-        articleId: a.id,
-        title: a.title,
-        subtitle: buildSnippet(a, normalizedQuery),
-        badge: a.category,
-        tone: categoryTone(a.category),
-        meta: `约 ${a.readTime || 1} 分钟`,
-      })),
+      ...matchedArticles.map((entry) => {
+        const a = entry.article
+        return {
+          key: `article-${a.id}`,
+          kind: 'article',
+          path: `/article/${a.id}`,
+          articleId: a.id,
+          title: a.title,
+          subtitle: buildSnippet(entry, normalizedQuery),
+          badge: a.category,
+          tone: categoryTone(a.category),
+          meta: `约 ${a.readTime || 1} 分钟`,
+        }
+      }),
       ...matchedTools.map((t) => ({
         key: `tool-${t.id}`,
         kind: 'tool',
@@ -123,49 +136,66 @@ export default function GlobalSearch({ isOpen, onClose }) {
       gameResults: flat.filter((item) => item.kind === 'game'),
       flatItems: flat,
     }
-  }, [articles, normalizedQuery])
+  }, [indexedArticles, normalizedQuery])
 
   useEffect(() => {
     setActiveIndex(0)
   }, [normalizedQuery])
 
-  const selectItem = (item) => {
+  useEffect(() => {
+    if (!shouldScrollActiveRef.current) {
+      return
+    }
+    shouldScrollActiveRef.current = false
+    const activeEl = itemRefs.current[activeIndex]
+    if (activeEl && typeof activeEl.scrollIntoView === 'function') {
+      activeEl.scrollIntoView({ block: 'nearest' })
+    }
+  }, [activeIndex])
+
+  const selectItem = useCallback((item) => {
     if (!item) {
       return
     }
     onClose()
     navigate(item.path)
-  }
+  }, [navigate, onClose])
 
   useEffect(() => {
-    if (!isOpen) {
-      return undefined
-    }
     const onKeyDown = (e) => {
+      if (e.isComposing || e.nativeEvent?.isComposing || e.keyCode === 229) {
+        return
+      }
       if (e.key === 'Escape') {
         e.preventDefault()
         onClose()
         return
       }
+      if (e.key === 'Tab') {
+        trapFocusOnTab(e, modalRef.current)
+        return
+      }
       if (e.key === 'ArrowDown' && flatItems.length > 0) {
         e.preventDefault()
+        shouldScrollActiveRef.current = true
         setActiveIndex((prev) => (prev + 1) % flatItems.length)
       } else if (e.key === 'ArrowUp' && flatItems.length > 0) {
         e.preventDefault()
+        shouldScrollActiveRef.current = true
         setActiveIndex((prev) => (prev - 1 + flatItems.length) % flatItems.length)
       } else if (e.key === 'Enter' && flatItems[activeIndex]) {
+        if (e.target && e.target !== inputRef.current && String(e.target.tagName || '').toUpperCase() === 'BUTTON') {
+          return
+        }
         e.preventDefault()
         selectItem(flatItems[activeIndex])
       }
     }
     window.addEventListener('keydown', onKeyDown)
     return () => window.removeEventListener('keydown', onKeyDown)
-  })
+  }, [activeIndex, flatItems, onClose, selectItem])
 
-  if (!isOpen || typeof document === 'undefined') {
-    return null
-  }
-
+  itemRefs.current = []
   let runningIdx = -1
   const renderGroup = (heading, sub, items) => {
     if (items.length === 0) {
@@ -185,6 +215,9 @@ export default function GlobalSearch({ isOpen, onClose }) {
             return (
               <li key={item.key}>
                 <button
+                  ref={(el) => {
+                    itemRefs.current[idx] = el
+                  }}
                   type="button"
                   className={`xgsearch-item ${active ? 'on' : ''}`}
                   onMouseEnter={() => {
@@ -240,7 +273,7 @@ export default function GlobalSearch({ isOpen, onClose }) {
         }
       }}
     >
-      <div className="xgsearch-modal scroll-card">
+      <div ref={modalRef} className="xgsearch-modal scroll-card">
         <div className="fret-band xgsearch-fret" aria-hidden="true" />
         <div className="xgsearch-head">
           <Seal text="寻" size={32} />
@@ -252,6 +285,7 @@ export default function GlobalSearch({ isOpen, onClose }) {
             <input
               ref={inputRef}
               type="search"
+              data-global-search-input="true"
               value={query}
               onChange={(e) => setQuery(e.target.value)}
               placeholder="寻经问道 · 搜文章、法宝器物、游仙境小游戏…"
@@ -267,7 +301,7 @@ export default function GlobalSearch({ isOpen, onClose }) {
           {flatItems.length === 0 ? (
             <div className="xgsearch-empty">
               <div className="state-mark brush">空</div>
-              <p>{loading ? '正在翻检藏卷…' : `云深雾重，未见与「${query}」相合之卷`}</p>
+              <p>{loading ? '正在翻检藏卷…' : `云深雾重，未见与「${trimmedQuery || query}」相合之卷`}</p>
             </div>
           ) : (
             <>
@@ -292,4 +326,11 @@ export default function GlobalSearch({ isOpen, onClose }) {
     </div>,
     document.body
   )
+}
+
+export default function GlobalSearch({ isOpen, onClose }) {
+  if (!isOpen || typeof document === 'undefined') {
+    return null
+  }
+  return <GlobalSearchDialog onClose={onClose} />
 }

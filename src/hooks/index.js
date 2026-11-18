@@ -3,5 +3,6 @@
  */
 
 export { useArticles, useArticle, useArticlesData } from './useArticles'
+export { useArticlePrefetch } from './useArticlePrefetch'
 export { useIntervalValue } from './useIntervalValue'
 export { useBackToTop } from './useBackToTop'

@@ -1,5 +1,6 @@
 import { useState, useEffect, useMemo, useCallback, useRef } from 'react'
 import {
+  getArticlesCacheGen,
   getCachedArticleById,
   getCachedArticlesList,
   getLikedArticleIds,
@@ -37,16 +38,25 @@ export function useArticlesData() {
       setError(null)
     }
 
+    const reqGen = getArticlesCacheGen()
     try {
       const data = await loadArticlesList({ force })
       if (mountedRef.current) {
-        setArticles(data)
-        setError(null)
+        if (reqGen === getArticlesCacheGen()) {
+          setArticles(data)
+          setError(null)
+        } else {
+          const fresher = getCachedArticlesList()
+          if (fresher) {
+            setArticles(fresher)
+            setError(null)
+          }
+        }
       }
       return data
     } catch (err) {
       console.error('获取文章失败:', err)
-      if (mountedRef.current && !hasCached) {
+      if (mountedRef.current && !hasCached && reqGen === getArticlesCacheGen()) {
         setError(err.message)
       }
       return null
@@ -242,9 +252,10 @@ export function useArticle(id) {
     }
 
     if (!cached || isArticleStale(id)) {
+      const reqGen = getArticlesCacheGen()
       loadArticleById(id, { force: Boolean(cached) })
         .then((data) => {
-          if (!active) {
+          if (!active || reqGen !== getArticlesCacheGen()) {
             return
           }
           setArticle(data)
@@ -252,7 +263,7 @@ export function useArticle(id) {
           setLoading(false)
         })
         .catch((err) => {
-          if (!active) {
+          if (!active || reqGen !== getArticlesCacheGen()) {
             return
           }
           console.error('获取文章详情失败:', err)

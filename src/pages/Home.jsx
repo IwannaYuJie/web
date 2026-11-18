@@ -5,9 +5,7 @@ import HomeCreativeSection from '../components/home/HomeCreativeSection'
 import { CloudDivider, Crane, Moon, Mountains, Petals, PlumBranch, Seal } from '../components/xian/Ornaments'
 import { CAT_QUOTES, HOME_PAGE_SIZE } from '../constants/home'
 import { blogProfile, nowItems } from '../data/blogProfile'
-import { useArticlesData, useBackToTop } from '../hooks'
-import { prefetchArticleById } from '../services/articles'
-import { prefetchRoute } from '../utils/routePrefetch'
+import { useArticlePrefetch, useArticlesData, useBackToTop } from '../hooks'
 import { filterArticles, getArticleCategories, paginateArticles, sortArticles } from '../utils/articleFilters'
 import { getBlogStats, getFeaturedArticles, getTagCloud } from '../utils/blogInsights'
 import { categoryTone, toHanMonth, toHanNumeral, toHanYear, toShichen } from '../utils/xianText'
@@ -137,6 +135,7 @@ function Hero({ stats }) {
 }
 
 function LeadStory({ article }) {
+  const { schedulePrefetch, cancelPrefetch, prefetchRouteChunkOnly } = useArticlePrefetch()
   if (!article) { return null }
   const { y, m, d } = splitDate(article.date)
   return (
@@ -148,8 +147,9 @@ function LeadStory({ article }) {
       <Link
         to={`/article/${article.id}`}
         className="xlead-card scroll-card"
-        onMouseEnter={() => { prefetchRoute(`/article/${article.id}`); prefetchArticleById(article.id) }}
-        onTouchStart={() => { prefetchRoute(`/article/${article.id}`); prefetchArticleById(article.id) }}
+        onMouseEnter={() => schedulePrefetch(article.id)}
+        onMouseLeave={cancelPrefetch}
+        onTouchStart={() => prefetchRouteChunkOnly(article.id)}
       >
         <div className="xlead-date">
           <span className="brush day">{toHanNumeral(d) || d}</span>
@@ -174,6 +174,7 @@ function LeadStory({ article }) {
 }
 
 function FeaturedScrolls({ featured }) {
+  const { schedulePrefetch, cancelPrefetch, prefetchRouteChunkOnly } = useArticlePrefetch()
   const items = featured.slice(1, 4)
   if (items.length === 0) { return null }
   return (
@@ -187,8 +188,9 @@ function FeaturedScrolls({ featured }) {
             key={a.id}
             to={`/article/${a.id}`}
             className="hang-scroll reveal"
-            onMouseEnter={() => { prefetchRoute(`/article/${a.id}`); prefetchArticleById(a.id) }}
-            onTouchStart={() => { prefetchRoute(`/article/${a.id}`); prefetchArticleById(a.id) }}
+            onMouseEnter={() => schedulePrefetch(a.id)}
+            onMouseLeave={cancelPrefetch}
+            onTouchStart={() => prefetchRouteChunkOnly(a.id)}
             style={{ '--d': i * 140, '--silk': `var(--silk-${(i % 3) + 1})` }}
           >
             <span className="rod" aria-hidden="true" />
@@ -290,6 +292,7 @@ function Sidebar({ cat, setCat, query, setQuery, categories, tags, counts }) {
 
 function Home() {
   const { articles, loading, error, fetchArticles } = useArticlesData()
+  const { schedulePrefetch, cancelPrefetch, prefetchRouteChunkOnly } = useArticlePrefetch()
   const [selectedCategory, setSelectedCategory] = useState('全部')
   const showBackToTop = useBackToTop(600)
   const [searchQuery, setSearchQuery] = useState('')
@@ -354,8 +357,9 @@ function Home() {
                       <Link
                         to={`/article/${a.id}`}
                         className="xrow"
-                        onMouseEnter={() => { prefetchRoute(`/article/${a.id}`); prefetchArticleById(a.id) }}
-                        onTouchStart={() => { prefetchRoute(`/article/${a.id}`); prefetchArticleById(a.id) }}
+                        onMouseEnter={() => schedulePrefetch(a.id)}
+                        onMouseLeave={cancelPrefetch}
+                        onTouchStart={() => prefetchRouteChunkOnly(a.id)}
                       >
                         <span className="xrow-num brush">{toHanNumeral(n)}</span>
                         <div className="xrow-body">

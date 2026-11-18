@@ -1,9 +1,7 @@
 import { useMemo, useState } from 'react'
 import { Link } from 'react-router-dom'
 import PageHeader from '../components/xian/PageHeader'
-import { useArticlesData } from '../hooks'
-import { prefetchArticleById } from '../services/articles'
-import { prefetchRoute } from '../utils/routePrefetch'
+import { useArticlePrefetch, useArticlesData } from '../hooks'
 import { filterArticles, getArticleCategories, sortArticles } from '../utils/articleFilters'
 import { getArchiveGroups, getBlogStats, getTagCloud } from '../utils/blogInsights'
 import { categoryTone, toHanMonth, toHanNumeral, toHanYear } from '../utils/xianText'
@@ -16,6 +14,7 @@ function hanMonthDay(date = '') {
 
 function Archive() {
   const { articles, loading, error, fetchArticles } = useArticlesData()
+  const { schedulePrefetch, cancelPrefetch, prefetchRouteChunkOnly } = useArticlePrefetch()
   const [searchQuery, setSearchQuery] = useState('')
   const [selectedCategory, setSelectedCategory] = useState('全部')
   const [selectedTag, setSelectedTag] = useState('')
@@ -140,8 +139,9 @@ function Archive() {
                       <Link
                         to={`/article/${a.id}`}
                         className="xentry"
-                        onMouseEnter={() => { prefetchRoute(`/article/${a.id}`); prefetchArticleById(a.id) }}
-                        onTouchStart={() => { prefetchRoute(`/article/${a.id}`); prefetchArticleById(a.id) }}
+                        onMouseEnter={() => schedulePrefetch(a.id)}
+                        onMouseLeave={cancelPrefetch}
+                        onTouchStart={() => prefetchRouteChunkOnly(a.id)}
                       >
                         <span className="xentry-date elegant">{hanMonthDay(a.date)}</span>
                         <div className="xentry-body">

@@ -1,7 +1,7 @@
 import { useState, useEffect, memo, useCallback } from 'react'
 import { Link, useLocation } from 'react-router-dom'
 import { prefetchRoute } from '../utils/routePrefetch'
-import { applyColorMode, persistColorMode, resolveInitialColorMode } from '../utils/themeMode'
+import { applyColorMode, persistColorMode, resolveInitialColorMode, subscribeSystemColorMode } from '../utils/themeMode'
 import GlobalSearch from './GlobalSearch'
 import { Seal } from './xian/Ornaments'
 import './Navbar.css'
@@ -71,12 +71,36 @@ function Navbar() {
   }, [isMenuOpen, isSearchOpen])
 
   useEffect(() => {
+    return subscribeSystemColorMode((nextMode) => {
+      setColorMode(applyColorMode(nextMode))
+    })
+  }, [])
+
+  useEffect(() => {
     const handleShortcut = (e) => {
-      if ((e.ctrlKey || e.metaKey) && e.key.toLowerCase() === 'k') {
-        e.preventDefault()
-        setIsMenuOpen(false)
-        setIsSearchOpen((prev) => !prev)
+      if (e.isComposing || e.keyCode === 229 || typeof e.key !== 'string') {
+        return
       }
+      if (!(e.ctrlKey || e.metaKey) || e.key.toLowerCase() !== 'k') {
+        return
+      }
+      const target = e.target
+      const tagName = target && typeof target.tagName === 'string' ? target.tagName.toUpperCase() : ''
+      const isEditable =
+        tagName === 'INPUT' ||
+        tagName === 'TEXTAREA' ||
+        tagName === 'SELECT' ||
+        Boolean(target?.isContentEditable)
+      const isGlobalSearchInput = Boolean(
+        target?.dataset?.globalSearchInput === 'true' ||
+        target?.getAttribute?.('data-global-search-input') === 'true'
+      )
+      if (isEditable && !isGlobalSearchInput) {
+        return
+      }
+      e.preventDefault()
+      setIsMenuOpen(false)
+      setIsSearchOpen((prev) => !prev)
     }
     window.addEventListener('keydown', handleShortcut)
     return () => window.removeEventListener('keydown', handleShortcut)
@@ -92,6 +116,10 @@ function Navbar() {
   const handleOpenSearch = useCallback(() => {
     setIsMenuOpen(false)
     setIsSearchOpen(true)
+  }, [])
+
+  const handleCloseSearch = useCallback(() => {
+    setIsSearchOpen(false)
   }, [])
 
   const handlePrefetch = useCallback((path) => {
@@ -228,7 +256,7 @@ function Navbar() {
         </div>
       </div>
 
-      <GlobalSearch isOpen={isSearchOpen} onClose={() => setIsSearchOpen(false)} />
+      {isSearchOpen ? <GlobalSearch isOpen={isSearchOpen} onClose={handleCloseSearch} /> : null}
     </>
   )
 }

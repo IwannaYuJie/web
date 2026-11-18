@@ -1,13 +1,13 @@
-import { Suspense, lazy, useState, useEffect, useMemo } from 'react'
+import { Suspense, lazy, useState, useEffect, useMemo, useRef } from 'react'
 import { createPortal } from 'react-dom'
 import { useParams, Link, useNavigate } from 'react-router-dom'
 import { Mountains, Seal } from '../components/xian/Ornaments'
 import { useArticle, useArticlesData } from '../hooks/useArticles'
-import { prefetchArticleById } from '../services/articles'
+import { useArticlePrefetch } from '../hooks/useArticlePrefetch'
 import { getRelatedArticles, getSortedArticles } from '../utils/blogInsights'
 import { setDocumentMeta } from '../utils/documentMeta'
+import { restoreFocus, trapFocusOnTab } from '../utils/focusTrap'
 import { extractMarkdownToc, getArticleReadingStats } from '../utils/markdownUtils'
-import { prefetchRoute } from '../utils/routePrefetch'
 import { categoryTone, toHanMonth, toHanNumeral, toHanYear } from '../utils/xianText'
 import './ArticleDetail.css'
 
@@ -54,6 +54,10 @@ function ArticleDetail() {
   const { articles: allArticles } = useArticlesData()
   const [copyStatus, setCopyStatus] = useState('')
   const [tocDrawerOpen, setTocDrawerOpen] = useState(false)
+  const copyTimerRef = useRef(null)
+  const tocDrawerRef = useRef(null)
+  const tocCloseBtnRef = useRef(null)
+  const { schedulePrefetch, cancelPrefetch, prefetchRouteChunkOnly } = useArticlePrefetch()
 
   const toc = useMemo(() => (article ? extractMarkdownToc(article.content) : []), [article])
   const tocIds = useMemo(() => toc.map(item => item.id), [toc])
@@ -79,17 +83,38 @@ function ArticleDetail() {
   }, [id])
 
   useEffect(() => {
+    return () => {
+      if (copyTimerRef.current !== null) {
+        window.clearTimeout(copyTimerRef.current)
+      }
+    }
+  }, [])
+
+  useEffect(() => {
     if (!tocDrawerOpen) {
       return undefined
     }
+    const previousFocus = typeof document !== 'undefined' ? document.activeElement : null
+    const prevOverflow = document.body.style.overflow
+    document.body.style.overflow = 'hidden'
+    tocCloseBtnRef.current?.focus({ preventScroll: true })
+
     const onKeyDown = (e) => {
       if (e.key === 'Escape') {
         e.preventDefault()
         setTocDrawerOpen(false)
+        return
+      }
+      if (e.key === 'Tab') {
+        trapFocusOnTab(e, tocDrawerRef.current)
       }
     }
     window.addEventListener('keydown', onKeyDown)
-    return () => window.removeEventListener('keydown', onKeyDown)
+    return () => {
+      window.removeEventListener('keydown', onKeyDown)
+      document.body.style.overflow = prevOverflow
+      restoreFocus(previousFocus)
+    }
   }, [tocDrawerOpen])
 
   useEffect(() => {
@@ -99,7 +124,12 @@ function ArticleDetail() {
         description: article.description || `${article.title} — 橘猫小窝技术笔记`,
         type: 'article',
       })
-    } else if (!loading && (error || !article)) {
+    } else if (loading) {
+      setDocumentMeta({
+        title: '展卷阅读 | 橘猫小窝',
+        type: 'article',
+      })
+    } else {
       setDocumentMeta({
         title: '此卷已不知所踪 | 橘猫小窝',
         description: '该文章可能已移动或尚未公开。',
@@ -114,12 +144,13 @@ function ArticleDetail() {
     } catch {
       setCopyStatus('誊抄未成')
     }
-    window.setTimeout(() => setCopyStatus(''), 1600)
-  }
-
-  const prefetchTargetArticle = (targetId) => {
-    prefetchRoute(`/article/${targetId}`)
-    prefetchArticleById(targetId)
+    if (copyTimerRef.current !== null) {
+      window.clearTimeout(copyTimerRef.current)
+    }
+    copyTimerRef.current = window.setTimeout(() => {
+      copyTimerRef.current = null
+      setCopyStatus('')
+    }, 1600)
   }
 
   if (loading) {
@@ -249,10 +280,11 @@ function ArticleDetail() {
                 }
               }}
             >
-              <aside className="xart-toc-drawer scroll-card">
+              <aside ref={tocDrawerRef} className="xart-toc-drawer scroll-card">
                 <div className="xart-toc-drawer-head">
                   <span className="brush">展卷目录</span>
                   <button
+                    ref={tocCloseBtnRef}
                     type="button"
                     className="xart-toc-drawer-close"
                     onClick={() => setTocDrawerOpen(false)}
@@ -286,8 +318,9 @@ function ArticleDetail() {
             <Link
               to={`/article/${articleNavigation.newer.id}`}
               className="xart-pager-item"
-              onMouseEnter={() => prefetchTargetArticle(articleNavigation.newer.id)}
-              onTouchStart={() => prefetchTargetArticle(articleNavigation.newer.id)}
+              onMouseEnter={() => schedulePrefetch(articleNavigation.newer.id)}
+              onMouseLeave={cancelPrefetch}
+              onTouchStart={() => prefetchRouteChunkOnly(articleNavigation.newer.id)}
             >
               <span className="elegant">← 后一篇</span>
               <strong>{articleNavigation.newer.title}</strong>
@@ -297,8 +330,9 @@ function ArticleDetail() {
             <Link
               to={`/article/${articleNavigation.older.id}`}
               className="xart-pager-item right"
-              onMouseEnter={() => prefetchTargetArticle(articleNavigation.older.id)}
-              onTouchStart={() => prefetchTargetArticle(articleNavigation.older.id)}
+              onMouseEnter={() => schedulePrefetch(articleNavigation.older.id)}
+              onMouseLeave={cancelPrefetch}
+              onTouchStart={() => prefetchRouteChunkOnly(articleNavigation.older.id)}
             >
               <span className="elegant">前一篇 →</span>
               <strong>{articleNavigation.older.title}</strong>
@@ -315,8 +349,9 @@ function ArticleDetail() {
                   key={a.id}
                   to={`/article/${a.id}`}
                   className="xart-related-card scroll-card"
-                  onMouseEnter={() => prefetchTargetArticle(a.id)}
-                  onTouchStart={() => prefetchTargetArticle(a.id)}
+                  onMouseEnter={() => schedulePrefetch(a.id)}
+                  onMouseLeave={cancelPrefetch}
+                  onTouchStart={() => prefetchRouteChunkOnly(a.id)}
                 >
                   <span className="cat-label" style={{ '--tone': categoryTone(a.category) }}>
                     <span className="tone-dot" />{a.category}

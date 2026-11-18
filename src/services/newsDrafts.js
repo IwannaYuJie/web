@@ -31,18 +31,18 @@ export function collectNewsDrafts(adminKey) {
 }
 
 export function updateNewsDraft(id, draft, adminKey) {
-  return newsRequest(`/${encodeURIComponent(id)}`, adminKey, {
+  return newsRequest(`/${encodeURIComponent(String(id))}`, adminKey, {
     method: 'PUT',
     body: JSON.stringify(draft),
   })
 }
 
 export function dismissNewsDraft(id, adminKey) {
-  return newsRequest(`/${encodeURIComponent(id)}`, adminKey, { method: 'DELETE' })
+  return newsRequest(`/${encodeURIComponent(String(id))}`, adminKey, { method: 'DELETE' })
 }
 
 export async function publishNewsDraft(id, adminKey) {
-  const result = await newsRequest(`/${encodeURIComponent(id)}/publish`, adminKey, { method: 'POST' })
+  const result = await newsRequest(`/${encodeURIComponent(String(id))}/publish`, adminKey, { method: 'POST' })
   invalidateArticlesCache()
   loadArticlesList({ force: true }).catch(() => {})
   return result

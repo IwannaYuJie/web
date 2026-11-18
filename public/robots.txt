@@ -3,4 +3,4 @@ Allow: /
 Disallow: /admin/
 Disallow: /api/
 
-Sitemap: https://jumaomaomaoju.cn/
+Sitemap: https://jumaomaomaoju.cn/sitemap.xml

@@ -3,6 +3,8 @@ import { requestJson } from './http'
 const ADMIN_KEY_STORAGE_KEY = 'adminKey'
 const CACHE_TTL_MS = 30_000
 
+let cacheGen = 0
+
 const listCache = {
   data: null,
   fetchedAt: 0,
@@ -29,6 +31,10 @@ function notifyCacheSubscribers(payload) {
       // ignore subscriber errors
     }
   })
+}
+
+export function getArticlesCacheGen() {
+  return cacheGen
 }
 
 export function subscribeArticlesCache(listener) {
@@ -94,6 +100,7 @@ export function isArticleStale(id) {
 }
 
 export function invalidateArticlesCache(id) {
+  cacheGen += 1
   listCache.fetchedAt = 0
   listCache.data = null
   listCache.promise = null
@@ -115,7 +122,7 @@ export async function fetchArticlesList(signal) {
 }
 
 export async function fetchArticleById(id, signal) {
-  return requestJson(`/api/articles?id=${id}`, { signal }, '获取文章失败')
+  return requestJson(`/api/articles?id=${encodeURIComponent(String(id))}`, { signal }, '获取文章失败')
 }
 
 export async function loadArticlesList({ force = false } = {}) {
@@ -127,9 +134,13 @@ export async function loadArticlesList({ force = false } = {}) {
     return listCache.promise
   }
 
+  const reqGen = cacheGen
   const pending = fetchArticlesList()
     .then((data) => {
       const normalized = Array.isArray(data) ? data : []
+      if (reqGen !== cacheGen) {
+        return normalized
+      }
       listCache.data = normalized
       listCache.fetchedAt = Date.now()
       seedDetailsFromList(normalized)
@@ -157,8 +168,12 @@ export async function loadArticleById(id, { force = false } = {}) {
     return existing.promise
   }
 
+  const reqGen = cacheGen
   const pending = fetchArticleById(id)
     .then((data) => {
+      if (reqGen !== cacheGen) {
+        return data
+      }
       detailCache.set(key, {
         data,
         fetchedAt: Date.now(),
@@ -241,7 +256,7 @@ export async function createArticle(articleData, adminKey) {
 }
 
 export async function updateArticle(id, articleData, adminKey) {
-  const updated = await requestJson(`/api/articles?id=${id}`, {
+  const updated = await requestJson(`/api/articles?id=${encodeURIComponent(String(id))}`, {
     method: 'POST',
     headers: {
       'Content-Type': 'application/json',
@@ -257,7 +272,7 @@ export async function updateArticle(id, articleData, adminKey) {
 }
 
 export async function deleteArticle(id, adminKey) {
-  const deleted = await requestJson(`/api/articles?id=${id}`, {
+  const deleted = await requestJson(`/api/articles?id=${encodeURIComponent(String(id))}`, {
     method: 'POST',
     headers: {
       'Content-Type': 'application/json',

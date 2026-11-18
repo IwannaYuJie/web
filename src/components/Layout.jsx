@@ -11,10 +11,12 @@ export default function Layout({ children }) {
   const mainRef = useRef(null)
   const progressRef = useRef(null)
 
-  // 切换页面时回到顶部并更新基础标题与元信息
+  // 切换页面时回到顶部并更新基础标题与元信息（文章详情页由 ArticleDetail 自行管理 meta，避免覆盖）
   useEffect(() => {
     window.scrollTo({ top: 0, behavior: 'instant' })
-    setDocumentMeta(resolveRouteMeta(location.pathname, location.search))
+    if (!/^\/article\/[^/]+/.test(location.pathname)) {
+      setDocumentMeta(resolveRouteMeta(location.pathname, location.search))
+    }
   }, [location.pathname, location.search])
 
   // 滚动入场：.reveal 区块与 .section-h 标题进入视口时加上 .in

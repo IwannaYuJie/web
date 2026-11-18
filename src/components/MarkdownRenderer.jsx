@@ -1,17 +1,35 @@
-import { Children, isValidElement, useEffect, useMemo, useState } from 'react'
+import { Children, isValidElement, useCallback, useEffect, useMemo, useRef, useState } from 'react'
 import { createPortal } from 'react-dom'
+import { Link } from 'react-router-dom'
 import ReactMarkdown from 'react-markdown'
 import remarkGfm from 'remark-gfm'
-import { extractMarkdownToc } from '../utils/markdownUtils'
+import { restoreFocus, trapFocusOnTab } from '../utils/focusTrap'
+import { extractMarkdownToc, scanMarkdownHeadings } from '../utils/markdownUtils'
 import './MarkdownRenderer.css'
 
 function CodeBlock({ language, code }) {
   const [copied, setCopied] = useState(false)
+  const copyTimerRef = useRef(null)
+
+  useEffect(() => {
+    return () => {
+      if (copyTimerRef.current !== null) {
+        window.clearTimeout(copyTimerRef.current)
+      }
+    }
+  }, [])
+
   const copy = async () => {
     try {
       await navigator.clipboard.writeText(code)
       setCopied(true)
-      window.setTimeout(() => setCopied(false), 1500)
+      if (copyTimerRef.current !== null) {
+        window.clearTimeout(copyTimerRef.current)
+      }
+      copyTimerRef.current = window.setTimeout(() => {
+        copyTimerRef.current = null
+        setCopied(false)
+      }, 1500)
     } catch {
       setCopied(false)
     }
@@ -29,22 +47,33 @@ function CodeBlock({ language, code }) {
 }
 
 function ImageLightbox({ image, onClose }) {
+  const stageRef = useRef(null)
+  const closeBtnRef = useRef(null)
+
   useEffect(() => {
     if (!image) {
       return undefined
     }
+    const previousFocus = typeof document !== 'undefined' ? document.activeElement : null
     const prevOverflow = document.body.style.overflow
     document.body.style.overflow = 'hidden'
+    closeBtnRef.current?.focus({ preventScroll: true })
+
     const onKeyDown = (e) => {
       if (e.key === 'Escape') {
         e.preventDefault()
         onClose()
+        return
+      }
+      if (e.key === 'Tab') {
+        trapFocusOnTab(e, stageRef.current)
       }
     }
     window.addEventListener('keydown', onKeyDown)
     return () => {
       document.body.style.overflow = prevOverflow
       window.removeEventListener('keydown', onKeyDown)
+      restoreFocus(previousFocus)
     }
   }, [image, onClose])
 
@@ -64,8 +93,9 @@ function ImageLightbox({ image, onClose }) {
         }
       }}
     >
-      <div className="md-lightbox-stage" onClick={(e) => { if (e.target === e.currentTarget) { onClose() } }}>
+      <div ref={stageRef} className="md-lightbox-stage" onClick={(e) => { if (e.target === e.currentTarget) { onClose() } }}>
         <button
+          ref={closeBtnRef}
           type="button"
           className="md-lightbox-close"
           onClick={onClose}
@@ -91,18 +121,15 @@ function ImageLightbox({ image, onClose }) {
 function MarkdownRenderer({ content, className = '', toc: providedToc }) {
   const toc = useMemo(() => providedToc || extractMarkdownToc(content), [content, providedToc])
   const [lightboxImage, setLightboxImage] = useState(null)
+  const handleCloseLightbox = useCallback(() => setLightboxImage(null), [])
 
-  // 按源码行号给标题分配锚点，与 extractMarkdownToc 的扫描顺序一致。
+  // 按源码行号给标题分配锚点，与 extractMarkdownToc 的扫描顺序一致（跳过围栏代码块）。
   // 不能在渲染时累加计数：StrictMode 会重复渲染，计数就会错位。
   const idByLine = useMemo(() => {
     const map = new Map()
-    let index = 0
-    String(content || '').split('\n').forEach((line, i) => {
-      const trimmed = line.trim()
-      if (trimmed.startsWith('## ') || trimmed.startsWith('### ')) {
-        if (toc[index]) { map.set(i + 1, toc[index].id) }
-        index += 1
-      }
+    const headings = scanMarkdownHeadings(content)
+    headings.forEach((heading, index) => {
+      map.set(heading.line, toc[index]?.id || heading.id)
     })
     return map
   }, [content, toc])
@@ -133,9 +160,15 @@ function MarkdownRenderer({ content, className = '', toc: providedToc }) {
             return <h3 id={headingId(node)}>{children}</h3>
           },
           a({ href, children }) {
-            const external = /^https?:/i.test(href || '')
+            const rawHref = href || ''
+            const isExternalProtocol = /^(https?:|mailto:|tel:|\/\/)/i.test(rawHref)
+            const isMpaOrAsset = /^\/(yujie(\/|$|\?)|images\/|creative-blogs\/|api\/)/i.test(rawHref)
+            if (rawHref.startsWith('/') && !isExternalProtocol && !isMpaOrAsset) {
+              return <Link to={rawHref}>{children}</Link>
+            }
+            const openInNewTab = /^https?:/i.test(rawHref) || rawHref.startsWith('//')
             return (
-              <a href={href} target={external ? '_blank' : undefined} rel={external ? 'noopener noreferrer' : undefined}>
+              <a href={href} target={openInNewTab ? '_blank' : undefined} rel={openInNewTab ? 'noopener noreferrer' : undefined}>
                 {children}
               </a>
             )
@@ -175,7 +208,7 @@ function MarkdownRenderer({ content, className = '', toc: providedToc }) {
         {content}
       </ReactMarkdown>
 
-      <ImageLightbox image={lightboxImage} onClose={() => setLightboxImage(null)} />
+      <ImageLightbox image={lightboxImage} onClose={handleCloseLightbox} />
     </div>
   )
 }
